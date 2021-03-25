@@ -3,13 +3,15 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api", "Net5Api\Net5Api.csproj", "{310C3DFD-9CF1-439C-9FBB-899E13C406F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Identity", "Net5Api\Net5Api.Identity.csproj", "{310C3DFD-9CF1-439C-9FBB-899E13C406F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.EntityFramework", "Net5Api.EntityFramework\Net5Api.EntityFramework.csproj", "{2E61A496-938F-402D-B0B0-AC702F17B714}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestApi", "TestApi\TestApi.csproj", "{A8F13FEB-AB72-411C-99B3-C96DD6D94D0D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Test", "TestApi\Net5Api.Test.csproj", "{A8F13FEB-AB72-411C-99B3-C96DD6D94D0D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.EntityFramework", "StokTakip.EntityFramework\StokTakip.EntityFramework.csproj", "{BBAAFD73-7FC8-44CC-B8CB-607F42128E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.EntityFramework", "StokTakip.EntityFramework\StokTakip.EntityFramework.csproj", "{BBAAFD73-7FC8-44CC-B8CB-607F42128E00}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "StokTakip", "{F6DABB41-6C43-4B8B-8773-7B31A64E059F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BBAAFD73-7FC8-44CC-B8CB-607F42128E00} = {F6DABB41-6C43-4B8B-8773-7B31A64E059F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}
