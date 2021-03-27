@@ -52,7 +52,7 @@ namespace Net5Api.MongoDB
         public virtual void Update(string id, TModel model)
         {
             var docId = new ObjectId(id);
-            mongoCollection.ReplaceOne(m => m.Id == docId, model);
+            mongoCollection.ReplaceOne(m => m.Id == docId, model); 
         }
 
         public virtual void Delete(TModel model)

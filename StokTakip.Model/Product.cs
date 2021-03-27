@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 #nullable disable
 
-namespace StokTakip.EntityFramework.Models
+namespace StokTakip.Model
 {
     public partial class Product
     {

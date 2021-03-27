@@ -1,10 +1,11 @@
 ﻿using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using StokTakip.Model;
 
 #nullable disable
 
-namespace StokTakip.EntityFramework.Models
+namespace StokTakip.EntityFramework
 {
     public partial class StokTakipContext : DbContext
     {

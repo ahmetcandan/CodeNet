@@ -13,11 +13,15 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.EntityFramework",
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "StokTakip", "{F6DABB41-6C43-4B8B-8773-7B31A64E059F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.Abstraction", "Net5Api.Abstraction\Net5Api.Abstraction.csproj", "{13621376-0547-4231-85E7-3B27D662E5D3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Abstraction", "Net5Api.Abstraction\Net5Api.Abstraction.csproj", "{13621376-0547-4231-85E7-3B27D662E5D3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.Repository", "Net5Api.Repository\Net5Api.Repository.csproj", "{3ABB7B53-78F2-4E84-957F-3A1D4CD3DF9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Repository", "Net5Api.Repository\Net5Api.Repository.csproj", "{3ABB7B53-78F2-4E84-957F-3A1D4CD3DF9C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.MongoDB", "Net5Api.MongoDB\Net5Api.MongoDB.csproj", "{32C1FEED-124B-47F1-B014-131A4F7F4CBD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.MongoDB", "Net5Api.MongoDB\Net5Api.MongoDB.csproj", "{32C1FEED-124B-47F1-B014-131A4F7F4CBD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Model", "StokTakip.Model\StokTakip.Model.csproj", "{69200730-3842-42CA-BAB1-FDC03E5C5A40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.Gateway", "Net5Api.Gateway\Net5Api.Gateway.csproj", "{89F02660-CC21-4ADC-81A4-C4FFAAA58845}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -53,12 +57,21 @@ Global
 		{32C1FEED-124B-47F1-B014-131A4F7F4CBD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{32C1FEED-124B-47F1-B014-131A4F7F4CBD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{32C1FEED-124B-47F1-B014-131A4F7F4CBD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69200730-3842-42CA-BAB1-FDC03E5C5A40}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69200730-3842-42CA-BAB1-FDC03E5C5A40}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69200730-3842-42CA-BAB1-FDC03E5C5A40}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69200730-3842-42CA-BAB1-FDC03E5C5A40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89F02660-CC21-4ADC-81A4-C4FFAAA58845}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89F02660-CC21-4ADC-81A4-C4FFAAA58845}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89F02660-CC21-4ADC-81A4-C4FFAAA58845}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89F02660-CC21-4ADC-81A4-C4FFAAA58845}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{BBAAFD73-7FC8-44CC-B8CB-607F42128E00} = {F6DABB41-6C43-4B8B-8773-7B31A64E059F}
+		{69200730-3842-42CA-BAB1-FDC03E5C5A40} = {F6DABB41-6C43-4B8B-8773-7B31A64E059F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}
