@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Net5Api.Abstraction.Model;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace StokTakip.Model
 {
-    public partial class CampaignRequirement
+    public partial class CampaignRequirement : IEntity
     {
         public int Id { get; set; }
         public int CampaignId { get; set; }

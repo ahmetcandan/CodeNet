@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Net5Api.Abstraction.Model;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace StokTakip.Model
 {
-    public partial class ProductAttributeValue
+    public partial class ProductAttributeValue : IEntity
     {
         public int ProductId { get; set; }
         public int ProductAttributeId { get; set; }

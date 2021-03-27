@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Net5Api.Repository\Net5Api.Repository.csproj" />
+    <ProjectReference Include="..\StokTakip.Abstraction\StokTakip.Abstraction.csproj" />
+    <ProjectReference Include="..\StokTakip.EntityFramework\StokTakip.EntityFramework.csproj" />
+  </ItemGroup>
+
+</Project>

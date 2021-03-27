@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Net5Api.Abstraction.Model;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace StokTakip.Model
 {
-    public partial class Customer
+    public partial class Customer : IEntity
     {
         public Customer()
         {

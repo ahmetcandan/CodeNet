@@ -1,11 +1,12 @@
-﻿using System;
+﻿using Net5Api.Abstraction.Model;
+using System;
 using System.Collections.Generic;
 
 #nullable disable
 
 namespace StokTakip.Model
 {
-    public partial class CurrencyType
+    public partial class CurrencyType : IEntity
     {
         public CurrencyType()
         {

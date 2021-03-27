@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Net5Api.Abstraction\Net5Api.Abstraction.csproj" />
+    <ProjectReference Include="..\StokTakip.Model\StokTakip.Model.csproj" />
   </ItemGroup>
 
 </Project>
