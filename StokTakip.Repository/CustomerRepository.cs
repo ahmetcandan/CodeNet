@@ -6,9 +6,9 @@ using System;
 
 namespace StokTakip.Repository
 {
-    public class ProductRepository : BaseRepository<Product>, IProductRepository
+    public class CustomerRepository : BaseRepository<Customer>, ICustomerRepository
     {
-        public ProductRepository(DbContext context) : base(context)
+        public CustomerRepository(DbContext context) : base(context)
         {
 
         }

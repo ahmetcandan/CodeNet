@@ -1,0 +1,86 @@
+{
+  "GlobalConfiguration": {
+    "BaseUrl": "http://localhost"
+  },
+  "Routes": [
+    {
+      "UpstreamPathTemplate": "/token/login",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/account/login",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42002
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/token/register",
+      "UpstreamHttpMethod": [ "Post" ],
+
+      "DownstreamPathTemplate": "/api/account/register",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42002
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/stoktakip/product/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "DownstreamPathTemplate": "/api/product/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42003
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/stoktakip/campaign/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "DownstreamPathTemplate": "/api/campaign/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42004
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/stoktakip/customer/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "DownstreamPathTemplate": "/api/customer/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42005
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/stoktakip/order/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+
+      "DownstreamPathTemplate": "/api/order/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 42006
+        }
+      ]
+    }
+  ]
+
+}

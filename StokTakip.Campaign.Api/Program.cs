@@ -6,13 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using System.IO;
-using Net5Api.MongoDB;
-using Newtonsoft.Json;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Runtime.Serialization;
 
-namespace Net5Api.Gateway
+namespace StokTakip.Campaign.Api
 {
     public class Program
     {
@@ -23,10 +18,6 @@ namespace Net5Api.Gateway
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((host, config) => 
-                {
-                    config.AddJsonFile("middleware.json");
-                })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

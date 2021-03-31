@@ -22,7 +22,7 @@ namespace StokTakip.Api.Controllers
         }
 
         [HttpGet]
-        public List<Product> GetAll()
+        public List<ProductViewModel> GetAll()
         {
             return productService.GetProducts();
         }
