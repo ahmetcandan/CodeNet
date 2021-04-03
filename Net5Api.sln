@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Identity", "Net5Api\Net5Api.Identity.csproj", "{310C3DFD-9CF1-439C-9FBB-899E13C406F4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Identity", "Net5Api.Identity\Net5Api.Identity.csproj", "{310C3DFD-9CF1-439C-9FBB-899E13C406F4}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.EntityFramework", "Net5Api.EntityFramework\Net5Api.EntityFramework.csproj", "{2E61A496-938F-402D-B0B0-AC702F17B714}"
 EndProject
