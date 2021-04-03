@@ -30,9 +30,9 @@ namespace Net5Api.Cache.Repository
             return null;
         }
 
-        public void SetCache(string key, object value, DateTime expiryDate)
+        public void SetCache(string key, object value, int time)
         {
-            var model = new CacheModel(key, value, expiryDate);
+            var model = new CacheModel(key, value, time);
             if (ContainsKey(key))
                 Update(key, model);
             else

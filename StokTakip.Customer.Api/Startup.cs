@@ -14,6 +14,7 @@ using Net5Api.Cache;
 using Net5Api.Cache.Proxy;
 using Net5Api.Cache.Repository;
 using Net5Api.Core.Aspect;
+using Net5Api.ExceptionHandling.Proxy;
 using Net5Api.Logging.Proxy;
 using Net5Api.Logging.Repository;
 using StokTakip.Abstraction;
@@ -77,6 +78,7 @@ namespace StokTakip.Customer.Api
             services.AddScoped<ILogRepository, LogRepository>();
             services.DecorateWithDispatchProxy<ICustomerService, CacheProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, LogProxy<ICustomerService>>();
+            services.DecorateWithDispatchProxy<ICustomerService, ExceptionHanlingProxy<ICustomerService>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

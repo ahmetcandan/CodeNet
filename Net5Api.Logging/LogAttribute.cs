@@ -1,4 +1,5 @@
-﻿using Net5Api.Logging.Repository;
+﻿using Net5Api.Core.Model;
+using Net5Api.Logging.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,10 +12,10 @@ namespace Net5Api.Logging
 {
     public class LogAttribute : Attribute, ILogAttribute
     {
-        public LogType LogType { get; set; }
-        public LogAttribute(LogType logType)
+        public LogTime LogTime { get; set; }
+        public LogAttribute(LogTime logType)
         {
-            LogType = logType;
+            LogTime = logType;
         }
 
         public void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user)
@@ -27,9 +28,10 @@ namespace Net5Api.Logging
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
                 UserName = userName,
-                LogTime = LogTime.Before
+                LogTime = LogTime.Before,
+                LogType = LogType.Info
             };
-
+            
             logRepository.Insert(model);
         }
 
@@ -43,7 +45,8 @@ namespace Net5Api.Logging
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
                 UserName = userName,
-                LogTime = LogTime.After
+                LogTime = LogTime.After,
+                LogType = LogType.Info
             };
 
             logRepository.Insert(model);
@@ -58,18 +61,17 @@ namespace Net5Api.Logging
                         Value = args[p.Position]
                     });
         }
+
+        public LogTime GetLogTime()
+        {
+            return LogTime;
+        }
     }
 
     public interface ILogAttribute
     {
         void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user);
         void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, ClaimsPrincipal user);
-    }
-
-    public enum LogType
-    {
-        Before,
-        After,
-        BeforeAndAfter
+        LogTime GetLogTime();
     }
 }

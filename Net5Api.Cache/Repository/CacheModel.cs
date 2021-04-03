@@ -9,9 +9,9 @@ namespace Net5Api.Cache.Repository
 {
     public class CacheModel : BaseMongoModel
     {
-        public CacheModel(string key, object value, DateTime expiryDate)
+        public CacheModel(string key, object value, int time)
         {
-            ExpiryDate = expiryDate;
+            ExpiryDate = DateTime.Now.AddSeconds(time);
             Id = CreateObjectId(key);
             Value = value;
         }

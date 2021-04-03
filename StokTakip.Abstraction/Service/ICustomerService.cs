@@ -1,6 +1,7 @@
 ﻿using Net5Api.Abstraction;
 using Net5Api.Cache;
 using Net5Api.Logging;
+using Net5Api.Logging.Repository;
 using StokTakip.EntityFramework.Models;
 using StokTakip.Model;
 using System;
@@ -15,11 +16,11 @@ namespace StokTakip.Abstraction
 {
     public interface ICustomerService : IService
     {
-        [Log(LogType.Before)]
+        [Log(LogTime.Before)]
         [Cache(11030)]
         public List<CustomerViewModel> GetCustomers();
 
-        [Log(LogType.Before)]
+        [Log(LogTime.Before)]
         [Cache(11030)]
         public CustomerViewModel GetCustomer(int customerId);
 

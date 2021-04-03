@@ -24,7 +24,7 @@ namespace Net5Api.Cache
 
         public void OnAfter(MethodInfo targetMethod, object[] args, object value, ICacheRepository cacheRepository)
         {
-            cacheRepository.SetCache(getKeyString(targetMethod, args), value, DateTime.Now.AddSeconds(Time));
+            cacheRepository.SetCache(getKeyString(targetMethod, args), value, Time);
         }
 
         string getKeyString(MethodInfo targetMethod, object[] args)
