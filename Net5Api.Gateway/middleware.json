@@ -1,83 +1,62 @@
 {
-  "GlobalConfiguration": {
-    "BaseUrl": "http://localhost"
-  },
   "Routes": [
     {
-      "UpstreamPathTemplate": "/token/login",
+      "UpstreamPathTemplate": "/token",
       "UpstreamHttpMethod": [ "Post" ],
-
       "DownstreamPathTemplate": "/api/account/login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 42002
+          "Port": 53092
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/token/register",
+      "UpstreamPathTemplate": "/identity/register",
       "UpstreamHttpMethod": [ "Post" ],
-
       "DownstreamPathTemplate": "/api/account/register",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 42002
+          "Port": 53092
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/product/{everything}",
+      "UpstreamPathTemplate": "/stoktakip/customer",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "DownstreamPathTemplate": "/api/product/{everything}",
+      "DownstreamPathTemplate": "/api/customer/",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 42003
+          "Port": 55625
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/campaign/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "DownstreamPathTemplate": "/api/campaign/{everything}",
+      "UpstreamPathTemplate": "/stoktakip/customer/{customerId}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/customer/{customerId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 42004
+          "Port": 55625
         }
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/customer/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "DownstreamPathTemplate": "/api/customer/{everything}",
+      "UpstreamPathTemplate": "/test",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/weatherforecast",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
-          "Port": 42005
-        }
-      ]
-    },
-    {
-      "UpstreamPathTemplate": "/stoktakip/order/{everything}",
-      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-
-      "DownstreamPathTemplate": "/api/order/{everything}",
-      "DownstreamScheme": "http",
-      "DownstreamHostAndPorts": [
-        {
-          "Host": "localhost",
-          "Port": 42006
+          "Port": 56473
         }
       ]
     }

@@ -4,11 +4,13 @@ using StokTakip.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
+using System.Security.Principal;
 using System.Text;
 
 namespace StokTakip.Service
 {
-    public class CustomerService : ICustomerService
+    public class CustomerService : BaseService, ICustomerService
     {
         ICustomerRepository customerRepository;
 

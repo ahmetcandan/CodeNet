@@ -6,7 +6,7 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Net5Api.Cache
+namespace Net5Api.Core.Aspect
 {
     public static class IServiceCollectionExtensions
     {

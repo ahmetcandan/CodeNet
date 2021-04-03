@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 
-namespace Net5Api.Cache.Proxies
+namespace Net5Api.Cache.Proxy
 {
     public class CacheProxy<TDecorated> : DispatchProxy
     {
@@ -22,9 +22,7 @@ namespace Net5Api.Cache.Proxies
             var aspect = targetMethod.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault();
 
             if (aspect == null)
-            {
                 return targetMethod.Invoke(decorated, args);
-            }
 
             var beforeResponse = ((ICacheAttribute)aspect)?.OnBefore(targetMethod, args, _cacheRepository);
 
@@ -36,9 +34,17 @@ namespace Net5Api.Cache.Proxies
             }
             else
             {
-                result = beforeResponse;
+                try
+                {
+                    result = beforeResponse;
+                }
+                catch (Exception)
+                {
+                    result = targetMethod.Invoke(decorated, args);
+                    (aspect as ICacheAttribute)?.OnAfter(targetMethod, args, result, _cacheRepository);
+                }
             }
-
+            
             return result;
         }
 

@@ -4,11 +4,12 @@ using StokTakip.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 
 namespace StokTakip.Service
 {
-    public class ProductService : IProductService
+    public class ProductService : BaseService, IProductService
     {
         IProductRepository productRepository;
 

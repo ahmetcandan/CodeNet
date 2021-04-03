@@ -9,44 +9,49 @@ using System.Threading.Tasks;
 namespace StokTakip.Product.Api.Controllers
 {
     [ApiController]
-    [Route("aspi/[controller]")]
+    [Route("api/[controller]")]
     public class ProductController : ControllerBase
     {
-        IProductService productService;
+        IProductService ProductService;
 
         public ProductController(IProductService productService)
         {
-            this.productService = productService;
+            ProductService = productService;
         }
 
         [HttpGet]
         public List<ProductViewModel> GetAll()
         {
-            return productService.GetProducts();
+            ProductService.SetUser(User);
+            return ProductService.GetProducts();
         }
 
         [HttpGet]
         public ProductViewModel Get(int productId)
         {
-            return productService.GetProduct(productId);
+            ProductService.SetUser(User);
+            return ProductService.GetProduct(productId);
         }
 
         [HttpPost]
         public ProductViewModel Post(ProductViewModel product)
         {
-            return productService.CreateProduct(product);
+            ProductService.SetUser(User);
+            return ProductService.CreateProduct(product);
         }
 
         [HttpPut]
         public ProductViewModel Put(ProductViewModel product)
         {
-            return productService.UpdateProduct(product);
+            ProductService.SetUser(User);
+            return ProductService.UpdateProduct(product);
         }
 
         [HttpDelete]
         public ProductViewModel Delete(int productId)
         {
-            return productService.DeleteProduct(productId);
+            ProductService.SetUser(User);
+            return ProductService.DeleteProduct(productId);
         }
     }
 }

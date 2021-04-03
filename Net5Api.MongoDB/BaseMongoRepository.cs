@@ -39,8 +39,14 @@ namespace Net5Api.MongoDB
 
         public virtual TModel GetById(string id)
         {
-            //var docId = new ObjectId(hexadecimalToString(id));
-            return mongoCollection.Find<TModel>(m => m.Id == id).FirstOrDefault();
+            try
+            {
+                return mongoCollection.Find(m => m.Id == id).FirstOrDefault();
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         public virtual TModel Create(TModel model)
@@ -51,8 +57,7 @@ namespace Net5Api.MongoDB
 
         public virtual void Update(string id, TModel model)
         {
-            //var docId = new ObjectId(hexadecimalToString(id));
-            mongoCollection.ReplaceOne(m => m.Id == id, model); 
+            mongoCollection.ReplaceOne(m => m.Id == id, model);
         }
 
         public virtual void Delete(TModel model)
@@ -62,19 +67,12 @@ namespace Net5Api.MongoDB
 
         public virtual void Delete(string id)
         {
-            //var docId = new ObjectId(hexadecimalToString(id));
             mongoCollection.DeleteOne(m => m.Id == id);
         }
 
         public virtual bool ContainsId(string id)
         {
-            //var docId = new ObjectId(hexadecimalToString(id));
-            return mongoCollection.Find(c => c.Id == id).Any();
-        }
-
-        private string hexadecimalToString(string key)
-        {
-            return BitConverter.ToString(Encoding.Default.GetBytes(key)).Replace("-", "");
+            return mongoCollection.Count(c => c.Id == id) > 0;
         }
     }
 }

@@ -7,12 +7,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="5.0.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.10.9" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Net5Api.Cache\Net5Api.Cache.csproj" />
+    <ProjectReference Include="..\Net5Api.Core\Net5Api.Core.csproj" />
+    <ProjectReference Include="..\Net5Api.Logging\Net5Api.Logging.csproj" />
     <ProjectReference Include="..\StokTakip.Abstraction\StokTakip.Abstraction.csproj" />
     <ProjectReference Include="..\StokTakip.EntityFramework\StokTakip.EntityFramework.csproj" />
     <ProjectReference Include="..\StokTakip.Repository\StokTakip.Repository.csproj" />

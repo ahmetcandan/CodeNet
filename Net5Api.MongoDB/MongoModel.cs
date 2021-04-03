@@ -6,7 +6,7 @@ namespace Net5Api.MongoDB
 {
     public abstract class BaseMongoModel
     {
-        public string Id { get; set; }
+        public virtual string Id { get; set; }
 
         public string CreateObjectId(string id)
         {

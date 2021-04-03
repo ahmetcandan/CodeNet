@@ -18,6 +18,8 @@ namespace Net5Api.Cache.Repository
             if (ContainsKey(key))
             {
                 var result = GetById(key);
+                if (result == null)
+                    return null;
                 if (result.ExpiryDate < DateTime.Now)
                 {
                     Delete(result);
