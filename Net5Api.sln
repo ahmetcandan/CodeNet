@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.EntityFramework", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Test", "TestApi\Net5Api.Test.csproj", "{A8F13FEB-AB72-411C-99B3-C96DD6D94D0D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.EntityFramework", "StokTakip.EntityFramework\StokTakip.EntityFramework.csproj", "{BBAAFD73-7FC8-44CC-B8CB-607F42128E00}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.EntityFramework", "StokTakip\StokTakip.EntityFramework\StokTakip.EntityFramework.csproj", "{BBAAFD73-7FC8-44CC-B8CB-607F42128E00}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "StokTakip", "{F6DABB41-6C43-4B8B-8773-7B31A64E059F}"
 EndProject
@@ -19,27 +19,27 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Repository", "Net5A
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.MongoDB", "Net5Api.MongoDB\Net5Api.MongoDB.csproj", "{32C1FEED-124B-47F1-B014-131A4F7F4CBD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Model", "StokTakip.Model\StokTakip.Model.csproj", "{69200730-3842-42CA-BAB1-FDC03E5C5A40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Model", "StokTakip\StokTakip.Model\StokTakip.Model.csproj", "{69200730-3842-42CA-BAB1-FDC03E5C5A40}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Gateway", "Net5Api.Gateway\Net5Api.Gateway.csproj", "{89F02660-CC21-4ADC-81A4-C4FFAAA58845}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Service", "StokTakip.Service\StokTakip.Service.csproj", "{33274610-B28E-4FA2-8C3D-E0AF20F3E1A8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Service", "StokTakip\StokTakip.Service\StokTakip.Service.csproj", "{33274610-B28E-4FA2-8C3D-E0AF20F3E1A8}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Abstraction", "StokTakip.Abstraction\StokTakip.Abstraction.csproj", "{0216DC6C-930B-44E9-BA57-5E5C9E9B282E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Abstraction", "StokTakip\StokTakip.Abstraction\StokTakip.Abstraction.csproj", "{0216DC6C-930B-44E9-BA57-5E5C9E9B282E}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Repository", "StokTakip.Repository\StokTakip.Repository.csproj", "{2B06231F-5B80-418E-95DD-0BDFF4F02998}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Repository", "StokTakip\StokTakip.Repository\StokTakip.Repository.csproj", "{2B06231F-5B80-418E-95DD-0BDFF4F02998}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Cache", "Net5Api.Cache\Net5Api.Cache.csproj", "{A8FEA345-104C-4F64-A0BE-2FEEA201B6AD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "API", "API", "{5434F0EE-F292-46EF-9B8E-1CA6ECC33C2B}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Product.Api", "StokTakip.Product.Api\StokTakip.Product.Api.csproj", "{14D0685C-57C5-467E-9318-3594C5ADD723}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Product.Api", "StokTakip\StokTakip.Product.Api\StokTakip.Product.Api.csproj", "{14D0685C-57C5-467E-9318-3594C5ADD723}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Campaign.Api", "StokTakip.Campaign.Api\StokTakip.Campaign.Api.csproj", "{EB184B7E-1739-4FBA-B306-72ACE48F686D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Campaign.Api", "StokTakip\StokTakip.Campaign.Api\StokTakip.Campaign.Api.csproj", "{EB184B7E-1739-4FBA-B306-72ACE48F686D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Core", "Net5Api.Core\Net5Api.Core.csproj", "{8CCB42BD-42CA-41BD-BA83-725E356399E9}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Api", "StokTakip.Customer.Api\StokTakip.Customer.Api.csproj", "{4FD6D17E-01FB-493C-A7F2-3ED35B42E8F5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Api", "StokTakip\StokTakip.Customer.Api\StokTakip.Customer.Api.csproj", "{4FD6D17E-01FB-493C-A7F2-3ED35B42E8F5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Logging", "Net5Api.Logging\Net5Api.Logging.csproj", "{73F8948D-3539-4408-B44F-F9A9D562AA62}"
 EndProject
