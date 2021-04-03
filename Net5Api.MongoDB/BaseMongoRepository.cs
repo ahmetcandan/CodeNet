@@ -74,5 +74,46 @@ namespace Net5Api.MongoDB
         {
             return mongoCollection.Count(c => c.Id == id) > 0;
         }
+
+        public virtual async Task<List<TModel>> GetListAsync()
+        {
+            return (await mongoCollection.FindAsync(c => true)).ToList();
+        }
+
+        public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter)
+        {
+            return (await mongoCollection.FindAsync(filter)).ToList();
+        }
+
+        public virtual async Task<TModel> GetByIdAsync(string id)
+        {
+            return (await mongoCollection.FindAsync(m => m.Id == id)).FirstOrDefault();
+        }
+
+        public virtual async Task<TModel> CreateAsync(TModel model)
+        {
+            await mongoCollection.InsertOneAsync(model);
+            return model;
+        }
+
+        public virtual async void UpdateAsync(string id, TModel model)
+        {
+            await mongoCollection.ReplaceOneAsync(m => m.Id == id, model);
+        }
+
+        public virtual async void DeleteAsync(TModel model)
+        {
+            await mongoCollection.DeleteOneAsync(m => m.Id == model.Id);
+        }
+
+        public virtual async void DeleteAsync(string id)
+        {
+            await mongoCollection.DeleteOneAsync(m => m.Id == id);
+        }
+
+        public virtual async Task<bool> ContainsIdAsync(string id)
+        {
+            return (await mongoCollection.CountAsync(c => c.Id == id) > 0);
+        }
     }
 }

@@ -16,7 +16,7 @@ namespace Net5Api.Logging.Repository
 
         public void Insert(LogModel instance)
         {
-            Create(instance);
+            Task.Run(() => { Create(instance); });
         }
     }
 }

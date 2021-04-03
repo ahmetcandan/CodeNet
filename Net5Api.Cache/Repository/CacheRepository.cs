@@ -22,7 +22,7 @@ namespace Net5Api.Cache.Repository
                     return null;
                 if (result.ExpiryDate < DateTime.Now)
                 {
-                    Delete(result);
+                    Task.Run(() => { Delete(result); });
                     return null;
                 }
                 return result.Value;
@@ -34,9 +34,9 @@ namespace Net5Api.Cache.Repository
         {
             var model = new CacheModel(key, value, time);
             if (ContainsKey(key))
-                Update(key, model);
+                Task.Run(() => { Update(key, model); });
             else
-                Create(model);
+                Task.Run(() => { Create(model); });
         }
 
         public bool ContainsKey(string key)
