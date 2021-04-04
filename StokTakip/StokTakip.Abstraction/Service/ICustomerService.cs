@@ -1,5 +1,6 @@
 ﻿using Net5Api.Abstraction;
 using Net5Api.Cache;
+using Net5Api.ExceptionHandling;
 using Net5Api.Logging;
 using Net5Api.Logging.Repository;
 using StokTakip.EntityFramework.Models;
@@ -22,6 +23,7 @@ namespace StokTakip.Abstraction
 
         [Log(LogTime.Before)]
         [Cache(11030)]
+        [Exception]
         public CustomerViewModel GetCustomer(int customerId);
 
         public CustomerViewModel CreateCustomer(CustomerViewModel customer);

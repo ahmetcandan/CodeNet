@@ -6,7 +6,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Net5Api.Abstraction\Net5Api.Abstraction.csproj" />
-    <ProjectReference Include="..\Net5Api.Core\Net5Api.Core.csproj" />
     <ProjectReference Include="..\Net5Api.MongoDB\Net5Api.MongoDB.csproj" />
   </ItemGroup>
 

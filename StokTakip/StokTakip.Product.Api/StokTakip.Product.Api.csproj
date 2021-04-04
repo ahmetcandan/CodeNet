@@ -12,10 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Net5Api.Abstraction\Net5Api.Abstraction.csproj" />
-    <ProjectReference Include="..\Net5Api.Repository\Net5Api.Repository.csproj" />
-    <ProjectReference Include="..\StokTakip.Abstraction\StokTakip.Abstraction.csproj" />
-    <ProjectReference Include="..\StokTakip.Model\StokTakip.Model.csproj" />
     <ProjectReference Include="..\StokTakip.Repository\StokTakip.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Service\StokTakip.Service.csproj" />
   </ItemGroup>

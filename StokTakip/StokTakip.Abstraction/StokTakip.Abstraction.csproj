@@ -5,9 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Net5Api.Abstraction\Net5Api.Abstraction.csproj" />
-    <ProjectReference Include="..\Net5Api.Cache\Net5Api.Cache.csproj" />
-    <ProjectReference Include="..\Net5Api.Logging\Net5Api.Logging.csproj" />
+    <ProjectReference Include="..\..\Net5Api.Cache\Net5Api.Cache.csproj" />
+    <ProjectReference Include="..\..\Net5Api.ExceptionHandling\Net5Api.ExceptionHandling.csproj" />
+    <ProjectReference Include="..\..\Net5Api.Logging\Net5Api.Logging.csproj" />
     <ProjectReference Include="..\StokTakip.EntityFramework\StokTakip.EntityFramework.csproj" />
     <ProjectReference Include="..\StokTakip.Model\StokTakip.Model.csproj" />
   </ItemGroup>

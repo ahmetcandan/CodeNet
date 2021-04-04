@@ -7,6 +7,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using StokTakip.Abstraction;
+using StokTakip.Repository;
+using StokTakip.Service;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,6 +35,9 @@ namespace StokTakip.Campaign.Api
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip.Campaign.Api", Version = "v1" });
             });
+
+            services.AddScoped<IProductService, ProductService>();
+            services.AddScoped<IProductRepository, ProductRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

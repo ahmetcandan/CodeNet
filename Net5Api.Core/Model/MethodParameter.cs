@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Net5Api.Core.Model
 {
-    public class MethodParameter
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-    }
+    //public class MethodParameter
+    //{
+    //    public string Name { get; set; }
+    //    public object Value { get; set; }
+    //}
 }

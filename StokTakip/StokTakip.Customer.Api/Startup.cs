@@ -10,7 +10,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using Net5Api.Cache;
 using Net5Api.Cache.Proxy;
 using Net5Api.Cache.Repository;
 using Net5Api.Core.Aspect;

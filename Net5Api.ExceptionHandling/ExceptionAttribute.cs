@@ -1,5 +1,4 @@
-﻿using Net5Api.Core.Model;
-using Net5Api.Logging.Repository;
+﻿using Net5Api.Logging.Repository;
 using System;
 using System.Collections.Generic;
 using System.Linq;

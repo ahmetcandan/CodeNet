@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Net5Api.Core.Model;
 
 namespace Net5Api.Logging.Repository
 {
@@ -38,6 +37,12 @@ namespace Net5Api.Logging.Repository
         public LogType LogType { get; set; }
         public string Message { get; set; }
         public IEnumerable<MethodParameter> MethodParameters { get; set; }
+    }
+
+    public class MethodParameter
+    {
+        public string Name { get; set; }
+        public object Value { get; set; }
     }
 
     public enum LogTime
