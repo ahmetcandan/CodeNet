@@ -21,6 +21,10 @@ namespace Net5Api.Logging.Repository
             {
                 return _logDate;
             }
+            set
+            {
+                _logDate = value;
+            }
         }
         public override string Id
         {

@@ -12,7 +12,5 @@ namespace Net5Api.Cache.Repository
         public object GetCache(string key);
 
         public void SetCache(string key, object value, int time);
-
-        public bool ContainsKey(string key);
     }
 }

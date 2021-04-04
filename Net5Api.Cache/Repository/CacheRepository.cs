@@ -15,33 +15,24 @@ namespace Net5Api.Cache.Repository
 
         public object GetCache(string key)
         {
-            if (ContainsKey(key))
+            var result = GetById(key);
+            if (result == null)
+                return null;
+            if (result.ExpiryDate < DateTime.Now)
             {
-                var result = GetById(key);
-                if (result == null)
-                    return null;
-                if (result.ExpiryDate < DateTime.Now)
-                {
-                    Task.Run(() => { Delete(result); });
-                    return null;
-                }
-                return result.Value;
+                Task.Run(() => { Delete(result); });
+                return null;
             }
-            return null;
+            return result.Value;
         }
 
         public void SetCache(string key, object value, int time)
         {
             var model = new CacheModel(key, value, time);
-            if (ContainsKey(key))
+            if (ContainsId(key))
                 Task.Run(() => { Update(key, model); });
             else
                 Task.Run(() => { Create(model); });
-        }
-
-        public bool ContainsKey(string key)
-        {
-            return ContainsId(key);
         }
     }
 }

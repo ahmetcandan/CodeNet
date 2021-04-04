@@ -36,7 +36,18 @@ namespace Net5Api.Logging.Proxy
             if (aspect.GetLogTime() == LogTime.Before || aspect.GetLogTime() == LogTime.BeforeAndAfter)
                 ((ILogAttribute)aspect)?.OnBefore(targetMethod, args, _logRepository, user);
 
-            var result = targetMethod.Invoke(decorated, args);
+            object result = null;
+            try
+            {
+                result = targetMethod.Invoke(decorated, args);
+            }
+            catch (Exception ex)
+            {
+                if (aspect.GetLogTime() == LogTime.Exception)
+                    ((ILogAttribute)aspect)?.OnException(targetMethod, args, _logRepository, user, ex);
+                throw;
+            }
+
             if (aspect.GetLogTime() == LogTime.After || aspect.GetLogTime() == LogTime.BeforeAndAfter)
                 (aspect as ILogAttribute)?.OnAfter(targetMethod, args, result, _logRepository, user);
 

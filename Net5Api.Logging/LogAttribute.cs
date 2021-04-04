@@ -33,6 +33,23 @@ namespace Net5Api.Logging
             
             logRepository.Insert(model);
         }
+        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user, Exception ex)
+        {
+            string userName = user != null ? user.Identity.Name : "anonymous";
+            var model = new LogModel()
+            {
+                MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
+                MethodName = targetMethod.Name,
+                Namespace = targetMethod.DeclaringType.Namespace,
+                ClassName = targetMethod.DeclaringType.Name,
+                UserName = userName,
+                Message = $"{{ Message: {ex.Message}, StackTrace: {ex.StackTrace}, InnerExceptionMessage: {(ex.InnerException != null ? ex.InnerException.Message : "")} }}",
+                LogTime = LogTime.Exception,
+                LogType = LogType.Error
+            };
+
+            logRepository.Insert(model);
+        }
 
         public void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, ClaimsPrincipal user)
         {
@@ -70,6 +87,7 @@ namespace Net5Api.Logging
     public interface ILogAttribute
     {
         void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user);
+        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user, Exception ex);
         void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, ClaimsPrincipal user);
         LogTime GetLogTime();
     }

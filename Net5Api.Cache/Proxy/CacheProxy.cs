@@ -19,32 +19,22 @@ namespace Net5Api.Cache.Proxy
 
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
-            var aspect = targetMethod.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault();
+            var aspect = targetMethod.GetCustomAttributes(typeof(ICacheAttribute), true).FirstOrDefault();
 
             if (aspect == null)
                 return targetMethod.Invoke(decorated, args);
 
-            var beforeResponse = ((ICacheAttribute)aspect)?.OnBefore(targetMethod, args, _cacheRepository);
+            var cacheResponse = ((ICacheAttribute)aspect)?.OnBefore(targetMethod, args, _cacheRepository);
 
             object result;
-            if (beforeResponse == null)
+            if (cacheResponse == null)
             {
                 result = targetMethod.Invoke(decorated, args);
                 (aspect as ICacheAttribute)?.OnAfter(targetMethod, args, result, _cacheRepository);
             }
             else
-            {
-                try
-                {
-                    result = beforeResponse;
-                }
-                catch (Exception)
-                {
-                    result = targetMethod.Invoke(decorated, args);
-                    (aspect as ICacheAttribute)?.OnAfter(targetMethod, args, result, _cacheRepository);
-                }
-            }
-            
+                result = cacheResponse;
+
             return result;
         }
 
