@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Net5Api.Model
+﻿namespace Net5Api.Model
 {
     public class Response
     {

@@ -1,56 +1,60 @@
 ﻿using Net5Api.Abstraction;
-using Net5Api.Logging.Repository;
+using Net5Api.Abstraction.Enum;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Claims;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Net5Api.ExceptionHandling.Proxy
+namespace Net5Api.Logging
 {
-    public class ExceptionHanlingProxy<TDecorated> : DispatchProxy
+    public class LogProxy<TDecorated> : DispatchProxy
     {
         private TDecorated decorated;
         private ILogRepository _logRepository;
 
+        public LogProxy()
+        {
+
+        }
+
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
-            var aspect = (IExceptionAttribute)targetMethod.GetCustomAttributes(typeof(IExceptionAttribute), true).FirstOrDefault();
+            var aspect = (ILogAttribute)targetMethod.GetCustomAttributes(typeof(ILogAttribute), true).FirstOrDefault();
 
             if (aspect == null)
                 return targetMethod.Invoke(decorated, args);
 
 
             ClaimsPrincipal user = null;
-            if (decorated.GetType().GetInterfaces().Any(c => c == typeof(IService)))
+
+            if (decorated.GetType().GetInterfaces().Any(c => c.Name == "IService"))
                 user = (decorated as IService).GetUser();
 
-            object result = null;
+            if (aspect.GetLogTime() == LogTime.Before || aspect.GetLogTime() == LogTime.BeforeAndAfter)
+                ((ILogAttribute)aspect)?.OnBefore(targetMethod, args, _logRepository, user);
 
+            object result = null;
             try
             {
                 result = targetMethod.Invoke(decorated, args);
             }
-            catch (UserLevelException ex)
-            {
-                ((IExceptionAttribute)aspect)?.OnException(targetMethod, args, _logRepository, ex, user);
-                throw;
-            }
             catch (Exception ex)
             {
-                ((IExceptionAttribute)aspect)?.OnException(targetMethod, args, _logRepository, ex, user);
-                throw new Exception(ex.Message);
+                if (aspect.GetLogTime() == LogTime.Exception)
+                    ((ILogAttribute)aspect)?.OnException(targetMethod, args, _logRepository, user, ex);
+                throw;
             }
+
+            if (aspect.GetLogTime() == LogTime.After || aspect.GetLogTime() == LogTime.BeforeAndAfter)
+                (aspect as ILogAttribute)?.OnAfter(targetMethod, args, result, _logRepository, user);
 
             return result;
         }
 
         public static TDecorated Create(TDecorated decorated, ILogRepository logRepository)
         {
-            object proxy = Create<TDecorated, ExceptionHanlingProxy<TDecorated>>();
-            ((ExceptionHanlingProxy<TDecorated>)proxy).SetParameters(decorated, logRepository);
+            object proxy = Create<TDecorated, LogProxy<TDecorated>>();
+            ((LogProxy<TDecorated>)proxy).SetParameters(decorated, logRepository);
             return (TDecorated)proxy;
         }
 

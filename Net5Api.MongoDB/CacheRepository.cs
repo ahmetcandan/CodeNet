@@ -1,16 +1,16 @@
-﻿using Net5Api.MongoDB;
+﻿using Net5Api.Abstraction;
+using Net5Api.Abstraction.Model;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
-namespace Net5Api.Cache.Repository
+namespace Net5Api.MongoDB
 {
     public class CacheRepository : BaseMongoRepository<CacheModel>, ICacheRepository
+
     {
         public CacheRepository() : base("Cache")
         {
+
         }
 
         public object GetCache(string key)

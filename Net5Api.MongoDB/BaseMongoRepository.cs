@@ -1,15 +1,15 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
+using Net5Api.Abstraction;
+using Net5Api.Abstraction.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Net5Api.MongoDB
 {
-    public class BaseMongoRepository<TModel> where TModel : BaseMongoModel
+    public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsyncRepository<TModel> where TModel : INoSqlModel, new()
     {
         private readonly IMongoCollection<TModel> mongoCollection;
 
@@ -39,14 +39,7 @@ namespace Net5Api.MongoDB
 
         public virtual TModel GetById(string id)
         {
-            try
-            {
-                return mongoCollection.Find(m => m.Id == id).FirstOrDefault();
-            }
-            catch
-            {
-                return null;
-            }
+            return mongoCollection.Find(m => m.Id == id).FirstOrDefault();
         }
 
         public virtual TModel Create(TModel model)
@@ -96,17 +89,17 @@ namespace Net5Api.MongoDB
             return model;
         }
 
-        public virtual async void UpdateAsync(string id, TModel model)
+        public virtual async Task UpdateAsync(string id, TModel model)
         {
             await mongoCollection.ReplaceOneAsync(m => m.Id == id, model);
         }
 
-        public virtual async void DeleteAsync(TModel model)
+        public virtual async Task DeleteAsync(TModel model)
         {
             await mongoCollection.DeleteOneAsync(m => m.Id == model.Id);
         }
 
-        public virtual async void DeleteAsync(string id)
+        public virtual async Task DeleteAsync(string id)
         {
             await mongoCollection.DeleteOneAsync(m => m.Id == id);
         }

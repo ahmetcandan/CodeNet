@@ -1,10 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace StokTakip.Product.Api.Controllers
 {

@@ -1,11 +1,9 @@
-﻿using Net5Api.Cache.Repository;
+﻿using Net5Api.Abstraction;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 
-namespace Net5Api.Cache.Proxy
+namespace Net5Api.Cache
 {
     public class CacheProxy<TDecorated> : DispatchProxy
     {

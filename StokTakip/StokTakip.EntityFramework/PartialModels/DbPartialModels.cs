@@ -1,13 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Net5Api.Abstraction.Model;
+﻿using Net5Api.Abstraction.Model;
 
 namespace StokTakip.EntityFramework.Models
 {
-    public partial class Campaign : IEntity 
+    public partial class Campaign : IEntity
     {
     }
 

@@ -1,17 +1,11 @@
 ﻿using Net5Api.Abstraction;
+using Net5Api.Abstraction.Enum;
 using Net5Api.Cache;
 using Net5Api.ExceptionHandling;
 using Net5Api.Logging;
-using Net5Api.Logging.Repository;
-using StokTakip.EntityFramework.Models;
 using StokTakip.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Security.Claims;
-using System.Security.Principal;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace StokTakip.Abstraction
 {

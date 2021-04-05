@@ -1,10 +1,7 @@
-﻿using Net5Api.Cache.Repository;
+﻿using Net5Api.Abstraction;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Net5Api.Cache
 {
