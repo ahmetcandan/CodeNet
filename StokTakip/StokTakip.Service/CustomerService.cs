@@ -17,6 +17,7 @@ namespace StokTakip.Service
 
         public CustomerViewModel CreateCustomer(CustomerViewModel customer)
         {
+            customerRepository.SetUser(GetUser());
             var result = customerRepository.Add(new EntityFramework.Models.Customer
             {
                 Code = customer.Code,
@@ -37,6 +38,7 @@ namespace StokTakip.Service
 
         public CustomerViewModel DeleteCustomer(int customerId)
         {
+            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customerId);
             result.IsDeleted = true;
             customerRepository.Update(result);
@@ -51,6 +53,7 @@ namespace StokTakip.Service
 
         public CustomerViewModel GetCustomer(int customerId)
         {
+            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customerId);
             if (result == null)
                 return null;
@@ -66,6 +69,7 @@ namespace StokTakip.Service
 
         public List<CustomerViewModel> GetCustomers()
         {
+            customerRepository.SetUser(GetUser());
             return (
                     from c in customerRepository.GetAll()
                     select new CustomerViewModel
@@ -81,6 +85,7 @@ namespace StokTakip.Service
 
         public CustomerViewModel UpdateCustomer(CustomerViewModel customer)
         {
+            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customer.Id);
             result.Code = customer.Code;
             result.Description = customer.Description;

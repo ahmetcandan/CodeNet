@@ -2,7 +2,7 @@
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Net5Api.ExceptionHandling
 {
@@ -19,7 +19,7 @@ namespace Net5Api.ExceptionHandling
                 return targetMethod.Invoke(decorated, args);
 
 
-            ClaimsPrincipal user = null;
+            IPrincipal user = null;
             if (decorated.GetType().GetInterfaces().Any(c => c == typeof(IService)))
                 user = (decorated as IService).GetUser();
 

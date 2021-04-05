@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Net5Api.Logging
 {
@@ -17,7 +17,7 @@ namespace Net5Api.Logging
             LogTime = logType;
         }
 
-        public void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user)
+        public void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user)
         {
             string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
@@ -28,12 +28,12 @@ namespace Net5Api.Logging
                 ClassName = targetMethod.DeclaringType.Name,
                 UserName = userName,
                 LogTime = LogTime.Before,
-                LogType = LogType.Info
+                LogType = LogType.Info,
             };
 
             logRepository.Insert(model);
         }
-        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user, Exception ex)
+        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user, Exception ex)
         {
             string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
@@ -51,7 +51,7 @@ namespace Net5Api.Logging
             logRepository.Insert(model);
         }
 
-        public void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, ClaimsPrincipal user)
+        public void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, IPrincipal user)
         {
             string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
@@ -86,9 +86,9 @@ namespace Net5Api.Logging
 
     public interface ILogAttribute
     {
-        void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user);
-        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, ClaimsPrincipal user, Exception ex);
-        void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, ClaimsPrincipal user);
+        void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user);
+        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user, Exception ex);
+        void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, IPrincipal user);
         LogTime GetLogTime();
     }
 }

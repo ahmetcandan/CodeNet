@@ -5,7 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Net5Api.ExceptionHandling
 {
@@ -16,7 +16,7 @@ namespace Net5Api.ExceptionHandling
 
         }
 
-        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, ClaimsPrincipal user)
+        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user)
         {
             string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
@@ -47,6 +47,6 @@ namespace Net5Api.ExceptionHandling
 
     public interface IExceptionAttribute
     {
-        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, ClaimsPrincipal user);
+        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user);
     }
 }

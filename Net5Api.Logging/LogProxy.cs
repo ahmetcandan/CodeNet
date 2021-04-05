@@ -3,7 +3,7 @@ using Net5Api.Abstraction.Enum;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
+using System.Security.Principal;
 
 namespace Net5Api.Logging
 {
@@ -25,7 +25,7 @@ namespace Net5Api.Logging
                 return targetMethod.Invoke(decorated, args);
 
 
-            ClaimsPrincipal user = null;
+            IPrincipal user = null;
 
             if (decorated.GetType().GetInterfaces().Any(c => c.Name == "IService"))
                 user = (decorated as IService).GetUser();

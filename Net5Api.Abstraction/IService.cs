@@ -1,11 +1,11 @@
-﻿using System.Security.Claims;
+﻿using System.Security.Principal;
 
 namespace Net5Api.Abstraction
 {
     public interface IService
     {
-        public void SetUser(ClaimsPrincipal user);
+        public void SetUser(IPrincipal user);
 
-        public ClaimsPrincipal GetUser();
+        public IPrincipal GetUser();
     }
 }

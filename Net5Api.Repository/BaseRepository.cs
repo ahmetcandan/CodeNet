@@ -5,14 +5,25 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Claims;
 using System.Security.Principal;
 
 namespace Net5Api.Repository
 {
-    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+    public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         protected readonly DbContext Context;
-        private readonly IPrincipal User;
+        private IPrincipal User;
+
+        public void SetUser(IPrincipal user)
+        {
+            User = user;
+        }
+
+        public IPrincipal GetUser()
+        {
+            return User;
+        }
 
         public BaseRepository(DbContext context)
         {

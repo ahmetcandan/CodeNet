@@ -6,7 +6,22 @@ namespace Net5Api.Abstraction.Model
 {
     public class LogModel : INoSqlModel
     {
-        public virtual string Id { get; set; }
+        public LogModel()
+        {
+            LogDate = DateTime.Now;
+        }
+
+        public virtual string Id
+        {
+            get
+            {
+                return $"{UserName}:{LogDate.Ticks}";
+            }
+            set 
+            {
+                
+            }
+        }
         public virtual DateTime LogDate { get; set; }
         public virtual string UserName { get; set; }
         public virtual string Namespace { get; set; }

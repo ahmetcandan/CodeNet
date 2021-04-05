@@ -3,11 +3,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Security.Principal;
 
 namespace Net5Api.Abstraction
 {
     public interface IRepository<TEntity> where TEntity : IEntity
     {
+        public void SetUser(IPrincipal user);
+        public IPrincipal GetUser();
+
         TEntity Get(params object[] keyValues);
         IQueryable<TEntity> GetAll();
         IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate);

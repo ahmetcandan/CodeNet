@@ -1,17 +1,17 @@
-﻿using System.Security.Claims;
+﻿using System.Security.Principal;
 
 namespace Net5Api.Abstraction
 {
     public abstract class BaseService
     {
-        ClaimsPrincipal User;
+        IPrincipal User;
 
-        public void SetUser(ClaimsPrincipal user)
+        public void SetUser(IPrincipal user)
         {
             User = user;
         }
 
-        public ClaimsPrincipal GetUser()
+        public IPrincipal GetUser()
         {
             return User;
         }
