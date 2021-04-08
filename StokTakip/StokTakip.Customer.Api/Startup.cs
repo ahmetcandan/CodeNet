@@ -13,6 +13,8 @@ using Net5Api.Core.Aspect;
 using Net5Api.ExceptionHandling;
 using Net5Api.Logging;
 using Net5Api.MongoDB;
+using Net5Api.Redis;
+using ServiceStack.Redis;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
 using StokTakip.Repository;
@@ -63,10 +65,12 @@ namespace StokTakip.Customer.Api
                 };
             });
 
+            services.Configure<RedisEndpoint>(Configuration.GetSection("RedisConfig"));
+
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<DbContext, StokTakipContext>();
-            services.AddScoped<ICacheRepository, CacheRepository>();
+            services.AddScoped<ICacheRepository, Net5Api.Redis.CacheRepository>();
             services.AddScoped<ILogRepository, LogRepository>();
             services.DecorateWithDispatchProxy<ICustomerService, CacheProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, LogProxy<ICustomerService>>();
