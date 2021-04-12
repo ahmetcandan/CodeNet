@@ -10,13 +10,13 @@ using Microsoft.Extensions.Options;
 
 namespace Net5Api.Redis
 {
-    public class CacheRepository : ICacheRepository
+    public class RedisCacheRepository : ICacheRepository
     {
         IRedisClient redisClient;
 
-        public CacheRepository(IOptions<RedisEndpoint> config)
+        public RedisCacheRepository(IOptions<RedisSettings> config)
         {
-            redisClient = new RedisClient(config.Value);
+            redisClient = new RedisClient(new RedisEndpoint { Host = config.Value.Host, Port = config.Value.Port, Password = config.Value.Password, RetryTimeout = config.Value.RetryTimeout });
         }
 
         public object GetCache(string key)
@@ -34,7 +34,7 @@ namespace Net5Api.Redis
 
         public void SetCache(string key, object value, int time)
         {
-            redisClient.Set(key, new CacheModel(key, value, time));
+            redisClient.Set(key, new CacheModel(key, value, time), DateTime.Now.AddSeconds(time));
         }
     }
 }

@@ -45,7 +45,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Logging", "Net5Api.
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.ExceptionHandling", "Net5Api.ExceptionHandling\Net5Api.ExceptionHandling.csproj", "{1C1C7D61-5D95-44FE-B433-D0E815393946}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.Redis", "Net5Api.Redis\Net5Api.Redis.csproj", "{2A317D4E-87AA-4EB2-B018-A1919C922ADE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Net5Api.Redis", "Net5Api.Redis\Net5Api.Redis.csproj", "{2A317D4E-87AA-4EB2-B018-A1919C922ADE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Net5Api.RabbitMQ", "RabbitMQ\Net5Api.RabbitMQ.csproj", "{77D325B4-6838-405E-94C4-97F4CC3A58AB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -133,6 +135,10 @@ Global
 		{2A317D4E-87AA-4EB2-B018-A1919C922ADE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A317D4E-87AA-4EB2-B018-A1919C922ADE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A317D4E-87AA-4EB2-B018-A1919C922ADE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{77D325B4-6838-405E-94C4-97F4CC3A58AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{77D325B4-6838-405E-94C4-97F4CC3A58AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{77D325B4-6838-405E-94C4-97F4CC3A58AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{77D325B4-6838-405E-94C4-97F4CC3A58AB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

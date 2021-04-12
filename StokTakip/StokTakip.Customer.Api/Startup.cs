@@ -8,11 +8,13 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Net5Api.Abstraction;
+using Net5Api.Abstraction.Model;
 using Net5Api.Cache;
 using Net5Api.Core.Aspect;
 using Net5Api.ExceptionHandling;
 using Net5Api.Logging;
 using Net5Api.MongoDB;
+using Net5Api.RabbitMQ;
 using Net5Api.Redis;
 using ServiceStack.Redis;
 using StokTakip.Abstraction;
@@ -35,8 +37,8 @@ namespace StokTakip.Customer.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+            services.AddDbContext<StokTakipContext>(options => options.UseSqlServer(Configuration.GetConnectionString("StokTakip")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip.Customer.Api", Version = "v1" });
@@ -65,13 +67,16 @@ namespace StokTakip.Customer.Api
                 };
             });
 
-            services.Configure<RedisEndpoint>(Configuration.GetSection("RedisConfig"));
+            services.Configure<RedisSettings>(Configuration.GetSection("Redis"));
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
+            services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
 
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<DbContext, StokTakipContext>();
-            services.AddScoped<ICacheRepository, Net5Api.Redis.CacheRepository>();
-            services.AddScoped<ILogRepository, LogRepository>();
+            services.AddScoped<ICacheRepository, RedisCacheRepository>();
+            services.AddScoped<ILogRepository, MongoDBLogRepository>();
+            services.AddScoped<IQService, RabbitMQService>();
             services.DecorateWithDispatchProxy<ICustomerService, CacheProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, LogProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, ExceptionHanlingProxy<ICustomerService>>();

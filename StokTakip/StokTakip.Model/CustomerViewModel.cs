@@ -1,5 +1,8 @@
-﻿namespace StokTakip.Model
+﻿using ServiceStack.Text;
+
+namespace StokTakip.Model
 {
+    [RuntimeSerializable]
     public class CustomerViewModel
     {
         public int Id { get; set; }

@@ -9,10 +9,14 @@ namespace StokTakip.Service
     public class CustomerService : BaseService, ICustomerService
     {
         ICustomerRepository customerRepository;
+        ILogRepository logRepository;
+        IQService qService;
 
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, ILogRepository logRepository, IQService qService)
         {
             this.customerRepository = customerRepository;
+            this.qService = qService;
+            this.logRepository = logRepository;
         }
 
         public CustomerViewModel CreateCustomer(CustomerViewModel customer)
@@ -57,7 +61,7 @@ namespace StokTakip.Service
             var result = customerRepository.Get(customerId);
             if (result == null)
                 return null;
-            return new CustomerViewModel
+            var value = new CustomerViewModel
             {
                 Code = result.Code,
                 Description = result.Description,
@@ -65,12 +69,14 @@ namespace StokTakip.Service
                 No = result.No,
                 Id = result.Id
             };
+            qService.Post("GetCustomer", value);
+            return value;
         }
 
         public List<CustomerViewModel> GetCustomers()
         {
             customerRepository.SetUser(GetUser());
-            return (
+            var result = (
                     from c in customerRepository.GetAll()
                     select new CustomerViewModel
                     {
@@ -81,6 +87,8 @@ namespace StokTakip.Service
                         No = c.No
                     }
                 ).ToList();
+            qService.Post("GetCustomers", result);
+            return result;
         }
 
         public CustomerViewModel UpdateCustomer(CustomerViewModel customer)

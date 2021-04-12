@@ -1,7 +1,9 @@
-﻿using System;
+﻿using ServiceStack.Text;
+using System;
 
 namespace Net5Api.Abstraction.Model
 {
+    [RuntimeSerializable]
     public class CacheModel : INoSqlModel
     {
         public CacheModel()

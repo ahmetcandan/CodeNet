@@ -28,7 +28,7 @@ namespace Net5Api
         {
 
             services.AddControllers();
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
+            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Net5Api")));
 
             // For Identity
             services.AddIdentity<ApplicationUser, IdentityRole>()
