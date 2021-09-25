@@ -9,6 +9,10 @@ namespace Net5Api.Cache
     {
         public int Time { get; set; }
 
+        /// <summary>
+        /// Cache
+        /// </summary>
+        /// <param name="time">Seconds</param>
         public CacheAttribute(int time = 3600)
         {
             Time = time;

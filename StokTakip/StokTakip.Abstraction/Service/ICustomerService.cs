@@ -12,18 +12,21 @@ namespace StokTakip.Abstraction
     public interface ICustomerService : IService
     {
         [Log(LogTime.Before)]
-        //[Cache(60)]
+        [Cache(60)]
         public List<CustomerViewModel> GetCustomers();
 
         [Log(LogTime.Before)]
-        //[Cache(60)]
+        [Cache(60)]
         [Exception]
         public CustomerViewModel GetCustomer(int customerId);
 
+        [Log(LogTime.After)]
         public CustomerViewModel CreateCustomer(CustomerViewModel customer);
 
+        [Log(LogTime.After)]
         public CustomerViewModel UpdateCustomer(CustomerViewModel customer);
 
+        [Log(LogTime.After)]
         public CustomerViewModel DeleteCustomer(int customerId);
     }
 }

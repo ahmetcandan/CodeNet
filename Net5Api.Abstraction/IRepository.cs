@@ -23,5 +23,7 @@ namespace Net5Api.Abstraction
 
         TEntity Remove(TEntity entity);
         IEnumerable<TEntity> RemoveRange(IEnumerable<TEntity> entities);
+
+        int SaveChanges();
     }
 }

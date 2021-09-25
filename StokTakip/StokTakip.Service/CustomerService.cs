@@ -31,8 +31,10 @@ namespace StokTakip.Service
                 IsActive = true,
                 IsDeleted = false
             });
+            customerRepository.SaveChanges();
             return new CustomerViewModel
             {
+                Id = result.Id,
                 Code = result.Code,
                 Description = result.Description,
                 Name = result.Name,
@@ -46,8 +48,10 @@ namespace StokTakip.Service
             var result = customerRepository.Get(customerId);
             result.IsDeleted = true;
             customerRepository.Update(result);
+            customerRepository.SaveChanges();
             return new CustomerViewModel
             {
+                Id = result.Id,
                 Code = result.Code,
                 Description = result.Description,
                 Name = result.Name,
@@ -69,7 +73,6 @@ namespace StokTakip.Service
                 No = result.No,
                 Id = result.Id
             };
-            qService.Post("GetCustomer", value);
             return value;
         }
 
@@ -87,7 +90,6 @@ namespace StokTakip.Service
                         No = c.No
                     }
                 ).ToList();
-            qService.Post("GetCustomers", result);
             return result;
         }
 
@@ -100,8 +102,10 @@ namespace StokTakip.Service
             result.Name = customer.Name;
             result.No = customer.No;
             customerRepository.Update(result);
+            customerRepository.SaveChanges();
             return new CustomerViewModel
             {
+                Id = result.Id,
                 Code = result.Code,
                 Description = result.Description,
                 Name = result.Name,

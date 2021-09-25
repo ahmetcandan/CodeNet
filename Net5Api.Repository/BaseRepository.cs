@@ -109,5 +109,10 @@ namespace Net5Api.Repository
             Context.Set<TEntity>().RemoveRange(entities);
             return entities;
         }
+
+        public int SaveChanges()
+        {
+            return Context.SaveChanges();
+        }
     }
 }
