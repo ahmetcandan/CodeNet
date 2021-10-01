@@ -32,7 +32,7 @@ namespace StokTakip.Service
                 IsDeleted = false
             });
             customerRepository.SaveChanges();
-            return new CustomerViewModel
+            var response = new CustomerViewModel
             {
                 Id = result.Id,
                 Code = result.Code,
@@ -40,6 +40,8 @@ namespace StokTakip.Service
                 Name = result.Name,
                 No = result.No
             };
+            qService.Post("CreateCustomer", response);
+            return response;
         }
 
         public CustomerViewModel DeleteCustomer(int customerId)

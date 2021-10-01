@@ -77,6 +77,7 @@ namespace StokTakip.Customer.Api
             services.AddScoped<ICacheRepository, RedisCacheRepository>();
             services.AddScoped<ILogRepository, MongoDBLogRepository>();
             services.AddScoped<IQService, RabbitMQService>();
+
             services.DecorateWithDispatchProxy<ICustomerService, CacheProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, LogProxy<ICustomerService>>();
             services.DecorateWithDispatchProxy<ICustomerService, ExceptionHanlingProxy<ICustomerService>>();

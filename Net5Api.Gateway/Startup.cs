@@ -4,6 +4,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using Net5Api.Abstraction;
+using Net5Api.Abstraction.Model;
+using Net5Api.MongoDB;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -21,7 +24,8 @@ namespace Net5Api.Gateway
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
+            services.AddScoped<ILogRepository, MongoDBLogRepository>();
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
@@ -34,6 +38,8 @@ namespace Net5Api.Gateway
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public async void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            app.UseMiddleware<RequestResponseLoggingMiddleware>();
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

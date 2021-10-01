@@ -18,4 +18,8 @@
     <Folder Include="Controllers\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Net5Api.MongoDB\Net5Api.MongoDB.csproj" />
+  </ItemGroup>
+
 </Project>
