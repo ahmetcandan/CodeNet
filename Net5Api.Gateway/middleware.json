@@ -37,6 +37,30 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/account/getuser/{username}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/accounts/getuser?username={username}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/account/getallusers",
+      "UpstreamHttpMethod": [ "Get" ],
+      "DownstreamPathTemplate": "/api/accounts/getallusers",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/account/removeuser",
       "UpstreamHttpMethod": [ "Delete" ],
       "DownstreamPathTemplate": "/api/accounts/removeuser",
@@ -75,7 +99,7 @@
     {
       "UpstreamPathTemplate": "/stoktakip/customers/{customerId}",
       "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/customer/{customerId}",
+      "DownstreamPathTemplate": "/api/customers/{customerId}",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

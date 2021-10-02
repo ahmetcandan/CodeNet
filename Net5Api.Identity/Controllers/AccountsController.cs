@@ -119,6 +119,45 @@ namespace JWTAuthenticationWithSwagger.Controllers
             return Ok(new Response { Status = "Success", Message = "User updated roles successfully!" });
         }
 
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("getuser")]
+        public async Task<IActionResult> GetUser(string username)
+        {
+            var user = await userManager.FindByNameAsync(username);
+            if (user == null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User not found!" });
+
+            var currentRoles = await userManager.GetRolesAsync(user);
+            return Ok(new UserModel()
+            {
+                Username = user.UserName,
+                Email = user.Email,
+                Roles = currentRoles,
+                Id = user.Id
+            });
+        }
+
+        [HttpGet]
+        [Authorize(Roles = "admin")]
+        [Route("getallusers")]
+        public async Task<IActionResult> GetAllUsers(string username)
+        {
+            var users = userManager.Users.ToList();
+
+            var result = new List<UserModel>();
+            foreach (var user in users)
+                result.Add(new UserModel()
+                {
+                    Username = user.UserName,
+                    Email = user.Email,
+                    Roles = await userManager.GetRolesAsync(user),
+                    Id = user.Id
+                });
+
+            return Ok(result);
+        }
+
         [HttpDelete]
         [Authorize(Roles = "admin")]
         [Route("removeuser")]

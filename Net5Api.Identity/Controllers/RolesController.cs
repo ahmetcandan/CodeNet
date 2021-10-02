@@ -85,5 +85,11 @@ namespace JWTAuthenticationWithSwagger.Controllers
 
             return Ok(new Response { Status = "Success", Message = "Role deleted successfully!" });
         }
+
+        [HttpGet]
+        public IActionResult Get()
+        {
+            return Ok(roleManager.Roles.ToList());
+        }
     }
 }
