@@ -6,14 +6,14 @@ using System.Collections.Generic;
 
 namespace StokTakip.Customer.Api.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "customer")]
     [ApiController]
     [Route("api/[controller]")]
-    public class CustomerController : ControllerBase
+    public class CustomersController : ControllerBase
     {
         ICustomerService CustomerService;
 
-        public CustomerController(ICustomerService customerService)
+        public CustomersController(ICustomerService customerService)
         {
             CustomerService = customerService;
         }

@@ -3,7 +3,7 @@
     {
       "UpstreamPathTemplate": "/token",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/account/login",
+      "DownstreamPathTemplate": "/api/accounts/login",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -13,9 +13,9 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/identity/register",
+      "UpstreamPathTemplate": "/account/register",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/account/register",
+      "DownstreamPathTemplate": "/api/accounts/register",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -25,9 +25,45 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/customer",
+      "UpstreamPathTemplate": "/account/editroles",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/accounts/editroles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/account/removeuser",
+      "UpstreamHttpMethod": [ "Delete" ],
+      "DownstreamPathTemplate": "/api/accounts/removeuser",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/account/roles",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamPathTemplate": "/api/customer/",
+      "DownstreamPathTemplate": "/api/roles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/stoktakip/customers",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "DownstreamPathTemplate": "/api/customers/",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {
@@ -37,7 +73,7 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/customer/{customerId}",
+      "UpstreamPathTemplate": "/stoktakip/customers/{customerId}",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/api/customer/{customerId}",
       "DownstreamScheme": "http",

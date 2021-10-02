@@ -1,17 +1,19 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using StokTakip.Abstraction;
 using StokTakip.Model;
 using System.Collections.Generic;
 
 namespace StokTakip.Product.Api.Controllers
 {
+    [Authorize(Roles = "product")]
     [ApiController]
     [Route("api/[controller]")]
-    public class ProductController : ControllerBase
+    public class ProductsController : ControllerBase
     {
         IProductService ProductService;
 
-        public ProductController(IProductService productService)
+        public ProductsController(IProductService productService)
         {
             ProductService = productService;
         }
