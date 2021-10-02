@@ -37,6 +37,18 @@
       ]
     },
     {
+      "UpstreamPathTemplate": "/account/editclaims",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/accounts/editclaims",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/account/getuser/{username}",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/api/accounts/getuser?username={username}",
@@ -76,6 +88,18 @@
       "UpstreamPathTemplate": "/account/roles",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "DownstreamPathTemplate": "/api/roles",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 53092
+        }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/account/roles/editclaims",
+      "UpstreamHttpMethod": [ "Put" ],
+      "DownstreamPathTemplate": "/api/roles/editclaims",
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         {

@@ -78,7 +78,7 @@ namespace JWTAuthenticationWithSwagger.Controllers
         [HttpPost]
         [Authorize(Roles = "admin")]
         [Route("register")]
-        public async Task<IActionResult> Register([FromBody] RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterUserModel model)
         {
             var userExists = await userManager.FindByNameAsync(model.Username);
             if (userExists != null)
@@ -102,7 +102,7 @@ namespace JWTAuthenticationWithSwagger.Controllers
         [HttpPut]
         [Authorize(Roles = "admin")]
         [Route("editroles")]
-        public async Task<IActionResult> EditRoles([FromBody] UpdateModel model)
+        public async Task<IActionResult> EditRoles([FromBody] UpdateUserRolesModel model)
         {
             var user = await userManager.FindByNameAsync(model.Username);
             if (user == null)
@@ -117,6 +117,26 @@ namespace JWTAuthenticationWithSwagger.Controllers
             await userManager.AddToRolesAsync(user, model.Roles.Where(r => !currentRoles.Any(c => c.Equals(r))));
 
             return Ok(new Response { Status = "Success", Message = "User updated roles successfully!" });
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "admin")]
+        [Route("editcliams")]
+        public async Task<IActionResult> EditCliams([FromBody] UpdateUserClaimsModel model)
+        {
+            var user = await userManager.FindByNameAsync(model.Username);
+            if (user == null)
+                return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User not found!" });
+
+            var currentClaims = await userManager.GetClaimsAsync(user);
+
+            // delete roles
+            await userManager.RemoveClaimsAsync(user, currentClaims.Where(c => !model.Claims.Any(r => r.Type.Equals(c.Type))));
+
+            //add roles
+            await userManager.AddClaimsAsync(user, model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))));
+
+            return Ok(new Response { Status = "Success", Message = "User updated claims successfully!" });
         }
 
         [HttpGet]
@@ -161,7 +181,7 @@ namespace JWTAuthenticationWithSwagger.Controllers
         [HttpDelete]
         [Authorize(Roles = "admin")]
         [Route("removeuser")]
-        public async Task<IActionResult> RemoveUser([FromBody] RemoveModel model)
+        public async Task<IActionResult> RemoveUser([FromBody] RemoveUserModel model)
         {
             var user = await userManager.FindByNameAsync(model.Username);
             if (user == null)
