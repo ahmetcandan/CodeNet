@@ -1,4 +1,4 @@
-﻿namespace Net5Api.Model
+﻿namespace Net5Api.Identity.Model
 {
     public class Response
     {

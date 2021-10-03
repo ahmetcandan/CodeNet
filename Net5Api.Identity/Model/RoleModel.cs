@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace Net5Api.Model
+namespace Net5Api.Identity.Model
 {
     public class RoleModel
     {

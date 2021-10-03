@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Net5Api
+namespace Net5Api.Identity
 {
     public class Program
     {

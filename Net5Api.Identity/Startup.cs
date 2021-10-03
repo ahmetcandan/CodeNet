@@ -12,7 +12,7 @@ using Net5Api.EntityFramework;
 using Net5Api.EntityFramework.Model;
 using System.Text;
 
-namespace Net5Api
+namespace Net5Api.Identity
 {
     public class Startup
     {

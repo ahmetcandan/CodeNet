@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.Security.Claims;
 
-namespace Net5Api.Model
+namespace Net5Api.Identity.Model
 {
     public class RoleClaimsModel
     {

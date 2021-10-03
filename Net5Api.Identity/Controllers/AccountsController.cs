@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Net5Api.EntityFramework.Model;
-using Net5Api.Model;
+using Net5Api.Identity.Model;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -14,7 +14,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace JWTAuthenticationWithSwagger.Controllers
+namespace Net5Api.Identity.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
@@ -40,7 +40,7 @@ namespace JWTAuthenticationWithSwagger.Controllers
                 {
                     var userRoles = await userManager.GetRolesAsync(user);
 
-                    var authClaims = new List<Claim>
+                    var claims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
@@ -48,8 +48,10 @@ namespace JWTAuthenticationWithSwagger.Controllers
 
                     foreach (var userRole in userRoles)
                     {
-                        authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+                        claims.Add(new Claim(ClaimTypes.Role, userRole));
                     }
+
+                    claims.Add(new Claim("LogTime", $"{DateTime.Now.ToShortDateString() + DateTime.Now.ToShortTimeString()}", "DateTime"));
 
                     var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
@@ -57,7 +59,7 @@ namespace JWTAuthenticationWithSwagger.Controllers
                         issuer: _configuration["JWT:ValidIssuer"],
                         audience: _configuration["JWT:ValidAudience"],
                         expires: DateTime.Now.AddHours(3),
-                        claims: authClaims,
+                        claims: claims,
                         signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                         );
 
