@@ -21,11 +21,13 @@ namespace Net5Api.Identity.Controllers
     public class AccountsController : ControllerBase
     {
         private readonly UserManager<ApplicationUser> userManager;
+        private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
 
-        public AccountsController(UserManager<ApplicationUser> userManager, IConfiguration configuration)
+        public AccountsController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             this.userManager = userManager;
+            this.roleManager = roleManager;
             _configuration = configuration;
         }
 
@@ -35,30 +37,34 @@ namespace Net5Api.Identity.Controllers
         {
             try
             {
+                var now = DateTime.Now;
                 var user = await userManager.FindByNameAsync(model.Username);
                 if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
                 {
                     var userRoles = await userManager.GetRolesAsync(user);
 
                     var claims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                };
-
-                    foreach (var userRole in userRoles)
                     {
-                        claims.Add(new Claim(ClaimTypes.Role, userRole));
+                        new Claim(ClaimTypes.Name, user.UserName),
+                        new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    };
+
+                    claims.AddRange(await userManager.GetClaimsAsync(user));
+                    foreach (var roleName in userRoles)
+                    {
+                        claims.Add(new Claim(ClaimTypes.Role, roleName));
+                        var role = await roleManager.FindByNameAsync(roleName);
+                        claims.AddRange(await roleManager.GetClaimsAsync(role));
                     }
 
-                    claims.Add(new Claim("LogTime", $"{DateTime.Now.ToShortDateString() + DateTime.Now.ToShortTimeString()}", "DateTime"));
+                    claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));
 
                     var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
                     var token = new JwtSecurityToken(
                         issuer: _configuration["JWT:ValidIssuer"],
                         audience: _configuration["JWT:ValidAudience"],
-                        expires: DateTime.Now.AddHours(3),
+                        expires: now.AddHours(5),
                         claims: claims,
                         signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
                         );
@@ -66,7 +72,9 @@ namespace Net5Api.Identity.Controllers
                     return Ok(new
                     {
                         token = new JwtSecurityTokenHandler().WriteToken(token),
-                        expiration = token.ValidTo
+                        expiration = token.ValidTo,
+                        createdDate = now,
+                        claims = (from c in claims select new { c.Type, c.Value, c.ValueType }).ToList()
                     });
                 }
             }
