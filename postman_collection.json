@@ -1,0 +1,275 @@
+{
+	"info": {
+		"_postman_id": "b07743a1-f952-4708-91cc-f57f2a07089e",
+		"name": "Net5Api",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Customers",
+			"item": [
+				{
+					"name": "Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImQ3YmZlNmQ1LTEwN2MtNDM5Yy04ZTRjLTQ3NjEzZWUyMTllMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsImN1c3RvbWVyIl0sIkxvZ2luVGltZSI6IjIwMjEtMTAtMDhUMTg6NDU6NDYuNjg2NjU5OSswMzowMCIsImV4cCI6MTYzMzcyNTk0NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1OTkyMSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.FP1gNt0yIZg6TsKa7p8fahrRwyrHz8WKmdE991CGv9g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "",
+								"value": "",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Id\": 1,\r\n    \"Name\": \"Ahmet CANDAN\",\r\n    \"No\": \"0010\",\r\n    \"Code\": \"C-0010\",\r\n    \"Description\": \"Test Müşteri 123\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:14000/stoktakip/customers",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"stoktakip",
+								"customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Customers",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImQ3YmZlNmQ1LTEwN2MtNDM5Yy04ZTRjLTQ3NjEzZWUyMTllMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsImN1c3RvbWVyIl0sIkxvZ2luVGltZSI6IjIwMjEtMTAtMDhUMTg6NDU6NDYuNjg2NjU5OSswMzowMCIsImV4cCI6MTYzMzcyNTk0NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1OTkyMSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.FP1gNt0yIZg6TsKa7p8fahrRwyrHz8WKmdE991CGv9g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:14000/stoktakip/customers/1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"stoktakip",
+								"customers",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Account",
+			"item": [
+				{
+					"name": "Identity Register",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImNjMWQzMGI0LWYyYWEtNGMyYS1hMjBkLWQyN2JkOTUwMjhiZSIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6ImFkbWluIiwiZXhwIjoxNjMzMTY5NjI2LCJpc3MiOiJodHRwOi8vbG9jYWxob3N0OjU5OTIxIiwiYXVkIjoiaHR0cDovL2xvY2FsaG9zdDo0MjAwIn0.fY8Qs5NFIm_cdtb9adspIt148smCNvSCHofi1hp6k1I",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n     \"Email\": \"user@netapi5.com\",\r\n     \"Username\": \"user\",\r\n     \"Password\": \"Test123!\",\r\n     \"Roles\": [\r\n         \"customer\"\r\n     ]\r\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:14000/account/register",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"account",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Token",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": " {\r\n     \"Username\": \"acandan\",\r\n     \"Password\": \"Test123!\"\r\n }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:14000/token",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"token"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Identity Edit Roles",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImQ3YmZlNmQ1LTEwN2MtNDM5Yy04ZTRjLTQ3NjEzZWUyMTllMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsImN1c3RvbWVyIl0sIkxvZ2luVGltZSI6IjIwMjEtMTAtMDhUMTg6NDU6NDYuNjg2NjU5OSswMzowMCIsImV4cCI6MTYzMzcyNTk0NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1OTkyMSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.FP1gNt0yIZg6TsKa7p8fahrRwyrHz8WKmdE991CGv9g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"Username\": \"acandan\",\r\n    \"Roles\": [\r\n        \"admin\",\r\n        \"customer\"\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:14000/account/editroles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"account",
+								"editroles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Roles",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImQ3YmZlNmQ1LTEwN2MtNDM5Yy04ZTRjLTQ3NjEzZWUyMTllMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsImN1c3RvbWVyIl0sIkxvZ2luVGltZSI6IjIwMjEtMTAtMDhUMTg6NDU6NDYuNjg2NjU5OSswMzowMCIsImV4cCI6MTYzMzcyNTk0NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1OTkyMSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.FP1gNt0yIZg6TsKa7p8fahrRwyrHz8WKmdE991CGv9g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:14000/account/roles",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"account",
+								"roles"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJodHRwOi8vc2NoZW1hcy54bWxzb2FwLm9yZy93cy8yMDA1LzA1L2lkZW50aXR5L2NsYWltcy9uYW1lIjoiYWNhbmRhbiIsImp0aSI6ImQ3YmZlNmQ1LTEwN2MtNDM5Yy04ZTRjLTQ3NjEzZWUyMTllMCIsImh0dHA6Ly9zY2hlbWFzLm1pY3Jvc29mdC5jb20vd3MvMjAwOC8wNi9pZGVudGl0eS9jbGFpbXMvcm9sZSI6WyJhZG1pbiIsImN1c3RvbWVyIl0sIkxvZ2luVGltZSI6IjIwMjEtMTAtMDhUMTg6NDU6NDYuNjg2NjU5OSswMzowMCIsImV4cCI6MTYzMzcyNTk0NiwiaXNzIjoiaHR0cDovL2xvY2FsaG9zdDo1OTkyMSIsImF1ZCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDIwMCJ9.FP1gNt0yIZg6TsKa7p8fahrRwyrHz8WKmdE991CGv9g",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:14000/account/getuser/acandan",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "14000",
+							"path": [
+								"account",
+								"getuser",
+								"acandan"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
