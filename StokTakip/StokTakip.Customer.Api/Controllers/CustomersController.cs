@@ -6,6 +6,7 @@ using System.Collections.Generic;
 
 namespace StokTakip.Customer.Api.Controllers
 {
+    //Test commit
     [Authorize(Roles = "customer")]
     [ApiController]
     [Route("api/[controller]")]
