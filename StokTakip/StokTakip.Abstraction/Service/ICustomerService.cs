@@ -1,8 +1,8 @@
-﻿using Net5Api.Abstraction;
-using Net5Api.Abstraction.Enum;
-using Net5Api.Cache;
-using Net5Api.ExceptionHandling;
-using Net5Api.Logging;
+﻿using NetCore.Abstraction;
+using NetCore.Abstraction.Enum;
+using NetCore.Cache;
+using NetCore.ExceptionHandling;
+using NetCore.Logging;
 using StokTakip.Model;
 using System;
 using System.Collections.Generic;

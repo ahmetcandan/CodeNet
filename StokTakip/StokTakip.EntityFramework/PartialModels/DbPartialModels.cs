@@ -1,4 +1,4 @@
-﻿using Net5Api.Abstraction.Model;
+﻿using NetCore.Abstraction.Model;
 
 namespace StokTakip.EntityFramework.Models
 {

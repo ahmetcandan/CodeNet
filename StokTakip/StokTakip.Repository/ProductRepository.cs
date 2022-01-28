@@ -1,5 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using Net5Api.Repository;
+using NetCore.Repository;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
 

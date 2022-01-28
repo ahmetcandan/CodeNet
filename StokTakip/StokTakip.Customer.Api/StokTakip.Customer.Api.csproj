@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -13,10 +13,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Net5Api.Core\Net5Api.Core.csproj" />
-    <ProjectReference Include="..\..\Net5Api.MongoDB\Net5Api.MongoDB.csproj" />
-    <ProjectReference Include="..\..\Net5Api.Redis\Net5Api.Redis.csproj" />
-    <ProjectReference Include="..\..\RabbitMQ\Net5Api.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\NetCore.Core\NetCore.Core.csproj" />
+    <ProjectReference Include="..\..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
+    <ProjectReference Include="..\..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
+    <ProjectReference Include="..\..\NetCore.Redis\NetCore.Redis.csproj" />
     <ProjectReference Include="..\StokTakip.Repository\StokTakip.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Service\StokTakip.Service.csproj" />
   </ItemGroup>

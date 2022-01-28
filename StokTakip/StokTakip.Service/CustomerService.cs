@@ -1,4 +1,4 @@
-﻿using Net5Api.Abstraction;
+﻿using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
 using System.Collections.Generic;

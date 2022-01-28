@@ -1,13 +1,13 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Net5Api.Cache\Net5Api.Cache.csproj" />
-    <ProjectReference Include="..\..\Net5Api.ExceptionHandling\Net5Api.ExceptionHandling.csproj" />
-    <ProjectReference Include="..\..\Net5Api.Logging\Net5Api.Logging.csproj" />
+    <ProjectReference Include="..\..\NetCore.Cache\NetCore.Cache.csproj" />
+    <ProjectReference Include="..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
+    <ProjectReference Include="..\..\NetCore.Logging\NetCore.Logging.csproj" />
     <ProjectReference Include="..\StokTakip.EntityFramework\StokTakip.EntityFramework.csproj" />
     <ProjectReference Include="..\StokTakip.Model\StokTakip.Model.csproj" />
   </ItemGroup>
