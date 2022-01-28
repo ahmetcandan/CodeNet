@@ -109,6 +109,11 @@ namespace Net5Api.Core
             return result;
         }
 
+        public static IEnumerable<T> Map<T>(this IEnumerable<object> values) where T: new()
+        {
+            return values.Select(c => c.Map<T>());
+        }
+
         private static bool propertyNameEquals(string name1, string name2)
         {
             return name1.ToLower().Replace("_", "").Equals(name2.Replace("_", "").ToLower());
