@@ -1,12 +1,26 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NetCore.Abstraction;
+using NetCore.Abstraction.Model;
+using NetCore.Cache;
+using NetCore.Core.Aspect;
+using NetCore.ExceptionHandling;
+using NetCore.Logging;
+using NetCore.MongoDB;
+using NetCore.RabbitMQ;
+using NetCore.Redis;
 using StokTakip.Abstraction;
+using StokTakip.EntityFramework.Models;
 using StokTakip.Repository;
 using StokTakip.Service;
+using System.Text;
 
 namespace StokTakip.Campaign.Api
 {
@@ -22,15 +36,50 @@ namespace StokTakip.Campaign.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
             services.AddControllers();
+            services.AddDbContext<StokTakipContext>(options => options.UseSqlServer(Configuration.GetConnectionString("StokTakip")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip.Campaign.Api", Version = "v1" });
             });
 
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductRepository, ProductRepository>();
+            // Adding Authentication
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+
+            // Adding Jwt Bearer
+            .AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidAudience = Configuration["JWT:ValidAudience"],
+                    ValidIssuer = Configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                };
+            });
+
+            services.Configure<RedisSettings>(Configuration.GetSection("Redis"));
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
+            services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
+
+            services.AddScoped<ICampaignService, CampaignService>();
+            services.AddScoped<ICampaignRepository, CampaignRepository>();
+            services.AddScoped<DbContext, StokTakipContext>();
+            services.AddScoped<ICacheRepository, RedisCacheRepository>();
+            services.AddScoped<ILogRepository, MongoDBLogRepository>();
+            services.AddScoped<IQService, RabbitMQService>();
+
+            services.DecorateWithDispatchProxy<ICampaignService, CacheProxy<ICampaignService>>();
+            services.DecorateWithDispatchProxy<ICampaignService, LogProxy<ICampaignService>>();
+            services.DecorateWithDispatchProxy<ICampaignService, ExceptionHanlingProxy<ICampaignService>>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -39,14 +88,16 @@ namespace StokTakip.Campaign.Api
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "StokTakip.Campaign.Api v1"));
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Campaigns API v1"));
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

@@ -9,10 +9,14 @@ namespace StokTakip.Service
     public class ProductService : BaseService, IProductService
     {
         IProductRepository productRepository;
+        ILogRepository logRepository;
+        IQService qService;
 
-        public ProductService(IProductRepository productRepository)
+        public ProductService(IProductRepository productRepository, ILogRepository logRepository, IQService qService)
         {
             this.productRepository = productRepository;
+            this.qService = qService;
+            this.logRepository = logRepository;
         }
 
         public ProductViewModel CreateProduct(ProductViewModel product)

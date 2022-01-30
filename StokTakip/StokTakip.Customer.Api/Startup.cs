@@ -16,7 +16,6 @@ using NetCore.Logging;
 using NetCore.MongoDB;
 using NetCore.RabbitMQ;
 using NetCore.Redis;
-using ServiceStack.Redis;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
 using StokTakip.Repository;
@@ -92,7 +91,7 @@ namespace StokTakip.Customer.Api
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "TestApi v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customers API v1"));
 
             app.UseHttpsRedirection();
 

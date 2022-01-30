@@ -25,7 +25,7 @@ namespace StokTakip.Product.Api.Controllers
             return ProductService.GetProducts();
         }
 
-        [HttpGet]
+        [HttpGet("{productId}")]
         public ProductViewModel Get(int productId)
         {
             ProductService.SetUser(User);
