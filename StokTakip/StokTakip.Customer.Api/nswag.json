@@ -34,7 +34,7 @@
       "serviceHost": null,
       "serviceBasePath": null,
       "serviceSchemes": [],
-      "infoTitle": "My Title",
+      "infoTitle": "Customers",
       "infoDescription": null,
       "infoVersion": "1.0.0",
       "documentTemplate": null,
@@ -120,8 +120,8 @@
       "typeNameGeneratorType": null,
       "propertyNameGeneratorType": null,
       "enumNameGeneratorType": null,
-      "serviceHost": null,
-      "serviceSchemes": null,
+      "serviceHost": "",
+      "serviceSchemes": [],
       "output": "../../../NetCoreClient/Customers.ts",
       "newLineBehavior": "Auto"
     }
