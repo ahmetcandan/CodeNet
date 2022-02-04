@@ -20,6 +20,6 @@ namespace NetCore.Abstraction.Model
 
         public virtual string Id { get; set; }
         public virtual object Value { get; set; }
-        public virtual DateTime ExpiryDate { get; set; }
+        public virtual DateTimeOffset ExpiryDate { get; set; }
     }
 }

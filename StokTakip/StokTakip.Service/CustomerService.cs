@@ -40,7 +40,6 @@ namespace StokTakip.Service
                 Name = result.Name,
                 No = result.No
             };
-            qService.Post("CreateCustomer", response);
             return response;
         }
 

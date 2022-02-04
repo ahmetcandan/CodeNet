@@ -29,7 +29,7 @@ namespace NetCore.Gateway
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "NetCore.Gateway", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "NetCore | Gateway", Version = "v1" });
             });
 
             services.AddOcelot();

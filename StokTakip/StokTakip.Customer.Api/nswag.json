@@ -83,7 +83,7 @@
       "exportTypes": true,
       "wrapDtoExceptions": false,
       "exceptionClass": "ApiException",
-      "clientBaseClass": null,
+      "clientBaseClass": "",
       "wrapResponses": false,
       "wrapResponseMethods": [],
       "generateResponseClasses": true,

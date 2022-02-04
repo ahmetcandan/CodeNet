@@ -99,9 +99,8 @@ namespace NetCore.Core
                 else
                 {
                     if (convertMethod == null)
-                        typeof(Converter).GetMethod("Convert", new Type[] { typeof(object) });
-                    MethodInfo convertMethodExecute = convertMethod.MakeGenericMethod(property.convertProperty.PropertyType);
-                    var resultPropValue = convertMethodExecute.Invoke(null, new object[] { propValue });
+                        convertMethod = typeof(Converter).GetMethod("Convert", new Type[] { property.convertProperty.PropertyType });
+                    var resultPropValue = convertMethod.MakeGenericMethod(property.convertProperty.PropertyType).Invoke(null, new object[] { propValue });
                     property.convertProperty.SetValue(result, resultPropValue);
                 }
             }

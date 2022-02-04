@@ -20,6 +20,7 @@ using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
 using StokTakip.Repository;
 using StokTakip.Service;
+using System.Collections.Generic;
 using System.Text;
 
 namespace StokTakip.Customer.Api
@@ -40,7 +41,37 @@ namespace StokTakip.Customer.Api
             services.AddDbContext<StokTakipContext>(options => options.UseSqlServer(Configuration.GetConnectionString("StokTakip")));
             services.AddSwaggerGen(c =>
             {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip.Customer.Api", Version = "v1" });
+                c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip | Customer API", Version = "v1" });
+
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                {
+                    Description = @"JWT Authorization header using the Bearer scheme. \r\n\r\n 
+                      Enter 'Bearer' [space] and then your token in the text input below.
+                      \r\n\r\nExample: 'Bearer 12345abcdef'",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            },
+                            Scheme = "oauth2",
+                            Name = "Bearer",
+                            In = ParameterLocation.Header,
+
+                        },
+                        new List<string>()
+                    }
+                });
             });
 
             // Adding Authentication
@@ -73,7 +104,7 @@ namespace StokTakip.Customer.Api
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<DbContext, StokTakipContext>();
-            services.AddScoped<ICacheRepository, RedisCacheRepository>();
+            services.AddScoped<ICacheRepository, MongoDBCacheRepository>();
             services.AddScoped<ILogRepository, MongoDBLogRepository>();
             services.AddScoped<IQService, RabbitMQService>();
 

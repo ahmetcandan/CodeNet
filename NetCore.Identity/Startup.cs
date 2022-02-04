@@ -64,8 +64,8 @@ namespace NetCore.Identity
                 swagger.SwaggerDoc("v1", new OpenApiInfo
                 {
                     Version = "v1",
-                    Title = "ASP.NET 5 Web API",
-                    Description = "Authentication and Authorization in ASP.NET 5 with JWT and Swagger"
+                    Title = "NetCore | Identity",
+                    Description = "Authentication and Authorization in NetCore.Identity with JWT and Swagger"
                 });
                 // To Enable authorization using Swagger (JWT)  
                 swagger.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
@@ -104,7 +104,7 @@ namespace NetCore.Identity
             }
 
             app.UseSwagger();
-            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NetCore v1"));
+            app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "NetCore.Identity v1"));
 
             app.UseHttpsRedirection();
 

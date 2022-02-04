@@ -22,7 +22,8 @@ namespace StokTakip.Customer.Api.Controllers
         public List<CustomerViewModel> GetAll()
         {
             CustomerService.SetUser(User);
-            return CustomerService.GetCustomers();
+            var list = CustomerService.GetCustomers();
+            return list;
         }
 
         [HttpGet("{customerId}")]
