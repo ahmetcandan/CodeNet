@@ -11,9 +11,10 @@ namespace NetCore.ExceptionHandling
 {
     public class ExceptionAttribute : Attribute, IExceptionAttribute
     {
-        public ExceptionAttribute()
+        private bool throwException;
+        public ExceptionAttribute(bool throwException = true)
         {
-
+            this.throwException = throwException;
         }
 
         public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user)
@@ -43,10 +44,17 @@ namespace NetCore.ExceptionHandling
                         Value = args[p.Position]
                     });
         }
+
+        public bool GetThrowException()
+        {
+            return throwException;
+        }
     }
 
     public interface IExceptionAttribute
     {
         void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user);
+
+        bool GetThrowException();
     }
 }

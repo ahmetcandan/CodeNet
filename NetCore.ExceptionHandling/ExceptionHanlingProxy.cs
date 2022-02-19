@@ -31,13 +31,15 @@ namespace NetCore.ExceptionHandling
             }
             catch (UserLevelException ex)
             {
-                ((IExceptionAttribute)aspect)?.OnException(targetMethod, args, _logRepository, ex, user);
-                throw;
+                aspect?.OnException(targetMethod, args, _logRepository, ex, user);
+                if (aspect.GetThrowException())
+                    throw;
             }
             catch (Exception ex)
             {
-                ((IExceptionAttribute)aspect)?.OnException(targetMethod, args, _logRepository, ex, user);
-                throw new Exception(ex.Message);
+                aspect?.OnException(targetMethod, args, _logRepository, ex, user);
+                if (aspect.GetThrowException())
+                    throw new Exception(ex.Message);
             }
 
             return result;

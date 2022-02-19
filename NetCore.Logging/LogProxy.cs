@@ -31,7 +31,7 @@ namespace NetCore.Logging
                 user = (decorated as IService).GetUser();
 
             if (aspect.GetLogTime() == LogTime.Before || aspect.GetLogTime() == LogTime.BeforeAndAfter)
-                ((ILogAttribute)aspect)?.OnBefore(targetMethod, args, _logRepository, user);
+                aspect?.OnBefore(targetMethod, args, _logRepository, user);
 
             object result = null;
             try
@@ -41,12 +41,12 @@ namespace NetCore.Logging
             catch (Exception ex)
             {
                 if (aspect.GetLogTime() == LogTime.Exception)
-                    ((ILogAttribute)aspect)?.OnException(targetMethod, args, _logRepository, user, ex);
+                    aspect?.OnException(targetMethod, args, _logRepository, user, ex);
                 throw;
             }
 
             if (aspect.GetLogTime() == LogTime.After || aspect.GetLogTime() == LogTime.BeforeAndAfter)
-                (aspect as ILogAttribute)?.OnAfter(targetMethod, args, result, _logRepository, user);
+                aspect?.OnAfter(targetMethod, args, result, _logRepository, user);
 
             return result;
         }

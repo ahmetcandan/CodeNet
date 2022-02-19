@@ -17,18 +17,18 @@ namespace NetCore.Cache
 
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
-            var aspect = targetMethod.GetCustomAttributes(typeof(ICacheAttribute), true).FirstOrDefault();
+            var aspect = (ICacheAttribute)targetMethod.GetCustomAttributes(typeof(ICacheAttribute), true).FirstOrDefault();
 
             if (aspect == null)
                 return targetMethod.Invoke(decorated, args);
 
-            var cacheResponse = ((ICacheAttribute)aspect)?.OnBefore(targetMethod, args, _cacheRepository);
+            var cacheResponse = aspect?.OnBefore(targetMethod, args, _cacheRepository);
 
             object result;
-            if (cacheResponse == null)
+            if (cacheResponse == null || cacheResponse.GetType() == targetMethod.ReturnType)
             {
                 result = targetMethod.Invoke(decorated, args);
-                (aspect as ICacheAttribute)?.OnAfter(targetMethod, args, result, _cacheRepository);
+                aspect?.OnAfter(targetMethod, args, result, _cacheRepository);
             }
             else
                 result = cacheResponse;
