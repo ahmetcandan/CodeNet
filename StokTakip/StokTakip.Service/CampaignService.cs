@@ -1,27 +1,35 @@
-﻿using NetCore.Abstraction;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
+using StokTakip.Repository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 
 namespace StokTakip.Service
 {
     public class CampaignService : BaseService, ICampaignService
     {
-        ICampaignRepository campaignRepository;
-        ILogRepository logRepository;
-        IQService qService;
+        private readonly ICampaignRepository campaignRepository;
+        private readonly ILogRepository logRepository;
+        private readonly IQService qService;
 
-        public CampaignService(ICampaignRepository campaignRepository, ILogRepository logRepository, IQService qService)
+        public CampaignService(DbContext dbContext, ILogRepository logRepository, IQService qService)
         {
-            this.campaignRepository = campaignRepository;
+            campaignRepository = new CampaignRepository(dbContext);
             this.qService = qService;
             this.logRepository = logRepository;
         }
 
+        public override void SetUser(IPrincipal user)
+        {
+            campaignRepository.SetUser(user);
+            base.SetUser(user);
+        }
+
         public CampaignViewModel CreateCampaign(CampaignViewModel campaign)
         {
-            campaignRepository.SetUser(GetUser());
             var result = campaignRepository.Add(new EntityFramework.Models.Campaign
             {
                 Name = campaign.Name,
@@ -39,7 +47,6 @@ namespace StokTakip.Service
 
         public CampaignViewModel DeleteCampaign(int campaignId)
         {
-            campaignRepository.SetUser(GetUser());
             var result = campaignRepository.Get(campaignId);
             result.IsDeleted = true;
             campaignRepository.Update(result);
@@ -53,7 +60,6 @@ namespace StokTakip.Service
 
         public CampaignViewModel GetCampaign(int campaignId)
         {
-            campaignRepository.SetUser(GetUser());
             var result = campaignRepository.Get(campaignId);
             if (result == null)
                 return null;
@@ -67,7 +73,6 @@ namespace StokTakip.Service
 
         public List<CampaignViewModel> GetCampaigns()
         {
-            campaignRepository.SetUser(GetUser());
             var result = (
                     from c in campaignRepository.GetAll()
                     select new CampaignViewModel
@@ -81,7 +86,6 @@ namespace StokTakip.Service
 
         public CampaignViewModel UpdateCampaign(CampaignViewModel campaign)
         {
-            campaignRepository.SetUser(GetUser());
             var result = campaignRepository.Get(campaign.Id);
             result.Name = campaign.Name;
             campaignRepository.Update(result);

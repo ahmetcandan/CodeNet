@@ -149,7 +149,7 @@ namespace NetCore.Identity.Controllers
             return Ok(new Response { Status = "Success", Message = "User updated claims successfully!" });
         }
 
-        [HttpGet]
+        [HttpGet("{customerId}")]
         [Authorize(Roles = "admin")]
         [Route("getuser")]
         public async Task<IActionResult> GetUser(string username)

@@ -1,10 +1,11 @@
-{
+﻿{
   "Routes": [
     {
-      "UpstreamPathTemplate": "/token",
+      "UpstreamPathTemplate": "/accounts/login",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/accounts/login",
+      "DownstreamPathTemplate": "/accounts/login",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -13,10 +14,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/register",
+      "UpstreamPathTemplate": "/accounts/register",
       "UpstreamHttpMethod": [ "Post" ],
-      "DownstreamPathTemplate": "/api/accounts/register",
+      "DownstreamPathTemplate": "/accounts/register",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -25,10 +27,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/editroles",
+      "UpstreamPathTemplate": "/accounts/editroles",
       "UpstreamHttpMethod": [ "Put" ],
-      "DownstreamPathTemplate": "/api/accounts/editroles",
+      "DownstreamPathTemplate": "/accounts/editroles",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -37,10 +40,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/editclaims",
+      "UpstreamPathTemplate": "/accounts/editclaims",
       "UpstreamHttpMethod": [ "Put" ],
-      "DownstreamPathTemplate": "/api/accounts/editclaims",
+      "DownstreamPathTemplate": "/accounts/editclaims",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Role",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -49,10 +53,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/getuser/{username}",
+      "UpstreamPathTemplate": "/accounts/getuser/{username}",
       "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/accounts/getuser?username={username}",
+      "DownstreamPathTemplate": "/accounts/getuser/{username}",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -61,10 +66,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/getallusers",
+      "UpstreamPathTemplate": "/accounts/getallusers",
       "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/accounts/getallusers",
+      "DownstreamPathTemplate": "/accounts/getallusers",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -73,10 +79,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/removeuser",
+      "UpstreamPathTemplate": "/accounts/removeuser",
       "UpstreamHttpMethod": [ "Delete" ],
-      "DownstreamPathTemplate": "/api/accounts/removeuser",
+      "DownstreamPathTemplate": "/accounts/removeuser",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Account",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -85,10 +92,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/roles",
+      "UpstreamPathTemplate": "/roles",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamPathTemplate": "/api/roles",
+      "DownstreamPathTemplate": "/roles",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Role",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -97,10 +105,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/account/roles/editclaims",
+      "UpstreamPathTemplate": "/roles/editclaims",
       "UpstreamHttpMethod": [ "Put" ],
-      "DownstreamPathTemplate": "/api/roles/editclaims",
+      "DownstreamPathTemplate": "/roles/editclaims",
       "DownstreamScheme": "http",
+      "SwaggerKey": "Role",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -109,10 +118,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/customers",
+      "UpstreamPathTemplate": "/stoktakip/customer/customers",
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
-      "DownstreamPathTemplate": "/api/customers/",
+      "DownstreamPathTemplate": "/customers/",
       "DownstreamScheme": "http",
+      "SwaggerKey": "customer",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -121,10 +131,11 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/stoktakip/customers/{customerId}",
+      "UpstreamPathTemplate": "/stoktakip/customer/customers/{customerId}",
       "UpstreamHttpMethod": [ "Get" ],
-      "DownstreamPathTemplate": "/api/customers/{customerId}",
+      "DownstreamPathTemplate": "/customers/{customerId}",
       "DownstreamScheme": "http",
+      "SwaggerKey": "customer",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
@@ -133,14 +144,82 @@
       ]
     },
     {
-      "UpstreamPathTemplate": "/test",
+      "UpstreamPathTemplate": "/weatherforecast",
       "UpstreamHttpMethod": [ "Get" ],
       "DownstreamPathTemplate": "/weatherforecast",
       "DownstreamScheme": "http",
+      "SwaggerKey": "weatherforecast",
       "DownstreamHostAndPorts": [
         {
           "Host": "localhost",
           "Port": 56473
+        }
+      ]
+    }
+  ],
+  "SwaggerEndPoints": [
+    {
+      "Key": "Account",
+      "Config": [
+        {
+          "Name": "Account",
+          "Version": "v1",
+          "Service": {
+            "Name": "account",
+            "Path": "/swagger/v1/swagger.json"
+          }
+        }
+      ]
+    },
+    {
+      "Key": "Role",
+      "Config": [
+        {
+          "Name": "Role API",
+          "Version": "v1",
+          "Service": {
+            "Name": "role",
+            "Path": "/swagger/v1/swagger.json"
+          }
+        }
+      ]
+    },
+    {
+      "Key": "Customer",
+      "Config": [
+        {
+          "Name": "Stok Takip | Müşteri API",
+          "Version": "v1",
+          "Service": {
+            "Name": "customer",
+            "Path": "/swagger/v1/swagger.json"
+          }
+        }
+      ]
+    },
+    {
+      "Key": "Campaign",
+      "Config": [
+        {
+          "Name": "Stok Takip | Kampanya API",
+          "Version": "v1",
+          "Service": {
+            "Name": "campaign",
+            "Path": "/swagger/v1/swagger.json"
+          }
+        }
+      ]
+    },
+    {
+      "Key": "Product",
+      "Config": [
+        {
+          "Name": "Stok Takip | Ürün API",
+          "Version": "v1",
+          "Service": {
+            "Name": "product",
+            "Path": "/swagger/v1/swagger.json"
+          }
         }
       ]
     }

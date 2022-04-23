@@ -1,27 +1,35 @@
-﻿using NetCore.Abstraction;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
+using StokTakip.Repository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 
 namespace StokTakip.Service
 {
     public class CustomerService : BaseService, ICustomerService
     {
-        ICustomerRepository customerRepository;
-        ILogRepository logRepository;
-        IQService qService;
+        private readonly ICustomerRepository customerRepository;
+        private readonly ILogRepository logRepository;
+        private readonly IQService qService;
 
-        public CustomerService(ICustomerRepository customerRepository, ILogRepository logRepository, IQService qService)
+        public CustomerService(DbContext dbContext, ILogRepository logRepository, IQService qService)
         {
-            this.customerRepository = customerRepository;
+            customerRepository = new CustomerRepository(dbContext);
             this.qService = qService;
             this.logRepository = logRepository;
         }
 
+        public override void SetUser(IPrincipal user)
+        {
+            customerRepository.SetUser(user);
+            base.SetUser(user);
+        }
+
         public CustomerViewModel CreateCustomer(CustomerViewModel customer)
         {
-            customerRepository.SetUser(GetUser());
             var result = customerRepository.Add(new EntityFramework.Models.Customer
             {
                 Code = customer.Code,
@@ -45,7 +53,6 @@ namespace StokTakip.Service
 
         public CustomerViewModel DeleteCustomer(int customerId)
         {
-            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customerId);
             result.IsDeleted = true;
             customerRepository.Update(result);
@@ -62,7 +69,6 @@ namespace StokTakip.Service
 
         public CustomerViewModel GetCustomer(int customerId)
         {
-            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customerId);
             if (result == null)
                 return null;
@@ -79,7 +85,6 @@ namespace StokTakip.Service
 
         public List<CustomerViewModel> GetCustomers()
         {
-            customerRepository.SetUser(GetUser());
             var result = (
                     from c in customerRepository.GetAll()
                     select new CustomerViewModel
@@ -96,7 +101,6 @@ namespace StokTakip.Service
 
         public CustomerViewModel UpdateCustomer(CustomerViewModel customer)
         {
-            customerRepository.SetUser(GetUser());
             var result = customerRepository.Get(customer.Id);
             result.Code = customer.Code;
             result.Description = customer.Description;

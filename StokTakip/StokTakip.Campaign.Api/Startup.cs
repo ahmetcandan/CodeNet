@@ -18,7 +18,6 @@ using NetCore.RabbitMQ;
 using NetCore.Redis;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
-using StokTakip.Repository;
 using StokTakip.Service;
 using System.Collections.Generic;
 using System.Text;
@@ -101,9 +100,8 @@ namespace StokTakip.Campaign.Api
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
 
-            services.AddScoped<ICampaignService, CampaignService>();
-            services.AddScoped<ICampaignRepository, CampaignRepository>();
             services.AddScoped<DbContext, StokTakipContext>();
+            services.AddScoped<ICampaignService, CampaignService>();
             services.AddScoped<ICacheRepository, RedisCacheRepository>();
             services.AddScoped<ILogRepository, MongoDBLogRepository>();
             services.AddScoped<IQService, RabbitMQService>();

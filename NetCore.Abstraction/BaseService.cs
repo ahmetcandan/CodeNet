@@ -6,12 +6,12 @@ namespace NetCore.Abstraction
     {
         IPrincipal User;
 
-        public void SetUser(IPrincipal user)
+        public virtual void SetUser(IPrincipal user)
         {
             User = user;
         }
 
-        public IPrincipal GetUser()
+        public virtual IPrincipal GetUser()
         {
             return User;
         }

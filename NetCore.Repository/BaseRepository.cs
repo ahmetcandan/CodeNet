@@ -7,6 +7,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Security.Claims;
 using System.Security.Principal;
+using System.Threading.Tasks;
 
 namespace NetCore.Repository
 {
@@ -48,6 +49,17 @@ namespace NetCore.Repository
             return Context.Set<TEntity>().Add(entity).Entity;
         }
 
+        public async Task<TEntity> AddAsync(TEntity entity)
+        {
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            {
+                var tEntity = (ITracingEntity)entity;
+                tEntity.CreatedDate = DateTime.Now;
+                tEntity.CreatedUser = User.Identity.Name;
+            }
+            return (await Context.Set<TEntity>().AddAsync(entity)).Entity;
+        }
+
         public IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities)
         {
             if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
@@ -60,6 +72,21 @@ namespace NetCore.Repository
                 }
             }
             Context.Set<TEntity>().AddRange(entities);
+            return entities;
+        }
+
+        public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities)
+        {
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            {
+                foreach (var entity in entities)
+                {
+                    var tEntity = (ITracingEntity)entity;
+                    tEntity.CreatedDate = DateTime.Now;
+                    tEntity.CreatedUser = User.Identity.Name;
+                }
+            }
+            await Context.Set<TEntity>().AddRangeAsync(entities);
             return entities;
         }
 
@@ -94,6 +121,11 @@ namespace NetCore.Repository
             return Context.Set<TEntity>().Find(keyValues);
         }
 
+        public async Task<TEntity> GetAsync(params object[] keyValues)
+        {
+            return await Context.Set<TEntity>().FindAsync(keyValues);
+        }
+
         public IQueryable<TEntity> GetAll()
         {
             return Context.Set<TEntity>();
@@ -113,6 +145,11 @@ namespace NetCore.Repository
         public int SaveChanges()
         {
             return Context.SaveChanges();
+        }
+
+        public async Task<int> SaveChangesAsync()
+        {
+            return await Context.SaveChangesAsync();
         }
     }
 }

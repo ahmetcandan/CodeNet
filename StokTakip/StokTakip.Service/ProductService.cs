@@ -1,22 +1,31 @@
-﻿using NetCore.Abstraction;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
+using StokTakip.Repository;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Principal;
 
 namespace StokTakip.Service
 {
     public class ProductService : BaseService, IProductService
     {
-        IProductRepository productRepository;
-        ILogRepository logRepository;
-        IQService qService;
+        private readonly IProductRepository productRepository;
+        private readonly ILogRepository logRepository;
+        private readonly IQService qService;
 
-        public ProductService(IProductRepository productRepository, ILogRepository logRepository, IQService qService)
+        public ProductService(DbContext dbContext, ILogRepository logRepository, IQService qService)
         {
-            this.productRepository = productRepository;
+            productRepository = new ProductRepository(dbContext);
             this.qService = qService;
             this.logRepository = logRepository;
+        }
+
+        public override void SetUser(IPrincipal user)
+        {
+            productRepository.SetUser(user);
+            base.SetUser(user);
         }
 
         public ProductViewModel CreateProduct(ProductViewModel product)

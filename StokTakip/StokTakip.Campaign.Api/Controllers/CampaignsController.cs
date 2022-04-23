@@ -8,7 +8,7 @@ namespace StokTakip.Campaign.Api.Controllers
 {
     [Authorize(Roles = "campaign")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class CampaignsController : ControllerBase
     {
         ICampaignService CampaignService;

@@ -18,7 +18,6 @@ using NetCore.RabbitMQ;
 using NetCore.Redis;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
-using StokTakip.Repository;
 using StokTakip.Service;
 using System.Collections.Generic;
 using System.Text;
@@ -102,9 +101,8 @@ namespace StokTakip.Product.Api
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
 
-            services.AddScoped<IProductService, ProductService>();
-            services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<DbContext, StokTakipContext>();
+            services.AddScoped<IProductService, ProductService>();
             services.AddScoped<ICacheRepository, RedisCacheRepository>();
             services.AddScoped<ILogRepository, MongoDBLogRepository>();
             services.AddScoped<IQService, RabbitMQService>();

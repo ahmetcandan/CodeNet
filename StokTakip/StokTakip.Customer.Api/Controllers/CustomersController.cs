@@ -8,7 +8,7 @@ namespace StokTakip.Customer.Api.Controllers
 {
     [Authorize(Roles = "customer")]
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     public class CustomersController : ControllerBase
     {
         ICustomerService CustomerService;

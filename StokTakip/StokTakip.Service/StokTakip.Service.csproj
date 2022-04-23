@@ -6,6 +6,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\StokTakip.Abstraction\StokTakip.Abstraction.csproj" />
+    <ProjectReference Include="..\StokTakip.Repository\StokTakip.Repository.csproj" />
   </ItemGroup>
 
 </Project>
