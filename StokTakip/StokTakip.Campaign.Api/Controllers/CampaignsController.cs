@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Campaign.Api.Controllers
 {
@@ -11,46 +12,35 @@ namespace StokTakip.Campaign.Api.Controllers
     [Route("[controller]")]
     public class CampaignsController : ControllerBase
     {
-        ICampaignService CampaignService;
+        private readonly ICampaignService _campaignService;
 
         public CampaignsController(ICampaignService campaignService)
         {
-            CampaignService = campaignService;
-        }
-
-        [HttpGet]
-        public List<CampaignViewModel> GetAll()
-        {
-            CampaignService.SetUser(User);
-            return CampaignService.GetCampaigns();
+            _campaignService = campaignService ?? throw new System.ArgumentNullException(nameof(campaignService));
         }
 
         [HttpGet("{campaignId}")]
-        public CampaignViewModel Get(int campaignId)
+        public async Task<CampaignViewModel> Get(int campaignId, CancellationToken cancellationToken)
         {
-            CampaignService.SetUser(User);
-            return CampaignService.GetCampaign(campaignId);
+            return await _campaignService.GetCampaign(campaignId, cancellationToken);
         }
 
         [HttpPost]
-        public CampaignViewModel Post(CampaignViewModel campaign)
+        public async Task<CampaignViewModel> Post(CampaignViewModel campaign, CancellationToken cancellationToken)
         {
-            CampaignService.SetUser(User);
-            return CampaignService.CreateCampaign(campaign);
+            return await _campaignService.CreateCampaign(campaign, cancellationToken);
         }
 
         [HttpPut]
-        public CampaignViewModel Put(CampaignViewModel campaign)
+        public async Task<CampaignViewModel> Put(CampaignViewModel campaign, CancellationToken cancellationToken)
         {
-            CampaignService.SetUser(User);
-            return CampaignService.UpdateCampaign(campaign);
+            return await _campaignService.UpdateCampaign(campaign, cancellationToken);
         }
 
         [HttpDelete]
-        public CampaignViewModel Delete(int campaignId)
+        public async Task<CampaignViewModel> Delete(int campaignId, CancellationToken cancellationToken)
         {
-            CampaignService.SetUser(User);
-            return CampaignService.DeleteCampaign(campaignId);
+            return await _campaignService.DeleteCampaign(campaignId, cancellationToken);
         }
     }
 }

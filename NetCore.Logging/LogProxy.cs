@@ -3,50 +3,42 @@ using NetCore.Abstraction.Enum;
 using System;
 using System.Linq;
 using System.Reflection;
-using System.Security.Principal;
 
 namespace NetCore.Logging
 {
     public class LogProxy<TDecorated> : DispatchProxy
     {
-        private TDecorated decorated;
+        private TDecorated _decorated;
         private ILogRepository _logRepository;
-
-        public LogProxy()
-        {
-
-        }
+        private IIdentityContext _identityContext;
 
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             var aspect = (ILogAttribute)targetMethod.GetCustomAttributes(typeof(ILogAttribute), true).FirstOrDefault();
 
             if (aspect == null)
-                return targetMethod.Invoke(decorated, args);
+                return targetMethod.Invoke(_decorated, args);
 
 
-            IPrincipal user = null;
-
-            if (decorated.GetType().GetInterfaces().Any(c => c.Name == "IService"))
-                user = (decorated as IService).GetUser();
+            string username = _identityContext.GetUserName();
 
             if (aspect.GetLogTime() == LogTime.Before || aspect.GetLogTime() == LogTime.BeforeAndAfter)
-                aspect?.OnBefore(targetMethod, args, _logRepository, user);
+                aspect?.OnBefore(targetMethod, args, _logRepository, username);
 
-            object result = null;
+            object result;
             try
             {
-                result = targetMethod.Invoke(decorated, args);
+                result = targetMethod.Invoke(_decorated, args);
             }
             catch (Exception ex)
             {
                 if (aspect.GetLogTime() == LogTime.Exception)
-                    aspect?.OnException(targetMethod, args, _logRepository, user, ex);
+                    aspect?.OnException(targetMethod, args, _logRepository, username, ex);
                 throw;
             }
 
             if (aspect.GetLogTime() == LogTime.After || aspect.GetLogTime() == LogTime.BeforeAndAfter)
-                aspect?.OnAfter(targetMethod, args, result, _logRepository, user);
+                aspect?.OnAfter(targetMethod, args, result, _logRepository, username);
 
             return result;
         }
@@ -60,7 +52,7 @@ namespace NetCore.Logging
 
         private void SetParameters(TDecorated decorated, ILogRepository logRepository)
         {
-            this.decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
+            _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
         }
     }

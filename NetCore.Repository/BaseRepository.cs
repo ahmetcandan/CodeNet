@@ -5,88 +5,81 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Security.Claims;
-using System.Security.Principal;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace NetCore.Repository
 {
     public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
-        protected readonly DbContext Context;
-        private IPrincipal User;
+        protected readonly DbContext _dbContext;
+        private readonly IIdentityContext _identityContext;
 
-        public void SetUser(IPrincipal user)
+        public BaseRepository(DbContext dbContext, IIdentityContext identityContext)
         {
-            User = user;
-        }
-
-        public IPrincipal GetUser()
-        {
-            return User;
-        }
-
-        public BaseRepository(DbContext context)
-        {
-            Context = context;
-            User = null;
-        }
-
-        public BaseRepository(DbContext context, IPrincipal user)
-        {
-            Context = context;
-            User = user;
+            _dbContext = dbContext;
+            _identityContext = identityContext;
         }
 
         public TEntity Add(TEntity entity)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
             {
                 var tEntity = (ITracingEntity)entity;
                 tEntity.CreatedDate = DateTime.Now;
-                tEntity.CreatedUser = User.Identity.Name;
+                tEntity.CreatedUser = _identityContext.GetUserName();
             }
-            return Context.Set<TEntity>().Add(entity).Entity;
+            return _dbContext.Set<TEntity>().Add(entity).Entity;
         }
 
-        public async Task<TEntity> AddAsync(TEntity entity)
+        public Task<TEntity> AddAsync(TEntity entity) 
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            return AddAsync(entity, CancellationToken.None);
+        }
+
+        public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
+        {
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
             {
                 var tEntity = (ITracingEntity)entity;
                 tEntity.CreatedDate = DateTime.Now;
-                tEntity.CreatedUser = User.Identity.Name;
+                tEntity.CreatedUser = _identityContext.GetUserName();
             }
-            return (await Context.Set<TEntity>().AddAsync(entity)).Entity;
+            return (await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken)).Entity;
         }
 
         public IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
             {
                 foreach (var entity in entities)
                 {
                     var tEntity = (ITracingEntity)entity;
                     tEntity.CreatedDate = DateTime.Now;
-                    tEntity.CreatedUser = User.Identity.Name;
+                    tEntity.CreatedUser = _identityContext.GetUserName();
                 }
             }
-            Context.Set<TEntity>().AddRange(entities);
+            _dbContext.Set<TEntity>().AddRange(entities);
             return entities;
         }
 
-        public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities)
+        public Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities) 
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+            return AddRangeAsync(entities, CancellationToken.None);
+        }
+
+        public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
+        {
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
             {
                 foreach (var entity in entities)
                 {
                     var tEntity = (ITracingEntity)entity;
                     tEntity.CreatedDate = DateTime.Now;
-                    tEntity.CreatedUser = User.Identity.Name;
+                    tEntity.CreatedUser = _identityContext.GetUserName();
                 }
             }
-            await Context.Set<TEntity>().AddRangeAsync(entities);
+            await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken);
             return entities;
         }
 
@@ -94,14 +87,14 @@ namespace NetCore.Repository
         {
             try
             {
-                if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)) && User != null)
+                if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
                 {
                     var tEntity = (ITracingEntity)entity;
                     tEntity.ModifiedDate = DateTime.Now;
-                    tEntity.ModifiedUser = User.Identity.Name;
+                    tEntity.ModifiedUser = _identityContext.GetUserName();
                 }
-                Context.Set<TEntity>().Attach(entity);
-                Context.Entry(entity).State = EntityState.Modified;
+                _dbContext.Set<TEntity>().Attach(entity);
+                _dbContext.Entry(entity).State = EntityState.Modified;
                 return entity;
             }
             catch (Exception ex)
@@ -113,43 +106,53 @@ namespace NetCore.Repository
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
         {
-            return Context.Set<TEntity>().Where(predicate);
+            return _dbContext.Set<TEntity>().Where(predicate);
         }
 
         public TEntity Get(params object[] keyValues)
         {
-            return Context.Set<TEntity>().Find(keyValues);
+            return _dbContext.Set<TEntity>().Find(keyValues);
         }
 
-        public async Task<TEntity> GetAsync(params object[] keyValues)
+        public Task<TEntity> GetAsync(params object[] keyValues)
         {
-            return await Context.Set<TEntity>().FindAsync(keyValues);
+            return GetAsync(keyValues, CancellationToken.None);
+        }
+
+        public async Task<TEntity> GetAsync(object[] keyValues, CancellationToken cancellationToken)
+        {
+            return await _dbContext.Set<TEntity>().FindAsync(keyValues, cancellationToken);
         }
 
         public IQueryable<TEntity> GetAll()
         {
-            return Context.Set<TEntity>();
+            return _dbContext.Set<TEntity>();
         }
 
         public TEntity Remove(TEntity entity)
         {
-            return Context.Set<TEntity>().Remove(entity).Entity;
+            return _dbContext.Set<TEntity>().Remove(entity).Entity;
         }
 
         public IEnumerable<TEntity> RemoveRange(IEnumerable<TEntity> entities)
         {
-            Context.Set<TEntity>().RemoveRange(entities);
+            _dbContext.Set<TEntity>().RemoveRange(entities);
             return entities;
         }
 
         public int SaveChanges()
         {
-            return Context.SaveChanges();
+            return _dbContext.SaveChanges();
         }
 
-        public async Task<int> SaveChangesAsync()
+        public Task<int> SaveChangesAsync()
         {
-            return await Context.SaveChangesAsync();
+            return SaveChangesAsync(CancellationToken.None);
+        }
+
+        public async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
+        {
+            return await _dbContext.SaveChangesAsync(cancellationToken);
         }
     }
 }

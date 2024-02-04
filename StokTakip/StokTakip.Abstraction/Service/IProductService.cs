@@ -1,19 +1,18 @@
 ﻿using NetCore.Abstraction;
 using StokTakip.Model;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Abstraction
 {
     public interface IProductService : IService
     {
-        public List<ProductViewModel> GetProducts();
+        public Task<ProductViewModel> GetProduct(int productId, CancellationToken cancellationToken);
 
-        public ProductViewModel GetProduct(int productId);
+        public Task<ProductViewModel> CreateProduct(ProductViewModel product, CancellationToken cancellationToken);
 
-        public ProductViewModel CreateProduct(ProductViewModel product);
+        public Task<ProductViewModel> UpdateProduct(ProductViewModel product, CancellationToken cancellationToken);
 
-        public ProductViewModel UpdateProduct(ProductViewModel product);
-
-        public ProductViewModel DeleteProduct(int productId);
+        public Task<ProductViewModel> DeleteProduct(int productId, CancellationToken cancellationToken);
     }
 }

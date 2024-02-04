@@ -1,36 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NetCore.Abstraction;
+﻿using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using StokTakip.Repository;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Service
 {
     public class ProductService : BaseService, IProductService
     {
-        private readonly IProductRepository productRepository;
-        private readonly ILogRepository logRepository;
-        private readonly IQService qService;
+        private readonly IProductRepository _productRepository;
 
-        public ProductService(DbContext dbContext, ILogRepository logRepository, IQService qService)
+        public ProductService(IProductRepository productRepository)
         {
-            productRepository = new ProductRepository(dbContext);
-            this.qService = qService;
-            this.logRepository = logRepository;
+            _productRepository = productRepository;
         }
 
-        public override void SetUser(IPrincipal user)
+        public async Task<ProductViewModel> CreateProduct(ProductViewModel product, CancellationToken cancellationToken)
         {
-            productRepository.SetUser(user);
-            base.SetUser(user);
-        }
-
-        public ProductViewModel CreateProduct(ProductViewModel product)
-        {
-            var result = productRepository.Add(new EntityFramework.Models.Product
+            var result = await _productRepository.AddAsync(new EntityFramework.Models.Product
             {
                 Barcode = product.Barcode,
                 CategoryId = product.CategoryId,
@@ -40,7 +27,8 @@ namespace StokTakip.Service
                 IsActive = true,
                 IsDeleted = false,
                 TaxRate = product.TaxRate
-            });
+            }, cancellationToken);
+            await _productRepository.SaveChangesAsync(cancellationToken);
             return new ProductViewModel
             {
                 Barcode = result.Barcode,
@@ -53,11 +41,12 @@ namespace StokTakip.Service
             };
         }
 
-        public ProductViewModel DeleteProduct(int productId)
+        public async Task<ProductViewModel> DeleteProduct(int productId, CancellationToken cancellationToken)
         {
-            var result = productRepository.Get(productId);
+            var result = await _productRepository.GetAsync(productId, cancellationToken);
             result.IsDeleted = true;
-            productRepository.Update(result);
+            _productRepository.Update(result);
+            await _productRepository.SaveChangesAsync(cancellationToken);
             return new ProductViewModel
             {
                 Barcode = result.Barcode,
@@ -70,9 +59,9 @@ namespace StokTakip.Service
             };
         }
 
-        public ProductViewModel GetProduct(int productId)
+        public async Task<ProductViewModel> GetProduct(int productId, CancellationToken cancellationToken)
         {
-            var result = productRepository.Get(productId);
+            var result = await _productRepository.GetAsync(productId, cancellationToken);
             return new ProductViewModel
             {
                 Barcode = result.Barcode,
@@ -85,26 +74,9 @@ namespace StokTakip.Service
             };
         }
 
-        public List<ProductViewModel> GetProducts()
+        public async Task<ProductViewModel> UpdateProduct(ProductViewModel product, CancellationToken cancellationToken)
         {
-            return (
-                    from c in productRepository.GetAll()
-                    select new ProductViewModel
-                    {
-                        Barcode = c.Barcode,
-                        CategoryId = c.CategoryId,
-                        Code = c.Code,
-                        Description = c.Description,
-                        Id = c.Id,
-                        Name = c.Name,
-                        TaxRate = c.TaxRate
-                    }
-                ).ToList();
-        }
-
-        public ProductViewModel UpdateProduct(ProductViewModel product)
-        {
-            var result = productRepository.Get(product.Id);
+            var result = await _productRepository.GetAsync(product.Id, cancellationToken);
             result.Barcode = product.Barcode;
             result.CategoryId = product.CategoryId;
             result.Code = product.Code;
@@ -112,7 +84,8 @@ namespace StokTakip.Service
             result.Name = product.Description;
             result.Name = product.Name;
             result.TaxRate = product.TaxRate;
-            productRepository.Update(result);
+            _productRepository.Update(result);
+            await _productRepository.SaveChangesAsync(cancellationToken);
             return new ProductViewModel
             {
                 Barcode = result.Barcode,

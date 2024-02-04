@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿using System.Net.Http;
 
 namespace NetCore.Core
 {
@@ -17,13 +11,11 @@ namespace NetCore.Core
             BearerToken = token;
         }
 
-        // Called by implementing swagger client classes
-        protected Task<HttpRequestMessage> CreateHttpRequestMessageAsync(CancellationToken cancellationToken)
+        protected HttpRequestMessage CreateHttpRequestMessageAsync()
         {
             var msg = new HttpRequestMessage();
-            // SET THE BEARER AUTH TOKEN
             msg.Headers.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", BearerToken);
-            return Task.FromResult(msg);
+            return msg;
         }
 
     }

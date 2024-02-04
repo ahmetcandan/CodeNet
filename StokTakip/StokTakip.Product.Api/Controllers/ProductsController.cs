@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Product.Api.Controllers
 {
@@ -11,46 +12,35 @@ namespace StokTakip.Product.Api.Controllers
     [Route("[controller]")]
     public class ProductsController : ControllerBase
     {
-        IProductService ProductService;
+        private readonly IProductService _productService;
 
         public ProductsController(IProductService productService)
         {
-            ProductService = productService;
-        }
-
-        [HttpGet]
-        public List<ProductViewModel> GetAll()
-        {
-            ProductService.SetUser(User);
-            return ProductService.GetProducts();
+            _productService = productService;
         }
 
         [HttpGet("{productId}")]
-        public ProductViewModel Get(int productId)
+        public async Task<ProductViewModel> Get(int productId, CancellationToken cancellationToken)
         {
-            ProductService.SetUser(User);
-            return ProductService.GetProduct(productId);
+            return await _productService.GetProduct(productId, cancellationToken);
         }
 
         [HttpPost]
-        public ProductViewModel Post(ProductViewModel product)
+        public async Task<ProductViewModel> Post(ProductViewModel product, CancellationToken cancellationToken)
         {
-            ProductService.SetUser(User);
-            return ProductService.CreateProduct(product);
+            return await _productService.CreateProduct(product, cancellationToken);
         }
 
         [HttpPut]
-        public ProductViewModel Put(ProductViewModel product)
+        public async Task<ProductViewModel> Put(ProductViewModel product, CancellationToken cancellationToken)
         {
-            ProductService.SetUser(User);
-            return ProductService.UpdateProduct(product);
+            return await _productService.UpdateProduct(product, cancellationToken);
         }
 
         [HttpDelete]
-        public ProductViewModel Delete(int productId)
+        public async Task<ProductViewModel> Delete(int productId, CancellationToken cancellationToken)
         {
-            ProductService.SetUser(User);
-            return ProductService.DeleteProduct(productId);
+            return await _productService.DeleteProduct(productId, cancellationToken);
         }
     }
 }

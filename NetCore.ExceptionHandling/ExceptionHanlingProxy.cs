@@ -11,6 +11,13 @@ namespace NetCore.ExceptionHandling
         private TDecorated decorated;
         private ILogRepository _logRepository;
 
+        public IIdentityContext _identityContext { get; }
+
+        public ExceptionHanlingProxy(IIdentityContext identityContext)
+        {
+            _identityContext = identityContext;
+        }
+
         protected override object Invoke(MethodInfo targetMethod, object[] args)
         {
             var aspect = (IExceptionAttribute)targetMethod.GetCustomAttributes(typeof(IExceptionAttribute), true).FirstOrDefault();
@@ -19,9 +26,7 @@ namespace NetCore.ExceptionHandling
                 return targetMethod.Invoke(decorated, args);
 
 
-            IPrincipal user = null;
-            if (decorated.GetType().GetInterfaces().Any(c => c == typeof(IService)))
-                user = (decorated as IService).GetUser();
+            string username = _identityContext.GetUserName();
 
             object result = null;
 
@@ -31,13 +36,13 @@ namespace NetCore.ExceptionHandling
             }
             catch (UserLevelException ex)
             {
-                aspect?.OnException(targetMethod, args, _logRepository, ex, user);
+                aspect?.OnException(targetMethod, args, _logRepository, ex, username);
                 if (aspect.GetThrowException())
                     throw;
             }
             catch (Exception ex)
             {
-                aspect?.OnException(targetMethod, args, _logRepository, ex, user);
+                aspect?.OnException(targetMethod, args, _logRepository, ex, username);
                 if (aspect.GetThrowException())
                     throw new Exception(ex.Message);
             }

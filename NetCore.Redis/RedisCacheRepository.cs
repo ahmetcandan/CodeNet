@@ -19,6 +19,11 @@ namespace NetCore.Redis
             redisClient = new RedisClient(new RedisEndpoint { Host = config.Value.Host, Port = config.Value.Port, Password = config.Value.Password, RetryTimeout = config.Value.RetryTimeout });
         }
 
+        /// <summary>
+        /// Get Cache value
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
         public object GetCache(string key)
         {
             var result = redisClient.Get<CacheModel>(key);
@@ -32,6 +37,12 @@ namespace NetCore.Redis
             return result.Value;
         }
 
+        /// <summary>
+        /// Set Cache
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="value"></param>
+        /// <param name="time">seconds</param>
         public void SetCache(string key, object value, int time)
         {
             redisClient.Set(key, new CacheModel(key, value, time), DateTime.Now.AddSeconds(time));

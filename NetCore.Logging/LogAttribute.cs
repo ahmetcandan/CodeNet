@@ -5,7 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Security.Principal;
 
 namespace NetCore.Logging
 {
@@ -17,32 +16,30 @@ namespace NetCore.Logging
             LogTime = logType;
         }
 
-        public void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user)
+        public void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, string username)
         {
-            string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
             {
                 MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
                 MethodName = targetMethod.Name,
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
-                UserName = userName,
+                UserName = username,
                 LogTime = LogTime.Before,
                 LogType = LogType.Info,
             };
 
             logRepository.Insert(model);
         }
-        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user, Exception ex)
+        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, string username, Exception ex)
         {
-            string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
             {
                 MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
                 MethodName = targetMethod.Name,
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
-                UserName = userName,
+                UserName = username,
                 Message = $"{{ Message: {ex.Message}, StackTrace: {ex.StackTrace}, InnerExceptionMessage: {(ex.InnerException != null ? ex.InnerException.Message : "")} }}",
                 LogTime = LogTime.Exception,
                 LogType = LogType.Error
@@ -51,16 +48,15 @@ namespace NetCore.Logging
             logRepository.Insert(model);
         }
 
-        public void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, IPrincipal user)
+        public void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, string username)
         {
-            string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
             {
                 MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
                 MethodName = targetMethod.Name,
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
-                UserName = userName,
+                UserName = username,
                 LogTime = LogTime.After,
                 LogType = LogType.Info
             };
@@ -86,9 +82,9 @@ namespace NetCore.Logging
 
     public interface ILogAttribute
     {
-        void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user);
-        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, IPrincipal user, Exception ex);
-        void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, IPrincipal user);
+        void OnBefore(MethodInfo targetMethod, object[] args, ILogRepository logRepository, string username);
+        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, string username, Exception ex);
+        void OnAfter(MethodInfo targetMethod, object[] args, object value, ILogRepository logRepository, string username);
         LogTime GetLogTime();
     }
 }

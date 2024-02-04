@@ -2,75 +2,75 @@
 
 namespace StokTakip.EntityFramework.Models
 {
-    public partial class Campaign : IEntity
+    public partial class Campaign : BaseEntity, IEntity
     {
     }
 
-    public partial class CampaignRequirement : IEntity
+    public partial class CampaignRequirement : BaseEntity, IEntity
     {
     }
 
-    public partial class CampaignUsedHistory : IEntity
+    public partial class CampaignUsedHistory : BaseEntity, IEntity
     {
     }
 
-    public partial class Category : IEntity
+    public partial class Category : BaseEntity, IEntity
     {
     }
 
-    public partial class CurrencyType : IEntity
+    public partial class CurrencyType : BaseEntity, IEntity
     {
     }
 
-    public partial class Customer : IEntity
+    public partial class Customer : BaseEntity, IEntity
     {
     }
 
-    public partial class DiscountCode : IEntity
+    public partial class DiscountCode : BaseEntity, IEntity
     {
     }
 
-    public partial class DiscountCodeRequirement : IEntity
+    public partial class DiscountCodeRequirement : BaseEntity, IEntity
     {
     }
 
-    public partial class DiscountCodeUsedHistory : IEntity
+    public partial class DiscountCodeUsedHistory : BaseEntity, IEntity
     {
     }
 
-    public partial class Employee : IEntity
+    public partial class Employee : BaseEntity, IEntity
     {
     }
 
-    public partial class GiftCard : IEntity
+    public partial class GiftCard : BaseEntity, IEntity
     {
     }
 
-    public partial class GiftCardHistory : IEntity
+    public partial class GiftCardHistory : BaseEntity, IEntity
     {
     }
 
-    public partial class Product : IEntity
+    public partial class Product : BaseEntity, IEntity
     {
     }
 
-    public partial class ProductAttribute : IEntity
+    public partial class ProductAttribute : BaseEntity, IEntity
     {
     }
 
-    public partial class ProductAttributeValue : IEntity
+    public partial class ProductAttributeValue : BaseEntity, IEntity
     {
     }
 
-    public partial class ProductPrice : IEntity
+    public partial class ProductPrice : BaseEntity, IEntity
     {
     }
 
-    public partial class SalesOrder : IEntity
+    public partial class SalesOrder : BaseEntity, IEntity
     {
     }
 
-    public partial class SalesOrderDetail : IEntity
+    public partial class SalesOrderDetail : BaseEntity, IEntity
     {
     }
 }

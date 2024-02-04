@@ -1,32 +1,28 @@
 ﻿using NetCore.Abstraction;
-using NetCore.Abstraction.Enum;
 using NetCore.Cache;
 using NetCore.ExceptionHandling;
-using NetCore.Logging;
 using StokTakip.Model;
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Abstraction
 {
     public interface ICustomerService : IService
     {
         //[Log(LogTime.Before)]
-        [Cache(120)]
-        public List<CustomerViewModel> GetCustomers();
-
-        //[Log(LogTime.Before)]
         [Cache(60)]
         [Exception]
-        public CustomerViewModel GetCustomer(int customerId);
+        Task<CustomerViewModel> GetCustomer(int customerId, CancellationToken cancellationToken);
 
         //[Log(LogTime.After)]
-        public CustomerViewModel CreateCustomer(CustomerViewModel customer);
+        Task<CustomerViewModel> CreateCustomer(CustomerViewModel customer, CancellationToken cancellationToken);
 
         //[Log(LogTime.After)]
-        public CustomerViewModel UpdateCustomer(CustomerViewModel customer);
+        Task<CustomerViewModel> UpdateCustomer(CustomerViewModel customer, CancellationToken cancellationToken);
 
         //[Log(LogTime.After)]
-        public CustomerViewModel DeleteCustomer(int customerId);
+        Task<CustomerViewModel> DeleteCustomer(int customerId, CancellationToken cancellationToken);
     }
 }

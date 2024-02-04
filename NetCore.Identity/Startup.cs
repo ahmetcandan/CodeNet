@@ -8,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NetCore.Abstraction;
+using NetCore.Core;
 using NetCore.EntityFramework;
 using NetCore.EntityFramework.Model;
 using System.Text;
@@ -93,6 +95,8 @@ namespace NetCore.Identity
                     }
                 });
             });
+
+            services.AddScoped<IIdentityContext, IdentityContext>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -109,6 +113,10 @@ namespace NetCore.Identity
             app.UseHttpsRedirection();
 
             app.UseRouting();
+            app.UseCors(builder => builder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
 
             app.UseAuthentication();
             app.UseAuthorization();

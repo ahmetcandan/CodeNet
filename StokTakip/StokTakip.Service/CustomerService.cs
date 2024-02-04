@@ -1,36 +1,23 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NetCore.Abstraction;
+﻿using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using StokTakip.Repository;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Service
 {
     public class CustomerService : BaseService, ICustomerService
     {
-        private readonly ICustomerRepository customerRepository;
-        private readonly ILogRepository logRepository;
-        private readonly IQService qService;
+        private readonly ICustomerRepository _customerRepository;
 
-        public CustomerService(DbContext dbContext, ILogRepository logRepository, IQService qService)
+        public CustomerService(ICustomerRepository customerRepository)
         {
-            customerRepository = new CustomerRepository(dbContext);
-            this.qService = qService;
-            this.logRepository = logRepository;
+            _customerRepository = customerRepository;
         }
 
-        public override void SetUser(IPrincipal user)
+        public async Task<CustomerViewModel> CreateCustomer(CustomerViewModel customer, CancellationToken cancellationToken)
         {
-            customerRepository.SetUser(user);
-            base.SetUser(user);
-        }
-
-        public CustomerViewModel CreateCustomer(CustomerViewModel customer)
-        {
-            var result = customerRepository.Add(new EntityFramework.Models.Customer
+            var result = await _customerRepository.AddAsync(new EntityFramework.Models.Customer
             {
                 Code = customer.Code,
                 Description = customer.Description,
@@ -38,8 +25,8 @@ namespace StokTakip.Service
                 No = customer.No,
                 IsActive = true,
                 IsDeleted = false
-            });
-            customerRepository.SaveChanges();
+            }, cancellationToken);
+            await _customerRepository.SaveChangesAsync(cancellationToken);
             var response = new CustomerViewModel
             {
                 Id = result.Id,
@@ -51,12 +38,12 @@ namespace StokTakip.Service
             return response;
         }
 
-        public CustomerViewModel DeleteCustomer(int customerId)
+        public async Task<CustomerViewModel> DeleteCustomer(int customerId, CancellationToken cancellationToken)
         {
-            var result = customerRepository.Get(customerId);
+            var result = await _customerRepository.GetAsync(customerId, cancellationToken);
             result.IsDeleted = true;
-            customerRepository.Update(result);
-            customerRepository.SaveChanges();
+            _customerRepository.Update(result);
+            await _customerRepository.SaveChangesAsync(cancellationToken);
             return new CustomerViewModel
             {
                 Id = result.Id,
@@ -67,9 +54,9 @@ namespace StokTakip.Service
             };
         }
 
-        public CustomerViewModel GetCustomer(int customerId)
+        public async Task<CustomerViewModel> GetCustomer(int customerId, CancellationToken cancellationToken)
         {
-            var result = customerRepository.Get(customerId);
+            var result = await _customerRepository.GetAsync(customerId, cancellationToken);
             if (result == null)
                 return null;
             var value = new CustomerViewModel
@@ -83,31 +70,15 @@ namespace StokTakip.Service
             return value;
         }
 
-        public List<CustomerViewModel> GetCustomers()
+        public async Task<CustomerViewModel> UpdateCustomer(CustomerViewModel customer, CancellationToken cancellationToken)
         {
-            var result = (
-                    from c in customerRepository.GetAll()
-                    select new CustomerViewModel
-                    {
-                        Code = c.Code,
-                        Description = c.Description,
-                        Id = c.Id,
-                        Name = c.Name,
-                        No = c.No
-                    }
-                ).ToList();
-            return result;
-        }
-
-        public CustomerViewModel UpdateCustomer(CustomerViewModel customer)
-        {
-            var result = customerRepository.Get(customer.Id);
+            var result = _customerRepository.Get(customer.Id);
             result.Code = customer.Code;
             result.Description = customer.Description;
             result.Name = customer.Name;
             result.No = customer.No;
-            customerRepository.Update(result);
-            customerRepository.SaveChanges();
+            _customerRepository.Update(result);
+            await _customerRepository.SaveChangesAsync(cancellationToken);
             return new CustomerViewModel
             {
                 Id = result.Id,

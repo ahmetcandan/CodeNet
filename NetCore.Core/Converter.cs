@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetCore.Core
 {
@@ -48,24 +46,20 @@ namespace NetCore.Core
 
                 value = (T)converter.ConvertFromString(source);
                 return true;
-
             }
             catch
             {
 
                 value = default(T);
                 return false;
-
             }
 
         }
 
         public static Boolean TryChangeType<T>(Object source, out T value)
         {
-
             try
             {
-
                 Type type = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
                 value = source.Convert<T>();
                 return true;
@@ -73,12 +67,10 @@ namespace NetCore.Core
             }
             catch
             {
-
                 value = default(T);
                 return false;
 
             }
-
         }
 
         public static T Map<T>(this object value) where T : new()

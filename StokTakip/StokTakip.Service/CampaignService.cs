@@ -1,42 +1,29 @@
-﻿using Microsoft.EntityFrameworkCore;
-using NetCore.Abstraction;
+﻿using NetCore.Abstraction;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using StokTakip.Repository;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Principal;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Service
 {
     public class CampaignService : BaseService, ICampaignService
     {
-        private readonly ICampaignRepository campaignRepository;
-        private readonly ILogRepository logRepository;
-        private readonly IQService qService;
+        private readonly ICampaignRepository _campaignRepository;
 
-        public CampaignService(DbContext dbContext, ILogRepository logRepository, IQService qService)
+        public CampaignService(ICampaignRepository campaignRepository)
         {
-            campaignRepository = new CampaignRepository(dbContext);
-            this.qService = qService;
-            this.logRepository = logRepository;
+            _campaignRepository = campaignRepository;
         }
 
-        public override void SetUser(IPrincipal user)
+        public async Task<CampaignViewModel> CreateCampaign(CampaignViewModel campaign, CancellationToken cancellationToken)
         {
-            campaignRepository.SetUser(user);
-            base.SetUser(user);
-        }
-
-        public CampaignViewModel CreateCampaign(CampaignViewModel campaign)
-        {
-            var result = campaignRepository.Add(new EntityFramework.Models.Campaign
+            var result = await _campaignRepository.AddAsync(new EntityFramework.Models.Campaign
             {
                 Name = campaign.Name,
                 IsActive = true,
                 IsDeleted = false
-            });
-            campaignRepository.SaveChanges();
+            }, cancellationToken);
+            await _campaignRepository.SaveChangesAsync(cancellationToken);
             var response = new CampaignViewModel
             {
                 Id = result.Id,
@@ -45,12 +32,12 @@ namespace StokTakip.Service
             return response;
         }
 
-        public CampaignViewModel DeleteCampaign(int campaignId)
+        public async Task<CampaignViewModel> DeleteCampaign(int campaignId, CancellationToken cancellationToken)
         {
-            var result = campaignRepository.Get(campaignId);
+            var result = await _campaignRepository.GetAsync(campaignId, cancellationToken);
             result.IsDeleted = true;
-            campaignRepository.Update(result);
-            campaignRepository.SaveChanges();
+            _campaignRepository.Update(result);
+            await _campaignRepository.SaveChangesAsync(cancellationToken);
             return new CampaignViewModel
             {
                 Id = result.Id,
@@ -58,9 +45,9 @@ namespace StokTakip.Service
             };
         }
 
-        public CampaignViewModel GetCampaign(int campaignId)
+        public async Task<CampaignViewModel> GetCampaign(int campaignId, CancellationToken cancellationToken)
         {
-            var result = campaignRepository.Get(campaignId);
+            var result = await _campaignRepository.GetAsync(campaignId, cancellationToken);
             if (result == null)
                 return null;
             var value = new CampaignViewModel
@@ -71,25 +58,12 @@ namespace StokTakip.Service
             return value;
         }
 
-        public List<CampaignViewModel> GetCampaigns()
+        public async Task<CampaignViewModel> UpdateCampaign(CampaignViewModel campaign, CancellationToken cancellationToken)
         {
-            var result = (
-                    from c in campaignRepository.GetAll()
-                    select new CampaignViewModel
-                    {
-                        Id = c.Id,
-                        Name = c.Name
-                    }
-                ).ToList();
-            return result;
-        }
-
-        public CampaignViewModel UpdateCampaign(CampaignViewModel campaign)
-        {
-            var result = campaignRepository.Get(campaign.Id);
+            var result = await _campaignRepository.GetAsync(campaign.Id, cancellationToken);
             result.Name = campaign.Name;
-            campaignRepository.Update(result);
-            campaignRepository.SaveChanges();
+            _campaignRepository.Update(result);
+            await _campaignRepository.SaveChangesAsync(cancellationToken);
             return new CampaignViewModel
             {
                 Id = result.Id,

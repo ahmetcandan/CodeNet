@@ -5,7 +5,8 @@ using NetCore.ExceptionHandling;
 using NetCore.Logging;
 using StokTakip.Model;
 using System;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Abstraction
 {
@@ -13,20 +14,16 @@ namespace StokTakip.Abstraction
     {
         [Log(LogTime.Before)]
         [Cache(60)]
-        public List<CampaignViewModel> GetCampaigns();
-
-        [Log(LogTime.Before)]
-        [Cache(60)]
         [Exception]
-        public CampaignViewModel GetCampaign(int campaignId);
+        public Task<CampaignViewModel> GetCampaign(int campaignId, CancellationToken cancellationToken);
 
         [Log(LogTime.After)]
-        public CampaignViewModel CreateCampaign(CampaignViewModel campaign);
+        public Task<CampaignViewModel> CreateCampaign(CampaignViewModel campaign, CancellationToken cancellationToken);
 
         [Log(LogTime.After)]
-        public CampaignViewModel UpdateCampaign(CampaignViewModel campaign);
+        public Task<CampaignViewModel> UpdateCampaign(CampaignViewModel campaign, CancellationToken cancellationToken);
 
         [Log(LogTime.After)]
-        public CampaignViewModel DeleteCampaign(int campaignId);
+        public Task<CampaignViewModel> DeleteCampaign(int campaignId, CancellationToken cancellationToken);
     }
 }

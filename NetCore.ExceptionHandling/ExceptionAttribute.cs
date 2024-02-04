@@ -17,16 +17,15 @@ namespace NetCore.ExceptionHandling
             this.throwException = throwException;
         }
 
-        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user)
+        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username)
         {
-            string userName = user != null ? user.Identity.Name : "anonymous";
             var model = new LogModel()
             {
                 MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
                 MethodName = targetMethod.Name,
                 Namespace = targetMethod.DeclaringType.Namespace,
                 ClassName = targetMethod.DeclaringType.Name,
-                UserName = userName,
+                UserName = username,
                 LogTime = LogTime.Before,
                 LogType = LogType.Error,
                 Message = $"{{ Message: {ex.Message}, StackTrace: {ex.StackTrace}, InnerExceptionMessage: {(ex.InnerException != null ? ex.InnerException.Message : "")} }}"
@@ -53,7 +52,7 @@ namespace NetCore.ExceptionHandling
 
     public interface IExceptionAttribute
     {
-        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, IPrincipal user);
+        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username);
 
         bool GetThrowException();
     }

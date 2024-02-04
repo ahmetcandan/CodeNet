@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace NetCore.Abstraction.Model
 {
-    public class TracingEntity : ITracingEntity
+    public abstract class TracingEntity : BaseEntity, ITracingEntity
     {
         public string CreatedUser { get; set; }
         public DateTime CreatedDate { get; set; }

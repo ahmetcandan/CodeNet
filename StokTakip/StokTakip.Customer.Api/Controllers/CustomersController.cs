@@ -2,7 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Abstraction;
 using StokTakip.Model;
-using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace StokTakip.Customer.Api.Controllers
 {
@@ -11,47 +12,35 @@ namespace StokTakip.Customer.Api.Controllers
     [Route("[controller]")]
     public class CustomersController : ControllerBase
     {
-        ICustomerService CustomerService;
+        private readonly ICustomerService _customerService;
 
         public CustomersController(ICustomerService customerService)
         {
-            CustomerService = customerService;
-        }
-
-        [HttpGet]
-        public List<CustomerViewModel> GetAll()
-        {
-            CustomerService.SetUser(User);
-            var list = CustomerService.GetCustomers();
-            return list;
+            _customerService = customerService ?? throw new System.ArgumentNullException(nameof(customerService));
         }
 
         [HttpGet("{customerId}")]
-        public CustomerViewModel Get(int customerId)
+        public async Task<CustomerViewModel> Get(int customerId, CancellationToken cancellationToken)
         {
-            CustomerService.SetUser(User);
-            return CustomerService.GetCustomer(customerId);
+            return await _customerService.GetCustomer(customerId, cancellationToken);
         }
 
         [HttpPost]
-        public CustomerViewModel Post(CustomerViewModel customer)
+        public async Task<CustomerViewModel> Post(CustomerViewModel customer, CancellationToken cancellationToken)
         {
-            CustomerService.SetUser(User);
-            return CustomerService.CreateCustomer(customer);
+            return await _customerService.CreateCustomer(customer, cancellationToken);
         }
 
         [HttpPut]
-        public CustomerViewModel Put(CustomerViewModel customer)
+        public async Task<CustomerViewModel> Put(CustomerViewModel customer, CancellationToken cancellationToken)
         {
-            CustomerService.SetUser(User);
-            return CustomerService.UpdateCustomer(customer);
+            return await _customerService.UpdateCustomer(customer, cancellationToken);
         }
 
         [HttpDelete]
-        public CustomerViewModel Delete(int customerId)
+        public async Task<CustomerViewModel> Delete(int customerId, CancellationToken cancellationToken)
         {
-            CustomerService.SetUser(User);
-            return CustomerService.DeleteCustomer(customerId);
+            return await _customerService.DeleteCustomer(customerId, cancellationToken);
         }
     }
 }

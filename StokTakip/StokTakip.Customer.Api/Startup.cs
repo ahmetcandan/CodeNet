@@ -10,6 +10,7 @@ using Microsoft.OpenApi.Models;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 using NetCore.Cache;
+using NetCore.Core;
 using NetCore.Core.Aspect;
 using NetCore.ExceptionHandling;
 using NetCore.Logging;
@@ -18,6 +19,7 @@ using NetCore.RabbitMQ;
 using NetCore.Redis;
 using StokTakip.Abstraction;
 using StokTakip.EntityFramework.Models;
+using StokTakip.Repository;
 using StokTakip.Service;
 using System.Collections.Generic;
 using System.Text;
@@ -100,7 +102,9 @@ namespace StokTakip.Customer.Api
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
 
+            services.AddScoped<IIdentityContext, IdentityContext>();
             services.AddScoped<DbContext, StokTakipContext>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
             services.AddScoped<ICustomerService, CustomerService>();
             services.AddScoped<ICacheRepository, RedisCacheRepository>();
             services.AddScoped<ILogRepository, MongoDBLogRepository>();
