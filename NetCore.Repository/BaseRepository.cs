@@ -32,7 +32,7 @@ namespace NetCore.Repository
             return _dbContext.Set<TEntity>().Add(entity).Entity;
         }
 
-        public Task<TEntity> AddAsync(TEntity entity) 
+        public Task<TEntity> AddAsync(TEntity entity)
         {
             return AddAsync(entity, CancellationToken.None);
         }
@@ -63,7 +63,7 @@ namespace NetCore.Repository
             return entities;
         }
 
-        public Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities) 
+        public Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities)
         {
             return AddRangeAsync(entities, CancellationToken.None);
         }

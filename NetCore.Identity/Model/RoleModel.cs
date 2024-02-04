@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace NetCore.Identity.Model
 {
@@ -8,7 +7,7 @@ namespace NetCore.Identity.Model
 
         [Required(ErrorMessage = "Id is required")]
         public string Id { get; set; }
-        
+
         [Required(ErrorMessage = "Name is required")]
         public string Name { get; set; }
 

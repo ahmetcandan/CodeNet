@@ -10,6 +10,6 @@ namespace NetCore.Identity.Model
         [Required(ErrorMessage = "Id is required")]
         public string Id { get; set; }
 
-        public IList<Claim>  Claims { get; set; }
+        public IList<Claim> Claims { get; set; }
     }
 }

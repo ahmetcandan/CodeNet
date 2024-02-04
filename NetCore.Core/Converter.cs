@@ -100,7 +100,7 @@ namespace NetCore.Core
             return result;
         }
 
-        public static IEnumerable<T> Map<T>(this IEnumerable<object> values) where T: new()
+        public static IEnumerable<T> Map<T>(this IEnumerable<object> values) where T : new()
         {
             return values.Select(c => c.Map<T>());
         }

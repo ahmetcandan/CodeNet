@@ -15,17 +15,17 @@ namespace NetCore.Core
             _httpContextAccessor = httpContextAccessor;
         }
 
-        public string GetUserName() 
+        public string GetUserName()
         {
             return _httpContextAccessor?.HttpContext?.User?.Identity?.Name;
         }
 
-        public IEnumerable<string> GetRoles() 
+        public IEnumerable<string> GetRoles()
         {
             return _httpContextAccessor?.HttpContext?.User?.Claims?.Where(c => c.Type == ClaimTypes.Role)?.Select(c => c.Value);
         }
 
-        public string GetToken() 
+        public string GetToken()
         {
             var authValues = _httpContextAccessor?.HttpContext?.Request?.Headers?["Authorization"][0]?.Split(' ');
             if (authValues?.Count() > 1)

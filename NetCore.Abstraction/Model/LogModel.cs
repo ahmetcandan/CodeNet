@@ -17,9 +17,9 @@ namespace NetCore.Abstraction.Model
             {
                 return $"{UserName}:{LogDate.Ticks}";
             }
-            set 
+            set
             {
-                
+
             }
         }
         public virtual DateTime LogDate { get; set; }

@@ -7,7 +7,7 @@ namespace NetCore.Identity.Model
     {
         [Required(ErrorMessage = "User Name is required")]
         public string Username { get; set; }
-        
+
         public IList<string> Roles { get; set; }
     }
 }

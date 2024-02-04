@@ -1,6 +1,4 @@
-﻿using NetCore.Abstraction.Enum;
-
-namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model
 {
     public interface IEntity
     {

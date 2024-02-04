@@ -3,7 +3,6 @@ using NetCore.Cache;
 using NetCore.ExceptionHandling;
 using StokTakip.Model;
 using System;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 

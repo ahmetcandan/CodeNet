@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model
 {
     public class RedisSettings
     {
