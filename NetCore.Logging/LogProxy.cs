@@ -43,17 +43,18 @@ namespace NetCore.Logging
             return result;
         }
 
-        public static TDecorated Create(TDecorated decorated, ILogRepository logRepository)
+        public static TDecorated Create(TDecorated decorated, ILogRepository logRepository, IIdentityContext identityContext)
         {
             object proxy = Create<TDecorated, LogProxy<TDecorated>>();
-            ((LogProxy<TDecorated>)proxy).SetParameters(decorated, logRepository);
+            ((LogProxy<TDecorated>)proxy).SetParameters(decorated, logRepository, identityContext);
             return (TDecorated)proxy;
         }
 
-        private void SetParameters(TDecorated decorated, ILogRepository logRepository)
+        private void SetParameters(TDecorated decorated, ILogRepository logRepository, IIdentityContext identityContext)
         {
             _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
+            _identityContext = identityContext ?? throw new ArgumentNullException(nameof(identityContext));
         }
     }
 }

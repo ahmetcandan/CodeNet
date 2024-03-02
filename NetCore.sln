@@ -55,7 +55,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Repository.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Core.Tests", "NetCore.Core.Tests\NetCore.Core.Tests.csproj", "{BC8D3FB8-D5E4-46C0-A526-D4D36A1EC84C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Contract", "StokTakip.Contract\StokTakip.Contract.csproj", "{31152801-A8FF-4B45-B19C-BA10673454BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Contract", "StokTakip.Contract\StokTakip.Contract.csproj", "{31152801-A8FF-4B45-B19C-BA10673454BC}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

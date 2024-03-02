@@ -7,10 +7,9 @@ namespace NetCore.ExceptionHandling
 {
     public class ExceptionHanlingProxy<TDecorated> : DispatchProxy
     {
-        private TDecorated decorated;
+        private TDecorated _decorated;
         private ILogRepository _logRepository;
-
-        public IIdentityContext _identityContext { get; }
+        private IIdentityContext _identityContext;
 
         public ExceptionHanlingProxy(IIdentityContext identityContext)
         {
@@ -22,7 +21,7 @@ namespace NetCore.ExceptionHandling
             var aspect = (IExceptionAttribute)targetMethod.GetCustomAttributes(typeof(IExceptionAttribute), true).FirstOrDefault();
 
             if (aspect == null)
-                return targetMethod.Invoke(decorated, args);
+                return targetMethod.Invoke(_decorated, args);
 
 
             string username = _identityContext.GetUserName();
@@ -31,7 +30,7 @@ namespace NetCore.ExceptionHandling
 
             try
             {
-                result = targetMethod.Invoke(decorated, args);
+                result = targetMethod.Invoke(_decorated, args);
             }
             catch (UserLevelException ex)
             {
@@ -49,17 +48,18 @@ namespace NetCore.ExceptionHandling
             return result;
         }
 
-        public static TDecorated Create(TDecorated decorated, ILogRepository logRepository)
+        public static TDecorated Create(TDecorated decorated, ILogRepository logRepository, IIdentityContext identityContext)
         {
             object proxy = Create<TDecorated, ExceptionHanlingProxy<TDecorated>>();
-            ((ExceptionHanlingProxy<TDecorated>)proxy).SetParameters(decorated, logRepository);
+            ((ExceptionHanlingProxy<TDecorated>)proxy).SetParameters(decorated, logRepository, identityContext);
             return (TDecorated)proxy;
         }
 
-        private void SetParameters(TDecorated decorated, ILogRepository logRepository)
+        private void SetParameters(TDecorated decorated, ILogRepository logRepository, IIdentityContext identityContext)
         {
-            this.decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
+            _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _logRepository = logRepository ?? throw new ArgumentNullException(nameof(logRepository));
+            _identityContext = identityContext ?? throw new ArgumentNullException(nameof(identityContext));
         }
     }
 }

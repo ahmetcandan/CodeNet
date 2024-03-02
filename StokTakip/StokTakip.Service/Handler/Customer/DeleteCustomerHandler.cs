@@ -8,18 +8,18 @@ using System.Threading.Tasks;
 
 namespace StokTakip.Service.Handler.Customer
 {
-    public class GetCustomerByIdHandler : IRequestHandler<GetCustomerById, ResponseBase<CustomerViewModel>>
+    public class DeleteCustomerHandler : IRequestHandler<DeleteCustomerRequest, ResponseBase<CustomerViewModel>>
     {
         private readonly ICustomerService _customerService;
 
-        public GetCustomerByIdHandler(ICustomerService customerService)
+        public DeleteCustomerHandler(ICustomerService customerService)
         {
             _customerService = customerService;
         }
 
-        public async Task<ResponseBase<CustomerViewModel>> Handle(GetCustomerById request, CancellationToken cancellationToken)
+        public async Task<ResponseBase<CustomerViewModel>> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
         {
-            var customer = await _customerService.GetCustomer(request.CustomerId, cancellationToken);
+            var customer = await _customerService.DeleteCustomer(request.Id, cancellationToken);
             return new ResponseBase<CustomerViewModel>
             {
                 Data = customer,

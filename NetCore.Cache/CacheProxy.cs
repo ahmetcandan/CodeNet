@@ -7,7 +7,7 @@ namespace NetCore.Cache
 {
     public class CacheProxy<TDecorated> : DispatchProxy
     {
-        private TDecorated decorated;
+        private TDecorated _decorated;
         private ICacheRepository _cacheRepository;
 
         public CacheProxy()
@@ -20,14 +20,14 @@ namespace NetCore.Cache
             var aspect = (ICacheAttribute)targetMethod.GetCustomAttributes(typeof(ICacheAttribute), true).FirstOrDefault();
 
             if (aspect == null)
-                return targetMethod.Invoke(decorated, args);
+                return targetMethod.Invoke(_decorated, args);
 
             var cacheResponse = aspect?.OnBefore(targetMethod, args, _cacheRepository);
 
             object result;
             if (cacheResponse == null || cacheResponse.GetType() == targetMethod.ReturnType)
             {
-                result = targetMethod.Invoke(decorated, args);
+                result = targetMethod.Invoke(_decorated, args);
                 aspect?.OnAfter(targetMethod, args, result, _cacheRepository);
             }
             else
@@ -45,7 +45,7 @@ namespace NetCore.Cache
 
         private void SetParameters(TDecorated decorated, ICacheRepository cacheRepository)
         {
-            this.decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
+            _decorated = decorated ?? throw new ArgumentNullException(nameof(decorated));
             _cacheRepository = cacheRepository ?? throw new ArgumentNullException(nameof(cacheRepository));
         }
     }

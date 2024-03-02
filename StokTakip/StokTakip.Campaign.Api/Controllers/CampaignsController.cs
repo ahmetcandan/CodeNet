@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using StokTakip.Abstraction;
+using NetCore.Abstraction.Model;
+using StokTakip.Contract.Request.Campaign;
 using StokTakip.Model;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,35 +14,35 @@ namespace StokTakip.Campaign.Api.Controllers
     [Route("[controller]")]
     public class CampaignsController : ControllerBase
     {
-        private readonly ICampaignService _campaignService;
+        private readonly IMediator _mediator;
 
-        public CampaignsController(ICampaignService campaignService)
+        public CampaignsController(IMediator mediator)
         {
-            _campaignService = campaignService ?? throw new System.ArgumentNullException(nameof(campaignService));
+            _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
         }
 
         [HttpGet("{campaignId}")]
-        public async Task<CampaignViewModel> Get(int campaignId, CancellationToken cancellationToken)
+        public async Task<ResponseBase<CampaignViewModel>> Get(int CampaignId, CancellationToken cancellationToken)
         {
-            return await _campaignService.GetCampaign(campaignId, cancellationToken);
+            return await _mediator.Send(new GetCampaignRequest { Id = CampaignId }, cancellationToken);
         }
 
         [HttpPost]
-        public async Task<CampaignViewModel> Post(CampaignViewModel campaign, CancellationToken cancellationToken)
+        public async Task<ResponseBase<CampaignViewModel>> Post(CreateCampaignRequest request, CancellationToken cancellationToken)
         {
-            return await _campaignService.CreateCampaign(campaign, cancellationToken);
+            return await _mediator.Send(request, cancellationToken);
         }
 
         [HttpPut]
-        public async Task<CampaignViewModel> Put(CampaignViewModel campaign, CancellationToken cancellationToken)
+        public async Task<ResponseBase<CampaignViewModel>> Put(UpdateCampaignRequest request, CancellationToken cancellationToken)
         {
-            return await _campaignService.UpdateCampaign(campaign, cancellationToken);
+            return await _mediator.Send(request, cancellationToken);
         }
 
         [HttpDelete]
-        public async Task<CampaignViewModel> Delete(int campaignId, CancellationToken cancellationToken)
+        public async Task<ResponseBase<CampaignViewModel>> Delete(int CampaignId, CancellationToken cancellationToken)
         {
-            return await _campaignService.DeleteCampaign(campaignId, cancellationToken);
+            return await _mediator.Send(new DeleteCampaignRequest { Id = CampaignId }, cancellationToken);
         }
     }
 }

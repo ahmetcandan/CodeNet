@@ -4,8 +4,8 @@ using StokTakip.Model;
 
 namespace StokTakip.Contract.Request.Customer
 {
-    public class GetCustomerById : IRequest<ResponseBase<CustomerViewModel>>
+    public class DeleteCustomerRequest : IRequest<ResponseBase<CustomerViewModel>>
     {
-        public int CustomerId { get; set; }
+        public int Id { get; set; }
     }
 }

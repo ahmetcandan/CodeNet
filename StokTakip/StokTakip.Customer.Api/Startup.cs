@@ -1,3 +1,4 @@
+using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -22,6 +23,7 @@ using StokTakip.EntityFramework.Models;
 using StokTakip.Repository;
 using StokTakip.Service;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 
 namespace StokTakip.Customer.Api
@@ -75,16 +77,13 @@ namespace StokTakip.Customer.Api
                 });
             });
 
-            // Adding Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-
-            // Adding Jwt Bearer
-            .AddJwtBearer(options =>
+                .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -102,6 +101,8 @@ namespace StokTakip.Customer.Api
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
 
+            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
+            services.AddHttpContextAccessor();
             services.AddScoped<IIdentityContext, IdentityContext>();
             services.AddScoped<DbContext, StokTakipContext>();
             services.AddScoped<ICustomerRepository, CustomerRepository>();
