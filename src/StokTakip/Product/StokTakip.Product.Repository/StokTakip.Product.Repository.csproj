@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetCore.Repository\NetCore.Repository.csproj" />
+    <ProjectReference Include="..\..\..\NetCore.Repository\NetCore.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
   </ItemGroup>
 

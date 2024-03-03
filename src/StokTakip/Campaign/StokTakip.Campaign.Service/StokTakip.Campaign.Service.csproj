@@ -5,7 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
+    <ProjectReference Include="..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
   </ItemGroup>
 
 </Project>

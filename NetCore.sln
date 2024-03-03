@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Identity", "src\Net
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.EntityFramework", "src\NetCore.EntityFramework\NetCore.EntityFramework.csproj", "{2E61A496-938F-402D-B0B0-AC702F17B714}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "src\StokTakip", "{F6DABB41-6C43-4B8B-8773-7B31A64E059F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "StokTakip", "{F6DABB41-6C43-4B8B-8773-7B31A64E059F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Abstraction", "src\NetCore.Abstraction\NetCore.Abstraction.csproj", "{13621376-0547-4231-85E7-3B27D662E5D3}"
 EndProject
@@ -49,11 +49,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Service"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Product.Service", "src\StokTakip\Product\StokTakip.Product.Service\StokTakip.Product.Service.csproj", "{DB069A09-607B-4A77-9DE5-937287140950}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customer", "src\StokTakip\Customer", "{CE10B00E-FAA5-4775-B7DE-592E5DF2CAFD}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Customer", "Customer", "{CE10B00E-FAA5-4775-B7DE-592E5DF2CAFD}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product", "src\StokTakip\Product", "{1D712A13-7F43-43E8-A4EF-BB2FD6EBC045}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Product", "Product", "{1D712A13-7F43-43E8-A4EF-BB2FD6EBC045}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Campaign", "src\StokTakip\Campaign", "{777EE02D-4940-4916-8E79-96EA2346C230}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Campaign", "Campaign", "{777EE02D-4940-4916-8E79-96EA2346C230}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Product.Container", "src\StokTakip\Product\StokTakip.Product.Container\StokTakip.Product.Container.csproj", "{79EC5281-2A8F-4CB3-9C35-04C6B0250858}"
 EndProject
@@ -73,17 +73,19 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Campaign.Reposito
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Campaign.Contract", "src\StokTakip\Campaign\StokTakip.Campaign.Contract\StokTakip.Campaign.Contract.csproj", "{CA9D5AA8-343E-497A-B517-F537A4742FA2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Campaign.Container", "src\StokTakip\Campaign\StokTakip.Campaign.Container\StokTakip.Campaign.Container.csproj", "{FEE37786-0E06-4739-8698-7DA994647536}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Campaign.Container", "src\StokTakip\Campaign\StokTakip.Campaign.Container\StokTakip.Campaign.Container.csproj", "{FEE37786-0E06-4739-8698-7DA994647536}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Customer.Model", "src\StokTakip\Customer\StokTakip.Customer.Model\StokTakip.Customer.Model.csproj", "{63E5E11F-F9B9-40D6-8349-276A34425776}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Model", "src\StokTakip\Customer\StokTakip.Customer.Model\StokTakip.Customer.Model.csproj", "{63E5E11F-F9B9-40D6-8349-276A34425776}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Customer.Repository", "src\StokTakip\Customer\StokTakip.Customer.Repository\StokTakip.Customer.Repository.csproj", "{0F56EF15-6E31-419F-808A-2CDB08B4B0F7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Repository", "src\StokTakip\Customer\StokTakip.Customer.Repository\StokTakip.Customer.Repository.csproj", "{0F56EF15-6E31-419F-808A-2CDB08B4B0F7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Customer.Abstraction", "src\StokTakip\Customer\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj", "{CE748F0C-7958-4E13-9D8F-A3118C8C75CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Abstraction", "src\StokTakip\Customer\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj", "{CE748F0C-7958-4E13-9D8F-A3118C8C75CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Customer.Contract", "src\StokTakip\Customer\StokTakip.Customer.Contract\StokTakip.Customer.Contract.csproj", "{027CAE08-A239-4BDD-8FE8-266B3CCB134E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Contract", "src\StokTakip\Customer\StokTakip.Customer.Contract\StokTakip.Customer.Contract.csproj", "{027CAE08-A239-4BDD-8FE8-266B3CCB134E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StokTakip.Customer.Container", "src\StokTakip\Customer\StokTakip.Customer.Container\StokTakip.Customer.Container.csproj", "{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Container", "src\StokTakip\Customer\StokTakip.Customer.Container\StokTakip.Customer.Container.csproj", "{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore.Container", "NetCore.Container\NetCore.Container.csproj", "{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -231,6 +233,10 @@ Global
 		{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -275,6 +281,7 @@ Global
 		{CE748F0C-7958-4E13-9D8F-A3118C8C75CE} = {CE10B00E-FAA5-4775-B7DE-592E5DF2CAFD}
 		{027CAE08-A239-4BDD-8FE8-266B3CCB134E} = {CE10B00E-FAA5-4775-B7DE-592E5DF2CAFD}
 		{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D} = {CE10B00E-FAA5-4775-B7DE-592E5DF2CAFD}
+		{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

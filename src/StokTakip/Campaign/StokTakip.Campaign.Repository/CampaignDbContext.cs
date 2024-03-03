@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StokTakip.Campaign.Model;
 
-namespace StokTakip.Product.Repository
+namespace StokTakip.Campaign.Repository
 {
     public partial class CampaignDbContext : DbContext
     {

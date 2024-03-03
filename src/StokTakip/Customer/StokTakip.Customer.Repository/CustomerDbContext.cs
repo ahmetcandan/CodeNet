@@ -9,7 +9,7 @@ namespace StokTakip.Customer.Repository
         {
         }
 
-        public CustomerDbContext(DbContextOptions<CustomerDbContext> options)
+        public CustomerDbContext(DbContextOptions<DbContext> options)
             : base(options)
         {
         }

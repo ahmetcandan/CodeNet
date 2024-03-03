@@ -1,12 +1,13 @@
-﻿using NetCore.Abstraction;
+﻿using Microsoft.EntityFrameworkCore;
+using NetCore.Abstraction;
 using NetCore.Repository;
 using StokTakip.Campaign.Abstraction.Repository;
 
-namespace StokTakip.Product.Repository
+namespace StokTakip.Campaign.Repository
 {
-    public class CampaignRepository : BaseRepository<Campaign.Model.Campaign>, ICampaignRepository
+    public class CampaignRepository : BaseRepository<Model.Campaign>, ICampaignRepository
     {
-        public CampaignRepository(CampaignDbContext context, IIdentityContext identityContext) : base(context, identityContext)
+        public CampaignRepository(DbContext context, IIdentityContext identityContext) : base(context, identityContext)
         {
 
         }

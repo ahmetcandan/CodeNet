@@ -7,15 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MediatR" Version="12.2.0" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
-    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="8.0.1" />
     <PackageReference Include="NSwag.MSBuild" Version="14.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -32,12 +25,7 @@
   </Target>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\NetCore.Core\NetCore.Core.csproj" />
-    <ProjectReference Include="..\..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
-    <ProjectReference Include="..\..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
-    <ProjectReference Include="..\..\NetCore.Redis\NetCore.Redis.csproj" />
-    <ProjectReference Include="..\..\StokTakip.Customer.Repository\StokTakip.Customer.Repository.csproj" />
-    <ProjectReference Include="..\..\StokTakip.Customer.Service\StokTakip.Customer.Service.csproj" />
+    <ProjectReference Include="..\StokTakip.Customer.Container\StokTakip.Customer.Container.csproj" />
   </ItemGroup>
 
 </Project>

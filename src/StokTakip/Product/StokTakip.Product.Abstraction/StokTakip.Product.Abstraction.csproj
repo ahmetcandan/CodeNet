@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+    <ProjectReference Include="..\..\..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Contract\StokTakip.Product.Contract.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Model\StokTakip.Product.Model.csproj" />
   </ItemGroup>

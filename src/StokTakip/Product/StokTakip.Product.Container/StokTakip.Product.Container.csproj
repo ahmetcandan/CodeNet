@@ -6,4 +6,15 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\NetCore.Container\NetCore.Container.csproj" />
+    <ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
+    <ProjectReference Include="..\StokTakip.Product.Repository\StokTakip.Product.Repository.csproj" />
+    <ProjectReference Include="..\StokTakip.Product.Service\StokTakip.Product.Service.csproj" />
+  </ItemGroup>
+
 </Project>

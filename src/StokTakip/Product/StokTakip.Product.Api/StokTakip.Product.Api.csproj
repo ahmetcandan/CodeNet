@@ -7,13 +7,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.2" />
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
     <PackageReference Include="NSwag.MSBuild" Version="14.0.3">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\StokTakip.Product.Container\StokTakip.Product.Container.csproj" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -23,14 +27,5 @@
   <Target Name="NSwag" AfterTargets="PostBuildEvent">
 	<!--<Exec WorkingDirectory="$(ProjectDir)" EnvironmentVariables="ASPNETCORE_ENVIRONMENT=Development" Command="$(NSwagExe_Net60) run nswag.json /variables:Configuration=$(Configuration)" />-->
   </Target>
-
-  <ItemGroup>
-    <ProjectReference Include="..\..\NetCore.Core\NetCore.Core.csproj" />
-    <ProjectReference Include="..\..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
-    <ProjectReference Include="..\..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
-    <ProjectReference Include="..\..\NetCore.Redis\NetCore.Redis.csproj" />
-    <ProjectReference Include="..\..\StokTakip.Product.Repository\StokTakip.Product.Repository.csproj" />
-    <ProjectReference Include="..\..\StokTakip.Product.Service\StokTakip.Product.Service.csproj" />
-  </ItemGroup>
 
 </Project>

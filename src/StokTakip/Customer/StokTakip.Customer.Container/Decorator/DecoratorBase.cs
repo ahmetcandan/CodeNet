@@ -1,10 +1,9 @@
-﻿using MediatR;
+﻿using Autofac;
+using MediatR;
 using NetCore.Abstraction.Model;
 using System.Reflection;
-using System.Threading;
-using System.Threading.Tasks;
 
-namespace NetCore.Abstraction
+namespace StokTakip.Customer.Container.Decorator
 {
     public abstract class DecoratorBase<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
          where TResponse : ResponseBase where TRequest : IRequest<TResponse>
@@ -14,11 +13,11 @@ namespace NetCore.Abstraction
 
         protected MethodBase GetHandlerMethodInfo()
         {
-            //var handler = Bootstrapper.Container.Resolve<IRequestHandler<TRequest, TResponse>>();
-            //if (handler != null)
-            //{
-            //    return handler.GetType().GetMethod("Handle");
-            //}
+            var handler = Bootstrapper.Container.Resolve<IRequestHandler<TRequest, TResponse>>();
+            if (handler != null)
+            {
+                return handler.GetType().GetMethod("Handle");
+            }
 
             return null;
         }

@@ -1,24 +1,16 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
-using NetCore.Core;
-using NetCore.MongoDB;
-using NetCore.RabbitMQ;
-using NetCore.Redis;
-using StokTakip.Campaign.Abstraction.Repository;
-using StokTakip.Campaign.Abstraction.Service;
-using StokTakip.Campaign.Service;
-using StokTakip.Product.Repository;
+using StokTakip.Campaign.Container;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Text;
 
 namespace StokTakip.Campaign.Api
@@ -36,7 +28,6 @@ namespace StokTakip.Campaign.Api
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddDbContext<CampaignDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Campaign")));
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "StokTakip | Campaign API", Version = "v1" });
@@ -72,16 +63,13 @@ namespace StokTakip.Campaign.Api
                 });
             });
 
-            // Adding Authentication
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
-
-            // Adding Jwt Bearer
-            .AddJwtBearer(options =>
+                .AddJwtBearer(options =>
             {
                 options.SaveToken = true;
                 options.RequireHttpsMetadata = false;
@@ -99,20 +87,14 @@ namespace StokTakip.Campaign.Api
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
             
-            services.AddMediatR(cfg => cfg.RegisterServicesFromAssembly(Assembly.GetAssembly(typeof(CampaignService))));
             services.AddHttpContextAccessor();
-            services.AddScoped<IIdentityContext, IdentityContext>();
-            services.AddScoped<DbContext, CampaignDbContext>();
-            services.AddScoped<ICampaignRepository, CampaignRepository>();
-            services.AddScoped<ICampaignService, CampaignService>();
-            services.AddScoped<ICacheRepository, RedisCacheRepository>();
-            services.AddScoped<ILogRepository, MongoDBLogRepository>();
-            services.AddScoped<IQService, RabbitMQService>();
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            var container = app.ApplicationServices.GetAutofacRoot();
+            Bootstrapper.SetContainer(container);
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -132,6 +114,11 @@ namespace StokTakip.Campaign.Api
             {
                 endpoints.MapControllers();
             });
+        }
+
+        public void ConfigureContainer(ContainerBuilder builder)
+        {
+            Bootstrapper.RegisterModules(builder);
         }
     }
 }

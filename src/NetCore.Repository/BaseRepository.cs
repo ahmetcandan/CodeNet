@@ -13,12 +13,14 @@ namespace NetCore.Repository
     public abstract class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
     {
         protected readonly DbContext _dbContext;
+        protected readonly DbSet<TEntity> _entities;
         private readonly IIdentityContext _identityContext;
 
         public BaseRepository(DbContext dbContext, IIdentityContext identityContext)
         {
             _dbContext = dbContext;
             _identityContext = identityContext;
+            _entities = _dbContext.Set<TEntity>();
         }
 
         public TEntity Add(TEntity entity)
@@ -85,23 +87,15 @@ namespace NetCore.Repository
 
         public TEntity Update(TEntity entity)
         {
-            try
+            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
             {
-                if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-                {
-                    var tEntity = (ITracingEntity)entity;
-                    tEntity.ModifiedDate = DateTime.Now;
-                    tEntity.ModifiedUser = _identityContext.GetUserName();
-                }
-                _dbContext.Set<TEntity>().Attach(entity);
-                _dbContext.Entry(entity).State = EntityState.Modified;
-                return entity;
+                var tEntity = (ITracingEntity)entity;
+                tEntity.ModifiedDate = DateTime.Now;
+                tEntity.ModifiedUser = _identityContext.GetUserName();
             }
-            catch (Exception ex)
-            {
-
-                throw;
-            }
+            _dbContext.Set<TEntity>().Attach(entity);
+            _dbContext.Entry(entity).State = EntityState.Modified;
+            return entity;
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
