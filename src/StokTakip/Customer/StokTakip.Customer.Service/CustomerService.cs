@@ -3,16 +3,19 @@ using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
+using System.Reflection;
 
 namespace StokTakip.Customer.Service
 {
     public class CustomerService : BaseService, ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
+        private readonly IAppLogger _appLogger;
 
-        public CustomerService(ICustomerRepository customerRepository)
+        public CustomerService(ICustomerRepository customerRepository, IAppLogger appLogger)
         {
             _customerRepository = customerRepository;
+            _appLogger = appLogger;
         }
 
         public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
@@ -59,6 +62,8 @@ namespace StokTakip.Customer.Service
             var result = await _customerRepository.GetAsync([customerId], cancellationToken);
             if (result == null)
                 return null;
+
+            _appLogger.TraceLog(result, MethodBase.GetCurrentMethod());
             var value = new CustomerResponse
             {
                 Code = result.Code,

@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Autofac" Version="8.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+    <ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
+    <ProjectReference Include="..\NetCore.Logging\NetCore.Logging.csproj" />
+    <ProjectReference Include="..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
+    <ProjectReference Include="..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
+    <ProjectReference Include="..\NetCore.Redis\NetCore.Redis.csproj" />
+  </ItemGroup>
+
+</Project>

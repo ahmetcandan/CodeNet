@@ -85,7 +85,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Contract
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StokTakip.Customer.Container", "src\StokTakip\Customer\StokTakip.Customer.Container\StokTakip.Customer.Container.csproj", "{E5682E6D-60A0-4099-8A7F-4672A1CB0F6D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore.Container", "NetCore.Container\NetCore.Container.csproj", "{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore.Container", "src\NetCore.Container\NetCore.Container.csproj", "{FDBD7DEB-C2DB-4F99-9D7F-27D66252FC1E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

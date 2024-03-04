@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetCore.Container\NetCore.Container.csproj" />
+    <ProjectReference Include="..\..\..\NetCore.Container\NetCore.Container.csproj" />
     <ProjectReference Include="..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
     <ProjectReference Include="..\StokTakip.Campaign.Repository\StokTakip.Campaign.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Campaign.Service\StokTakip.Campaign.Service.csproj" />

@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\NetCore.Container\NetCore.Container.csproj" />
+    <ProjectReference Include="..\..\..\NetCore.Container\NetCore.Container.csproj" />
     <ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
     <ProjectReference Include="..\StokTakip.Customer.Repository\StokTakip.Customer.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Customer.Service\StokTakip.Customer.Service.csproj" />
