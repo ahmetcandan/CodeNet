@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StokTakip.Product.Repository;
 
 namespace StokTakip.Product.Container.Modules
 {
@@ -10,7 +9,7 @@ namespace StokTakip.Product.Container.Modules
     {
         public static void AddDbContext(IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddEntityFrameworkSqlServer().AddDbContext<ProductDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Product")));
+            serviceCollection.AddEntityFrameworkSqlServer().AddDbContext<DbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Default")));
         }
     }
 }

@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using StokTakip.Campaign.Repository;
 
 namespace StokTakip.Campaign.Container.Modules
 {
@@ -10,7 +9,7 @@ namespace StokTakip.Campaign.Container.Modules
     {
         public static void AddDbContext(IServiceCollection serviceCollection, IConfiguration configuration)
         {
-            serviceCollection.AddEntityFrameworkSqlServer().AddDbContext<CampaignDbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Customer")));
+            serviceCollection.AddEntityFrameworkSqlServer().AddDbContext<DbContext>(options => options.UseSqlServer(configuration.GetConnectionString("Default")));
         }
     }
 }

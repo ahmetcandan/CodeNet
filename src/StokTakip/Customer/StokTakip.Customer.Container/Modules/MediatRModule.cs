@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using MediatR;
-using StokTakip.Customer.Container.Decorator;
+using NetCore.Container;
 using System.Reflection;
 
 namespace StokTakip.Customer.Container.Modules
@@ -10,10 +10,6 @@ namespace StokTakip.Customer.Container.Modules
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly).AsImplementedInterfaces();
-
-            builder.RegisterAssemblyTypes(typeof(Contract.Request.CreateCustomerRequest).Assembly)
-                .AsImplementedInterfaces()
-                .InstancePerLifetimeScope();
 
             builder.RegisterAssemblyTypes(typeof(Service.Handler.CreateCustomerHandler).Assembly)
                 .AsClosedTypesOf(typeof(IRequestHandler<,>))
