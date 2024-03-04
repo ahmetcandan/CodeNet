@@ -115,7 +115,7 @@ namespace StokTakip.Customer.Api
             });
         }
 
-        public void ConfigureContainer(ContainerBuilder builder) 
+        public void ConfigureContainer(ContainerBuilder builder)
         {
             Bootstrapper.RegisterModules(builder);
         }

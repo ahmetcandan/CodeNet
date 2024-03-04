@@ -6,9 +6,9 @@ namespace NetCore.Abstraction.Extension
 {
     public static class GetMethodBaseExtension
     {
-        public static MethodBase GetMethodBase(this MethodBase methodBase) 
+        public static MethodBase GetMethodBase(this MethodBase methodBase)
         {
-            if (methodBase.DeclaringType.GetInterfaces().Any(i=> i.Equals(typeof(IAsyncStateMachine))))
+            if (methodBase.DeclaringType.GetInterfaces().Any(i => i.Equals(typeof(IAsyncStateMachine))))
             {
                 var generatedType = methodBase.DeclaringType;
                 var originalType = generatedType.DeclaringType;

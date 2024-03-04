@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
 using StokTakip.Product.Contract.Request;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace StokTakip.Product.Api.Controllers
 {
-    //[Authorize(Roles = "product")]
     [ApiController]
     [Route("[controller]")]
     public class ProductsController : ControllerBase

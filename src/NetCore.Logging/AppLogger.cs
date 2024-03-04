@@ -44,7 +44,7 @@ namespace NetCore.Logging
             return $"Assebly: {methodBase.DeclaringType.Assembly.GetName().Name}, Class: {_methodBase.DeclaringType.Name}, Method: {_methodBase.Name}";
         }
 
-        protected virtual string GetObjectToString(object obj) 
+        protected virtual string GetObjectToString(object obj)
         {
             return JsonConvert.SerializeObject(obj);
         }

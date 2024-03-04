@@ -86,7 +86,7 @@ namespace StokTakip.Campaign.Api
             services.Configure<RedisSettings>(Configuration.GetSection("Redis"));
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
             services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
-            
+
             services.AddHttpContextAccessor();
         }
 

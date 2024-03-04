@@ -1,5 +1,4 @@
 ﻿using MediatR;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
 using StokTakip.Customer.Contract.Request;
@@ -9,7 +8,6 @@ using System.Threading.Tasks;
 
 namespace StokTakip.Customer.Api.Controllers
 {
-    //[Authorize]
     [ApiController]
     [Route("[controller]")]
     public class CustomersController : ControllerBase
@@ -23,7 +21,7 @@ namespace StokTakip.Customer.Api.Controllers
 
         [HttpGet("{customerId}")]
         public async Task<ResponseBase<CustomerResponse>> Get(int customerId, CancellationToken cancellationToken)
-        {;
+        {
             return await _mediator.Send(new GetCustomerRequest { Id = customerId }, cancellationToken);
         }
 
