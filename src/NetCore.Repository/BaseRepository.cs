@@ -34,9 +34,9 @@ namespace NetCore.Repository
             return _dbContext.Set<TEntity>().Add(entity).Entity;
         }
 
-        public Task<TEntity> AddAsync(TEntity entity)
+        public Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            return AddAsync(entity, CancellationToken.None);
+            return AddAsync(entity, cancellationToken);
         }
 
         public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
