@@ -7,8 +7,8 @@
         public string Message { get; set; }
     }
 
-    public class ResponseBase<T> : ResponseBase
+    public class ResponseBase<T> : ResponseBase where T : class
     {
-        public T Data { get; set; }
+        public T? Data { get; set; }
     }
 }

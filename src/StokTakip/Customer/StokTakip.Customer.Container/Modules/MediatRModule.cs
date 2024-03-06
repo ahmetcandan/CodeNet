@@ -1,6 +1,8 @@
 ﻿using Autofac;
+using AutoMapper;
 using MediatR;
 using NetCore.Container;
+using StokTakip.Customer.Service.Mapper;
 using System.Reflection;
 
 namespace StokTakip.Customer.Container.Modules
@@ -17,6 +19,8 @@ namespace StokTakip.Customer.Container.Modules
                 .InstancePerLifetimeScope();
 
             builder.RegisterGeneric(typeof(LoggingHandler<,>)).As(typeof(IPipelineBehavior<,>));
+            builder.RegisterType(typeof(Mapper)).As(typeof(IMapper)).AsSelf().InstancePerLifetimeScope();
+            builder.RegisterType(typeof(AutoMapperConfiguration)).As(typeof(IAutoMapperConfiguration)).AsSelf().InstancePerLifetimeScope();
 
             base.Load(builder);
         }

@@ -25,12 +25,9 @@ namespace NetCore.Repository
 
         public TEntity Add(TEntity entity)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-            {
-                var tEntity = (ITracingEntity)entity;
-                tEntity.CreatedDate = DateTime.Now;
-                tEntity.CreatedUser = _identityContext.GetUserName();
-            }
+            if (entity is TracingEntity tEntity)
+                SetCreatorInfo(tEntity);
+
             return _dbContext.Set<TEntity>().Add(entity).Entity;
         }
 
@@ -41,26 +38,17 @@ namespace NetCore.Repository
 
         public async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-            {
-                var tEntity = (ITracingEntity)entity;
-                tEntity.CreatedDate = DateTime.Now;
-                tEntity.CreatedUser = _identityContext.GetUserName();
-            }
+            if (entity is TracingEntity tEntity)
+                SetCreatorInfo(tEntity);
             return (await _dbContext.Set<TEntity>().AddAsync(entity, cancellationToken)).Entity;
         }
 
         public IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-            {
-                foreach (var entity in entities)
-                {
-                    var tEntity = (ITracingEntity)entity;
-                    tEntity.CreatedDate = DateTime.Now;
-                    tEntity.CreatedUser = _identityContext.GetUserName();
-                }
-            }
+            if (entities is IEnumerable<TracingEntity> tEntities)
+                foreach (var tEntity in tEntities)
+                    SetCreatorInfo(tEntity);
+
             _dbContext.Set<TEntity>().AddRange(entities);
             return entities;
         }
@@ -72,30 +60,45 @@ namespace NetCore.Repository
 
         public async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-            {
-                foreach (var entity in entities)
-                {
-                    var tEntity = (ITracingEntity)entity;
-                    tEntity.CreatedDate = DateTime.Now;
-                    tEntity.CreatedUser = _identityContext.GetUserName();
-                }
-            }
+            if (entities is IEnumerable<TracingEntity> tEntities)
+                foreach (var tEntity in tEntities)
+                    SetCreatorInfo(tEntity);
+
             await _dbContext.Set<TEntity>().AddRangeAsync(entities, cancellationToken);
             return entities;
         }
 
         public TEntity Update(TEntity entity)
         {
-            if (typeof(TEntity).GetInterfaces().Any(c => c == typeof(ITracingEntity)))
-            {
-                var tEntity = (ITracingEntity)entity;
-                tEntity.ModifiedDate = DateTime.Now;
-                tEntity.ModifiedUser = _identityContext.GetUserName();
-            }
+            if (entity is TracingEntity tEntity)
+                SetModifytorInfo(tEntity);
+
             _dbContext.Set<TEntity>().Attach(entity);
             _dbContext.Entry(entity).State = EntityState.Modified;
             return entity;
+        }
+
+        public IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities)
+        {
+            if (entities is IEnumerable<TracingEntity> tEntities)
+                foreach (var tEntity in tEntities)
+                    SetModifytorInfo(tEntity);
+
+            _dbContext.Set<TEntity>().AttachRange(entities);
+            _dbContext.Entry(entities).State = EntityState.Modified;
+            return entities;
+        }
+
+        private void SetCreatorInfo(TracingEntity tEntity)
+        {
+            tEntity.CreatedDate = DateTime.Now;
+            tEntity.CreatedUser = _identityContext.GetUserName();
+        }
+
+        private void SetModifytorInfo(TracingEntity tEntity)
+        {
+            tEntity.ModifiedDate = DateTime.Now;
+            tEntity.ModifiedUser = _identityContext.GetUserName();
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
@@ -125,11 +128,24 @@ namespace NetCore.Repository
 
         public TEntity Remove(TEntity entity)
         {
+            if (entity is BaseEntity bEntity)
+            {
+                bEntity.IsActive = false;
+                return Update(entity);
+            }
+
             return _dbContext.Set<TEntity>().Remove(entity).Entity;
         }
 
         public IEnumerable<TEntity> RemoveRange(IEnumerable<TEntity> entities)
         {
+            if (entities is IEnumerable<BaseEntity> bEntities)
+            {
+                foreach (var bEntity in bEntities)
+                    bEntity.IsDeleted = true;
+                return UpdateRange(entities);
+            }
+
             _dbContext.Set<TEntity>().RemoveRange(entities);
             return entities;
         }

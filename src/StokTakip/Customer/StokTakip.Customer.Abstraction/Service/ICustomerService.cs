@@ -6,7 +6,7 @@ namespace StokTakip.Customer.Abstraction.Service
 {
     public interface ICustomerService : IService
     {
-        Task<CustomerResponse> GetCustomer(int customerId, CancellationToken cancellationToken);
+        Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken);
 
         Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken);
 

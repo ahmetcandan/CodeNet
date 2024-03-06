@@ -3,76 +3,44 @@ using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
-using System.Reflection;
+using StokTakip.Customer.Service.Mapper;
 
 namespace StokTakip.Customer.Service
 {
     public class CustomerService : BaseService, ICustomerService
     {
         private readonly ICustomerRepository _customerRepository;
-        private readonly IAppLogger _appLogger;
+        private readonly IAutoMapperConfiguration _mapper;
 
-        public CustomerService(ICustomerRepository customerRepository, IAppLogger appLogger)
+        public CustomerService(ICustomerRepository customerRepository, IAutoMapperConfiguration mapper)
         {
             _customerRepository = customerRepository;
-            _appLogger = appLogger;
+            _mapper = mapper;
         }
 
         public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
         {
-            var result = await _customerRepository.AddAsync(new Model.Customer
-            {
-                Code = request.Code,
-                Description = request.Description,
-                Name = request.Name,
-                No = request.No,
-                IsActive = true,
-                IsDeleted = false
-            }, cancellationToken);
+            var model = _mapper.MapObject<CreateCustomerRequest, Model.Customer>(request);
+            var result = await _customerRepository.AddRangeAsync([model], cancellationToken);
             await _customerRepository.SaveChangesAsync(cancellationToken);
-            var response = new CustomerResponse
-            {
-                Id = result.Id,
-                Code = result.Code,
-                Description = result.Description,
-                Name = result.Name,
-                No = result.No
-            };
-            return response;
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result.FirstOrDefault());
         }
 
         public async Task<CustomerResponse> DeleteCustomer(int customerId, CancellationToken cancellationToken)
         {
             var result = await _customerRepository.GetAsync([customerId], cancellationToken);
-            result.IsDeleted = true;
-            _customerRepository.Update(result);
+            _customerRepository.Remove(result);
             await _customerRepository.SaveChangesAsync(cancellationToken);
-            return new CustomerResponse
-            {
-                Id = result.Id,
-                Code = result.Code,
-                Description = result.Description,
-                Name = result.Name,
-                No = result.No
-            };
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }
 
-        public async Task<CustomerResponse> GetCustomer(int customerId, CancellationToken cancellationToken)
+        public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
         {
             var result = await _customerRepository.GetAsync([customerId], cancellationToken);
             if (result == null)
                 return null;
 
-            _appLogger.TraceLog(result, MethodBase.GetCurrentMethod());
-            var value = new CustomerResponse
-            {
-                Code = result.Code,
-                Description = result.Description,
-                Name = result.Name,
-                No = result.No,
-                Id = result.Id
-            };
-            return value;
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }
 
         public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
@@ -84,14 +52,7 @@ namespace StokTakip.Customer.Service
             result.No = request.No;
             _customerRepository.Update(result);
             await _customerRepository.SaveChangesAsync(cancellationToken);
-            return new CustomerResponse
-            {
-                Id = result.Id,
-                Code = result.Code,
-                Description = result.Description,
-                Name = result.Name,
-                No = result.No
-            };
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }
     }
 }

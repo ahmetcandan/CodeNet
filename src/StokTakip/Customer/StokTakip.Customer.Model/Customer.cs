@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Customer.Model
 {
-    public class Customer : BaseEntity
+    public class Customer : TracingEntity
     {
         public int Id { get; set; }
 
