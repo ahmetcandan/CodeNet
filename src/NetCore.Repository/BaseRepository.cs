@@ -92,13 +92,13 @@ namespace NetCore.Repository
         private void SetCreatorInfo(TracingEntity tEntity)
         {
             tEntity.CreatedDate = DateTime.Now;
-            tEntity.CreatedUser = _identityContext.GetUserName();
+            tEntity.CreatedUser = _identityContext?.GetUserName();
         }
 
         private void SetModifytorInfo(TracingEntity tEntity)
         {
             tEntity.ModifiedDate = DateTime.Now;
-            tEntity.ModifiedUser = _identityContext.GetUserName();
+            tEntity.ModifiedUser = _identityContext?.GetUserName();
         }
 
         public IQueryable<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
@@ -130,7 +130,7 @@ namespace NetCore.Repository
         {
             if (entity is BaseEntity bEntity)
             {
-                bEntity.IsActive = false;
+                bEntity.IsDeleted = true;
                 return Update(entity);
             }
 

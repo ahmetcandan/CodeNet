@@ -10,13 +10,13 @@ namespace StokTakip.Customer.Service.Mapper
 
         public AutoMapperConfiguration()
         {
-            _mapperConfiguration = new MapperConfiguration(c => 
+            _mapperConfiguration = new MapperConfiguration(c =>
             {
                 c.AddMaps(Assembly.GetExecutingAssembly());
                 c.AllowNullCollections = true;
                 c.AllowNullDestinationValues = true;
             });
-            
+
             _mapper = new AutoMapper.Mapper(_mapperConfiguration);
         }
 
