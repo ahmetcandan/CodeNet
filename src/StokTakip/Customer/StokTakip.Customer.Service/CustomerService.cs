@@ -36,11 +36,11 @@ namespace StokTakip.Customer.Service
 
         public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
         {
-            var result = await _customerRepository.Find(c => c.Id == customerId,  cancellationToken);
-            if (result?.Any() == false)
+            var result = await _customerRepository.GetAsync([customerId], cancellationToken);
+            if (result is null)
                 return null;
 
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result.First());
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }
 
         public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
