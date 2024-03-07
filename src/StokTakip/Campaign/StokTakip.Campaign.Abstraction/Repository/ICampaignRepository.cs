@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Abstraction.Repository
 {
-    public interface ICampaignRepository : IRepository<Model.Campaign>
+    public interface ICampaignRepository : IBaseRepository<Model.Campaign>
     {
     }
 }

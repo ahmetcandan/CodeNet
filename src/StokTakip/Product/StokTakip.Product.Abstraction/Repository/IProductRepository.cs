@@ -2,7 +2,7 @@
 
 namespace StokTakip.Product.Abstraction.Repository
 {
-    public interface IProductRepository : IRepository<Model.Product>
+    public interface IProductRepository : IBaseRepository<Model.Product>
     {
     }
 }

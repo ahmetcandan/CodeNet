@@ -1,6 +1,6 @@
 ﻿namespace NetCore.Abstraction.Model
 {
-    public abstract class BaseEntity : IEntity
+    public abstract class BaseEntity : Entity, IBaseEntity
     {
         protected BaseEntity()
         {

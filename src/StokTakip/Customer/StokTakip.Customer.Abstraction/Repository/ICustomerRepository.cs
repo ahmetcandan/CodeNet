@@ -2,7 +2,7 @@
 
 namespace StokTakip.Customer.Abstraction.Repository
 {
-    public interface ICustomerRepository : IRepository<Model.Customer>
+    public interface ICustomerRepository : ITracingRepository<Model.Customer>
     {
     }
 }
