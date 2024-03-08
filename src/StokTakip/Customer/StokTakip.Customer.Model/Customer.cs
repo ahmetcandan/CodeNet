@@ -9,7 +9,7 @@ namespace StokTakip.Customer.Model
 
         [Required]
         [MaxLength(100)]
-        public required string Name 
+        public required string Name
         {
             get { return GetValue(_name); }
             set { _name = SetValue(value); }

@@ -1,9 +1,9 @@
 ﻿using NetCore.Abstraction.Model;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
-using System.Threading.Tasks;
 using System.Threading;
-using System;
+using System.Threading.Tasks;
 
 namespace NetCore.Abstraction
 {

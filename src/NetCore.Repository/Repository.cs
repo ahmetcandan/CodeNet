@@ -67,7 +67,7 @@ namespace NetCore.Repository
             return entities;
         }
 
-        public virtual Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> predicate) 
+        public virtual Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> predicate)
         {
             return Find(predicate, CancellationToken.None);
         }
