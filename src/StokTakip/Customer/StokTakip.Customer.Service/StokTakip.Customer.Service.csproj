@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
     <ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
   </ItemGroup>
 

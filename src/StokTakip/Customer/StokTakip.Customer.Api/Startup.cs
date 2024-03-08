@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.Abstraction.Model;
 using StokTakip.Customer.Container;
-using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 namespace StokTakip.Customer.Api
@@ -42,24 +42,7 @@ namespace StokTakip.Customer.Api
                     Scheme = "Bearer"
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-
-                        },
-                        new List<string>()
-                    }
-                });
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
             services.AddAuthentication(options =>

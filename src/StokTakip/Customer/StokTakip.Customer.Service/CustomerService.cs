@@ -1,4 +1,5 @@
 ﻿using NetCore.Abstraction;
+using NetCore.ExceptionHandling;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
@@ -21,9 +22,9 @@ namespace StokTakip.Customer.Service
         public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
         {
             var model = _mapper.MapObject<CreateCustomerRequest, Model.Customer>(request);
-            var result = await _customerRepository.AddRangeAsync([model], cancellationToken);
+            var result = await _customerRepository.AddAsync(model, cancellationToken);
             await _customerRepository.SaveChangesAsync(cancellationToken);
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result.FirstOrDefault());
+            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }
 
         public async Task<CustomerResponse> DeleteCustomer(int customerId, CancellationToken cancellationToken)
@@ -38,7 +39,7 @@ namespace StokTakip.Customer.Service
         {
             var result = await _customerRepository.GetAsync([customerId], cancellationToken);
             if (result is null)
-                return null;
+                throw new UserLevelException("01", "Kullanıcı bulunamadı!");
 
             return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
         }

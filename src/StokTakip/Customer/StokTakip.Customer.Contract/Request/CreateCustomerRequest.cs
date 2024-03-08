@@ -1,14 +1,19 @@
 ﻿using MediatR;
 using NetCore.Abstraction.Model;
 using StokTakip.Customer.Contract.Response;
+using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Customer.Contract.Request
 {
     public class CreateCustomerRequest : IRequest<ResponseBase<CustomerResponse>>
     {
-        public string Name { get; set; }
-        public string No { get; set; }
-        public string Code { get; set; }
-        public string Description { get; set; }
+        [MaxLength(100)]
+        public required string Name { get; set; }
+        [MaxLength(10)]
+        public required string No { get; set; }
+        [MaxLength(50)]
+        public required string Code { get; set; }
+        [MaxLength(100)]
+        public string? Description { get; set; }
     }
 }
