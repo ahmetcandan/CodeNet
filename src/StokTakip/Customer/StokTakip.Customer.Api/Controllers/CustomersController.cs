@@ -20,27 +20,31 @@ namespace StokTakip.Customer.Api.Controllers
         }
 
         [HttpGet("{customerId}")]
-        public async Task<ResponseBase<CustomerResponse>> Get(int customerId, CancellationToken cancellationToken)
+        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+        public async Task<IActionResult> Get(int customerId, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new GetCustomerRequest { Id = customerId }, cancellationToken);
+            return Ok(await _mediator.Send(new GetCustomerRequest { Id = customerId }, cancellationToken));
         }
 
         [HttpPost]
-        public async Task<ResponseBase<CustomerResponse>> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
+        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+        public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(request, cancellationToken);
+            return Ok(await _mediator.Send(request, cancellationToken));
         }
 
         [HttpPut]
-        public async Task<ResponseBase<CustomerResponse>> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
+        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+        public async Task<IActionResult> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(request, cancellationToken);
+            return Ok(await _mediator.Send(request, cancellationToken));
         }
 
         [HttpDelete]
-        public async Task<ResponseBase<CustomerResponse>> Delete(int customerId, CancellationToken cancellationToken)
+        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+        public async Task<IActionResult> Delete(int customerId, CancellationToken cancellationToken)
         {
-            return await _mediator.Send(new DeleteCustomerRequest { Id = customerId }, cancellationToken);
+            return Ok(await _mediator.Send(new DeleteCustomerRequest { Id = customerId }, cancellationToken));
         }
     }
 }

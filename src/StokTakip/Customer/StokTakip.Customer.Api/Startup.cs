@@ -82,6 +82,8 @@ namespace StokTakip.Customer.Api
                 app.UseDeveloperExceptionPage();
             }
 
+            app.UseExceptionHandler("/Error");
+
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Customers API v1"));
 
