@@ -6,41 +6,39 @@ using StokTakip.Product.Contract.Response;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StokTakip.Product.Api.Controllers
+namespace StokTakip.Product.Api.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class ProductsController(IMediator mediator) : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class ProductsController : ControllerBase
+    private readonly IMediator _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
+
+    [HttpGet("{productId}")]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    public async Task<IActionResult> Get(int productId, CancellationToken cancellationToken)
     {
-        private readonly IMediator _mediator;
+        return Ok(await _mediator.Send(new GetProductRequest { Id = productId }, cancellationToken));
+    }
 
-        public ProductsController(IMediator mediator)
-        {
-            _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
-        }
+    [HttpPost]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    public async Task<IActionResult> Post(CreateProductRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(request, cancellationToken));
+    }
 
-        [HttpGet("{productId}")]
-        public async Task<ResponseBase<ProductResponse>> Get(int productId, CancellationToken cancellationToken)
-        {
-            return await _mediator.Send(new GetProductRequest { Id = productId }, cancellationToken);
-        }
+    [HttpPut]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    public async Task<IActionResult> Put(UpdateProductRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(request, cancellationToken));
+    }
 
-        [HttpPost]
-        public async Task<ResponseBase<ProductResponse>> Post(CreateProductRequest request, CancellationToken cancellationToken)
-        {
-            return await _mediator.Send(request, cancellationToken);
-        }
-
-        [HttpPut]
-        public async Task<ResponseBase<ProductResponse>> Put(UpdateProductRequest request, CancellationToken cancellationToken)
-        {
-            return await _mediator.Send(request, cancellationToken);
-        }
-
-        [HttpDelete]
-        public async Task<ResponseBase<ProductResponse>> Delete(int productId, CancellationToken cancellationToken)
-        {
-            return await _mediator.Send(new DeleteProductRequest { Id = productId }, cancellationToken);
-        }
+    [HttpDelete]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    public async Task<IActionResult> Delete(int productId, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(new DeleteProductRequest { Id = productId }, cancellationToken));
     }
 }

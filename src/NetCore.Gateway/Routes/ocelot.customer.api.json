@@ -1,0 +1,36 @@
+{
+  "Routes": [
+    {
+      "DownstreamPathTemplate": "/customers",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5011
+        }
+      ],
+      "UpstreamPathTemplate": "/customers",
+      "UpstreamHttpMethod": [ "Post", "Put", "Delete" ],
+      "AuthenticationOptions": {
+        "AllowedScopes": []
+      },
+      "SwaggerKey": "customer"
+    },
+    {
+      "DownstreamPathTemplate": "/customers/{customerId}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 5011
+        }
+      ],
+      "UpstreamPathTemplate": "/customers/{customerId}",
+      "UpstreamHttpMethod": [ "Get" ],
+      "AuthenticationOptions": {
+        "AllowedScopes": []
+      },
+      "SwaggerKey": "customer"
+    }
+  ]
+}

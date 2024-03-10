@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
 using StokTakip.Customer.Contract.Request;
@@ -6,45 +7,40 @@ using StokTakip.Customer.Contract.Response;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StokTakip.Customer.Api.Controllers
+namespace StokTakip.Customer.Api.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class CustomersController(IMediator mediator) : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class CustomersController : ControllerBase
+    private readonly IMediator _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
+
+    [HttpGet("{customerId}")]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+    public async Task<IActionResult> Get(int customerId, CancellationToken cancellationToken)
     {
-        private readonly IMediator _mediator;
+        return Ok(await _mediator.Send(new GetCustomerRequest { Id = customerId }, cancellationToken));
+    }
 
-        public CustomersController(IMediator mediator)
-        {
-            _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
-        }
+    [HttpPost]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+    public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(request, cancellationToken));
+    }
 
-        [HttpGet("{customerId}")]
-        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
-        public async Task<IActionResult> Get(int customerId, CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(new GetCustomerRequest { Id = customerId }, cancellationToken));
-        }
+    [Authorize]
+    [HttpPut]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+    public async Task<IActionResult> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(request, cancellationToken));
+    }
 
-        [HttpPost]
-        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
-        public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(request, cancellationToken));
-        }
-
-        [HttpPut]
-        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
-        public async Task<IActionResult> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(request, cancellationToken));
-        }
-
-        [HttpDelete]
-        [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
-        public async Task<IActionResult> Delete(int customerId, CancellationToken cancellationToken)
-        {
-            return Ok(await _mediator.Send(new DeleteCustomerRequest { Id = customerId }, cancellationToken));
-        }
+    [HttpDelete]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]
+    public async Task<IActionResult> Delete(int customerId, CancellationToken cancellationToken)
+    {
+        return Ok(await _mediator.Send(new DeleteCustomerRequest { Id = customerId }, cancellationToken));
     }
 }

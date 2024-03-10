@@ -15,10 +15,7 @@ namespace StokTakip.Product.Repository
         }
 
         public virtual DbSet<Model.Product> Products { get; set; }
-        public virtual DbSet<ProductAttribute> ProductAttributes { get; set; }
-        public virtual DbSet<ProductAttributeValue> ProductAttributeValues { get; set; }
-        public virtual DbSet<ProductPrice> ProductPrices { get; set; }
-        public virtual DbSet<CurrencyType> CurrencyTypes { get; set; }
+        public virtual DbSet<Category> Categories { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

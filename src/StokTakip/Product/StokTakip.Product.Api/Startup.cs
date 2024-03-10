@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.Abstraction.Model;
 using StokTakip.Product.Container;
-using System.Collections.Generic;
+using Swashbuckle.AspNetCore.Filters;
 using System.Text;
 
 namespace StokTakip.Product.Api
@@ -24,7 +24,6 @@ namespace StokTakip.Product.Api
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
@@ -43,24 +42,7 @@ namespace StokTakip.Product.Api
                     Scheme = "Bearer"
                 });
 
-                c.AddSecurityRequirement(new OpenApiSecurityRequirement()
-                {
-                    {
-                        new OpenApiSecurityScheme
-                        {
-                            Reference = new OpenApiReference
-                            {
-                                Type = ReferenceType.SecurityScheme,
-                                Id = "Bearer"
-                            },
-                            Scheme = "oauth2",
-                            Name = "Bearer",
-                            In = ParameterLocation.Header,
-
-                        },
-                        new List<string>()
-                    }
-                });
+                c.OperationFilter<SecurityRequirementsOperationFilter>();
             });
 
             services.AddAuthentication(options =>
@@ -70,18 +52,18 @@ namespace StokTakip.Product.Api
                 options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
             })
                 .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
                 {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = Configuration["JWT:ValidAudience"],
-                    ValidIssuer = Configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
-                };
-            });
+                    options.SaveToken = true;
+                    options.RequireHttpsMetadata = false;
+                    options.TokenValidationParameters = new TokenValidationParameters()
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidAudience = Configuration["JWT:ValidAudience"],
+                        ValidIssuer = Configuration["JWT:ValidIssuer"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                    };
+                });
 
             services.Configure<RedisSettings>(Configuration.GetSection("Redis"));
             services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
@@ -99,6 +81,8 @@ namespace StokTakip.Product.Api
             {
                 app.UseDeveloperExceptionPage();
             }
+
+            app.UseExceptionHandler("/Error");
 
             app.UseSwagger();
             app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Products API v1"));

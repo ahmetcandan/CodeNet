@@ -6,6 +6,6 @@ namespace StokTakip.Customer.Contract.Request
 {
     public class GetCustomerRequest : IRequest<ResponseBase<CustomerResponse>>
     {
-        public int Id { get; set; }
+        public required int Id { get; set; }
     }
 }

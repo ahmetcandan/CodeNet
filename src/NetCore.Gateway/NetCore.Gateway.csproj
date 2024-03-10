@@ -1,25 +1,20 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <UserSecretsId>0bd488d2-393d-4aa1-a743-d7d7e8df0c03</UserSecretsId>
-    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
-    <EnableUnsafeBinaryFormatterSerialization>true</EnableUnsafeBinaryFormatterSerialization>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.19.6" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
-    <PackageReference Include="Ocelot" Version="23.0.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="MMLib.SwaggerForOcelot" Version="8.1.0" />
+    <PackageReference Include="Ocelot" Version="23.1.0" />
+    <PackageReference Include="Ocelot.Provider.Polly" Version="23.1.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0" />
   </ItemGroup>
 
   <ItemGroup>
     <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
   </ItemGroup>
 
 </Project>

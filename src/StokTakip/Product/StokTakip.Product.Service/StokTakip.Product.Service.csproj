@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="13.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
   </ItemGroup>
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 
-namespace StokTakip.Customer.Api.Controllers;
+namespace StokTakip.Product.Api.Controllers;
 
 [Route("Error")]
 [ApiController]
