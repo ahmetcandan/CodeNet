@@ -1,8 +1,7 @@
 ﻿using NetCore.Abstraction.Model;
 
-namespace NetCore.Abstraction
+namespace NetCore.Abstraction;
+
+public interface ITracingRepository<TTracingEntity> : IBaseRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
 {
-    public interface ITracingRepository<TTracingEntity> : IBaseRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
-    {
-    }
 }

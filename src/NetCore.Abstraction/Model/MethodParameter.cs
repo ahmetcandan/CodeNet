@@ -1,8 +1,7 @@
-﻿namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model;
+
+public class MethodParameter
 {
-    public class MethodParameter
-    {
-        public string Name { get; set; }
-        public object Value { get; set; }
-    }
+    public string Name { get; set; }
+    public object Value { get; set; }
 }

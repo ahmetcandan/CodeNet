@@ -1,8 +1,7 @@
-﻿namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model;
+
+public interface IBaseEntity : IEntity
 {
-    public interface IBaseEntity : IEntity
-    {
-        bool IsDeleted { get; set; }
-        bool IsActive { get; set; }
-    }
+    bool IsDeleted { get; set; }
+    bool IsActive { get; set; }
 }

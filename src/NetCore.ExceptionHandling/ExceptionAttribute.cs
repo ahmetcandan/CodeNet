@@ -6,53 +6,46 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
-namespace NetCore.ExceptionHandling
+namespace NetCore.ExceptionHandling;
+
+public class ExceptionAttribute(bool throwException = true) : Attribute, IExceptionAttribute
 {
-    public class ExceptionAttribute : Attribute, IExceptionAttribute
+    public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username)
     {
-        private bool throwException;
-        public ExceptionAttribute(bool throwException = true)
+        var model = new LogModel()
         {
-            this.throwException = throwException;
-        }
+            MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
+            MethodName = targetMethod.Name,
+            Namespace = targetMethod.DeclaringType.Namespace,
+            ClassName = targetMethod.DeclaringType.Name,
+            UserName = username,
+            LogTime = LogTime.Before,
+            LogType = LogType.Error,
+            Message = $"{{ Message: {ex.Message}, StackTrace: {ex.StackTrace}, InnerExceptionMessage: {(ex.InnerException != null ? ex.InnerException.Message : "")} }}"
+        };
 
-        public void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username)
-        {
-            var model = new LogModel()
-            {
-                MethodParameters = getMethodParameters(targetMethod.GetParameters(), args),
-                MethodName = targetMethod.Name,
-                Namespace = targetMethod.DeclaringType.Namespace,
-                ClassName = targetMethod.DeclaringType.Name,
-                UserName = username,
-                LogTime = LogTime.Before,
-                LogType = LogType.Error,
-                Message = $"{{ Message: {ex.Message}, StackTrace: {ex.StackTrace}, InnerExceptionMessage: {(ex.InnerException != null ? ex.InnerException.Message : "")} }}"
-            };
-
-            logRepository.Insert(model);
-        }
-
-        IEnumerable<MethodParameter> getMethodParameters(ParameterInfo[] parameters, object[] args)
-        {
-            return (from p in parameters
-                    select new MethodParameter
-                    {
-                        Name = p.Name,
-                        Value = args[p.Position]
-                    });
-        }
-
-        public bool GetThrowException()
-        {
-            return throwException;
-        }
+        logRepository.Insert(model);
     }
 
-    public interface IExceptionAttribute
+    static IEnumerable<MethodParameter> getMethodParameters(ParameterInfo[] parameters, object[] args)
     {
-        void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username);
-
-        bool GetThrowException();
+        return (from p in parameters
+                select new MethodParameter
+                {
+                    Name = p.Name,
+                    Value = args[p.Position]
+                });
     }
+
+    public bool GetThrowException()
+    {
+        return throwException;
+    }
+}
+
+public interface IExceptionAttribute
+{
+    void OnException(MethodInfo targetMethod, object[] args, ILogRepository logRepository, Exception ex, string username);
+
+    bool GetThrowException();
 }

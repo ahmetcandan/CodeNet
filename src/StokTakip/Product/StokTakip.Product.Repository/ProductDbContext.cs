@@ -1,28 +1,18 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StokTakip.Product.Model;
 
-namespace StokTakip.Product.Repository
+namespace StokTakip.Product.Repository;
+
+public partial class ProductDbContext(DbContextOptions<ProductDbContext> options) : DbContext(options)
 {
-    public partial class ProductDbContext : DbContext
+    public virtual DbSet<Model.Product> Products { get; set; }
+    public virtual DbSet<Category> Categories { get; set; }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        public ProductDbContext()
+        if (!optionsBuilder.IsConfigured)
         {
-        }
-
-        public ProductDbContext(DbContextOptions<ProductDbContext> options)
-            : base(options)
-        {
-        }
-
-        public virtual DbSet<Model.Product> Products { get; set; }
-        public virtual DbSet<Category> Categories { get; set; }
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=Product;Trusted_Connection=True;TrustServerCertificate=true");
-            }
+            optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=Product;Trusted_Connection=True;TrustServerCertificate=true");
         }
     }
 }

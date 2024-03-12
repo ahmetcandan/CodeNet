@@ -1,14 +1,7 @@
-﻿namespace NetCore.Abstraction.Model
-{
-    public abstract class BaseEntity : Entity, IBaseEntity
-    {
-        protected BaseEntity()
-        {
-            IsActive = true;
-            IsDeleted = false;
-        }
+﻿namespace NetCore.Abstraction.Model;
 
-        public bool IsDeleted { get; set; }
-        public bool IsActive { get; set; }
-    }
+public abstract class BaseEntity : Entity, IBaseEntity
+{
+    public bool IsDeleted { get; set; } = false;
+    public bool IsActive { get; set; } = true;
 }

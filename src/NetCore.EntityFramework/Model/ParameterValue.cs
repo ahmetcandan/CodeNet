@@ -1,15 +1,14 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace NetCore.EntityFramework.Model
+namespace NetCore.EntityFramework.Model;
+
+public class ParameterValue
 {
-    public class ParameterValue
-    {
-        public int ParameterValueId { get; set; }
-        [Required]
-        public string Value { get; set; }
-        public DateTime? ExpDate { get; set; }
-        public int ParameterKeyId { get; set; }
-        public ParameterKey ParameterKey { get; set; }
-    }
+    public int ParameterValueId { get; set; }
+    [Required]
+    public string Value { get; set; }
+    public DateTime? ExpDate { get; set; }
+    public int ParameterKeyId { get; set; }
+    public ParameterKey ParameterKey { get; set; }
 }

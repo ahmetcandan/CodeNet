@@ -20,10 +20,6 @@ namespace NetCore.Identity.Controllers;
 [ApiController]
 public class TokenController(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) : ControllerBase
 {
-    private readonly UserManager<ApplicationUser> _userManager = userManager;
-    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-    private readonly IConfiguration _configuration = configuration;
-
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(ResponseBase<TokenResponse>))]
     public async Task<IActionResult> Login([FromBody] LoginModel model)
@@ -31,10 +27,10 @@ public class TokenController(UserManager<ApplicationUser> userManager, RoleManag
         try
         {
             var now = DateTime.Now;
-            var user = await _userManager.FindByNameAsync(model.Username);
-            if (user != null && await _userManager.CheckPasswordAsync(user, model.Password))
+            var user = await userManager.FindByNameAsync(model.Username);
+            if (user != null && await userManager.CheckPasswordAsync(user, model.Password))
             {
-                var userRoles = await _userManager.GetRolesAsync(user);
+                var userRoles = await userManager.GetRolesAsync(user);
 
                 var claims = new List<Claim>
                     {
@@ -44,21 +40,21 @@ public class TokenController(UserManager<ApplicationUser> userManager, RoleManag
                         new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     };
 
-                claims.AddRange(await _userManager.GetClaimsAsync(user));
+                claims.AddRange(await userManager.GetClaimsAsync(user));
                 foreach (var roleName in userRoles)
                 {
                     claims.Add(new Claim(ClaimTypes.Role, roleName));
-                    var role = await _roleManager.FindByNameAsync(roleName);
-                    claims.AddRange(await _roleManager.GetClaimsAsync(role));
+                    var role = await roleManager.FindByNameAsync(roleName);
+                    claims.AddRange(await roleManager.GetClaimsAsync(role));
                 }
 
                 claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));
 
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
 
                 var token = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
+                    issuer: configuration["JWT:ValidIssuer"],
+                    audience: configuration["JWT:ValidAudience"],
                     expires: now.AddHours(5),
                     claims: claims,
                     signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)

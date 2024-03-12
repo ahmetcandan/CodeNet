@@ -17,14 +17,12 @@ namespace NetCore.Identity.Controllers;
 [ApiController]
 public class RolesController(RoleManager<IdentityRole> roleManager) : ControllerBase
 {
-    private readonly RoleManager<IdentityRole> _roleManager = roleManager;
-
     [HttpPost]
     [Route("create")]
     [ProducesResponseType(200, Type = typeof(ResponseBase<IdentityRole>))]
     public async Task<IActionResult> Post([FromBody] CreateRoleModel model)
     {
-        var roleExists = await _roleManager.FindByNameAsync(model.Name);
+        var roleExists = await roleManager.FindByNameAsync(model.Name);
         if (roleExists != null)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("011", "Role already exists!"));
 
@@ -35,7 +33,7 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
             ? model.Name.Replace(" ", "").ToUpper()
             : model.NormalizedName
         };
-        var result = await _roleManager.CreateAsync(role);
+        var result = await roleManager.CreateAsync(role);
 
         if (!result.Succeeded)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("013", "Role creation failed! Please check role details and try again."));
@@ -48,7 +46,7 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> Put([FromBody] RoleModel model)
     {
-        var role = await _roleManager.FindByIdAsync(model.Id);
+        var role = await roleManager.FindByIdAsync(model.Id);
         if (role == null)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("012", "Role not found!"));
 
@@ -56,7 +54,7 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
         role.NormalizedName = string.IsNullOrEmpty(model.NormalizedName)
             ? model.Name.Replace(" ", "").ToUpper()
             : model.NormalizedName;
-        var result = await _roleManager.UpdateAsync(role);
+        var result = await roleManager.UpdateAsync(role);
 
         if (!result.Succeeded)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("014", "Role update failed! Please check role details and try again."));
@@ -69,19 +67,19 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> EditClaims([FromBody] RoleClaimsModel model)
     {
-        var role = await _roleManager.FindByIdAsync(model.Id);
+        var role = await roleManager.FindByIdAsync(model.Id);
         if (role == null)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("012", "Role not found!"));
 
-        var currentClaims = await _roleManager.GetClaimsAsync(role);
+        var currentClaims = await roleManager.GetClaimsAsync(role);
 
         // delete roles
         foreach (var claim in currentClaims.Where(c => !model.Claims.Any(r => r.Type.Equals(c.Type))))
-            await _roleManager.RemoveClaimAsync(role, claim);
+            await roleManager.RemoveClaimAsync(role, claim);
 
         //add roles
         foreach (var claim in model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))))
-            await _roleManager.AddClaimAsync(role, claim);
+            await roleManager.AddClaimAsync(role, claim);
 
         return Ok(new ResponseBase("000", "Role claims updated successfully!"));
     }
@@ -91,11 +89,11 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> Delete([FromBody] RoleModel model)
     {
-        var role = await _roleManager.FindByIdAsync(model.Id);
+        var role = await roleManager.FindByIdAsync(model.Id);
         if (role == null)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("012", "Role not found!"));
 
-        var result = await _roleManager.DeleteAsync(role);
+        var result = await roleManager.DeleteAsync(role);
 
         if (!result.Succeeded)
             return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("015", "Role delete failed! Please check role details and try again."));
@@ -108,6 +106,6 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
     [ProducesResponseType(200, Type = typeof(ResponseBase<IEnumerable<IdentityRole>>))]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        return Ok(new ResponseBase<IEnumerable<IdentityRole>>(await _roleManager.Roles.ToListAsync(cancellationToken)));
+        return Ok(new ResponseBase<IEnumerable<IdentityRole>>(await roleManager.Roles.ToListAsync(cancellationToken)));
     }
 }

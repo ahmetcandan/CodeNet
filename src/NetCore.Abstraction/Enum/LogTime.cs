@@ -1,10 +1,9 @@
-﻿namespace NetCore.Abstraction.Enum
+﻿namespace NetCore.Abstraction.Enum;
+
+public enum LogTime
 {
-    public enum LogTime
-    {
-        Before = 1,
-        After = 2,
-        BeforeAndAfter = 3,
-        Exception = 4
-    }
+    Before = 1,
+    After = 2,
+    BeforeAndAfter = 3,
+    Exception = 4
 }

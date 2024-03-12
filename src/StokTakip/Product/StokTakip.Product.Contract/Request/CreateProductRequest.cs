@@ -3,24 +3,23 @@ using NetCore.Abstraction.Model;
 using StokTakip.Product.Contract.Response;
 using System.ComponentModel.DataAnnotations;
 
-namespace StokTakip.Product.Contract.Request
+namespace StokTakip.Product.Contract.Request;
+
+public class CreateProductRequest : IRequest<ResponseBase<ProductResponse>>
 {
-    public class CreateProductRequest : IRequest<ResponseBase<ProductResponse>>
-    {
-        [MaxLength(50)]
-        public required string Code { get; set; }
+    [MaxLength(50)]
+    public required string Code { get; set; }
 
-        [MaxLength(150)]
-        public string? Description { get; set; }
+    [MaxLength(150)]
+    public string? Description { get; set; }
 
-        [MaxLength(150)]
-        public required string Name { get; set; }
+    [MaxLength(150)]
+    public required string Name { get; set; }
 
-        public required int CategoryId { get; set; }
+    public required int CategoryId { get; set; }
 
-        public decimal TaxRate { get; set; }
+    public decimal TaxRate { get; set; }
 
-        [MaxLength(100)]
-        public string? Barcode { get; set; }
-    }
+    [MaxLength(100)]
+    public string? Barcode { get; set; }
 }

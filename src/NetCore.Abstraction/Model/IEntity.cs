@@ -1,7 +1,6 @@
-﻿namespace NetCore.Abstraction.Model
-{
-    public interface IEntity
-    {
+﻿namespace NetCore.Abstraction.Model;
 
-    }
+public interface IEntity
+{
+
 }

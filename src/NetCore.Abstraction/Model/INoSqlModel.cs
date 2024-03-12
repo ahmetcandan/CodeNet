@@ -1,7 +1,6 @@
-﻿namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model;
+
+public interface INoSqlModel
 {
-    public interface INoSqlModel
-    {
-        public string Id { get; set; }
-    }
+    public string Id { get; }
 }

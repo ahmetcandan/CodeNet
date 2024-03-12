@@ -1,35 +1,27 @@
 ﻿using NetCore.Abstraction;
 using System;
 
-namespace NetCore.Cache
+namespace NetCore.Cache;
+
+public class CacheService(ICacheRepository cacheRepository)
 {
-    public class CacheService
+    public object GetCache(string key)
     {
-        private readonly ICacheRepository _cacheRepository;
+        return cacheRepository.GetCache(key);
+    }
 
-        public CacheService(ICacheRepository cacheRepository)
-        {
-            _cacheRepository = cacheRepository;
-        }
+    public T GetCache<T>(string key)
+    {
+        return (T)cacheRepository.GetCache(key);
+    }
 
-        public object GetCache(string key)
-        {
-            return _cacheRepository.GetCache(key);
-        }
+    public void SetCache(string key, object value, int time)
+    {
+        cacheRepository.SetCache(key, value, time);
+    }
 
-        public T GetCache<T>(string key)
-        {
-            return (T)_cacheRepository.GetCache(key);
-        }
-
-        public void SetCache(string key, object value, int time)
-        {
-            _cacheRepository.SetCache(key, value, time);
-        }
-
-        public void SetCache(string key, object value, TimeSpan timeSpan)
-        {
-            SetCache(key, value, (int)timeSpan.TotalSeconds);
-        }
+    public void SetCache(string key, object value, TimeSpan timeSpan)
+    {
+        SetCache(key, value, (int)timeSpan.TotalSeconds);
     }
 }

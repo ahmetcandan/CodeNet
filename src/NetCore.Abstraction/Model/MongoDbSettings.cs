@@ -1,8 +1,7 @@
-﻿namespace NetCore.Abstraction.Model
+﻿namespace NetCore.Abstraction.Model;
+
+public class MongoDbSettings
 {
-    public class MongoDbSettings
-    {
-        public string ConnectionString { get; set; }
-        public string DatabaseName { get; set; }
-    }
+    public string ConnectionString { get; set; }
+    public string DatabaseName { get; set; }
 }

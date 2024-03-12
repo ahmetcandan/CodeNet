@@ -1,9 +1,8 @@
-﻿namespace NetCore.Identity.Model
+﻿namespace NetCore.Identity.Model;
+
+public class ClaimResponse
 {
-    public class ClaimResponse
-    {
-        public string Type { get; set; }
-        public string Value { get; set; }
-        public string ValueType { get; set; }
-    }
+    public string Type { get; set; }
+    public string Value { get; set; }
+    public string ValueType { get; set; }
 }

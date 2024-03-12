@@ -1,9 +1,8 @@
-﻿namespace NetCore.Abstraction.Enum
+﻿namespace NetCore.Abstraction.Enum;
+
+public enum LogType
 {
-    public enum LogType
-    {
-        Info = 1,
-        Warning = 2,
-        Error = 3
-    }
+    Info = 1,
+    Warning = 2,
+    Error = 3
 }

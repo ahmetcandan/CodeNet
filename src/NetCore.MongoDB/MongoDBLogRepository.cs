@@ -2,19 +2,12 @@
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 
-namespace NetCore.MongoDB
+namespace NetCore.MongoDB;
+
+public class MongoDBLogRepository(IOptions<MongoDbSettings> config) : BaseMongoRepository<LogModel>(config.Value.ConnectionString, config.Value.DatabaseName, "Log"), ILogRepository
 {
-    public class MongoDBLogRepository : BaseMongoRepository<LogModel>, ILogRepository
-
+    public void Insert(LogModel model)
     {
-        public MongoDBLogRepository(IOptions<MongoDbSettings> config) : base(config.Value.ConnectionString, config.Value.DatabaseName, "Log")
-        {
-
-        }
-
-        public void Insert(LogModel model)
-        {
-            Create(model);
-        }
+        Create(model);
     }
 }

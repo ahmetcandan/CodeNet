@@ -1,9 +1,8 @@
 ﻿using NetCore.Abstraction.Model;
 
-namespace NetCore.Abstraction
+namespace NetCore.Abstraction;
+
+public interface ILogRepository
 {
-    public interface ILogRepository
-    {
-        public void Insert(LogModel model);
-    }
+    public void Insert(LogModel model);
 }

@@ -1,20 +1,19 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
-namespace NetCore.Identity.Model
+namespace NetCore.Identity.Model;
+
+public class RegisterUserModel
 {
-    public class RegisterUserModel
-    {
-        [Required(ErrorMessage = "User Name is required")]
-        public string Username { get; set; }
+    [Required(ErrorMessage = "User Name is required")]
+    public string Username { get; set; }
 
-        [EmailAddress]
-        [Required(ErrorMessage = "Email is required")]
-        public string Email { get; set; }
+    [EmailAddress]
+    [Required(ErrorMessage = "Email is required")]
+    public string Email { get; set; }
 
-        [Required(ErrorMessage = "Password is required")]
-        public string Password { get; set; }
+    [Required(ErrorMessage = "Password is required")]
+    public string Password { get; set; }
 
-        public IList<string> Roles { get; set; }
-    }
+    public IList<string> Roles { get; set; }
 }

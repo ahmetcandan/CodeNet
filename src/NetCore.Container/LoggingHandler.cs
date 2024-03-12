@@ -4,34 +4,24 @@ using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 using System.Diagnostics;
 
-namespace NetCore.Container
+namespace NetCore.Container;
+
+public class LoggingHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, IAppLogger appLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase
 {
-    public class LoggingHandler<TRequest, TResponse> : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase
+    public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        private readonly ILifetimeScope _lifetimeScope;
-        private readonly IAppLogger _appLogger;
+        var methodInfo = GetHandlerMethodInfo(lifetimeScope);
 
-        public LoggingHandler(ILifetimeScope lifetimeScope, IAppLogger appLogger)
-        {
-            _lifetimeScope = lifetimeScope;
-            _appLogger = appLogger;
-        }
+        appLogger.EntryLog(request, methodInfo);
 
-        public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
-        {
-            var methodInfo = GetHandlerMethodInfo(_lifetimeScope);
+        var timer = new Stopwatch();
+        timer.Start();
 
-            _appLogger.EntryLog(request, methodInfo);
+        var response = await next();
 
-            var timer = new Stopwatch();
-            timer.Start();
+        timer.Stop();
+        appLogger.ExitLog(response, methodInfo, timer.ElapsedMilliseconds);
 
-            var response = await next();
-
-            timer.Stop();
-            _appLogger.ExitLog(response, methodInfo, timer.ElapsedMilliseconds);
-
-            return response;
-        }
+        return response;
     }
 }

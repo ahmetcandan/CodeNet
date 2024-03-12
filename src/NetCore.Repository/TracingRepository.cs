@@ -6,79 +6,71 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace NetCore.Repository
+namespace NetCore.Repository;
+
+public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IIdentityContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
 {
-    public abstract class TracingRepository<TTracingEntity> : BaseRepository<TTracingEntity>, ITracingRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
+    public override TTracingEntity Add(TTracingEntity entity)
     {
-        private readonly IIdentityContext _identityContext;
+        SetCreatorInfo(entity);
+        return base.Add(entity);
+    }
 
-        public TracingRepository(DbContext dbContext, IIdentityContext identityContext) : base(dbContext)
-        {
-            _identityContext = identityContext;
-        }
+    public override Task<TTracingEntity> AddAsync(TTracingEntity entity)
+    {
+        return AddAsync(entity, CancellationToken.None);
+    }
 
-        public override TTracingEntity Add(TTracingEntity entity)
-        {
+    public override Task<TTracingEntity> AddAsync(TTracingEntity entity, CancellationToken cancellationToken)
+    {
+        SetCreatorInfo(entity);
+        return base.AddAsync(entity, cancellationToken);
+    }
+
+    public override IEnumerable<TTracingEntity> AddRange(IEnumerable<TTracingEntity> entities)
+    {
+        foreach (var entity in entities)
             SetCreatorInfo(entity);
-            return base.Add(entity);
-        }
 
-        public override Task<TTracingEntity> AddAsync(TTracingEntity entity)
-        {
-            return AddAsync(entity, CancellationToken.None);
-        }
+        return base.AddRange(entities);
+    }
 
-        public override Task<TTracingEntity> AddAsync(TTracingEntity entity, CancellationToken cancellationToken)
-        {
+    public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities)
+    {
+        return AddRangeAsync(entities, CancellationToken.None);
+    }
+
+    public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities, CancellationToken cancellationToken)
+    {
+        foreach (var entity in entities)
             SetCreatorInfo(entity);
-            return base.AddAsync(entity, cancellationToken);
-        }
 
-        public override IEnumerable<TTracingEntity> AddRange(IEnumerable<TTracingEntity> entities)
-        {
-            foreach (var entity in entities)
-                SetCreatorInfo(entity);
+        return base.AddRangeAsync(entities, cancellationToken);
+    }
 
-            return base.AddRange(entities);
-        }
+    public override TTracingEntity Update(TTracingEntity entity)
+    {
+        SetModifytorInfo(entity);
+        return base.Update(entity);
+    }
 
-        public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities)
-        {
-            return AddRangeAsync(entities, CancellationToken.None);
-        }
-
-        public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities, CancellationToken cancellationToken)
-        {
-            foreach (var entity in entities)
-                SetCreatorInfo(entity);
-
-            return base.AddRangeAsync(entities, cancellationToken);
-        }
-
-        public override TTracingEntity Update(TTracingEntity entity)
-        {
+    public override IEnumerable<TTracingEntity> UpdateRange(IEnumerable<TTracingEntity> entities)
+    {
+        foreach (var entity in entities)
             SetModifytorInfo(entity);
-            return base.Update(entity);
-        }
 
-        public override IEnumerable<TTracingEntity> UpdateRange(IEnumerable<TTracingEntity> entities)
-        {
-            foreach (var entity in entities)
-                SetModifytorInfo(entity);
+        return base.UpdateRange(entities);
+    }
 
-            return base.UpdateRange(entities);
-        }
+    protected void SetCreatorInfo(TTracingEntity tEntity)
+    {
+        tEntity.CreatedDate = DateTime.Now;
+        tEntity.CreatedUser = identityContext?.GetUserName();
+    }
 
-        protected void SetCreatorInfo(TTracingEntity tEntity)
-        {
-            tEntity.CreatedDate = DateTime.Now;
-            tEntity.CreatedUser = _identityContext?.GetUserName();
-        }
-
-        protected void SetModifytorInfo(TTracingEntity tEntity)
-        {
-            tEntity.ModifiedDate = DateTime.Now;
-            tEntity.ModifiedUser = _identityContext?.GetUserName();
-        }
+    protected void SetModifytorInfo(TTracingEntity tEntity)
+    {
+        tEntity.ModifiedDate = DateTime.Now;
+        tEntity.ModifiedUser = identityContext?.GetUserName();
     }
 }

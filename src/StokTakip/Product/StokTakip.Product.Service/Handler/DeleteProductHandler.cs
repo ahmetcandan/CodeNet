@@ -4,25 +4,17 @@ using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Contract.Request;
 using StokTakip.Product.Contract.Response;
 
-namespace StokTakip.Product.Service.Handler
+namespace StokTakip.Product.Service.Handler;
+
+public class DeleteProductHandler(IProductService productService) : IRequestHandler<DeleteProductRequest, ResponseBase<ProductResponse>>
 {
-    public class DeleteProductHandler : IRequestHandler<DeleteProductRequest, ResponseBase<ProductResponse>>
+    public async Task<ResponseBase<ProductResponse>> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
     {
-        private readonly IProductService _productService;
-
-        public DeleteProductHandler(IProductService productService)
+        var product = await productService.DeleteProduct(request.Id, cancellationToken);
+        return new ResponseBase<ProductResponse>
         {
-            _productService = productService;
-        }
-
-        public async Task<ResponseBase<ProductResponse>> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
-        {
-            var product = await _productService.DeleteProduct(request.Id, cancellationToken);
-            return new ResponseBase<ProductResponse>
-            {
-                Data = product,
-                IsSuccessfull = true
-            };
-        }
+            Data = product,
+            IsSuccessfull = true
+        };
     }
 }

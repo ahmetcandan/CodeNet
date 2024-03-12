@@ -1,6 +1,5 @@
-﻿namespace NetCore.Abstraction
+﻿namespace NetCore.Abstraction;
+
+public abstract class BaseService : IService
 {
-    public abstract class BaseService : IService
-    {
-    }
 }

@@ -6,54 +6,43 @@ using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Service.Mapper;
 
-namespace StokTakip.Customer.Service
+namespace StokTakip.Customer.Service;
+
+public class CustomerService(ICustomerRepository customerRepository, IAutoMapperConfiguration mapper) : BaseService, ICustomerService
 {
-    public class CustomerService : BaseService, ICustomerService
+    public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
-        private readonly ICustomerRepository _customerRepository;
-        private readonly IAutoMapperConfiguration _mapper;
+        var model = mapper.MapObject<CreateCustomerRequest, Model.Customer>(request);
+        var result = await customerRepository.AddAsync(model, cancellationToken);
+        await customerRepository.SaveChangesAsync(cancellationToken);
+        return mapper.MapObject<Model.Customer, CustomerResponse>(result);
+    }
 
-        public CustomerService(ICustomerRepository customerRepository, IAutoMapperConfiguration mapper)
-        {
-            _customerRepository = customerRepository;
-            _mapper = mapper;
-        }
+    public async Task<CustomerResponse> DeleteCustomer(int customerId, CancellationToken cancellationToken)
+    {
+        var result = await customerRepository.GetAsync([customerId], cancellationToken);
+        customerRepository.Remove(result);
+        await customerRepository.SaveChangesAsync(cancellationToken);
+        return mapper.MapObject<Model.Customer, CustomerResponse>(result);
+    }
 
-        public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
-        {
-            var model = _mapper.MapObject<CreateCustomerRequest, Model.Customer>(request);
-            var result = await _customerRepository.AddAsync(model, cancellationToken);
-            await _customerRepository.SaveChangesAsync(cancellationToken);
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
-        }
+    public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
+    {
+        var result = await customerRepository.GetAsync([customerId], cancellationToken);
+        return result is null
+            ? throw new UserLevelException("01", "Kullanıcı bulunamadı!")
+            : mapper.MapObject<Model.Customer, CustomerResponse>(result);
+    }
 
-        public async Task<CustomerResponse> DeleteCustomer(int customerId, CancellationToken cancellationToken)
-        {
-            var result = await _customerRepository.GetAsync([customerId], cancellationToken);
-            _customerRepository.Remove(result);
-            await _customerRepository.SaveChangesAsync(cancellationToken);
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
-        }
-
-        public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
-        {
-            var result = await _customerRepository.GetAsync([customerId], cancellationToken);
-            if (result is null)
-                throw new UserLevelException("01", "Kullanıcı bulunamadı!");
-
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
-        }
-
-        public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
-        {
-            var result = await _customerRepository.GetAsync([request.Id], cancellationToken);
-            result.Code = request.Code;
-            result.Description = request.Description;
-            result.Name = request.Name;
-            result.No = request.No;
-            _customerRepository.Update(result);
-            await _customerRepository.SaveChangesAsync(cancellationToken);
-            return _mapper.MapObject<Model.Customer, CustomerResponse>(result);
-        }
+    public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
+    {
+        var result = await customerRepository.GetAsync([request.Id], cancellationToken);
+        result.Code = request.Code;
+        result.Description = request.Description;
+        result.Name = request.Name;
+        result.No = request.No;
+        customerRepository.Update(result);
+        await customerRepository.SaveChangesAsync(cancellationToken);
+        return mapper.MapObject<Model.Customer, CustomerResponse>(result);
     }
 }

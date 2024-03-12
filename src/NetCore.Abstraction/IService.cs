@@ -1,7 +1,6 @@
-﻿namespace NetCore.Abstraction
-{
-    public interface IService
-    {
+﻿namespace NetCore.Abstraction;
 
-    }
+public interface IService
+{
+
 }

@@ -4,25 +4,17 @@ using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 
-namespace StokTakip.Customer.Service.Handler
+namespace StokTakip.Customer.Service.Handler;
+
+public class UpdateCustomerHandler(ICustomerService customerService) : IRequestHandler<UpdateCustomerRequest, ResponseBase<CustomerResponse>>
 {
-    public class UpdateCustomerHandler : IRequestHandler<UpdateCustomerRequest, ResponseBase<CustomerResponse>>
+    public async Task<ResponseBase<CustomerResponse>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        private readonly ICustomerService _customerService;
-
-        public UpdateCustomerHandler(ICustomerService customerService)
+        var customer = await customerService.UpdateCustomer(request, cancellationToken);
+        return new ResponseBase<CustomerResponse>
         {
-            _customerService = customerService;
-        }
-
-        public async Task<ResponseBase<CustomerResponse>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
-        {
-            var customer = await _customerService.UpdateCustomer(request, cancellationToken);
-            return new ResponseBase<CustomerResponse>
-            {
-                Data = customer,
-                IsSuccessfull = true
-            };
-        }
+            Data = customer,
+            IsSuccessfull = true
+        };
     }
 }

@@ -4,25 +4,17 @@ using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Contract.Request;
 using StokTakip.Product.Contract.Response;
 
-namespace StokTakip.Product.Service.Handler
+namespace StokTakip.Product.Service.Handler;
+
+public class UpdateProductHandler(IProductService productService) : IRequestHandler<UpdateProductRequest, ResponseBase<ProductResponse>>
 {
-    public class UpdateProductHandler : IRequestHandler<UpdateProductRequest, ResponseBase<ProductResponse>>
+    public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
     {
-        private readonly IProductService _productService;
-
-        public UpdateProductHandler(IProductService productService)
+        var product = await productService.UpdateProduct(request, cancellationToken);
+        return new ResponseBase<ProductResponse>
         {
-            _productService = productService;
-        }
-
-        public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
-        {
-            var product = await _productService.UpdateProduct(request, cancellationToken);
-            return new ResponseBase<ProductResponse>
-            {
-                Data = product,
-                IsSuccessfull = true
-            };
-        }
+            Data = product,
+            IsSuccessfull = true
+        };
     }
 }

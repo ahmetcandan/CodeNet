@@ -3,12 +3,8 @@ using NetCore.Abstraction;
 using NetCore.Repository;
 using StokTakip.Customer.Abstraction.Repository;
 
-namespace StokTakip.Customer.Repository
+namespace StokTakip.Customer.Repository;
+
+public class CustomerRepository(DbContext context, IIdentityContext identityContext) : TracingRepository<Model.Customer>(context, identityContext), ICustomerRepository
 {
-    public class CustomerRepository : TracingRepository<Model.Customer>, ICustomerRepository
-    {
-        public CustomerRepository(DbContext context, IIdentityContext identityContext) : base(context, identityContext)
-        {
-        }
-    }
 }
