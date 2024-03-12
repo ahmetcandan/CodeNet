@@ -55,7 +55,7 @@ namespace NetCore.Repository.Tests
             #region Modify
             now = DateTime.Now;
             var updatedData = testRepository.Update(foundData);
-            await testRepository.SaveChangesAsync(cancellationToken);
+            _ = await testRepository.SaveChangesAsync(cancellationToken);
             Assert2.AreEqualByJson(updatedData, foundData);
             Assert.Multiple(() =>
             {
@@ -67,7 +67,7 @@ namespace NetCore.Repository.Tests
             #region Delete
             now = DateTime.Now;
             var deletedData = testRepository.Remove(updatedData);
-            await testRepository.SaveChangesAsync(cancellationToken);
+            _ = await testRepository.SaveChangesAsync(cancellationToken);
             Assert2.AreEqualByJson(deletedData, updatedData);
             Assert.Multiple(() =>
             {
