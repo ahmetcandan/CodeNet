@@ -24,7 +24,7 @@ public class CacheAttribute(int time = 3600) : Attribute, ICacheAttribute
         cacheRepository.SetCache(getKeyString(targetMethod, args), value, Time);
     }
 
-    string getKeyString(MethodInfo targetMethod, object[] args)
+    private string getKeyString(MethodInfo targetMethod, object[] args)
     {
         return $"{targetMethod.Name}_{string.Join("-", targetMethod.GetParameters().Select(c => $"{c.Name}:{args[c.Position]}"))}";
     }

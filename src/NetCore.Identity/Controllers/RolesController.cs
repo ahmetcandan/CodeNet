@@ -35,10 +35,9 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
         };
         var result = await roleManager.CreateAsync(role);
 
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("013", "Role creation failed! Please check role details and try again."));
-
-        return Ok(new ResponseBase<IdentityRole>(role));
+        return !result.Succeeded
+            ? StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("013", "Role creation failed! Please check role details and try again."))
+            : (IActionResult)Ok(new ResponseBase<IdentityRole>(role));
     }
 
     [HttpPut]
@@ -56,10 +55,9 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
             : model.NormalizedName;
         var result = await roleManager.UpdateAsync(role);
 
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("014", "Role update failed! Please check role details and try again."));
-
-        return Ok(new ResponseBase("000", "Role updated successfully!"));
+        return !result.Succeeded
+            ? StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("014", "Role update failed! Please check role details and try again."))
+            : (IActionResult)Ok(new ResponseBase("000", "Role updated successfully!"));
     }
 
     [HttpPut]
@@ -95,10 +93,9 @@ public class RolesController(RoleManager<IdentityRole> roleManager) : Controller
 
         var result = await roleManager.DeleteAsync(role);
 
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("015", "Role delete failed! Please check role details and try again."));
-
-        return Ok(new ResponseBase("000", "Role deleted successfully!"));
+        return !result.Succeeded
+            ? StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("015", "Role delete failed! Please check role details and try again."))
+            : (IActionResult)Ok(new ResponseBase("000", "Role deleted successfully!"));
     }
 
     [HttpGet]

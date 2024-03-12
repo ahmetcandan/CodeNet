@@ -27,14 +27,14 @@ public class ExceptionAttribute(bool throwException = true) : Attribute, IExcept
         logRepository.Insert(model);
     }
 
-    static IEnumerable<MethodParameter> getMethodParameters(ParameterInfo[] parameters, object[] args)
+    private static IEnumerable<MethodParameter> getMethodParameters(ParameterInfo[] parameters, object[] args)
     {
-        return (from p in parameters
-                select new MethodParameter
-                {
-                    Name = p.Name,
-                    Value = args[p.Position]
-                });
+        return from p in parameters
+               select new MethodParameter
+               {
+                   Name = p.Name,
+                   Value = args[p.Position]
+               };
     }
 
     public bool GetThrowException()

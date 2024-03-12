@@ -18,7 +18,7 @@ public static class IServiceCollectionExtensions
                 .GetMethods(BindingFlags.Public | BindingFlags.Static)
                 .First(info => !info.IsGenericMethod && info.ReturnType == typeof(TInterface));
         }
-        catch (Exception e)
+        catch (Exception)
         {
             throw new Exception("An error has occured while finding create method in given interface");
         }
@@ -56,16 +56,8 @@ public static class IServiceCollectionExtensions
 
     private static object CreateInstance(this IServiceProvider services, ServiceDescriptor descriptor)
     {
-        if (descriptor.ImplementationInstance != null)
-        {
-            return descriptor.ImplementationInstance;
-        }
-
-        if (descriptor.ImplementationFactory != null)
-        {
-            return descriptor.ImplementationFactory(services);
-        }
-
-        return ActivatorUtilities.GetServiceOrCreateInstance(services, descriptor.ImplementationType);
+        return descriptor.ImplementationInstance ?? (descriptor.ImplementationFactory != null
+            ? descriptor.ImplementationFactory(services)
+            : ActivatorUtilities.GetServiceOrCreateInstance(services, descriptor.ImplementationType));
     }
 }

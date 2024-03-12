@@ -37,10 +37,9 @@ public class AccountsController(UserManager<ApplicationUser> userManager) : Cont
         var result = await _userManager.CreateAsync(user, model.Password);
         if (result.Succeeded && model.Roles != null && model.Roles.Count > 0)
             await _userManager.AddToRolesAsync(user, model.Roles);
-        if (!result.Succeeded)
-            return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("003", "User creation failed! Please check user details and try again."));
-
-        return Ok(new ResponseBase("000", "User created successfully!"));
+        return !result.Succeeded
+            ? StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase("003", "User creation failed! Please check user details and try again."))
+            : (IActionResult)Ok(new ResponseBase("000", "User created successfully!"));
     }
 
     [HttpPut]

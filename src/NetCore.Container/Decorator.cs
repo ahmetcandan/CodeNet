@@ -14,11 +14,6 @@ public abstract class DecoratorBase<TRequest, TResponse> : IPipelineBehavior<TRe
     protected MethodBase? GetHandlerMethodInfo(ILifetimeScope lifetimeScope)
     {
         var handler = lifetimeScope.Resolve<IRequestHandler<TRequest, TResponse>>();
-        if (handler != null)
-        {
-            return handler.GetType().GetMethod("Handle");
-        }
-
-        return null;
+        return handler != null ? handler.GetType().GetMethod("Handle") : (MethodBase?)null;
     }
 }

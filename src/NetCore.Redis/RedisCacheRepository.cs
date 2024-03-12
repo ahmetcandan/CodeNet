@@ -9,7 +9,7 @@ namespace NetCore.Redis;
 
 public class RedisCacheRepository : ICacheRepository
 {
-    readonly IRedisClient redisClient;
+    private readonly IRedisClient redisClient;
 
     public RedisCacheRepository(IOptions<RedisSettings> config)
     {

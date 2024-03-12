@@ -14,14 +14,9 @@ public static class Converter
         try
         {
             if (value == null || value == DBNull.Value) return result;
-            if (typeof(T).IsEnum)
-            {
-                result = (T)Enum.ToObject(typeof(T), Convert(value, System.Convert.ToInt32(defaultValue)));
-            }
-            else
-            {
-                result = (T)System.Convert.ChangeType(value, typeof(T));
-            }
+            result = typeof(T).IsEnum
+                ? (T)Enum.ToObject(typeof(T), Convert(value, System.Convert.ToInt32(defaultValue)))
+                : (T)System.Convert.ChangeType(value, typeof(T));
         }
         catch
         {
@@ -36,7 +31,7 @@ public static class Converter
         return Convert(value, default(T));
     }
 
-    public static Boolean TryParse<T>(String source, out T value)
+    public static bool TryParse<T>(string source, out T value)
     {
 
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
@@ -56,7 +51,7 @@ public static class Converter
 
     }
 
-    public static Boolean TryChangeType<T>(Object source, out T value)
+    public static bool TryChangeType<T>(object source, out T value)
     {
         try
         {
@@ -79,11 +74,11 @@ public static class Converter
         var valueProperties = value.GetType().GetProperties();
         var convertProperties = typeof(T).GetProperties();
         MethodInfo convertMethod = null;
-        foreach (var property in (from c in convertProperties
-                                  join v in valueProperties
-                                  on 1 equals 1
-                                  where propertyNameEquals(c.Name, v.Name)
-                                  select new { convertProperty = c, valueProperty = v }))
+        foreach (var property in from c in convertProperties
+                                 join v in valueProperties
+                                 on 1 equals 1
+                                 where propertyNameEquals(c.Name, v.Name)
+                                 select new { convertProperty = c, valueProperty = v })
         {
             var propValue = property.valueProperty.GetValue(value);
             if (property.valueProperty.PropertyType == property.convertProperty.PropertyType)
