@@ -3,6 +3,7 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -83,6 +84,7 @@ public class Startup
             };
         });
 
+        services.AddDbContext<DbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("Default")));
         services.Configure<RedisSettings>(Configuration.GetSection("Redis"));
         services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDB"));
         services.Configure<RabbitMQSettings>(Configuration.GetSection("RabbitMQ"));
