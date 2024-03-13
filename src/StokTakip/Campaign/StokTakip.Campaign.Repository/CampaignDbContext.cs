@@ -1,34 +1,33 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using StokTakip.Campaign.Model;
 
-namespace StokTakip.Campaign.Repository
+namespace StokTakip.Campaign.Repository;
+
+public partial class CampaignDbContext : DbContext
 {
-    public partial class CampaignDbContext : DbContext
+    public CampaignDbContext()
     {
-        public CampaignDbContext()
-        {
-        }
+    }
 
-        public CampaignDbContext(DbContextOptions<CampaignDbContext> options)
-            : base(options)
-        {
-        }
+    public CampaignDbContext(DbContextOptions<CampaignDbContext> options)
+        : base(options)
+    {
+    }
 
-        public virtual DbSet<Campaign.Model.Campaign> Campaigns { get; set; }
-        public virtual DbSet<CampaignRequirement> CampaignRequirements { get; set; }
-        public virtual DbSet<CampaignUsedHistory> CampaignUsedHistories { get; set; }
-        public virtual DbSet<DiscountCode> DiscountCodes { get; set; }
-        public virtual DbSet<DiscountCodeRequirement> DiscountCodeRequirements { get; set; }
-        public virtual DbSet<DiscountCodeUsedHistory> DiscountCodeUsedHistories { get; set; }
-        public virtual DbSet<GiftCard> GiftCards { get; set; }
-        public virtual DbSet<GiftCardHistory> GiftCardHistories { get; set; }
+    public virtual DbSet<Campaign.Model.Campaign> Campaigns { get; set; }
+    public virtual DbSet<CampaignRequirement> CampaignRequirements { get; set; }
+    public virtual DbSet<CampaignUsedHistory> CampaignUsedHistories { get; set; }
+    public virtual DbSet<DiscountCode> DiscountCodes { get; set; }
+    public virtual DbSet<DiscountCodeRequirement> DiscountCodeRequirements { get; set; }
+    public virtual DbSet<DiscountCodeUsedHistory> DiscountCodeUsedHistories { get; set; }
+    public virtual DbSet<GiftCard> GiftCards { get; set; }
+    public virtual DbSet<GiftCardHistory> GiftCardHistories { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        if (!optionsBuilder.IsConfigured)
         {
-            if (!optionsBuilder.IsConfigured)
-            {
-                optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=Campaign;Trusted_Connection=True;TrustServerCertificate=true");
-            }
+            optionsBuilder.UseSqlServer("Data Source=.; Initial Catalog=Campaign;Trusted_Connection=True;TrustServerCertificate=true");
         }
     }
 }

@@ -1,8 +1,7 @@
-﻿namespace StokTakip.Campaign.Contract.Response
+﻿namespace StokTakip.Campaign.Contract.Response;
+
+public class CampaignResponse
 {
-    public class CampaignResponse
-    {
-        public object Name { get; set; }
-        public object Id { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; }
 }

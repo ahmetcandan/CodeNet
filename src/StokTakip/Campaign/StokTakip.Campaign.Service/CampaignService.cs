@@ -6,71 +6,63 @@ using StokTakip.Campaign.Contract.Response;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StokTakip.Campaign.Service
+namespace StokTakip.Campaign.Service;
+
+public class CampaignService(ICampaignRepository campaignRepository) : BaseService, ICampaignService
 {
-    public class CampaignService : BaseService, ICampaignService
+    public async Task<CampaignResponse> CreateCampaign(CreateCampaignRequest request, CancellationToken cancellationToken)
     {
-        private readonly ICampaignRepository _campaignRepository;
-
-        public CampaignService(ICampaignRepository campaignRepository)
+        var result = await campaignRepository.AddAsync(new Model.Campaign
         {
-            _campaignRepository = campaignRepository;
-        }
-
-        public async Task<CampaignResponse> CreateCampaign(CreateCampaignRequest request, CancellationToken cancellationToken)
+            Name = request.Name,
+            IsActive = true,
+            IsDeleted = false
+        }, cancellationToken);
+        await campaignRepository.SaveChangesAsync(cancellationToken);
+        var response = new CampaignResponse
         {
-            var result = await _campaignRepository.AddAsync(new Model.Campaign
-            {
-                Name = request.Name,
-                IsActive = true,
-                IsDeleted = false
-            }, cancellationToken);
-            await _campaignRepository.SaveChangesAsync(cancellationToken);
-            var response = new CampaignResponse
-            {
-                Id = result.Id,
-                Name = result.Name
-            };
-            return response;
-        }
+            Id = result.Id,
+            Name = result.Name
+        };
+        return response;
+    }
 
-        public async Task<CampaignResponse> DeleteCampaign(int campaignId, CancellationToken cancellationToken)
+    public async Task<CampaignResponse> DeleteCampaign(int campaignId, CancellationToken cancellationToken)
+    {
+        var result = await campaignRepository.GetAsync([campaignId], cancellationToken);
+        result.IsDeleted = true;
+        campaignRepository.Update(result);
+        await campaignRepository.SaveChangesAsync(cancellationToken);
+        return new CampaignResponse
         {
-            var result = await _campaignRepository.GetAsync([campaignId], cancellationToken);
-            result.IsDeleted = true;
-            _campaignRepository.Update(result);
-            await _campaignRepository.SaveChangesAsync(cancellationToken);
-            return new CampaignResponse
-            {
-                Id = result.Id,
-                Name = result.Name
-            };
-        }
+            Id = result.Id,
+            Name = result.Name
+        };
+    }
 
-        public async Task<CampaignResponse> GetCampaign(int campaignId, CancellationToken cancellationToken)
+    public async Task<CampaignResponse> GetCampaign(int campaignId, CancellationToken cancellationToken)
+    {
+        var result = await campaignRepository.GetAsync([campaignId], cancellationToken);
+        if (result == null)
+            return null;
+        var value = new CampaignResponse
         {
-            var result = await _campaignRepository.GetAsync([campaignId], cancellationToken);
-            if (result == null)
-                return null;
-            var value = new CampaignResponse
-            {
-                Name = result.Name,
-                Id = result.Id
-            };
-            return value;
-        }
+            Name = result.Name,
+            Id = result.Id
+        };
+        return value;
+    }
 
-        public async Task<CampaignResponse> UpdateCampaign(UpdateCampaignRequest request, CancellationToken cancellationToken)
+    public async Task<CampaignResponse> UpdateCampaign(UpdateCampaignRequest request, CancellationToken cancellationToken)
+    {
+        var result = await campaignRepository.GetAsync([request.Id], cancellationToken);
+        result.Name = request.Name;
+        campaignRepository.Update(result);
+        await campaignRepository.SaveChangesAsync(cancellationToken);
+        return new CampaignResponse
         {
-            var result = await _campaignRepository.GetAsync([request.Id], cancellationToken);
-            result.Name = request.Name;
-            _campaignRepository.Update(result);
-            await _campaignRepository.SaveChangesAsync(cancellationToken);
-            return new CampaignResponse
-            {
-                Id = result.Id,
-                Name = result.Name
-            };
-        }
+            Id = result.Id,
+            Name = result.Name
+        };
     }
 }

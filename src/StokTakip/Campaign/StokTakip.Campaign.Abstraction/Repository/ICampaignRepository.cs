@@ -1,8 +1,7 @@
 ﻿using NetCore.Abstraction;
 
-namespace StokTakip.Campaign.Abstraction.Repository
+namespace StokTakip.Campaign.Abstraction.Repository;
+
+public interface ICampaignRepository : IBaseRepository<Model.Campaign>
 {
-    public interface ICampaignRepository : IBaseRepository<Model.Campaign>
-    {
-    }
 }

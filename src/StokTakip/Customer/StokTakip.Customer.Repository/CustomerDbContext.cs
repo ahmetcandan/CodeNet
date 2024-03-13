@@ -3,8 +3,16 @@ using StokTakip.Customer.Model;
 
 namespace StokTakip.Customer.Repository;
 
-public partial class CustomerDbContext(DbContextOptions<DbContext> options) : DbContext(options)
+public partial class CustomerDbContext : DbContext
 {
+    public CustomerDbContext()
+    {
+    }
+
+    public CustomerDbContext(DbContextOptions<DbContext> options) : base(options)
+    {
+    }
+
     public virtual DbSet<Model.Customer> Customers { get; set; }
     public virtual DbSet<Employee> Employees { get; set; }
 

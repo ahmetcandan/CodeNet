@@ -6,25 +6,17 @@ using StokTakip.Campaign.Contract.Response;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StokTakip.Campaign.Service.Handler
+namespace StokTakip.Campaign.Service.Handler;
+
+public class DeleteCampaignHandler(ICampaignService campaignService) : IRequestHandler<DeleteCampaignRequest, ResponseBase<CampaignResponse>>
 {
-    public class DeleteCampaignHandler : IRequestHandler<DeleteCampaignRequest, ResponseBase<CampaignResponse>>
+    public async Task<ResponseBase<CampaignResponse>> Handle(DeleteCampaignRequest request, CancellationToken cancellationToken)
     {
-        private readonly ICampaignService _campaignService;
-
-        public DeleteCampaignHandler(ICampaignService campaignService)
+        var campaign = await campaignService.DeleteCampaign(request.Id, cancellationToken);
+        return new ResponseBase<CampaignResponse>
         {
-            _campaignService = campaignService;
-        }
-
-        public async Task<ResponseBase<CampaignResponse>> Handle(DeleteCampaignRequest request, CancellationToken cancellationToken)
-        {
-            var campaign = await _campaignService.DeleteCampaign(request.Id, cancellationToken);
-            return new ResponseBase<CampaignResponse>
-            {
-                Data = campaign,
-                IsSuccessfull = true
-            };
-        }
+            Data = campaign,
+            IsSuccessfull = true
+        };
     }
 }

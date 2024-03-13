@@ -6,25 +6,17 @@ using StokTakip.Campaign.Contract.Response;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace StokTakip.Campaign.Service.Handler
+namespace StokTakip.Campaign.Service.Handler;
+
+public class UpdateCampaignHandler(ICampaignService campaignService) : IRequestHandler<UpdateCampaignRequest, ResponseBase<CampaignResponse>>
 {
-    public class UpdateCampaignHandler : IRequestHandler<UpdateCampaignRequest, ResponseBase<CampaignResponse>>
+    public async Task<ResponseBase<CampaignResponse>> Handle(UpdateCampaignRequest request, CancellationToken cancellationToken)
     {
-        private readonly ICampaignService _campaignService;
-
-        public UpdateCampaignHandler(ICampaignService campaignService)
+        var campaign = await campaignService.UpdateCampaign(request, cancellationToken);
+        return new ResponseBase<CampaignResponse>
         {
-            _campaignService = campaignService;
-        }
-
-        public async Task<ResponseBase<CampaignResponse>> Handle(UpdateCampaignRequest request, CancellationToken cancellationToken)
-        {
-            var campaign = await _campaignService.UpdateCampaign(request, cancellationToken);
-            return new ResponseBase<CampaignResponse>
-            {
-                Data = campaign,
-                IsSuccessfull = true
-            };
-        }
+            Data = campaign,
+            IsSuccessfull = true
+        };
     }
 }
