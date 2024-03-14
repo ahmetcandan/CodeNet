@@ -19,6 +19,7 @@
 
   <PropertyGroup>
 	  <RunPostBuildEvent>OnBuildSuccess</RunPostBuildEvent>
+	  <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
   <Target Name="NSwag" AfterTargets="PostBuildEvent">

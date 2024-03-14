@@ -17,7 +17,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "NetCore": {
+    "NetCore.Identity": {
       "commandName": "Project",
       "launchBrowser": true,
       "launchUrl": "swagger",
