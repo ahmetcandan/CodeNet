@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace NetCore.Identity.Model;
+﻿namespace NetCore.Identity.Model;
 
 public class UserModel
 {

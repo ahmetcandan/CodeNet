@@ -4,8 +4,6 @@ using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace StokTakip.Customer.Api.Controllers;
 

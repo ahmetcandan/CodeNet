@@ -1,15 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
 using MongoDB.Driver.Linq;
 using NetCore.Abstraction.Model;
 using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace NetCore.Identity.Manager;
 

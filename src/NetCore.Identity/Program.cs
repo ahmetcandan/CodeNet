@@ -1,19 +1,19 @@
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.Abstraction;
-using NetCore.EntityFramework.Model;
-using NetCore.EntityFramework;
-using Swashbuckle.AspNetCore.Filters;
-using System.Text;
-using Autofac.Extensions.DependencyInjection;
-using Autofac;
 using NetCore.Container;
 using NetCore.Core;
-using NetCore.Identity.Model;
+using NetCore.EntityFramework;
+using NetCore.EntityFramework.Model;
 using NetCore.Identity.Manager;
+using NetCore.Identity.Model;
+using Swashbuckle.AspNetCore.Filters;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
