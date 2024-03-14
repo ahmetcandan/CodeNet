@@ -9,5 +9,5 @@ public interface IIdentityRoleManager
     Task<ResponseBase> EditRole(RoleModel model);
     Task<ResponseBase> EditRoleClaims(RoleClaimsModel model);
     Task<ResponseBase> DeleteRole(RoleModel model);
-    Task<ResponseBase<IEnumerable<IdentityRole>>> GetRoles(CancellationToken cancellationToken);
+    Task<ResponseBase<IEnumerable<RoleViewModel>>> GetRoles(CancellationToken cancellationToken);
 }

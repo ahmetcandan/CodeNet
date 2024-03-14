@@ -9,6 +9,5 @@ public interface IIdentityUserManager
     Task<ResponseBase> EditUserRoles(UpdateUserRolesModel model);
     Task<ResponseBase> EditUserClaims(UpdateUserClaimsModel model);
     Task<ResponseBase<UserModel>> GetUser(string username);
-    Task<ResponseBase<IEnumerable<UserModel>>> GetAllUsers();
     Task<ResponseBase> RemoveUser(RemoveUserModel model);
 }

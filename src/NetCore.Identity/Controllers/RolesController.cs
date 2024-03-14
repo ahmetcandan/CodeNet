@@ -46,7 +46,7 @@ public class RolesController(IIdentityRoleManager IdentityRoleManager) : Control
 
     [HttpGet]
     [Route("get")]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<IEnumerable<IdentityRole>>))]
+    [ProducesResponseType(200, Type = typeof(ResponseBase<IEnumerable<RoleViewModel>>))]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
         return Ok(await IdentityRoleManager.GetRoles(cancellationToken));

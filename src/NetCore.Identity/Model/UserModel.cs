@@ -7,4 +7,5 @@ public class UserModel
     public IList<string> Roles { get; set; }
     public string Id { get; set; }
     public string Email { get; set; }
+    public IEnumerable<ClaimModel> Claims { get; set; }
 }

@@ -33,7 +33,7 @@
       "SwaggerKey": "identity"
     },
     {
-      "DownstreamPathTemplate": "/accounts/editcliams",
+      "DownstreamPathTemplate": "/accounts/editclaims",
       "DownstreamScheme": "https",
       "DownstreamHostAndPorts": [
         {
@@ -41,7 +41,7 @@
           "Port": 5003
         }
       ],
-      "UpstreamPathTemplate": "/accounts/editcliams",
+      "UpstreamPathTemplate": "/accounts/editclaims",
       "UpstreamHttpMethod": [ "Put" ],
       "AuthenticationOptions": {
         "AllowedScopes": []

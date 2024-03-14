@@ -30,9 +30,9 @@ public class AccountsController(IIdentityUserManager IdentityUserManager) : Cont
 
     [HttpPut]
     [Authorize(Roles = "admin")]
-    [Route("editcliams")]
+    [Route("editclaims")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> EditCliams([FromBody] UpdateUserClaimsModel model)
+    public async Task<IActionResult> EditClaims([FromBody] UpdateUserClaimsModel model)
     {
         return Ok(await IdentityUserManager.EditUserClaims(model));
     }
@@ -44,15 +44,6 @@ public class AccountsController(IIdentityUserManager IdentityUserManager) : Cont
     public async Task<IActionResult> GetUser(string username)
     {
         return Ok(await IdentityUserManager.GetUser(username));
-    }
-
-    [HttpGet]
-    [Authorize(Roles = "admin")]
-    [Route("getallusers")]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<IEnumerable<UserModel>>))]
-    public async Task<IActionResult> GetAllUsers()
-    {
-        return Ok(await IdentityUserManager.GetAllUsers());
     }
 
     [HttpDelete]

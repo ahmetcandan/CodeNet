@@ -1,15 +1,17 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
 using MongoDB.Driver.Linq;
 using NetCore.Abstraction.Model;
-using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
+using Newtonsoft.Json.Linq;
+using System.Collections.Generic;
+using System.Data;
+using System.Threading;
 
 namespace NetCore.Identity.Manager;
 
-public class IdentityRoleManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<JwtConfig> JwtConfig) : IIdentityRoleManager
+public class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIdentityRoleManager
 {
     public async Task<ResponseBase> CreateRole(CreateRoleModel model)
     {
@@ -56,7 +58,7 @@ public class IdentityRoleManager(UserManager<ApplicationUser> UserManager, RoleM
 
         //add roles
         foreach (var claim in model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))))
-            await RoleManager.AddClaimAsync(role, claim);
+            await RoleManager.AddClaimAsync(role, claim.GetClaim());
 
         return new ResponseBase(true, "000", "Role claims updated successfully!");
     }
@@ -71,8 +73,24 @@ public class IdentityRoleManager(UserManager<ApplicationUser> UserManager, RoleM
             : new ResponseBase(true, "000", "Role deleted successfully!");
     }
 
-    public async Task<ResponseBase<IEnumerable<IdentityRole>>> GetRoles(CancellationToken cancellationToken)
+    public async Task<ResponseBase<IEnumerable<RoleViewModel>>> GetRoles(CancellationToken cancellationToken)
     {
-        return new ResponseBase<IEnumerable<IdentityRole>>(await RoleManager.Roles.ToListAsync(cancellationToken));
+        return new ResponseBase<IEnumerable<RoleViewModel>>(await GetRolesWithClaims(cancellationToken));
+    }
+
+    private async Task<IEnumerable<RoleViewModel>> GetRolesWithClaims(CancellationToken cancellationToken)
+    {
+        var roles = await RoleManager.Roles.ToListAsync(cancellationToken);
+        var list = new List<RoleViewModel>(roles.Count);
+        foreach (var role in roles)
+            list.Add(new()
+            {
+                Id = role.Id,
+                Name = role.Name,
+                NormalizedName = role.NormalizedName,
+                Claims = (await RoleManager.GetClaimsAsync(role)).Select(c => new ClaimModel(c.Type, c.Value))
+            });
+
+        return list;
     }
 }

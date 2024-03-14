@@ -1,6 +1,4 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using MongoDB.Driver.Linq;
 using NetCore.Abstraction.Model;
 using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
@@ -8,7 +6,7 @@ using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Manager;
 
-public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<JwtConfig> JwtConfig) : IIdentityUserManager
+public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager) : IIdentityUserManager
 {
     public async Task<ResponseBase<IdentityResult>> CreateUser(RegisterUserModel model)
     {
@@ -46,6 +44,8 @@ public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleM
 
     public async Task<ResponseBase> EditUserClaims(UpdateUserClaimsModel model)
     {
+        UserLevelException.ThrowIfNull(model?.Claims);
+
         var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("002", "User not found!");
         var currentClaims = await UserManager.GetClaimsAsync(user);
 
@@ -53,7 +53,7 @@ public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleM
         await UserManager.RemoveClaimsAsync(user, currentClaims.Where(c => !model.Claims.Any(r => r.Type.Equals(c.Type))));
 
         //add roles
-        await UserManager.AddClaimsAsync(user, model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))));
+        await UserManager.AddClaimsAsync(user, model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))).Select(c => c.GetClaim()));
 
         return new ResponseBase(true, "000", "User updated claims successfully!");
     }
@@ -61,31 +61,24 @@ public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleM
     public async Task<ResponseBase<UserModel>> GetUser(string username)
     {
         var user = await UserManager.FindByNameAsync(username) ?? throw new UserLevelException("002", "User not found!");
-        var currentRoles = await UserManager.GetRolesAsync(user);
+        var claims = await UserManager.GetClaimsAsync(user);
+        var roles = await UserManager.GetRolesAsync(user);
+        foreach (var roleName in roles)
+        {
+            var role = await RoleManager.FindByNameAsync(roleName);
+            var roleClaims = await RoleManager.GetClaimsAsync(role);
+            foreach (var claim in roleClaims)
+                claims.Add(new System.Security.Claims.Claim(claim.Type, claim.Value));
+        }
+
         return new ResponseBase<UserModel>(new UserModel()
         {
             Username = user.UserName,
             Email = user.Email,
-            Roles = currentRoles,
+            Roles = roles,
+            Claims = claims.Select(c => new ClaimModel { Type = c.Type, Value = c.Value }),
             Id = user.Id
         });
-    }
-
-    public async Task<ResponseBase<IEnumerable<UserModel>>> GetAllUsers()
-    {
-        var users = UserManager.Users.ToList();
-
-        var result = new List<UserModel>();
-        foreach (var user in users)
-            result.Add(new UserModel()
-            {
-                Username = user.UserName,
-                Email = user.Email,
-                Roles = await UserManager.GetRolesAsync(user),
-                Id = user.Id
-            });
-
-        return new ResponseBase<IEnumerable<UserModel>>(result);
     }
 
     public async Task<ResponseBase> RemoveUser(RemoveUserModel model)

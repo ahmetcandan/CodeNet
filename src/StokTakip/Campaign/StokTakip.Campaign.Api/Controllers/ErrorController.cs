@@ -2,14 +2,15 @@
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
-using NetCore.ExceptionHandling;
 
-namespace NetCore.Identity.Controllers;
+namespace StokTakip.Campaign.Api.Controllers;
 
 [Route("Error")]
 [ApiController]
 public class ErrorController(IAppLogger appLogger) : ControllerBase
 {
+    private readonly IAppLogger _appLogger = appLogger;
+
     [HttpDelete]
     [HttpGet]
     [HttpHead]
@@ -21,12 +22,7 @@ public class ErrorController(IAppLogger appLogger) : ControllerBase
     {
         var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         if (exceptionFeature is not null)
-        {
-            appLogger.ExceptionLog(exceptionFeature.Error, typeof(ErrorController).GetMethod("Index"));
-
-            if (exceptionFeature.Error is UserLevelException userLevelException)
-                return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase(userLevelException.Code, userLevelException.Message));
-        }
+            _appLogger.ExceptionLog(exceptionFeature.Error, typeof(ErrorController).GetMethod("Index"));
 
         return BadRequest(new ResponseBase
         {
