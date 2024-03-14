@@ -12,12 +12,17 @@ using Autofac.Extensions.DependencyInjection;
 using Autofac;
 using NetCore.Container;
 using NetCore.Core;
+using NetCore.Identity.Model;
+using NetCore.Identity.Manager;
 
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
 {
+    containerBuilder.RegisterType<IdentityTokenManager>().As<IIdentityTokenManager>().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<IdentityUserManager>().As<IIdentityUserManager>().InstancePerLifetimeScope();
+    containerBuilder.RegisterType<IdentityRoleManager>().As<IIdentityRoleManager>().InstancePerLifetimeScope();
     containerBuilder.RegisterModule<NetCoreModule>();
 });
 
@@ -41,6 +46,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.OperationFilter<SecurityRequirementsOperationFilter>();
 });
+builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JWT"));
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<IIdentityContext, IdentityContext>();
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>()

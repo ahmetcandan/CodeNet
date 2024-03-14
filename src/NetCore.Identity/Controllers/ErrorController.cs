@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
+using NetCore.ExceptionHandling;
 
 namespace NetCore.Identity.Controllers;
 
@@ -21,7 +22,14 @@ public class ErrorController(IAppLogger appLogger) : ControllerBase
     {
         var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         if (exceptionFeature is not null)
+        {
             appLogger.ExceptionLog(exceptionFeature.Error, typeof(ErrorController).GetMethod("Index"));
+            switch (exceptionFeature)
+            {
+                case UserLevelException userLevelException:
+                    return StatusCode(StatusCodes.Status500InternalServerError, new ResponseBase(userLevelException.Code, userLevelException.Message));
+            }
+        }
 
         return BadRequest(new ResponseBase
         {

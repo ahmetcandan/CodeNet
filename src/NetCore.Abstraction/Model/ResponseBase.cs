@@ -30,9 +30,23 @@ public class ResponseBase<T> : ResponseBase where T : class
     {
     }
 
-    public ResponseBase(T data)
+    public ResponseBase(T data, bool isSuccessfull = true)
     {
+        IsSuccessfull = isSuccessfull;
         Data = data;
+    }
+
+    public ResponseBase(string messageCode, string message)
+    {
+        MessageCode = messageCode;
+        Message = message;
+    }
+
+    public ResponseBase(bool isSuccessfull, string messageCode, string message)
+    {
+        IsSuccessfull = isSuccessfull;
+        MessageCode = messageCode;
+        Message = message;
     }
 
     public T? Data { get; set; }

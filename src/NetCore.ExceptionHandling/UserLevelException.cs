@@ -20,6 +20,4 @@ public class UserLevelException : Exception
     public string Code { get; set; }
     public override string StackTrace => string.Empty;
     public override string Message => UserMessage;
-
-    public HttpStatusCode? HttpResponseCode { get; set; }
 }
