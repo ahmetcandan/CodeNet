@@ -60,8 +60,12 @@ builder.Services
 
 builder.Services.AddHttpContextAccessor();
 
+builder.Services.AddStackExchangeRedisCache(option =>
+{
+    option.Configuration = $"{builder.Configuration["Redis:Host"]}:{builder.Configuration["Redis:Port"]}";
+    option.InstanceName = "master";
+});
 builder.Services.AddDbContext<DbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-builder.Services.Configure<RedisSettings>(builder.Configuration.GetSection("Redis"));
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
 

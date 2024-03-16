@@ -11,7 +11,7 @@ namespace NetCore.Container;
 public class NetCoreModule : Module
 {
     protected override void Load(ContainerBuilder builder)
-    {
+    {   
         builder.RegisterType<IdentityContext>().As<IIdentityContext>().InstancePerLifetimeScope();
         builder.RegisterType<RedisCacheRepository>().As<ICacheRepository>().InstancePerLifetimeScope();
         builder.RegisterType<MongoDBLogRepository>().As<ILogRepository>().InstancePerLifetimeScope();

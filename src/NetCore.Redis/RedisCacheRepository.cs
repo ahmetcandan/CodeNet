@@ -1,18 +1,23 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Caching.Distributed;
 using NetCore.Abstraction;
-using NetCore.Abstraction.Model;
-using ServiceStack.Redis;
+using Newtonsoft.Json;
 using System;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace NetCore.Redis;
 
-public class RedisCacheRepository : ICacheRepository
+public class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRepository
 {
-    private readonly IRedisClient _redisClient;
-
-    public RedisCacheRepository(IOptions<RedisSettings> config)
+    /// <summary>
+    /// Get Cache value
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public async Task<TModel> GetCacheAsync<TModel>(string key, CancellationToken cancellationToken)
     {
-        _redisClient = new RedisClient(new RedisEndpoint { Host = config.Value.Host, Port = config.Value.Port, Password = config.Value.Password, RetryTimeout = config.Value.RetryTimeout });
+        var json = await DistributedCache.GetStringAsync(key, cancellationToken);
+        return JsonConvert.DeserializeObject<TModel>(json);
     }
 
     /// <summary>
@@ -20,7 +25,10 @@ public class RedisCacheRepository : ICacheRepository
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public TModel GetCache<TModel>(string key) => _redisClient.Get<TModel>(key);
+    public async Task<TModel> GetCacheAsync<TModel>(string key)
+    {
+        return await GetCacheAsync<TModel>(key, CancellationToken.None);
+    }
 
     /// <summary>
     /// Set Cache
@@ -28,5 +36,41 @@ public class RedisCacheRepository : ICacheRepository
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <param name="time">seconds</param>
-    public void SetCache(string key, object value, int time) => _redisClient.Set(key, value, DateTime.Now.AddMinutes(time));
+    public async Task SetCacheAsync(string key, string jsonValue, int time, CancellationToken cancellationToken)
+    {
+        await DistributedCache.SetStringAsync(key, jsonValue, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, cancellationToken);
+    }
+
+    /// <summary>
+    /// Set Cache
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="time">seconds</param>
+    public async Task SetCacheAsync(string key, string jsonValue, int time)
+    {
+        await SetCacheAsync(key, jsonValue, time, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Set Cache
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="time">seconds</param>
+    public async Task SetCacheAsync(string key, object value, int time, CancellationToken cancellationToken)
+    {
+        await SetCacheAsync(key, JsonConvert.SerializeObject(value), time, cancellationToken);
+    }
+
+    /// <summary>
+    /// Set Cache
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="value"></param>
+    /// <param name="time">seconds</param>
+    public async Task SetCacheAsync(string key, object value, int time) 
+    {
+        await SetCacheAsync(key, value, time, CancellationToken.None);
+    }
 }
