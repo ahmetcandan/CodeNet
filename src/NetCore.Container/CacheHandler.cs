@@ -22,11 +22,14 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
             var cacheAttribute = (CacheAttribute)attributes[0];
             string key = $"{methodInfo?.DeclaringType?.Assembly.GetName().Name}:{methodInfo?.DeclaringType?.Name}:{RequestKey(request)}";
 
-            var cacheJsonValue = await DistributedCache.GetStringAsync(key);
+            var cacheJsonValue = await DistributedCache.GetStringAsync(key, cancellationToken);
             if (string.IsNullOrEmpty(cacheJsonValue))
             {
                 var response = await next();
-                await DistributedCache.SetStringAsync(key, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time) });
+                await DistributedCache.SetStringAsync(key, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions 
+                    { 
+                        AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time) 
+                    }, cancellationToken);
                 return response;
             }
 
