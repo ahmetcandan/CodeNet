@@ -20,23 +20,21 @@ public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope,
         catch (Exception ex)
         {
             appLogger.ExceptionLog(ex, methodInfo);
-            switch (ex)
+            return ex switch
             {
-                case UserLevelException userLevelException:
-                    return new TResponse
-                    {
-                        IsSuccessfull = false,
-                        Message = userLevelException.Message,
-                        MessageCode = userLevelException.Code
-                    };
-                default:
-                    return new TResponse
-                    {
-                        IsSuccessfull = false,
-                        Message = "Unexpected error",
-                        MessageCode = "00"
-                    };
-            }
+                UserLevelException userLevelException => new TResponse
+                {
+                    IsSuccessfull = false,
+                    Message = userLevelException.Message,
+                    MessageCode = userLevelException.Code
+                },
+                _ => new TResponse
+                {
+                    IsSuccessfull = false,
+                    Message = "Unexpected error",
+                    MessageCode = "00"
+                },
+            };
         }
     }
 }

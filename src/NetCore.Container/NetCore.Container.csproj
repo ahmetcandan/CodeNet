@@ -8,11 +8,11 @@
 
   <ItemGroup>
     <PackageReference Include="Autofac" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+    <ProjectReference Include="..\NetCore.Cache\NetCore.Cache.csproj" />
     <ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
     <ProjectReference Include="..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
     <ProjectReference Include="..\NetCore.Logging\NetCore.Logging.csproj" />

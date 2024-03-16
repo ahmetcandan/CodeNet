@@ -22,6 +22,7 @@ public class ResponseBase
     public bool IsSuccessfull { get; set; }
     public string MessageCode { get; set; }
     public string Message { get; set; }
+    public bool HasCacheData { get; set; } = false;
 }
 
 public class ResponseBase<T> : ResponseBase where T : class
