@@ -10,10 +10,9 @@ public class CreateCustomerHandler(ICustomerService customerService) : IRequestH
 {
     public async Task<ResponseBase<CustomerResponse>> Handle(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customer = await customerService.CreateCustomer(request, cancellationToken);
         return new ResponseBase<CustomerResponse>
         {
-            Data = customer,
+            Data = await customerService.CreateCustomer(request, cancellationToken),
             IsSuccessfull = true
         };
     }

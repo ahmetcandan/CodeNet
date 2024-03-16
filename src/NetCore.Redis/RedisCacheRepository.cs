@@ -20,10 +20,7 @@ public class RedisCacheRepository : ICacheRepository
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public TModel GetCache<TModel>(string key)
-    {
-        return _redisClient.Get<TModel>(key);
-    }
+    public TModel GetCache<TModel>(string key) => _redisClient.Get<TModel>(key);
 
     /// <summary>
     /// Set Cache
@@ -31,8 +28,5 @@ public class RedisCacheRepository : ICacheRepository
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <param name="time">seconds</param>
-    public void SetCache(string key, object value, int time)
-    {
-        _redisClient.Set(key, value, DateTime.Now.AddMinutes(time));
-    }
+    public void SetCache(string key, object value, int time) => _redisClient.Set(key, value, DateTime.Now.AddMinutes(time));
 }

@@ -10,10 +10,9 @@ public class UpdateCustomerHandler(ICustomerService customerService) : IRequestH
 {
     public async Task<ResponseBase<CustomerResponse>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customer = await customerService.UpdateCustomer(request, cancellationToken);
         return new ResponseBase<CustomerResponse>
         {
-            Data = customer,
+            Data = await customerService.UpdateCustomer(request, cancellationToken),
             IsSuccessfull = true
         };
     }

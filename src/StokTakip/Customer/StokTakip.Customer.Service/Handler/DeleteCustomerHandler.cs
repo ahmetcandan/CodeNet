@@ -10,10 +10,9 @@ public class DeleteCustomerHandler(ICustomerService customerService) : IRequestH
 {
     public async Task<ResponseBase<CustomerResponse>> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customer = await customerService.DeleteCustomer(request.Id, cancellationToken);
         return new ResponseBase<CustomerResponse>
         {
-            Data = customer,
+            Data = await customerService.DeleteCustomer(request.Id, cancellationToken),
             IsSuccessfull = true
         };
     }

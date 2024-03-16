@@ -43,8 +43,8 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, ICa
 
         var stringBuilder = new StringBuilder();
         foreach (var prop in typeof(TRequest).Properties())
-            stringBuilder.AppendLine(prop.GetValue(request)?.ToString());
+            stringBuilder.Append(prop.GetValue(request)?.ToString());
 
-        return stringBuilder.ToString().TrimEnd();
+        return stringBuilder.ToString();
     }
 }

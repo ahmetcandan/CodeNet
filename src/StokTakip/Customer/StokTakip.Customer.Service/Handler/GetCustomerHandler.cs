@@ -9,13 +9,12 @@ namespace StokTakip.Customer.Service.Handler;
 
 public class GetCustomerHandler(ICustomerService customerService) : IRequestHandler<GetCustomerRequest, ResponseBase<CustomerResponse>>
 {
-    [Cache(1)]
+    [Cache]
     public async Task<ResponseBase<CustomerResponse>> Handle(GetCustomerRequest request, CancellationToken cancellationToken)
     {
-        var customer = await customerService.GetCustomer(request.Id, cancellationToken);
         return new ResponseBase<CustomerResponse>
         {
-            Data = customer,
+            Data = await customerService.GetCustomer(request.Id, cancellationToken),
             IsSuccessfull = true
         };
     }
