@@ -1,51 +1,75 @@
 ﻿using NetCore.Abstraction;
+using NetCore.Abstraction.Enum;
 using NetCore.Abstraction.Extension;
+using NetCore.Abstraction.Model;
 using Newtonsoft.Json;
 using System;
 using System.Reflection;
 
 namespace NetCore.Logging;
 
-public class AppLogger : IAppLogger
+public class AppLogger(IQService QService, IIdentityContext IdentityContext) : IAppLogger
 {
+    private const string CHANNEL_NAME = "log";
+
     public void EntryLog(object request, MethodBase methodBase)
     {
-        Console.WriteLine($"LogType: Entry, Data: {GetObjectToString(request)}, {MethodBaseToString(methodBase)}");
+        PostLogData(LogTime.Entry, methodBase, request);
     }
 
     public void ExceptionLog(Exception exception, MethodBase methodBase)
     {
-        Console.WriteLine($"LogType: Exception, Message: {exception.Message}, StackTrace: {exception.StackTrace}, {MethodBaseToString(methodBase)}");
+        PostLogData(LogTime.Exception, methodBase, exception);
     }
 
     public void ExceptionLog(Exception exception, object data, MethodBase methodBase)
     {
-        Console.WriteLine($"LogType: Exception, Message: {exception.Message}, StackTrace: {exception.StackTrace}, Data: {GetObjectToString(data)}, {MethodBaseToString(methodBase)}");
+        PostLogData(LogTime.Exception, methodBase, new { Exception = exception, Data = data });
     }
 
     public void ExitLog(object response, MethodBase methodBase)
     {
-        Console.WriteLine($"LogType: Exit, Data: {GetObjectToString(response)}, {MethodBaseToString(methodBase)}");
+        PostLogData(LogTime.Exit, methodBase, response);
     }
 
     public void ExitLog(object response, MethodBase methodBase, long time)
     {
-        Console.WriteLine($"LogType: Exit, Data: {GetObjectToString(response)}, {MethodBaseToString(methodBase)}, Time: {time}");
+        PostLogData(LogTime.Exit, methodBase, response, time: time);
     }
 
     public void TraceLog(object data, MethodBase methodBase)
     {
-        Console.WriteLine($"LogType: Trace, Data: {GetObjectToString(data)}, {MethodBaseToString(methodBase)}");
-    }
-
-    protected virtual string MethodBaseToString(MethodBase methodBase)
-    {
-        var _methodBase = methodBase.GetMethodBase();
-        return $"Assebly: {methodBase.DeclaringType.Assembly.GetName().Name}, Class: {_methodBase.DeclaringType.Name}, Method: {_methodBase.Name}";
+        PostLogData(LogTime.Trace, methodBase, data);
     }
 
     protected virtual string GetObjectToString(object obj)
     {
         return JsonConvert.SerializeObject(obj);
+    }
+
+    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long time = 0)
+    {
+        PostLogData(logTime, methodBase, GetObjectToString(data), time);
+    }
+
+    private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long time = 0)
+    {
+        var _methodBase = methodBase.GetMethodBase();
+        PostLogData(logTime, _methodBase.DeclaringType.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, time);
+    }
+
+    private void PostLogData(LogTime logTime, string _namespace, string className, string methodName, string data, long time = 0)
+    {
+        QService.Post(CHANNEL_NAME, new LogModel
+        {
+            Namespace = _namespace,
+            ClassName = className,
+            MethodName = methodName,
+            LogTime = logTime,
+            Username = IdentityContext.UserName,
+            Data = data,
+            RequestId = IdentityContext.RequestId,
+            Time = time
+        });
     }
 }

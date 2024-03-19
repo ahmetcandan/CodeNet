@@ -1,4 +1,6 @@
-﻿namespace NetCore.Abstraction.Model;
+﻿using System;
+
+namespace NetCore.Abstraction.Model;
 
 public interface INoSqlModel
 {

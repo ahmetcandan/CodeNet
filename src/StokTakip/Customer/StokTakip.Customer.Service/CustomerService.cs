@@ -5,10 +5,11 @@ using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Service.Mapper;
+using System.Reflection;
 
 namespace StokTakip.Customer.Service;
 
-public class CustomerService(ICustomerRepository customerRepository, IAutoMapperConfiguration mapper) : BaseService, ICustomerService
+public class CustomerService(ICustomerRepository customerRepository, IAutoMapperConfiguration mapper, IAppLogger appLogger) : BaseService, ICustomerService
 {
     public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
@@ -36,6 +37,7 @@ public class CustomerService(ICustomerRepository customerRepository, IAutoMapper
 
     public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
+        appLogger.TraceLog("Az kaldı Customer güncellenecek...", MethodBase.GetCurrentMethod());
         var result = await customerRepository.GetAsync([request.Id], cancellationToken);
         result.Code = request.Code;
         result.Description = request.Description;
@@ -43,6 +45,7 @@ public class CustomerService(ICustomerRepository customerRepository, IAutoMapper
         result.No = request.No;
         customerRepository.Update(result);
         await customerRepository.SaveChangesAsync(cancellationToken);
+        appLogger.TraceLog("İşte bitti Customer güncellendi...", MethodBase.GetCurrentMethod());
         return mapper.MapObject<Model.Customer, CustomerResponse>(result);
     }
 }

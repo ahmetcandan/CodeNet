@@ -65,12 +65,12 @@ public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IId
     protected void SetCreatorInfo(TTracingEntity tEntity)
     {
         tEntity.CreatedDate = DateTime.Now;
-        tEntity.CreatedUser = identityContext?.GetUserName();
+        tEntity.CreatedUser = identityContext?.UserName;
     }
 
     protected void SetModifytorInfo(TTracingEntity tEntity)
     {
         tEntity.ModifiedDate = DateTime.Now;
-        tEntity.ModifiedUser = identityContext?.GetUserName();
+        tEntity.ModifiedUser = identityContext?.UserName;
     }
 }

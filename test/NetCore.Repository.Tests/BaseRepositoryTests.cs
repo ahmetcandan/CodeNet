@@ -21,7 +21,7 @@ namespace NetCore.Repository.Tests
             var options = new DbContextOptionsBuilder<DbContext>().UseInMemoryDatabase(databaseName: "TestDB").Options;
             using var context = new MockDbContext(options);
             var mockIdentityContext = new Mock<IIdentityContext>();
-            mockIdentityContext.Setup(c => c.GetUserName())
+            mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
             var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
             var data1 = new TestTable

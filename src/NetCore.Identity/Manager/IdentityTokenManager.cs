@@ -24,9 +24,9 @@ public class IdentityTokenManager(UserManager<ApplicationUser> UserManager, Role
 
             var claims = new List<Claim>
                     {
-                        new("Username", user.UserName),
-                        new("UserId", user.Id),
-                        new("Email", user.Email),
+                        new(ClaimTypes.Name, user.UserName),
+                        new(ClaimTypes.NameIdentifier, user.Id),
+                        new(ClaimTypes.Email, user.Email),
                         new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     };
 

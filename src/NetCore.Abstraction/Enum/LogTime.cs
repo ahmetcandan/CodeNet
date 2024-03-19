@@ -2,8 +2,8 @@
 
 public enum LogTime
 {
-    Before = 1,
-    After = 2,
-    BeforeAndAfter = 3,
+    Entry = 1,
+    Exit = 2,
+    Trace = 3,
     Exception = 4
 }

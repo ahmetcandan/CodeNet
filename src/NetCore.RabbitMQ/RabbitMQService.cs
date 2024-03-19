@@ -2,6 +2,7 @@
 using NetCore.Abstraction.Model;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
+using System;
 using System.Text;
 
 namespace NetCore.RabbitMQ;
@@ -14,9 +15,14 @@ public class RabbitMQService(Microsoft.Extensions.Options.IOptions<RabbitMQSetti
     {
         try
         {
-            var factory = new ConnectionFactory() { HostName = config.Value.HostName };
-            using IConnection connection = factory.CreateConnection();
-            using IModel channel = connection.CreateModel();
+            var factory = new ConnectionFactory()
+            {
+                HostName = config.Value.HostName,
+                UserName = config.Value.Username,
+                Password = config.Value.Password
+            };
+            using var connection = factory.CreateConnection();
+            using var channel = connection.CreateModel();
             channel.QueueDeclare(queue: channelName,
                                  durable: false,
                                  exclusive: false,
@@ -29,6 +35,7 @@ public class RabbitMQService(Microsoft.Extensions.Options.IOptions<RabbitMQSetti
                                  routingKey: channelName,
                                  basicProperties: null,
                                  body: body);
+            Console.WriteLine($"RabbitMQ Channel: {channelName}, Send: {message}");
             return true;
         }
         catch
