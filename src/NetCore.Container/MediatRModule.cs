@@ -2,19 +2,15 @@
 using MediatR;
 using System.Reflection;
 
-namespace StokTakip.Campaign.Container.Modules;
+namespace NetCore.Container;
 
-public class MediatRModule : Autofac.Module
+public class MediatRModule<TRequestHandler> : Autofac.Module 
 {
     protected override void Load(ContainerBuilder builder)
     {
         builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly).AsImplementedInterfaces();
 
-        builder.RegisterAssemblyTypes(typeof(Contract.Request.CreateCampaignRequest).Assembly)
-            .AsImplementedInterfaces()
-            .InstancePerLifetimeScope();
-
-        builder.RegisterAssemblyTypes(typeof(Service.Handler.CreateCampaignHandler).Assembly)
+        builder.RegisterAssemblyTypes(typeof(TRequestHandler).Assembly)
             .AsClosedTypesOf(typeof(IRequestHandler<,>))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();
@@ -22,3 +18,4 @@ public class MediatRModule : Autofac.Module
         base.Load(builder);
     }
 }
+

@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using MongoDB.Driver.Linq;
 using NetCore.Abstraction.Model;
 using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;

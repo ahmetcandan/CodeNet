@@ -1,11 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\..\..\NetCore.Cache\NetCore.Cache.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
+	</ItemGroup>
 
 </Project>

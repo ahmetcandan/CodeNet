@@ -1,15 +1,15 @@
-﻿using NetCore.Abstraction;
+﻿using Microsoft.Extensions.Options;
+using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
-using System;
 using System.Text;
 
 namespace NetCore.RabbitMQ;
 
-public class RabbitMQService(Microsoft.Extensions.Options.IOptions<RabbitMQSettings> config) : IQService
+public class RabbitMQService(IOptions<RabbitMQSettings> config) : IQService
 {
-    public readonly Microsoft.Extensions.Options.IOptions<RabbitMQSettings> config = config;
+    public readonly IOptions<RabbitMQSettings> config = config;
 
     public bool Post(string channelName, object data)
     {

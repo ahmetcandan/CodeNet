@@ -1,15 +1,14 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
-    <ProjectReference Include="..\StokTakip.Product.Contract\StokTakip.Product.Contract.csproj" />
-    <ProjectReference Include="..\StokTakip.Product.Model\StokTakip.Product.Model.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\StokTakip.Product.Contract\StokTakip.Product.Contract.csproj" />
+		<ProjectReference Include="..\StokTakip.Product.Model\StokTakip.Product.Model.csproj" />
+	</ItemGroup>
 
 </Project>

@@ -1,12 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NetCore.Repository;
 

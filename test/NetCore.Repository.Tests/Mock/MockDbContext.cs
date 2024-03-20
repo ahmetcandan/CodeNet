@@ -3,13 +3,8 @@ using NetCore.Repository.Tests.Mock.Model;
 
 namespace NetCore.Repository.Tests.Mock
 {
-    public class MockDbContext : DbContext
+    public class MockDbContext(DbContextOptions<DbContext> options) : DbContext(options)
     {
-
-        public MockDbContext(DbContextOptions<DbContext> options)
-            : base(options)
-        {
-        }
         public virtual DbSet<TestTable> TestTables { get; set; }
     }
 }

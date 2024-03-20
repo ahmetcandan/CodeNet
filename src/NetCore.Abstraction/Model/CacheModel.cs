@@ -1,9 +1,7 @@
-﻿using ServiceStack.Text;
-using System;
+﻿using System;
 
 namespace NetCore.Abstraction.Model;
 
-[RuntimeSerializable]
 public class CacheModel : INoSqlModel
 {
     public CacheModel()

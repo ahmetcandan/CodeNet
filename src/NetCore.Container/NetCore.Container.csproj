@@ -1,26 +1,27 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="Autofac" Version="8.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
-  </ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.0.0" />
+		<PackageReference Include="AutoMapper" Version="13.0.1" />
+		<PackageReference Include="MediatR" Version="12.2.0" />
+		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
+	</ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
-    <ProjectReference Include="..\NetCore.Cache\NetCore.Cache.csproj" />
-    <ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
-    <ProjectReference Include="..\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj" />
-    <ProjectReference Include="..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
-    <ProjectReference Include="..\NetCore.Logging\NetCore.Logging.csproj" />
-    <ProjectReference Include="..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
-    <ProjectReference Include="..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
-    <ProjectReference Include="..\NetCore.Redis\NetCore.Redis.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+		<ProjectReference Include="..\NetCore.Cache\NetCore.Cache.csproj" />
+		<ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
+		<ProjectReference Include="..\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj" />
+		<ProjectReference Include="..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\NetCore.Logging\NetCore.Logging.csproj" />
+		<ProjectReference Include="..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
+		<ProjectReference Include="..\NetCore.Redis\NetCore.Redis.csproj" />
+	</ItemGroup>
 
 </Project>

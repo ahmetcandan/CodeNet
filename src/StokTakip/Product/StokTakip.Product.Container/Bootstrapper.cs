@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using NetCore.Container;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Abstraction.Service;
-using StokTakip.Product.Container.Modules;
 using StokTakip.Product.Repository;
 using StokTakip.Product.Service;
+using StokTakip.Product.Service.Handler;
 
 namespace StokTakip.Product.Container;
 
@@ -16,8 +16,7 @@ public class Bootstrapper
     public static void RegisterModules(ContainerBuilder builder)
     {
         builder.RegisterModule<NetCoreModule>();
-        builder.RegisterModule<MediatRModule>();
-        builder.RegisterModule<RepositoryModule>();
+        builder.RegisterModule<MediatRModule<GetProductHandler>>();
 
         builder.RegisterType<ProductDbContext>().As<DbContext>().InstancePerLifetimeScope();
         builder.RegisterType<ProductRepository>().As<IProductRepository>().InstancePerLifetimeScope();

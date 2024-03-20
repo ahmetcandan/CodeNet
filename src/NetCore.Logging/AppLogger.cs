@@ -3,7 +3,6 @@ using NetCore.Abstraction.Enum;
 using NetCore.Abstraction.Extension;
 using NetCore.Abstraction.Model;
 using Newtonsoft.Json;
-using System;
 using System.Reflection;
 
 namespace NetCore.Logging;

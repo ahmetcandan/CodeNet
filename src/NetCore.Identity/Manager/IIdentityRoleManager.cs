@@ -2,6 +2,7 @@
 using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Manager;
+
 public interface IIdentityRoleManager
 {
     Task<ResponseBase> CreateRole(CreateRoleModel model);

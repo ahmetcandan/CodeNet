@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using NetCore.Abstraction.Model;
 using NetCore.Cache;
 using Newtonsoft.Json;
-using ServiceStack;
 using System.Text;
 
 namespace NetCore.Container;
@@ -49,7 +48,7 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
             return string.Empty;
 
         var stringBuilder = new StringBuilder();
-        foreach (var prop in typeof(TRequest).Properties())
+        foreach (var prop in typeof(TRequest).GetProperties())
             stringBuilder.Append(prop.GetValue(request)?.ToString());
 
         return stringBuilder.ToString();

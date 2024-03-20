@@ -1,9 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using NetCore.Abstraction;
 using Newtonsoft.Json;
-using System;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace NetCore.Redis;
 
