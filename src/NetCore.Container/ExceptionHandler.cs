@@ -6,20 +6,17 @@ using NetCore.ExceptionHandling;
 
 namespace NetCore.Container;
 
-public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, IAppLogger appLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
+public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var methodInfo = GetHandlerMethodInfo(lifetimeScope);
-
         try
         {
-            var response = await next();
-            return response;
+            return await next();
         }
         catch (Exception ex)
         {
-            appLogger.ExceptionLog(ex, methodInfo);
+            AppLogger.ExceptionLog(ex, GetHandlerMethodInfo(LifetimeScope));
             return ex switch
             {
                 UserLevelException userLevelException => new TResponse

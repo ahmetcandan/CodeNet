@@ -7,7 +7,7 @@ using System.Security.Claims;
 
 namespace NetCore.Core;
 
-public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdentityContext
+public class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIdentityContext
 {
     private Guid? _requestId;
     public Guid RequestId
@@ -17,10 +17,10 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
             if (_requestId.HasValue)
                 return _requestId.Value;
 
-            var headerRequestId = httpContextAccessor?.HttpContext?.Request?.Headers?["RequestId"].ToString();
+            var headerRequestId = HttpContextAccessor?.HttpContext?.Request?.Headers?["RequestId"].ToString();
             _requestId = !string.IsNullOrEmpty(headerRequestId) && Guid.TryParse(headerRequestId, out var requestId) ? requestId : Guid.NewGuid();
 
-            httpContextAccessor.HttpContext.Response.Headers["RequestId"] = _requestId.Value.ToString();
+            HttpContextAccessor.HttpContext.Response.Headers["RequestId"] = _requestId.Value.ToString();
             return _requestId.Value;
         }
     }
@@ -29,7 +29,7 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
     {
         get
         {
-            return httpContextAccessor?.HttpContext?.User?.Identity?.Name;
+            return HttpContextAccessor?.HttpContext?.User?.Identity?.Name;
         }
     }
 
@@ -37,7 +37,7 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
     {
         get
         {
-            return httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+            return HttpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
         }
     }
 
@@ -45,7 +45,7 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
     {
         get
         {
-            return httpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
+            return HttpContextAccessor?.HttpContext?.User?.Claims?.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
         }
     }
 
@@ -53,7 +53,7 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
     {
         get
         {
-            return httpContextAccessor?.HttpContext?.User?.Claims?.Where(c => c.Type is ClaimTypes.Role)?.Select(c => c.Value);
+            return HttpContextAccessor?.HttpContext?.User?.Claims?.Where(c => c.Type is ClaimTypes.Role)?.Select(c => c.Value);
         }
     }
 
@@ -61,9 +61,9 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
     {
         get
         {
-            if (httpContextAccessor?.HttpContext?.Request?.Headers?["Authorization"].Count != 0 == true)
+            if (HttpContextAccessor?.HttpContext?.Request?.Headers?["Authorization"].Count > 0)
             {
-                var authValues = httpContextAccessor.HttpContext.Request.Headers["Authorization"][0].Split(' ');
+                var authValues = HttpContextAccessor.HttpContext.Request.Headers["Authorization"][0].Split(' ');
                 if (authValues?.Length > 1)
                     return authValues[1];
             }

@@ -13,14 +13,13 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var methodInfo = GetHandlerMethodInfo(LifetimeScope);
-        ArgumentNullException.ThrowIfNull(methodInfo);
+        var methodBase = GetHandlerMethodInfo(LifetimeScope);
+        ArgumentNullException.ThrowIfNull(methodBase);
 
-        var attributes = methodInfo!.GetCustomAttributes(typeof(CacheAttribute), true);
-        if (attributes?.Length > 0)
+        var cacheAttribute = methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() as CacheAttribute;
+        if (cacheAttribute is not null)
         {
-            var cacheAttribute = (CacheAttribute)attributes[0];
-            string key = $"{methodInfo?.DeclaringType?.Assembly.GetName().Name}:{methodInfo?.DeclaringType?.Name}:{RequestKey(request)}";
+            string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
 
             var cacheJsonValue = await DistributedCache.GetStringAsync(key, cancellationToken);
             if (string.IsNullOrEmpty(cacheJsonValue))

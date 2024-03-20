@@ -6,13 +6,13 @@ using System.Diagnostics;
 
 namespace NetCore.Container;
 
-public class LoggingHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, IAppLogger appLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase
+public class LoggingHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        var methodInfo = GetHandlerMethodInfo(lifetimeScope);
+        var methodInfo = GetHandlerMethodInfo(LifetimeScope);
 
-        appLogger.EntryLog(request, methodInfo);
+        AppLogger.EntryLog(request, methodInfo);
 
         var timer = new Stopwatch();
         timer.Start();
@@ -20,7 +20,7 @@ public class LoggingHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, I
         var response = await next();
 
         timer.Stop();
-        appLogger.ExitLog(response, methodInfo, timer.ElapsedMilliseconds);
+        AppLogger.ExitLog(response, methodInfo, timer.ElapsedMilliseconds);
 
         return response;
     }

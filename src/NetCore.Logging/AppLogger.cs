@@ -34,7 +34,7 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
 
     public void ExitLog(object response, MethodBase methodBase, long time)
     {
-        PostLogData(LogTime.Exit, methodBase, response, time: time);
+        PostLogData(LogTime.Exit, methodBase, response, elapsedDuration: time);
     }
 
     public void TraceLog(object data, MethodBase methodBase)
@@ -47,29 +47,29 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
         return JsonConvert.SerializeObject(obj);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long time = 0)
+    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long? elapsedDuration = null)
     {
-        PostLogData(logTime, methodBase, GetObjectToString(data), time);
+        PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long time = 0)
+    private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long? elapsedDuration = null)
     {
         var _methodBase = methodBase.GetMethodBase();
-        PostLogData(logTime, _methodBase.DeclaringType.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, time);
+        PostLogData(logTime, _methodBase.DeclaringType.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, elapsedDuration);
     }
 
-    private void PostLogData(LogTime logTime, string _namespace, string className, string methodName, string data, long time = 0)
+    private void PostLogData(LogTime logTime, string assemblyName, string className, string methodName, string data, long? elapsedDuration = null)
     {
         QService.Post(CHANNEL_NAME, new LogModel
         {
-            Namespace = _namespace,
+            AssemblyName = assemblyName,
             ClassName = className,
             MethodName = methodName,
             LogTime = logTime,
             Username = IdentityContext.UserName,
             Data = data,
             RequestId = IdentityContext.RequestId,
-            Time = time
+            ElapsedDuration = elapsedDuration
         });
     }
 }
