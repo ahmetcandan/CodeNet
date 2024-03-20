@@ -18,10 +18,7 @@ public class IdentityContext(IHttpContextAccessor httpContextAccessor) : IIdenti
                 return _requestId.Value;
 
             var headerRequestId = httpContextAccessor?.HttpContext?.Request?.Headers?["RequestId"].ToString();
-            if (!string.IsNullOrEmpty(headerRequestId) && Guid.TryParse(headerRequestId, out var requestId))
-                _requestId = requestId;
-            else
-                _requestId = Guid.NewGuid();
+            _requestId = !string.IsNullOrEmpty(headerRequestId) && Guid.TryParse(headerRequestId, out var requestId) ? requestId : Guid.NewGuid();
 
             httpContextAccessor.HttpContext.Response.Headers["RequestId"] = _requestId.Value.ToString();
             return _requestId.Value;

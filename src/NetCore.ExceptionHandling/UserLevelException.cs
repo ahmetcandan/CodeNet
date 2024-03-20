@@ -1,5 +1,4 @@
-﻿using ServiceStack;
-using System;
+﻿using System;
 
 namespace NetCore.ExceptionHandling;
 
@@ -24,14 +23,11 @@ public class UserLevelException : Exception
     public static void ThrowIfNull<TObject>(TObject obj, string parameterName = "")
     {
         if (obj is null)
-            throw new UserLevelException("400", $"{(string.IsNullOrEmpty(parameterName) ? TypeNamne(typeof(TObject)) : parameterName)} cannot be empty.");
+            throw new UserLevelException("400", $"{(string.IsNullOrEmpty(parameterName) ? TypeName(typeof(TObject)) : parameterName)} cannot be empty.");
     }
 
-    private static string TypeNamne(Type type)
+    private static string TypeName(Type type)
     {
-        if (type.GenericTypeArguments.Length > 0)
-            return type.GenericTypeArguments[0].Name;
-
-        return type.Name;
+        return type.GenericTypeArguments.Length > 0 ? type.GenericTypeArguments[0].Name : type.Name;
     }
 }

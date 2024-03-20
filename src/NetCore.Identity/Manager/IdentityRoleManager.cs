@@ -4,10 +4,7 @@ using MongoDB.Driver.Linq;
 using NetCore.Abstraction.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
-using Newtonsoft.Json.Linq;
-using System.Collections.Generic;
 using System.Data;
-using System.Threading;
 
 namespace NetCore.Identity.Manager;
 

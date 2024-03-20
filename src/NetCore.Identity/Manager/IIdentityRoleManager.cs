@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-using NetCore.Abstraction.Model;
+﻿using NetCore.Abstraction.Model;
 using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Manager;

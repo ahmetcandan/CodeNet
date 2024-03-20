@@ -1,9 +1,9 @@
-﻿using RabbitMQ.Client.Events;
-using RabbitMQ.Client;
-using System.Text;
+﻿using NetCore.Abstraction.Model;
 using NetCore.Elasticsearch;
 using Newtonsoft.Json;
-using NetCore.Abstraction.Model;
+using RabbitMQ.Client;
+using RabbitMQ.Client.Events;
+using System.Text;
 
 const string CHANNEL_NAME = "log";
 Console.WriteLine($"{DateTime.Now} RabbitMQ Started");
