@@ -3,6 +3,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace NetCore.Core.Extension;
@@ -41,8 +43,10 @@ public static class ServiceCollectionExtension
         return service;
     }
 
-    public static IServiceCollection AddAuthentication(this IServiceCollection service, string validAudience, string validIssuer, string secret)
+    public static IServiceCollection AddAuthentication(this IServiceCollection service, string validAudience, string validIssuer, string publicKeyPath)
     {
+        var rsa = AsymmetricKeyEncryption.CreateRSA(publicKeyPath);
+
         service.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -55,11 +59,13 @@ public static class ServiceCollectionExtension
             options.RequireHttpsMetadata = false;
             options.TokenValidationParameters = new TokenValidationParameters()
             {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = validAudience,
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new RsaSecurityKey(rsa),
                 ValidIssuer = validIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(secret))
+                ValidateIssuer = true,
+                ValidAudience = validAudience,
+                ValidateAudience = true,
+                ClockSkew = TimeSpan.Zero
             };
         });
         return service;

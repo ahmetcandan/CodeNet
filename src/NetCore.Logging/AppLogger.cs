@@ -18,12 +18,12 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
 
     public void ExceptionLog(Exception exception, MethodBase methodBase)
     {
-        PostLogData(LogTime.Exception, methodBase, exception);
+        PostLogData(LogTime.Error, methodBase, exception);
     }
 
     public void ExceptionLog(Exception exception, object data, MethodBase methodBase)
     {
-        PostLogData(LogTime.Exception, methodBase, new { Exception = exception, Data = data });
+        PostLogData(LogTime.Error, methodBase, new { Exception = exception, Data = data });
     }
 
     public void ExitLog(object response, MethodBase methodBase)
@@ -54,17 +54,17 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
     private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long? elapsedDuration = null)
     {
         var _methodBase = methodBase.GetMethodBase();
-        PostLogData(logTime, _methodBase.DeclaringType.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, elapsedDuration);
+        PostLogData(logTime, _methodBase!.DeclaringType!.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, elapsedDuration);
     }
 
-    private void PostLogData(LogTime logTime, string assemblyName, string className, string methodName, string data, long? elapsedDuration = null)
+    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null)
     {
         QService.Post(CHANNEL_NAME, new LogModel
         {
-            AssemblyName = assemblyName,
+            AssemblyName = assemblyName ?? "unknow",
             ClassName = className,
             MethodName = methodName,
-            LogTime = logTime,
+            LogTime = nameof(logTime),
             Username = IdentityContext.UserName,
             Data = data,
             RequestId = IdentityContext.RequestId,

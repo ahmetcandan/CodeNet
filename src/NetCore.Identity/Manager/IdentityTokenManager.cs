@@ -2,11 +2,13 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetCore.Abstraction.Model;
+using NetCore.Core;
 using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace NetCore.Identity.Manager;
@@ -17,7 +19,7 @@ public class IdentityTokenManager(UserManager<ApplicationUser> UserManager, Role
     {
         var now = DateTime.Now;
         var user = await UserManager.FindByNameAsync(model.Username);
-        if (user != null && await UserManager.CheckPasswordAsync(user, model.Password))
+        if (user is not null && await UserManager.CheckPasswordAsync(user, model.Password))
         {
             var userRoles = await UserManager.GetRolesAsync(user);
 
@@ -39,14 +41,14 @@ public class IdentityTokenManager(UserManager<ApplicationUser> UserManager, Role
 
             claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));
 
-            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(JwtConfig.Value.Secret));
+            var rsa = AsymmetricKeyEncryption.CreateRSA("private_key.pem");
 
             var token = new JwtSecurityToken(
                 issuer: JwtConfig.Value.ValidIssuer,
                 audience: JwtConfig.Value.ValidAudience,
                 expires: now.AddHours(JwtConfig.Value.ExpiryTime),
                 claims: claims,
-                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+                signingCredentials: new SigningCredentials(new RsaSecurityKey(rsa), SecurityAlgorithms.RsaSha256)
                 );
 
 

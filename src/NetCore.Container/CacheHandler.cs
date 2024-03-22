@@ -34,7 +34,7 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
             var cacheValue = JsonConvert.DeserializeObject<TResponse>(cacheJsonValue);
             if (cacheValue is not null)
             {
-                cacheValue.HasCacheData = true;
+                cacheValue.FromCache = true;
                 return cacheValue;
             }
         }

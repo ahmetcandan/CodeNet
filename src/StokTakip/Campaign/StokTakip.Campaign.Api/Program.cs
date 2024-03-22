@@ -13,9 +13,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => Bootstrapp
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger("StokTakip | Campaign API");
-builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"], builder.Configuration["JWT:ValidIssuer"], builder.Configuration["JWT:Secret"]);
+builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddRedisSettings(builder.Configuration["Redis:Url"]);
+builder.Services.AddRedisSettings(builder.Configuration["Redis:Url"]!);
 builder.Services.AddDbContext<DbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
