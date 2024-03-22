@@ -8,6 +8,6 @@ namespace StokTakip.Campaign.Service.Handler;
 
 public class UpdateCampaignHandler(ICampaignService CampaignService) : IRequestHandler<UpdateCampaignRequest, ResponseBase<CampaignResponse>>
 {
-    public async Task<ResponseBase<CampaignResponse>> Handle(UpdateCampaignRequest request, CancellationToken cancellationToken) 
+    public async Task<ResponseBase<CampaignResponse>> Handle(UpdateCampaignRequest request, CancellationToken cancellationToken)
         => new ResponseBase<CampaignResponse>(await CampaignService.UpdateCampaign(request, cancellationToken));
 }

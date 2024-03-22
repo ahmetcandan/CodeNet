@@ -8,6 +8,6 @@ namespace StokTakip.Product.Service.Handler;
 
 public class UpdateProductHandler(IProductService ProductService) : IRequestHandler<UpdateProductRequest, ResponseBase<ProductResponse>>
 {
-    public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken) 
+    public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
         => new ResponseBase<ProductResponse>(await ProductService.UpdateProduct(request, cancellationToken));
 }

@@ -4,7 +4,7 @@ using System.Reflection;
 
 namespace NetCore.Container;
 
-public class MediatRModule<TRequestHandler> : Autofac.Module 
+public class MediatRModule<TRequestHandler> : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {

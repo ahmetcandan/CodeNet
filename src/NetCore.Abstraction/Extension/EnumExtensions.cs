@@ -3,7 +3,7 @@ using System.Reflection;
 
 namespace NetCore.Abstraction.Extension;
 
-    public static class EnumExtensions
+public static class EnumExtensions
 {
     public static string? GetDisplayName(this System.Enum enumValue)
     {

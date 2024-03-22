@@ -8,6 +8,6 @@ namespace StokTakip.Customer.Service.Handler;
 
 public class DeleteCustomerHandler(ICustomerService CustomerService) : IRequestHandler<DeleteCustomerRequest, ResponseBase<CustomerResponse>>
 {
-    public async Task<ResponseBase<CustomerResponse>> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken) 
+    public async Task<ResponseBase<CustomerResponse>> Handle(DeleteCustomerRequest request, CancellationToken cancellationToken)
         => new ResponseBase<CustomerResponse>(await CustomerService.DeleteCustomer(request.Id, cancellationToken));
 }

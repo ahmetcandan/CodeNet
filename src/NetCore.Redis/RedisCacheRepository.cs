@@ -66,7 +66,7 @@ public class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRe
     /// <param name="key"></param>
     /// <param name="value"></param>
     /// <param name="time">seconds</param>
-    public async Task SetCacheAsync(string key, object value, int time) 
+    public async Task SetCacheAsync(string key, object value, int time)
     {
         await SetCacheAsync(key, value, time, CancellationToken.None);
     }

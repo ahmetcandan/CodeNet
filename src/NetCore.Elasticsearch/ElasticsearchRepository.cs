@@ -25,7 +25,7 @@ public class ElasticsearchRepository : IElasticsearchRepository
         _elasticsearchClient = new ElasticsearchClient(settings);
     }
 
-    public async Task SetData(LogModel log) 
+    public async Task SetData(LogModel log)
     {
         await _elasticsearchClient.IndexAsync(log, idx => idx.Index(INDEX_NAME));
     }
