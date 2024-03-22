@@ -4,8 +4,6 @@ using StokTakip.Campaign.Abstraction.Repository;
 using StokTakip.Campaign.Abstraction.Service;
 using StokTakip.Campaign.Contract.Request;
 using StokTakip.Campaign.Contract.Response;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace StokTakip.Campaign.Service;
 

@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NetCore.Abstraction.Model;
+﻿namespace NetCore.Abstraction.Model;
 
 public interface ITracingEntity : IBaseEntity
 {

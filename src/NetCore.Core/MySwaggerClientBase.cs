@@ -1,6 +1,4 @@
-﻿using System.Net.Http;
-
-namespace NetCore.Core;
+﻿namespace NetCore.Core;
 
 public abstract class MySwaggerClientBase
 {

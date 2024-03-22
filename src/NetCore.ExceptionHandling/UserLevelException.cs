@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace NetCore.ExceptionHandling;
+﻿namespace NetCore.ExceptionHandling;
 
 public class UserLevelException : Exception
 {

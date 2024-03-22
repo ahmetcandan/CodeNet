@@ -8,8 +8,6 @@ using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace NetCore.Identity.Manager;
 

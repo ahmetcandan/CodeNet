@@ -5,7 +5,7 @@ using Ocelot.Middleware;
 using Ocelot.Provider.Polly;
 
 
-const string  routes = "Routes";
+const string routes = "Routes";
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.AddOcelotWithSwaggerSupport(options =>
 {

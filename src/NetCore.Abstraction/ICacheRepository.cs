@@ -1,7 +1,4 @@
-﻿using System.Threading;
-using System.Threading.Tasks;
-
-namespace NetCore.Abstraction;
+﻿namespace NetCore.Abstraction;
 
 public interface ICacheRepository
 {

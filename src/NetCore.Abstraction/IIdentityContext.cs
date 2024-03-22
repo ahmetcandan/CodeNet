@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace NetCore.Abstraction;
+﻿namespace NetCore.Abstraction;
 
 public interface IIdentityContext
 {

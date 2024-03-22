@@ -1,7 +1,4 @@
-﻿using NetCore.Abstraction.Enum;
-using System;
-
-namespace NetCore.Abstraction.Model;
+﻿namespace NetCore.Abstraction.Model;
 
 public class LogModel
 {
