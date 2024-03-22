@@ -31,7 +31,7 @@ public class ResponseBase<T> : ResponseBase where T : class
     {
     }
 
-    public ResponseBase(T data, bool isSuccessfull = true)
+    public ResponseBase(T? data, bool isSuccessfull = true)
     {
         IsSuccessfull = isSuccessfull;
         Data = data;

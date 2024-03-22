@@ -6,15 +6,8 @@ using StokTakip.Product.Contract.Response;
 
 namespace StokTakip.Product.Service.Handler;
 
-public class DeleteProductHandler(IProductService productService) : IRequestHandler<DeleteProductRequest, ResponseBase<ProductResponse>>
+public class DeleteProductHandler(IProductService ProductService) : IRequestHandler<DeleteProductRequest, ResponseBase<ProductResponse>>
 {
-    public async Task<ResponseBase<ProductResponse>> Handle(DeleteProductRequest request, CancellationToken cancellationToken)
-    {
-        var product = await productService.DeleteProduct(request.Id, cancellationToken);
-        return new ResponseBase<ProductResponse>
-        {
-            Data = product,
-            IsSuccessfull = true
-        };
-    }
+    public async Task<ResponseBase<ProductResponse>> Handle(DeleteProductRequest request, CancellationToken cancellationToken) 
+        => new ResponseBase<ProductResponse>(await ProductService.DeleteProduct(request.Id, cancellationToken));
 }

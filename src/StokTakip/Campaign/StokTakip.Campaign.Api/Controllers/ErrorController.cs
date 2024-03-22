@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
+using System.Reflection;
 
 namespace StokTakip.Campaign.Api.Controllers;
 
@@ -22,13 +23,8 @@ public class ErrorController(IAppLogger appLogger) : ControllerBase
     {
         var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         if (exceptionFeature is not null)
-            _appLogger.ExceptionLog(exceptionFeature.Error, typeof(ErrorController).GetMethod("Index"));
+            _appLogger.ExceptionLog(exceptionFeature.Error, MethodBase.GetCurrentMethod()!);
 
-        return BadRequest(new ResponseBase
-        {
-            IsSuccessfull = false,
-            MessageCode = "99",
-            Message = "An unexpected error occurred!"
-        });
+        return BadRequest(new ResponseBase("99", "An unexpected error occurred!"));
     }
 }

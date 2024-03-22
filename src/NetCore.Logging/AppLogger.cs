@@ -11,45 +11,21 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
 {
     private const string CHANNEL_NAME = "log";
 
-    public void EntryLog(object request, MethodBase methodBase)
-    {
-        PostLogData(LogTime.Entry, methodBase, request);
-    }
+    public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
-    public void ExceptionLog(Exception exception, MethodBase methodBase)
-    {
-        PostLogData(LogTime.Error, methodBase, exception);
-    }
+    public void ExceptionLog(Exception exception, MethodBase methodBase) => PostLogData(LogTime.Error, methodBase, exception);
 
-    public void ExceptionLog(Exception exception, object data, MethodBase methodBase)
-    {
-        PostLogData(LogTime.Error, methodBase, new { Exception = exception, Data = data });
-    }
+    public void ExceptionLog(Exception exception, object data, MethodBase methodBase) => PostLogData(LogTime.Error, methodBase, new { Exception = exception, Data = data });
 
-    public void ExitLog(object response, MethodBase methodBase)
-    {
-        PostLogData(LogTime.Exit, methodBase, response);
-    }
+    public void ExitLog(object response, MethodBase methodBase) => PostLogData(LogTime.Exit, methodBase, response);
 
-    public void ExitLog(object response, MethodBase methodBase, long time)
-    {
-        PostLogData(LogTime.Exit, methodBase, response, elapsedDuration: time);
-    }
+    public void ExitLog(object response, MethodBase methodBase, long time) => PostLogData(LogTime.Exit, methodBase, response, elapsedDuration: time);
 
-    public void TraceLog(object data, MethodBase methodBase)
-    {
-        PostLogData(LogTime.Trace, methodBase, data);
-    }
+    public void TraceLog(object data, MethodBase methodBase) => PostLogData(LogTime.Trace, methodBase, data);
 
-    protected virtual string GetObjectToString(object obj)
-    {
-        return JsonConvert.SerializeObject(obj);
-    }
+    protected virtual string GetObjectToString(object obj) => JsonConvert.SerializeObject(obj);
 
-    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long? elapsedDuration = null)
-    {
-        PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration);
-    }
+    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long? elapsedDuration = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration);
 
     private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long? elapsedDuration = null)
     {

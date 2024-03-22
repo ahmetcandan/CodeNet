@@ -1,4 +1,5 @@
 ﻿using NetCore.Abstraction;
+using NetCore.ExceptionHandling;
 using StokTakip.Campaign.Abstraction.Repository;
 using StokTakip.Campaign.Abstraction.Service;
 using StokTakip.Campaign.Contract.Request;
@@ -8,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace StokTakip.Campaign.Service;
 
-public class CampaignService(ICampaignRepository campaignRepository) : BaseService, ICampaignService
+public class CampaignService(ICampaignRepository CampaignRepository) : BaseService, ICampaignService
 {
     public async Task<CampaignResponse> CreateCampaign(CreateCampaignRequest request, CancellationToken cancellationToken)
     {
-        var result = await campaignRepository.AddAsync(new Model.Campaign
+        var result = await CampaignRepository.AddAsync(new Model.Campaign
         {
             Name = request.Name,
             IsActive = true,
             IsDeleted = false
         }, cancellationToken);
-        await campaignRepository.SaveChangesAsync(cancellationToken);
+        await CampaignRepository.SaveChangesAsync(cancellationToken);
         var response = new CampaignResponse
         {
             Id = result.Id,
@@ -29,10 +30,9 @@ public class CampaignService(ICampaignRepository campaignRepository) : BaseServi
 
     public async Task<CampaignResponse> DeleteCampaign(int campaignId, CancellationToken cancellationToken)
     {
-        var result = await campaignRepository.GetAsync([campaignId], cancellationToken);
-        result.IsDeleted = true;
-        campaignRepository.Update(result);
-        await campaignRepository.SaveChangesAsync(cancellationToken);
+        var result = await CampaignRepository.GetAsync([campaignId], cancellationToken);
+        CampaignRepository.Remove(result);
+        await CampaignRepository.SaveChangesAsync(cancellationToken);
         return new CampaignResponse
         {
             Id = result.Id,
@@ -42,9 +42,7 @@ public class CampaignService(ICampaignRepository campaignRepository) : BaseServi
 
     public async Task<CampaignResponse> GetCampaign(int campaignId, CancellationToken cancellationToken)
     {
-        var result = await campaignRepository.GetAsync([campaignId], cancellationToken);
-        if (result == null)
-            return null;
+        var result = await CampaignRepository.GetAsync([campaignId], cancellationToken) ?? throw new UserLevelException("01", "Kampanya bulunamadı!");
         var value = new CampaignResponse
         {
             Name = result.Name,
@@ -55,10 +53,10 @@ public class CampaignService(ICampaignRepository campaignRepository) : BaseServi
 
     public async Task<CampaignResponse> UpdateCampaign(UpdateCampaignRequest request, CancellationToken cancellationToken)
     {
-        var result = await campaignRepository.GetAsync([request.Id], cancellationToken);
+        var result = await CampaignRepository.GetAsync([request.Id], cancellationToken);
         result.Name = request.Name;
-        campaignRepository.Update(result);
-        await campaignRepository.SaveChangesAsync(cancellationToken);
+        CampaignRepository.Update(result);
+        await CampaignRepository.SaveChangesAsync(cancellationToken);
         return new CampaignResponse
         {
             Id = result.Id,

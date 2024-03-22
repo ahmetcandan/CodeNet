@@ -22,15 +22,9 @@ public class AutoMapperConfiguration : IAutoMapperConfiguration
 
     public IEnumerable<TReturn> MapCollection<TMap, TReturn>(IEnumerable<TMap> expression)
         where TMap : class
-        where TReturn : class
-    {
-        return _mapper.Map<IEnumerable<TMap>, IEnumerable<TReturn>>(expression);
-    }
+        where TReturn : class => _mapper.Map<IEnumerable<TMap>, IEnumerable<TReturn>>(expression);
 
     public TReturn MapObject<TMap, TReturn>(TMap obj)
         where TMap : class
-        where TReturn : class
-    {
-        return _mapper.Map<TMap, TReturn>(obj);
-    }
+        where TReturn : class => _mapper.Map<TMap, TReturn>(obj);
 }

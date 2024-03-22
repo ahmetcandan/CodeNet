@@ -6,14 +6,8 @@ using StokTakip.Customer.Contract.Response;
 
 namespace StokTakip.Customer.Service.Handler;
 
-public class UpdateCustomerHandler(ICustomerService customerService) : IRequestHandler<UpdateCustomerRequest, ResponseBase<CustomerResponse>>
+public class UpdateCustomerHandler(ICustomerService CustomerService) : IRequestHandler<UpdateCustomerRequest, ResponseBase<CustomerResponse>>
 {
-    public async Task<ResponseBase<CustomerResponse>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken)
-    {
-        return new ResponseBase<CustomerResponse>
-        {
-            Data = await customerService.UpdateCustomer(request, cancellationToken),
-            IsSuccessfull = true
-        };
-    }
+    public async Task<ResponseBase<CustomerResponse>> Handle(UpdateCustomerRequest request, CancellationToken cancellationToken) 
+        => new ResponseBase<CustomerResponse>(await CustomerService.UpdateCustomer(request, cancellationToken));
 }

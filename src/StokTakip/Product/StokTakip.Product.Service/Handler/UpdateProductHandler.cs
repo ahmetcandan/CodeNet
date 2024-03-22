@@ -6,15 +6,8 @@ using StokTakip.Product.Contract.Response;
 
 namespace StokTakip.Product.Service.Handler;
 
-public class UpdateProductHandler(IProductService productService) : IRequestHandler<UpdateProductRequest, ResponseBase<ProductResponse>>
+public class UpdateProductHandler(IProductService ProductService) : IRequestHandler<UpdateProductRequest, ResponseBase<ProductResponse>>
 {
-    public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken)
-    {
-        var product = await productService.UpdateProduct(request, cancellationToken);
-        return new ResponseBase<ProductResponse>
-        {
-            Data = product,
-            IsSuccessfull = true
-        };
-    }
+    public async Task<ResponseBase<ProductResponse>> Handle(UpdateProductRequest request, CancellationToken cancellationToken) 
+        => new ResponseBase<ProductResponse>(await ProductService.UpdateProduct(request, cancellationToken));
 }
