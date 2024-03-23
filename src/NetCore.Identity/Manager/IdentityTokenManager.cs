@@ -13,7 +13,7 @@ namespace NetCore.Identity.Manager;
 
 public class IdentityTokenManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<JwtConfig> JwtConfig) : IIdentityTokenManager
 {
-    public async Task<ResponseBase> GenerateToken(LoginModel model)
+    public async Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model)
     {
         var now = DateTime.Now;
         var user = await UserManager.FindByNameAsync(model.Username);

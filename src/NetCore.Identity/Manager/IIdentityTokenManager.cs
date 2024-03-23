@@ -5,5 +5,5 @@ namespace NetCore.Identity.Manager;
 
 public interface IIdentityTokenManager
 {
-    Task<ResponseBase> GenerateToken(LoginModel model);
+    Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model);
 }

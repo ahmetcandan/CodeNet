@@ -2,7 +2,7 @@
 
 namespace NetCore.Core;
 
-public class AsymmetricKeyEncryption
+public sealed class AsymmetricKeyEncryption
 {
     public static RSA CreateRSA(string filePath)
     {
