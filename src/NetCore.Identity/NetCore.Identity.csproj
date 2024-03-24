@@ -20,7 +20,6 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\NetCore.Container\NetCore.Container.csproj" />
-		<ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
 		<ProjectReference Include="..\NetCore.EntityFramework\NetCore.EntityFramework.csproj" />
 	</ItemGroup>
 

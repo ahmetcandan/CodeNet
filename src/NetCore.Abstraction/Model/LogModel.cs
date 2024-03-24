@@ -1,10 +1,8 @@
 ﻿namespace NetCore.Abstraction.Model;
 
-public class LogModel
+public class LogModel : ElasticsearchModel
 {
-    public virtual Guid Id { get; } = Guid.NewGuid();
     public virtual Guid RequestId { get; set; }
-    public virtual DateTime LogDate { get; } = DateTime.Now;
     public virtual string? Username { get; set; }
     public virtual required string AssemblyName { get; set; }
     public virtual required string ClassName { get; set; }

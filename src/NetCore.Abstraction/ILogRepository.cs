@@ -4,5 +4,5 @@ namespace NetCore.Abstraction;
 
 public interface ILogRepository
 {
-    public void Insert(LogModel model);
+    public Task<bool> AddAsync(LogModel model);
 }

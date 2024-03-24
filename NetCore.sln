@@ -89,7 +89,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Gateway", "src\NetC
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.RabbitMQ.Consumer", "src\NetCore.RabbitMQ.Consumer\NetCore.RabbitMQ.Consumer.csproj", "{8DAD3A78-27DB-42D7-AB9D-5EBEC2CFBB8F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore.Elasticsearch", "src\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj", "{D05F5506-743D-49D4-803D-0D250210BE06}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Elasticsearch", "src\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj", "{D05F5506-743D-49D4-803D-0D250210BE06}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

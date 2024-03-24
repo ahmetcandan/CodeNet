@@ -9,8 +9,6 @@ namespace NetCore.Logging;
 
 public class AppLogger(IQService QService, IIdentityContext IdentityContext) : IAppLogger
 {
-    private const string CHANNEL_NAME = "log";
-
     public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
     public void ExceptionLog(Exception exception, MethodBase methodBase) => PostLogData(LogTime.Error, methodBase, exception);
@@ -35,12 +33,12 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null)
     {
-        QService.Post(CHANNEL_NAME, new LogModel
+        QService.Post(Settings.LOG_CHANNEL_NAME, new LogModel
         {
             AssemblyName = assemblyName ?? "unknow",
             ClassName = className,
             MethodName = methodName,
-            LogTime = nameof(logTime),
+            LogTime = logTime.ToString(),
             Username = IdentityContext.UserName,
             Data = data,
             RequestId = IdentityContext.RequestId,

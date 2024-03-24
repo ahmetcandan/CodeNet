@@ -17,7 +17,6 @@
 		<ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
 		<ProjectReference Include="..\NetCore.Cache\NetCore.Cache.csproj" />
 		<ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
-		<ProjectReference Include="..\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj" />
 		<ProjectReference Include="..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
 		<ProjectReference Include="..\NetCore.Logging\NetCore.Logging.csproj" />
 		<ProjectReference Include="..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />

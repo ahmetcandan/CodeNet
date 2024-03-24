@@ -7,19 +7,17 @@ using System.Text;
 
 namespace NetCore.RabbitMQ;
 
-public class RabbitMQService(IOptions<RabbitMQSettings> config) : IQService
+public class RabbitMQService(IOptions<RabbitMQSettings> Config) : IQService
 {
-    public readonly IOptions<RabbitMQSettings> config = config;
-
     public bool Post(string channelName, object data)
     {
         try
         {
             var factory = new ConnectionFactory()
             {
-                HostName = config.Value.HostName,
-                UserName = config.Value.Username,
-                Password = config.Value.Password
+                HostName = Config.Value.HostName,
+                UserName = Config.Value.Username,
+                Password = Config.Value.Password
             };
             using var connection = factory.CreateConnection();
             using var channel = connection.CreateModel();

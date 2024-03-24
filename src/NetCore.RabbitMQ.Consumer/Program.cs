@@ -1,23 +1,29 @@
-﻿using NetCore.Abstraction.Model;
+﻿using Microsoft.Extensions.Options;
+using NetCore.Abstraction;
+using NetCore.Abstraction.Model;
 using NetCore.Elasticsearch;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 using System.Text;
 
-const string CHANNEL_NAME = "log";
-Console.WriteLine($"{DateTime.Now} RabbitMQ Started");
-var elasticsearchRepo = new ElasticsearchRepository();
+var appSettingsJson = File.ReadAllText("appsettings.json");
+var settings = JObject.Parse(appSettingsJson);
+
+var elasticOption = Options.Create(settings.SelectToken("Elasticsearch")!.ToObject<ElasticsearchSettings>()!);
+var rabbitMqSetting = settings.SelectToken("RabbitMQ")!.ToObject<RabbitMQSettings>()!;
+var elasticsearchRepo = new ElasticsearchRepository<LogModel>(elasticOption, Settings.LOG_INDEX_NAME);
 
 var factory = new ConnectionFactory()
 {
-    HostName = "localhost",
-    UserName = "guest",
-    Password = "guest"
+    HostName = rabbitMqSetting.HostName,
+    UserName = rabbitMqSetting.Username,
+    Password = rabbitMqSetting.Password
 };
 using var connection = factory.CreateConnection();
 using var channel = connection.CreateModel();
-channel.QueueDeclare(queue: CHANNEL_NAME,
+channel.QueueDeclare(queue: Settings.LOG_CHANNEL_NAME,
                      durable: false,
                      exclusive: false,
                      autoDelete: false,
@@ -29,13 +35,14 @@ consumer.Received += async (model, args) =>
     var message = Encoding.UTF8.GetString(body);
     var logModel = JsonConvert.DeserializeObject<LogModel>(message);
     if (logModel is not null)
-        await elasticsearchRepo.SetData(logModel);
+    {
+        var result = await elasticsearchRepo.InsertAsync(logModel);
+        Console.WriteLine($"Elasticsearch send data: {(result ? "Successfull" : "Fail")}");
+    }
     Console.WriteLine($"Received: {message}");
 };
-channel.BasicConsume(queue: CHANNEL_NAME,
+channel.BasicConsume(queue: Settings.LOG_CHANNEL_NAME,
                      autoAck: true,
                      consumer: consumer);
-
-
 
 Console.ReadLine();
