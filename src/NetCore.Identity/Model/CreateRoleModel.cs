@@ -1,8 +1,10 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MediatR;
+using NetCore.Abstraction.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace NetCore.Identity.Model;
 
-public class CreateRoleModel
+public class CreateRoleModel : IRequest<ResponseBase>
 {
     public string Id { get; set; }
 

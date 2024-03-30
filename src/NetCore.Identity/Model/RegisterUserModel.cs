@@ -1,8 +1,11 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using MediatR;
+using Microsoft.AspNetCore.Identity;
+using NetCore.Abstraction.Model;
+using System.ComponentModel.DataAnnotations;
 
 namespace NetCore.Identity.Model;
 
-public class RegisterUserModel
+public class RegisterUserModel : IRequest<ResponseBase<IdentityResult>>
 {
     [Required(ErrorMessage = "User Name is required")]
     public string Username { get; set; }

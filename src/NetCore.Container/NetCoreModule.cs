@@ -17,7 +17,8 @@ public class NetCoreModule : Module
         builder.RegisterGeneric(typeof(LoggingHandler<,>)).As(typeof(IPipelineBehavior<,>));
         builder.RegisterGeneric(typeof(ExceptionHandler<,>)).As(typeof(IPipelineBehavior<,>));
         builder.RegisterGeneric(typeof(CacheHandler<,>)).As(typeof(IPipelineBehavior<,>));
-        
+        builder.RegisterGeneric(typeof(DistributedLockHandler<,>)).As(typeof(IPipelineBehavior<,>));
+
         builder.RegisterType(typeof(Mapper)).As(typeof(IMapper)).AsSelf().InstancePerLifetimeScope();
         builder.RegisterType<IdentityContext>().As<IIdentityContext>().InstancePerLifetimeScope();
         builder.RegisterType<RedisCacheRepository>().As<ICacheRepository>().InstancePerLifetimeScope();

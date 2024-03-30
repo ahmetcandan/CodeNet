@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
-using NetCore.Identity.Manager;
 using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Controllers;
@@ -10,38 +10,38 @@ namespace NetCore.Identity.Controllers;
 [Route("[controller]")]
 [Authorize(Roles = "admin")]
 [ApiController]
-public class RolesController(IIdentityRoleManager IdentityRoleManager) : ControllerBase
+public class RolesController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Route("create")]
     [ProducesResponseType(200, Type = typeof(ResponseBase<IdentityRole>))]
-    public async Task<IActionResult> Post([FromBody] CreateRoleModel model)
+    public async Task<IActionResult> Post([FromBody] CreateRoleModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityRoleManager.CreateRole(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpPut]
     [Route("edit")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> Put([FromBody] RoleModel model)
+    public async Task<IActionResult> Put([FromBody] UpdateRoleModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityRoleManager.EditRole(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpPut]
     [Route("editclaims")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> EditClaims([FromBody] RoleClaimsModel model)
+    public async Task<IActionResult> EditClaims([FromBody] RoleClaimsModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityRoleManager.EditRoleClaims(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpDelete]
     [Route("delete")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> Delete([FromBody] RoleModel model)
+    public async Task<IActionResult> Delete([FromBody] DeleteRoleModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityRoleManager.DeleteRole(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpGet]
@@ -49,6 +49,6 @@ public class RolesController(IIdentityRoleManager IdentityRoleManager) : Control
     [ProducesResponseType(200, Type = typeof(ResponseBase<IEnumerable<RoleViewModel>>))]
     public async Task<IActionResult> Get(CancellationToken cancellationToken)
     {
-        return Ok(await IdentityRoleManager.GetRoles(cancellationToken));
+        return Ok(await mediator.Send(new GetRoleQuery(), cancellationToken));
     }
 }

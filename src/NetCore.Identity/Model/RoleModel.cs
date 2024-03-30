@@ -4,7 +4,6 @@ namespace NetCore.Identity.Model;
 
 public class RoleModel
 {
-
     [Required(ErrorMessage = "Id is required")]
     public string Id { get; set; }
 

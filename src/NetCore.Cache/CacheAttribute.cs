@@ -3,10 +3,10 @@
 /// <summary>
 /// Cache
 /// </summary>
-/// <param name="time">Seconds</param>
+/// <param name="time">Minutes</param>
 /// <remarks>
 [AttributeUsage(AttributeTargets.Method)]
-public class CacheAttribute(int time) : Attribute
+public class CacheAttribute() : Attribute
 {
-    public int Time { get; set; } = time;
+    public required int Time { get; set; }
 }

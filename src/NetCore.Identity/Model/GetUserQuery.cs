@@ -4,10 +4,8 @@ using System.ComponentModel.DataAnnotations;
 
 namespace NetCore.Identity.Model;
 
-public class UpdateUserClaimsModel : IRequest<ResponseBase>
+public class GetUserQuery(string username) : IRequest<ResponseBase<UserModel>>
 {
     [Required(ErrorMessage = "User Name is required")]
-    public string Username { get; set; }
-
-    public IEnumerable<EditClaimsModel> Claims { get; set; }
+    public string Username { get; set; } = username;
 }

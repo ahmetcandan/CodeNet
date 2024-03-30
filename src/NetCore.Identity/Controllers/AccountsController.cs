@@ -1,57 +1,57 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NetCore.Abstraction.Model;
-using NetCore.Identity.Manager;
 using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Controllers;
 
 [Route("[controller]")]
 [ApiController]
-public class AccountsController(IIdentityUserManager IdentityUserManager) : ControllerBase
+public class AccountsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
     [Authorize(Roles = "admin")]
     [Route("register")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> Register([FromBody] RegisterUserModel model)
+    public async Task<IActionResult> Register([FromBody] RegisterUserModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityUserManager.CreateUser(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpPut]
     [Authorize(Roles = "admin")]
     [Route("editroles")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> EditRoles([FromBody] UpdateUserRolesModel model)
+    public async Task<IActionResult> EditRoles([FromBody] UpdateUserRolesModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityUserManager.EditUserRoles(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpPut]
     [Authorize(Roles = "admin")]
     [Route("editclaims")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> EditClaims([FromBody] UpdateUserClaimsModel model)
+    public async Task<IActionResult> EditClaims([FromBody] UpdateUserClaimsModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityUserManager.EditUserClaims(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 
     [HttpGet]
     [Authorize(Roles = "admin")]
     [Route("getuser/{username}")]
     [ProducesResponseType(200, Type = typeof(ResponseBase<UserModel>))]
-    public async Task<IActionResult> GetUser(string username)
+    public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityUserManager.GetUser(username));
+        return Ok(await mediator.Send(new GetUserQuery(username), cancellationToken));
     }
 
     [HttpDelete]
     [Authorize(Roles = "admin")]
     [Route("removeuser")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
-    public async Task<IActionResult> RemoveUser([FromBody] RemoveUserModel model)
+    public async Task<IActionResult> RemoveUser([FromBody] RemoveUserModel model, CancellationToken cancellationToken)
     {
-        return Ok(await IdentityUserManager.RemoveUser(model));
+        return Ok(await mediator.Send(model, cancellationToken));
     }
 }

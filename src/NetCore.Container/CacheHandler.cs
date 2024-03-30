@@ -4,7 +4,6 @@ using Microsoft.Extensions.Caching.Distributed;
 using NetCore.Abstraction.Model;
 using NetCore.Cache;
 using Newtonsoft.Json;
-using System.Text;
 
 namespace NetCore.Container;
 
@@ -13,7 +12,6 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
         var methodBase = GetHandlerMethodInfo(LifetimeScope);
-        ArgumentNullException.ThrowIfNull(methodBase);
 
         var cacheAttribute = methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() as CacheAttribute;
         if (cacheAttribute is not null)
@@ -40,17 +38,5 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
         }
 
         return await next();
-    }
-
-    private static string RequestKey(TRequest request)
-    {
-        if (request is null)
-            return string.Empty;
-
-        var stringBuilder = new StringBuilder();
-        foreach (var prop in typeof(TRequest).GetProperties())
-            stringBuilder.Append(prop.GetValue(request)?.ToString());
-
-        return stringBuilder.ToString();
     }
 }
