@@ -16,7 +16,7 @@ public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope,
         }
         catch (Exception ex)
         {
-            AppLogger.ExceptionLog(ex, GetHandlerMethodInfo(LifetimeScope));
+            AppLogger.ExceptionLog(ex, GetHandlerMethodInfo(LifetimeScope)!);
             return ex switch
             {
                 UserLevelException userLevelException => new TResponse

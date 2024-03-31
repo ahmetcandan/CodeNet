@@ -1,12 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using NetCore.Abstraction.Model;
-using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
 
 namespace NetCore.Identity.Manager;
 
-public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager) : IIdentityUserManager
+public class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager) : IIdentityUserManager
 {
     public async Task<ResponseBase<IdentityResult>> CreateUser(RegisterUserModel model)
     {
@@ -14,7 +13,7 @@ public class IdentityUserManager(UserManager<ApplicationUser> UserManager, RoleM
         if (userExists is not null)
             throw new UserLevelException("001", "User already exists!");
 
-        var user = new ApplicationUser()
+        var user = new IdentityUser()
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),

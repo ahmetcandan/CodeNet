@@ -13,30 +13,23 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
     {
         var methodBase = GetHandlerMethodInfo(LifetimeScope);
 
-        var cacheAttribute = methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() as CacheAttribute;
-        if (cacheAttribute is not null)
+        if (methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() is not CacheAttribute cacheAttribute)
+            return await next();
+
+        string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
+        var cacheJsonValue = await DistributedCache.GetStringAsync(key, cancellationToken);
+        if (string.IsNullOrEmpty(cacheJsonValue))
         {
-            string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
-
-            var cacheJsonValue = await DistributedCache.GetStringAsync(key, cancellationToken);
-            if (string.IsNullOrEmpty(cacheJsonValue))
+            var response = await next();
+            await DistributedCache.SetStringAsync(key, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions
             {
-                var response = await next();
-                await DistributedCache.SetStringAsync(key, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time)
-                }, cancellationToken);
-                return response;
-            }
-
-            var cacheValue = JsonConvert.DeserializeObject<TResponse>(cacheJsonValue);
-            if (cacheValue is not null)
-            {
-                cacheValue.FromCache = true;
-                return cacheValue;
-            }
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time)
+            }, cancellationToken);
+            return response;
         }
 
-        return await next();
+        var cacheValue = JsonConvert.DeserializeObject<TResponse>(cacheJsonValue);
+        cacheValue!.FromCache = true;
+        return cacheValue;
     }
 }

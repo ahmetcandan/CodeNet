@@ -1,8 +1,13 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using RedLockNet;
+using RedLockNet.SERedis;
+using RedLockNet.SERedis.Configuration;
 using Swashbuckle.AspNetCore.Filters;
+using System.Net;
 
 namespace NetCore.Core.Extension;
 
@@ -10,7 +15,7 @@ public static class ServiceCollectionExtension
 {
     public static IServiceCollection AddSwagger(this IServiceCollection service, string title, string version = "v1")
     {
-        service.AddSwaggerGen(c =>
+        return service.AddSwaggerGen(c =>
          {
              c.SwaggerDoc(version, new OpenApiInfo { Title = title, Version = version });
 
@@ -27,16 +32,25 @@ public static class ServiceCollectionExtension
 
              c.OperationFilter<SecurityRequirementsOperationFilter>();
          });
-        return service;
     }
 
-    public static IServiceCollection AddRedisSettings(this IServiceCollection service, string configuration, string instanceName = "master")
+    public static IServiceCollection AddRedisSettings(this IServiceCollection service, string hostname, int port, string instanceName = "master")
     {
+        //Cache
         service.AddStackExchangeRedisCache(option =>
          {
-             option.Configuration = configuration;
+             option.Configuration = $"{hostname}:{port}";
              option.InstanceName = instanceName;
          });
+
+        //Lock
+        var ipAddresses = Dns.GetHostAddresses(hostname);
+        var endPoints = new List<RedLockEndPoint>
+        {
+            new() { EndPoint = new IPEndPoint(ipAddresses[0], port) }
+        };
+        service.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
+
         return service;
     }
 
@@ -66,5 +80,15 @@ public static class ServiceCollectionExtension
             };
         });
         return service;
+    }
+
+    public static IServiceCollection AddSqlServer(this IServiceCollection service, string connectionString)
+    {
+        return service.AddSqlServer<DbContext>(connectionString);
+    }
+
+    public static IServiceCollection AddSqlServer<TDbContext>(this IServiceCollection service, string connectionString) where TDbContext : DbContext
+    {
+        return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
     }
 }

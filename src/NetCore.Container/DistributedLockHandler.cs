@@ -12,24 +12,21 @@ public class DistributedLockHandler<TRequest, TResponse>(ILifetimeScope Lifetime
     {
         var methodBase = GetHandlerMethodInfo(LifetimeScope);
 
-        var distributedLockAttribute = methodBase?.GetCustomAttributes(typeof(DistributedLockAttribute), true).FirstOrDefault() as DistributedLockAttribute;
-        if (distributedLockAttribute is not null)
-        {
-            string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
+        if (methodBase?.GetCustomAttributes(typeof(DistributedLockAttribute), true).FirstOrDefault() is not DistributedLockAttribute distributedLockAttribute)
+            return await next();
 
-            using var redLock = await LockFactory.CreateLockAsync(key, TimeSpan.FromSeconds(distributedLockAttribute.ExpiryTime));
-            if (redLock.IsAcquired)
-                return await next();
-            else
-                return new TResponse
-                {
-                    IsSuccessfull = false,
-                    Message = "Distributed Lock Fail !",
-                    MessageCode = "012",
-                    FromCache = false
-                };
-        }
+        string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
 
-        return await next();
+        using var redLock = await LockFactory.CreateLockAsync(key, TimeSpan.FromSeconds(distributedLockAttribute.ExpiryTime));
+        if (redLock.IsAcquired)
+            return await next();
+        else
+            return new TResponse
+            {
+                IsSuccessfull = false,
+                Message = "Distributed Lock Fail !",
+                MessageCode = "012",
+                FromCache = false
+            };
     }
 }

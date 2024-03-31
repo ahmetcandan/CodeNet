@@ -1,18 +1,12 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using NetCore.Container;
 using NetCore.Core.Extension;
-using NetCore.EntityFramework;
-using NetCore.EntityFramework.Model;
+using NetCore.Identity.DbContext;
 using NetCore.Identity.Handler;
 using NetCore.Identity.Manager;
 using NetCore.Identity.Model;
-using RedLockNet;
-using RedLockNet.SERedis;
-using RedLockNet.SERedis.Configuration;
-using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,22 +24,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwagger("NetCore | Identity API");
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JWT"));
-builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
-builder.Services.AddRedisSettings(builder.Configuration["Redis:Url"]!);
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration["SqlServer:Default"]!);
+builder.Services.AddRedisSettings(builder.Configuration["Redis:Hostname"]!, int.Parse(builder.Configuration["Redis:Port"]!));
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
 builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
 builder.Services.AddHttpContextAccessor();
-
-var uri = new Uri("https://192.168.1.47"); 
-var ipAddresses = Dns.GetHostAddresses(uri.Host);
-
-var endPoints = new List<RedLockEndPoint>
-{
-    new() { EndPoint = new IPEndPoint(ipAddresses[0], 6379) }
-};
-builder.Services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
 
 var app = builder.Build();
 if (app.Environment.IsDevelopment())

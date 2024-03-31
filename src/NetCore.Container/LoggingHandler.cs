@@ -12,7 +12,7 @@ public class LoggingHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, I
     {
         var methodInfo = GetHandlerMethodInfo(LifetimeScope);
 
-        AppLogger.EntryLog(request, methodInfo);
+        AppLogger.EntryLog(request, methodInfo!);
 
         var timer = new Stopwatch();
         timer.Start();
@@ -20,7 +20,7 @@ public class LoggingHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, I
         var response = await next();
 
         timer.Stop();
-        AppLogger.ExitLog(response, methodInfo, timer.ElapsedMilliseconds);
+        AppLogger.ExitLog(response, methodInfo!, timer.ElapsedMilliseconds);
 
         return response;
     }

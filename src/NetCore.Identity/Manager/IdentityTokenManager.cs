@@ -3,7 +3,6 @@ using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using NetCore.Abstraction.Model;
 using NetCore.Core;
-using NetCore.EntityFramework.Model;
 using NetCore.ExceptionHandling;
 using NetCore.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,7 +10,7 @@ using System.Security.Claims;
 
 namespace NetCore.Identity.Manager;
 
-public class IdentityTokenManager(UserManager<ApplicationUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<JwtConfig> JwtConfig) : IIdentityTokenManager
+public class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<JwtConfig> JwtConfig) : IIdentityTokenManager
 {
     public async Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model)
     {
