@@ -9,11 +9,11 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
 
+const string appName = "StokTakip | Campaign API";
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwagger("StokTakip | Campaign API");
+builder.Services.AddSwagger(appName);
 builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
-builder.Services.AddHttpContextAccessor();
 builder.Services.AddRedisSettings(builder.Configuration["Redis:Hostname"]!, int.Parse(builder.Configuration["Redis:Port"]!));
 builder.Services.AddSqlServer(builder.Configuration["SqlServer:Default"]!);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoDB"));
@@ -27,11 +27,5 @@ if (app.Environment.IsDevelopment())
     app.UseDeveloperExceptionPage();
 
 app.UseExceptionHandler("/Error");
-app.UseSwagger();
-app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "Campaigns API v1"));
-app.UseHttpsRedirection();
-app.UseRouting();
-app.UseAuthentication();
-app.UseAuthorization();
-app.MapControllers();
+app.AddNetCoreSettings(appName);
 app.Run();

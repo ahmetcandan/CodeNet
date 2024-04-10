@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
@@ -57,7 +58,6 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddAuthentication(this IServiceCollection service, string validAudience, string validIssuer, string publicKeyPath)
     {
         var rsa = AsymmetricKeyEncryption.CreateRSA(publicKeyPath);
-
         service.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -79,6 +79,8 @@ public static class ServiceCollectionExtension
                 ClockSkew = TimeSpan.Zero
             };
         });
+
+        service.AddHttpContextAccessor();
         return service;
     }
 
@@ -90,5 +92,17 @@ public static class ServiceCollectionExtension
     public static IServiceCollection AddSqlServer<TDbContext>(this IServiceCollection service, string connectionString) where TDbContext : DbContext
     {
         return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
+    }
+
+    public static WebApplication AddNetCoreSettings(this WebApplication app, string title, string version = "v1") 
+    {
+        app.UseSwagger();
+        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{title} {version}"));
+        app.UseHttpsRedirection();
+        app.UseRouting();
+        app.UseAuthentication();
+        app.UseAuthorization();
+        app.MapControllers();
+        return app;
     }
 }

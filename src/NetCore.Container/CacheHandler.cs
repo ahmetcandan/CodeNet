@@ -16,7 +16,7 @@ public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDi
         if (methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() is not CacheAttribute cacheAttribute)
             return await next();
 
-        string key = $"{methodBase?.DeclaringType?.Assembly.GetName().Name}:{methodBase?.DeclaringType?.Name}:{RequestKey(request)}";
+        var key = GetKey(methodBase, request);
         var cacheJsonValue = await DistributedCache.GetStringAsync(key, cancellationToken);
         if (string.IsNullOrEmpty(cacheJsonValue))
         {
