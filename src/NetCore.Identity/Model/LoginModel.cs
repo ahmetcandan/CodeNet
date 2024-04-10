@@ -1,6 +1,5 @@
 ﻿using MediatR;
 using NetCore.Abstraction.Model;
-using System.ComponentModel.DataAnnotations;
 
 namespace NetCore.Identity.Model;
 

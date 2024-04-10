@@ -94,7 +94,7 @@ public static class ServiceCollectionExtension
         return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
     }
 
-    public static WebApplication AddNetCoreSettings(this WebApplication app, string title, string version = "v1") 
+    public static WebApplication AddNetCoreSettings(this WebApplication app, string title, string version = "v1")
     {
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{title} {version}"));

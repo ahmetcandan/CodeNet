@@ -16,10 +16,9 @@ public class LockHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDis
             return await next();
 
         using var redLock = await LockFactory.CreateLockAsync(GetKey(methodBase, request), TimeSpan.FromSeconds(distributedLockAttribute.ExpiryTime));
-        if (redLock.IsAcquired)
-            return await next();
-        else
-            return new TResponse
+        return redLock.IsAcquired
+            ? await next()
+            : new TResponse
             {
                 IsSuccessfull = false,
                 Message = "Distributed Lock Fail !",

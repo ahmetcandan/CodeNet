@@ -21,7 +21,7 @@ public class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIdenti
                 HttpContextAccessor.HttpContext.Response.Headers["RequestId"] = _requestId.Value.ToString();
 
             return _requestId.Value;
-        }   
+        }
     }
 
     public string? UserName => HttpContextAccessor?.HttpContext?.User?.Identity?.Name;

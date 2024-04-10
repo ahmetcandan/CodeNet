@@ -18,7 +18,7 @@ public abstract class DecoratorBase<TRequest, TResponse> : IPipelineBehavior<TRe
         return handler != null ? handler.GetType().GetMethod("Handle") : (MethodBase?)null;
     }
 
-    protected static string GetKey(MethodBase methodBase, TRequest request) 
+    protected static string GetKey(MethodBase methodBase, TRequest request)
     {
         return $"{methodBase.DeclaringType?.Assembly.GetName().Name}:{methodBase.DeclaringType?.Name}:{GetRequestKey(request)}";
     }
