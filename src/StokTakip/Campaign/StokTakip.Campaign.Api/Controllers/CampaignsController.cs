@@ -10,36 +10,35 @@ namespace StokTakip.Campaign.Api.Controllers;
 [Authorize(Roles = "campaign")]
 [ApiController]
 [Route("[controller]")]
-public class CampaignsController : ControllerBase
+public class CampaignsController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator;
-
-    public CampaignsController(IMediator mediator)
-    {
-        _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
-    }
+    private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
     [HttpGet("{campaignId}")]
-    public async Task<ResponseBase<CampaignResponse>> Get(int CampaignId, CancellationToken cancellationToken)
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CampaignResponse>))]
+    public async Task<IActionResult> Get(int CampaignId, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new GetCampaignRequest { Id = CampaignId }, cancellationToken);
+        return Ok(await _mediator.Send(new GetCampaignRequest { Id = CampaignId }, cancellationToken));
     }
 
     [HttpPost]
-    public async Task<ResponseBase<CampaignResponse>> Post(CreateCampaignRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CampaignResponse>))]
+    public async Task<IActionResult> Post(CreateCampaignRequest request, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(request, cancellationToken);
+        return Ok(await _mediator.Send(request, cancellationToken));
     }
 
     [HttpPut]
-    public async Task<ResponseBase<CampaignResponse>> Put(UpdateCampaignRequest request, CancellationToken cancellationToken)
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CampaignResponse>))]
+    public async Task<IActionResult> Put(UpdateCampaignRequest request, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(request, cancellationToken);
+        return Ok(await _mediator.Send(request, cancellationToken));
     }
 
     [HttpDelete]
-    public async Task<ResponseBase<CampaignResponse>> Delete(int CampaignId, CancellationToken cancellationToken)
+    [ProducesResponseType(200, Type = typeof(ResponseBase<CampaignResponse>))]
+    public async Task<IActionResult> Delete(int CampaignId, CancellationToken cancellationToken)
     {
-        return await _mediator.Send(new DeleteCampaignRequest { Id = CampaignId }, cancellationToken);
+        return Ok(await _mediator.Send(new DeleteCampaignRequest { Id = CampaignId }, cancellationToken));
     }
 }

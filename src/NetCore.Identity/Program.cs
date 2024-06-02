@@ -1,6 +1,7 @@
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
+using NetCore.Abstraction.Model;
 using NetCore.Container;
 using NetCore.Core.Extension;
 using NetCore.Identity.DbContext;
@@ -21,11 +22,9 @@ builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
     containerBuilder.RegisterType<IdentityRoleManager>().As<IIdentityRoleManager>().InstancePerLifetimeScope();
 });
 
-const string appName = "NetCore | Identity API";
-builder.Services.AddControllers();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwagger(appName);
-builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration["SqlServer:Default"]!);
+var applicationSettings = builder.Configuration.GetSection("Application").Get<ApplicationSettings>()!;
+builder.Services.AddNetCore(applicationSettings);
+builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer")!);
 builder.Services.AddRedisSettings(builder.Configuration["Redis:Hostname"]!, int.Parse(builder.Configuration["Redis:Port"]!));
 builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
@@ -34,9 +33,6 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>()
 builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JWT"));
 
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
-    app.UseDeveloperExceptionPage();
 
-app.UseExceptionHandler("/Error");
-app.AddNetCoreSettings(appName);
+app.UseNetCore(applicationSettings);
 app.Run();

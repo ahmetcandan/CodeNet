@@ -2,8 +2,10 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NetCore.Abstraction.Model;
 using RedLockNet;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
@@ -14,25 +16,29 @@ namespace NetCore.Core.Extension;
 
 public static class ServiceCollectionExtension
 {
-    public static IServiceCollection AddSwagger(this IServiceCollection service, string title, string version = "v1")
+    public static IServiceCollection AddNetCore(this IServiceCollection services, ApplicationSettings applicationSettings) 
     {
-        return service.AddSwaggerGen(c =>
-         {
-             c.SwaggerDoc(version, new OpenApiInfo { Title = title, Version = version });
+        services.AddSwaggerGen(c =>
+        {
+            c.SwaggerDoc(applicationSettings.Version, new OpenApiInfo { Title = applicationSettings.Title, Version = applicationSettings.Version });
 
-             c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
-             {
-                 Description = @"JWT Authorization header using the Bearer scheme. 
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            {
+                Description = @"JWT Authorization header using the Bearer scheme. 
               Enter 'Bearer' [space] and then your token in the text input below.
               Example: 'Bearer 12345abcdef'",
-                 Name = "Authorization",
-                 In = ParameterLocation.Header,
-                 Type = SecuritySchemeType.ApiKey,
-                 Scheme = "Bearer"
-             });
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
 
-             c.OperationFilter<SecurityRequirementsOperationFilter>();
-         });
+            c.OperationFilter<SecurityRequirementsOperationFilter>();
+        });
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+
+        return services;
     }
 
     public static IServiceCollection AddRedisSettings(this IServiceCollection service, string hostname, int port, string instanceName = "master")
@@ -94,10 +100,14 @@ public static class ServiceCollectionExtension
         return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
     }
 
-    public static WebApplication AddNetCoreSettings(this WebApplication app, string title, string version = "v1")
+    public static WebApplication UseNetCore(this WebApplication app, ApplicationSettings applicationSettings)
     {
+        if (app.Environment.IsDevelopment())
+            app.UseDeveloperExceptionPage();
+
+        app.UseExceptionHandler("/Error");
         app.UseSwagger();
-        app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", $"{title} {version}"));
+        app.UseSwaggerUI(c => c.SwaggerEndpoint($"/swagger/{applicationSettings.Version}/swagger.json", $"{applicationSettings.Title} {applicationSettings.Version}"));
         app.UseHttpsRedirection();
         app.UseRouting();
         app.UseAuthentication();

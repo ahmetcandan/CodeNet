@@ -11,7 +11,7 @@ namespace StokTakip.Customer.Api.Controllers;
 [Route("[controller]")]
 public class CustomersController(IMediator mediator) : ControllerBase
 {
-    private readonly IMediator _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
+    private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 
     [HttpGet("{customerId}")]
     [ProducesResponseType(200, Type = typeof(ResponseBase<CustomerResponse>))]

@@ -9,10 +9,10 @@ public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsync
 {
     private readonly IMongoCollection<TModel> _mongoCollection;
 
-    public BaseMongoRepository(string mongoDBConnectionString, string dbName, string collectionName)
+    public BaseMongoRepository(string mongoDBConnectionString, string collectionName)
     {
         var client = new MongoClient(mongoDBConnectionString);
-        var database = client.GetDatabase(dbName);
+        var database = client.GetDatabase(MongoUrl.Create(mongoDBConnectionString).DatabaseName); 
         _mongoCollection = database.GetCollection<TModel>(collectionName);
     }
 

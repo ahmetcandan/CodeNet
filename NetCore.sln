@@ -89,6 +89,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.RabbitMQ.Consumer",
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Elasticsearch", "src\NetCore.Elasticsearch\NetCore.Elasticsearch.csproj", "{D05F5506-743D-49D4-803D-0D250210BE06}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{0038FE54-3C71-45CD-A3AE-EA82FEB03CFC}"
+	ProjectSection(SolutionItems) = preProject
+		NetCore.sql = NetCore.sql
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

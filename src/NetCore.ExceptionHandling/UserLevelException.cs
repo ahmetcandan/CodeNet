@@ -4,7 +4,7 @@ public class UserLevelException : Exception
 {
     public UserLevelException()
     {
-
+        
     }
 
     public UserLevelException(string code, string message)

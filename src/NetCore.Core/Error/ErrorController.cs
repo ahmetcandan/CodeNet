@@ -1,10 +1,12 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
+using NetCore.Abstraction;
 using System.Reflection;
 
-namespace StokTakip.Campaign.Api.Controllers;
+namespace NetCore.Core.Error;
+
 
 [Route("Error")]
 [ApiController]
@@ -19,7 +21,7 @@ public class ErrorController(IAppLogger appLogger) : ControllerBase
     [HttpPatch]
     [HttpPost]
     [HttpPut]
-    public IActionResult Index()
+    public virtual IActionResult Index()
     {
         var exceptionFeature = HttpContext.Features.Get<IExceptionHandlerPathFeature>();
         if (exceptionFeature is not null)
