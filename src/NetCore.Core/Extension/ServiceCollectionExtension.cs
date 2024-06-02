@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -16,6 +18,12 @@ namespace NetCore.Core.Extension;
 
 public static class ServiceCollectionExtension
 {
+    public static IHostBuilder UseNetCoreContainer(this IHostBuilder hostBuilder, Action<ContainerBuilder> configureDelegate)
+    {
+        hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+        return hostBuilder.ConfigureContainer(configureDelegate);
+    }
+
     public static IServiceCollection AddNetCore(this IServiceCollection services, ApplicationSettings applicationSettings) 
     {
         services.AddSwaggerGen(c =>

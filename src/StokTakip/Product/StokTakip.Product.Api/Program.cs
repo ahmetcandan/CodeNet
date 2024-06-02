@@ -1,13 +1,10 @@
-using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using NetCore.Abstraction.Model;
 using NetCore.Core.Extension;
 using StokTakip.Product.Container;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
+builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
 
 var applicationSettings = builder.Configuration.GetSection("Application").Get<ApplicationSettings>()!;
 builder.Services.AddNetCore(applicationSettings);

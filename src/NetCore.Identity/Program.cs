@@ -1,5 +1,4 @@
 using Autofac;
-using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Identity;
 using NetCore.Abstraction.Model;
 using NetCore.Container;
@@ -10,13 +9,10 @@ using NetCore.Identity.Manager;
 using NetCore.Identity.Model;
 
 var builder = WebApplication.CreateBuilder(args);
-
-builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(containerBuilder =>
+builder.Host.UseNetCoreContainer(containerBuilder => 
 {
     containerBuilder.RegisterModule<NetCoreModule>();
     containerBuilder.RegisterModule<MediatRModule<GenerateTokenRequestHandler>>();
-
     containerBuilder.RegisterType<IdentityTokenManager>().As<IIdentityTokenManager>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<IdentityUserManager>().As<IIdentityUserManager>().InstancePerLifetimeScope();
     containerBuilder.RegisterType<IdentityRoleManager>().As<IIdentityRoleManager>().InstancePerLifetimeScope();
