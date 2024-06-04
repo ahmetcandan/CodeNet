@@ -1,4 +1,5 @@
-﻿using MongoDB.Driver;
+﻿using Microsoft.Extensions.Options;
+using MongoDB.Driver;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 using System.Linq.Expressions;
@@ -8,12 +9,15 @@ namespace NetCore.MongoDB;
 public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsyncRepository<TModel> where TModel : INoSqlModel, new()
 {
     private readonly IMongoCollection<TModel> _mongoCollection;
+    private readonly MongoDBSettings _settings;
 
-    public BaseMongoRepository(string mongoDBConnectionString, string collectionName)
+    public BaseMongoRepository(IOptions<MongoDBSettings> options)
     {
-        var client = new MongoClient(mongoDBConnectionString);
-        var database = client.GetDatabase(MongoUrl.Create(mongoDBConnectionString).DatabaseName); 
-        _mongoCollection = database.GetCollection<TModel>(collectionName);
+        _settings = options.Value;
+        var client = new MongoClient(_settings.ConnectionString);
+        var databaseName = string.IsNullOrEmpty(_settings.DatabaseName) ? MongoUrl.Create(_settings.ConnectionString).DatabaseName : _settings.DatabaseName;
+        var database = client.GetDatabase(databaseName);
+        _mongoCollection = database.GetCollection<TModel>(_settings.CollectionName);
     }
 
     public virtual List<TModel> GetList()
@@ -54,7 +58,7 @@ public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsync
 
     public virtual bool ContainsId(string id)
     {
-        return _mongoCollection.Count(c => c.Id == id) > 0;
+        return _mongoCollection.CountDocuments(c => c.Id == id) > 0;
     }
 
     public virtual async Task<List<TModel>> GetListAsync()
@@ -95,6 +99,6 @@ public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsync
 
     public virtual async Task<bool> ContainsIdAsync(string id)
     {
-        return (await _mongoCollection.CountAsync(c => c.Id == id)) > 0;
+        return (await _mongoCollection.CountDocumentsAsync(c => c.Id == id)) > 0;
     }
 }
