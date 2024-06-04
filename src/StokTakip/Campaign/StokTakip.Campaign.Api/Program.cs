@@ -7,10 +7,10 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
 
 builder.AddNetCore("Application");
-builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
+builder.AddAuthentication("JWT", "public_key.pem");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
-builder.Services.AddSqlServer(builder.Configuration.GetConnectionString("SqlServer")!);
+builder.AddSqlServer("SqlServer");
 builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
 
 var app = builder.Build();

@@ -20,10 +20,10 @@ builder.Host.UseNetCoreContainer(containerBuilder =>
 
 var applicationSettings = builder.Configuration.GetSection("Application").Get<ApplicationSettings>()!;
 builder.AddNetCore("Application");
-builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer")!);
+builder.AddSqlServer<ApplicationDbContext>("SqlServer");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
-builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
+builder.AddAuthentication("JWT", "public_key.pem");
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();

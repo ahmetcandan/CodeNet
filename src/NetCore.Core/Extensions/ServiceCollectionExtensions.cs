@@ -47,10 +47,11 @@ public static class ServiceCollectionExtensions
         return webBuilder;
     }
 
-    public static IServiceCollection AddAuthentication(this IServiceCollection service, string validAudience, string validIssuer, string publicKeyPath)
+    public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder webBuilder, string sectionName, string publicKeyPath)
     {
+        var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettings>()!;
         var rsa = AsymmetricKeyEncryption.CreateRSA(publicKeyPath);
-        service.AddAuthentication(options =>
+        webBuilder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -64,31 +65,34 @@ public static class ServiceCollectionExtensions
             {
                 ValidateIssuerSigningKey = true,
                 IssuerSigningKey = new RsaSecurityKey(rsa),
-                ValidIssuer = validIssuer,
+                ValidIssuer = authenticationSettings.ValidIssuer,
                 ValidateIssuer = true,
-                ValidAudience = validAudience,
+                ValidAudience = authenticationSettings.ValidAudience,
                 ValidateAudience = true,
                 ClockSkew = TimeSpan.Zero
             };
         });
 
-        service.AddHttpContextAccessor();
-        return service;
+        webBuilder.Services.AddHttpContextAccessor();
+        return webBuilder;
     }
 
-    public static IServiceCollection AddSqlServer(this IServiceCollection service, string connectionString)
+    public static WebApplicationBuilder AddSqlServer(this WebApplicationBuilder webBuilder, string connectionName)
     {
-        return service.AddSqlServer<DbContext>(connectionString);
+        webBuilder.AddSqlServer<DbContext>(connectionName);
+        return webBuilder;
     }
 
-    public static IServiceCollection AddSqlServer<TDbContext>(this IServiceCollection service, string connectionString) where TDbContext : DbContext
+    public static WebApplicationBuilder AddSqlServer<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) where TDbContext : DbContext
     {
-        return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
+        webBuilder.Services.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration.GetConnectionString(connectionName)));
+        return webBuilder;
     }
 
     public static WebApplication UseNetCore(this WebApplication app, IConfiguration configuration, string sectionName)
     {
         var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>()!;
+
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
 
