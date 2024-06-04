@@ -2,7 +2,7 @@ using Autofac;
 using Microsoft.AspNetCore.Identity;
 using NetCore.Abstraction.Model;
 using NetCore.Container;
-using NetCore.Core.Extension;
+using NetCore.Core.Extensions;
 using NetCore.Identity.DbContext;
 using NetCore.Identity.Handler;
 using NetCore.Identity.Manager;
@@ -19,9 +19,10 @@ builder.Host.UseNetCoreContainer(containerBuilder =>
 });
 
 var applicationSettings = builder.Configuration.GetSection("Application").Get<ApplicationSettings>()!;
-builder.Services.AddNetCore(applicationSettings);
+builder.AddNetCore("Application");
 builder.Services.AddSqlServer<ApplicationDbContext>(builder.Configuration.GetConnectionString("SqlServer")!);
-builder.Services.AddRedisSettings(builder.Configuration["Redis:Hostname"]!, int.Parse(builder.Configuration["Redis:Port"]!));
+builder.AddRedisDistributedCache("Redis");
+builder.AddRedisDistributedLock("Redis");
 builder.Services.AddAuthentication(builder.Configuration["JWT:ValidAudience"]!, builder.Configuration["JWT:ValidIssuer"]!, "public_key.pem");
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
@@ -30,5 +31,5 @@ builder.Services.Configure<JwtConfig>(builder.Configuration.GetSection("JWT"));
 
 var app = builder.Build();
 
-app.UseNetCore(applicationSettings);
+app.UseNetCore(builder.Configuration, "Application");
 app.Run();

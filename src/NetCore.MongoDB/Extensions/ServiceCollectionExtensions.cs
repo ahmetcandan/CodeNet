@@ -4,9 +4,9 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using NetCore.Abstraction.Model;
 
-namespace NetCore.MongoDB.Extension;
+namespace NetCore.MongoDB.Extensions;
 
-public static class ServiceCollectionExtension
+public static class ServiceCollectionExtensions
 {
     public static WebApplicationBuilder AddMongoDB<TMongoDB, TModel, TMongoSettings>(this WebApplicationBuilder webBuilder, string sectionName) 
         where TMongoDB : BaseMongoRepository<TModel> 

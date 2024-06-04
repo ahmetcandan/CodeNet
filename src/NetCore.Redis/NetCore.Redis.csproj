@@ -9,10 +9,11 @@
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="RedLock.net" Version="2.3.2" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+	  <ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -3,20 +3,17 @@ using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.Abstraction.Model;
-using RedLockNet;
-using RedLockNet.SERedis;
-using RedLockNet.SERedis.Configuration;
 using Swashbuckle.AspNetCore.Filters;
-using System.Net;
 
-namespace NetCore.Core.Extension;
+namespace NetCore.Core.Extensions;
 
-public static class ServiceCollectionExtension
+public static class ServiceCollectionExtensions
 {
     public static IHostBuilder UseNetCoreContainer(this IHostBuilder hostBuilder, Action<ContainerBuilder> configureDelegate)
     {
@@ -24,9 +21,10 @@ public static class ServiceCollectionExtension
         return hostBuilder.ConfigureContainer(configureDelegate);
     }
 
-    public static IServiceCollection AddNetCore(this IServiceCollection services, ApplicationSettings applicationSettings) 
+    public static WebApplicationBuilder AddNetCore(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        services.AddSwaggerGen(c =>
+        var applicationSettings = webBuilder.Configuration.GetSection(sectionName).Get<ApplicationSettings>()!;
+        webBuilder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc(applicationSettings.Version, new OpenApiInfo { Title = applicationSettings.Title, Version = applicationSettings.Version });
 
@@ -43,30 +41,10 @@ public static class ServiceCollectionExtension
 
             c.OperationFilter<SecurityRequirementsOperationFilter>();
         });
-        services.AddControllers();
-        services.AddEndpointsApiExplorer();
+        webBuilder.Services.AddControllers();
+        webBuilder.Services.AddEndpointsApiExplorer();
 
-        return services;
-    }
-
-    public static IServiceCollection AddRedisSettings(this IServiceCollection service, string hostname, int port, string instanceName = "master")
-    {
-        //Cache
-        service.AddStackExchangeRedisCache(option =>
-         {
-             option.Configuration = $"{hostname}:{port}";
-             option.InstanceName = instanceName;
-         });
-
-        //Lock
-        var ipAddresses = Dns.GetHostAddresses(hostname);
-        var endPoints = new List<RedLockEndPoint>
-        {
-            new() { EndPoint = new IPEndPoint(ipAddresses[0], port) }
-        };
-        service.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
-
-        return service;
+        return webBuilder;
     }
 
     public static IServiceCollection AddAuthentication(this IServiceCollection service, string validAudience, string validIssuer, string publicKeyPath)
@@ -108,8 +86,9 @@ public static class ServiceCollectionExtension
         return service.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
     }
 
-    public static WebApplication UseNetCore(this WebApplication app, ApplicationSettings applicationSettings)
+    public static WebApplication UseNetCore(this WebApplication app, IConfiguration configuration, string sectionName)
     {
+        var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>()!;
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
 
