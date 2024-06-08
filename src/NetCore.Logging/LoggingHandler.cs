@@ -2,9 +2,10 @@
 using MediatR;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
+using NetCore.Container;
 using System.Diagnostics;
 
-namespace NetCore.Container;
+namespace NetCore.Logging;
 
 public class LoggingHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase
 {

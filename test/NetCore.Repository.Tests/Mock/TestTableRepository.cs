@@ -1,8 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore.Abstraction;
-using NetCore.Repository.Tests.Mock.Model;
+using NetCore.EntityFramework.Tests.Mock.Model;
 
-namespace NetCore.Repository.Tests.Mock
+namespace NetCore.EntityFramework.Tests.Mock
 {
     public class TestTableRepository : TracingRepository<TestTable>
     {

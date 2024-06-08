@@ -2,7 +2,7 @@
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 
-namespace NetCore.Repository;
+namespace NetCore.EntityFramework;
 
 public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IIdentityContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
 {

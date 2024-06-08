@@ -1,17 +1,16 @@
 using Autofac.Extensions.DependencyInjection;
-using NetCore.Abstraction.Model;
-using NetCore.Core.Extensions;
+using NetCore.Extensions;
 using StokTakip.Customer.Container;
+using StokTakip.Customer.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
-
 builder.AddNetCore("Application");
 builder.AddAuthentication("JWT", "public_key.pem");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
-builder.AddSqlServer("SqlServer");
-builder.Services.Configure<RabbitMQSettings>(builder.Configuration.GetSection("RabbitMQ"));
+builder.AddSqlServer<CustomerDbContext>("SqlServer");
+builder.AddLogging();
 
 var app = builder.Build();
 var container = app.Services.GetAutofacRoot();

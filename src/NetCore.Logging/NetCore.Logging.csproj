@@ -11,7 +11,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+		<ProjectReference Include="..\NetCore.Container\NetCore.Container.csproj" />
+		<ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
 	</ItemGroup>
 
 </Project>

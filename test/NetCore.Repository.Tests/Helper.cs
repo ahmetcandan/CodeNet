@@ -1,4 +1,4 @@
-﻿namespace NetCore.Repository.Tests
+﻿namespace NetCore.EntityFramework.Tests
 {
     public class Assert2 : Assert
     {

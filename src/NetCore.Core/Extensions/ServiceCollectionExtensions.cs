@@ -2,28 +2,42 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using NetCore.Abstraction.Model;
+using NetCore.Core;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace NetCore.Core.Extensions;
+namespace NetCore.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Use NetCore Container
+    /// </summary>
+    /// <param name="hostBuilder"></param>
+    /// <param name="configureDelegate"></param>
+    /// <returns></returns>
     public static IHostBuilder UseNetCoreContainer(this IHostBuilder hostBuilder, Action<ContainerBuilder> configureDelegate)
     {
         hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         return hostBuilder.ConfigureContainer(configureDelegate);
     }
 
+    /// <summary>
+    /// Add NetCore Configuration
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddNetCore(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        var applicationSettings = webBuilder.Configuration.GetSection(sectionName).Get<ApplicationSettings>()!;
+        var applicationSettings = webBuilder.Configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
+        
         webBuilder.Services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc(applicationSettings.Version, new OpenApiInfo { Title = applicationSettings.Title, Version = applicationSettings.Version });
@@ -43,13 +57,22 @@ public static class ServiceCollectionExtensions
         });
         webBuilder.Services.AddControllers();
         webBuilder.Services.AddEndpointsApiExplorer();
+        webBuilder.Services.AddHttpContextAccessor();
 
         return webBuilder;
     }
 
+    /// <summary>
+    /// Add Authentication
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type AuthenticationSettings</param>
+    /// <param name="publicKeyPath">Application must contain the pem file</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder webBuilder, string sectionName, string publicKeyPath)
     {
-        var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettings>()!;
+        var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         var rsa = AsymmetricKeyEncryption.CreateRSA(publicKeyPath);
         webBuilder.Services.AddAuthentication(options =>
         {
@@ -73,25 +96,20 @@ public static class ServiceCollectionExtensions
             };
         });
 
-        webBuilder.Services.AddHttpContextAccessor();
         return webBuilder;
     }
 
-    public static WebApplicationBuilder AddSqlServer(this WebApplicationBuilder webBuilder, string connectionName)
-    {
-        webBuilder.AddSqlServer<DbContext>(connectionName);
-        return webBuilder;
-    }
-
-    public static WebApplicationBuilder AddSqlServer<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) where TDbContext : DbContext
-    {
-        webBuilder.Services.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration.GetConnectionString(connectionName)));
-        return webBuilder;
-    }
-
+    /// <summary>
+    /// Use NetCore
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplication UseNetCore(this WebApplication app, IConfiguration configuration, string sectionName)
     {
-        var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>()!;
+        var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
 
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();

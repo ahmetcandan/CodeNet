@@ -1,6 +1,9 @@
 ﻿using Autofac;
-using Microsoft.EntityFrameworkCore;
-using NetCore.Container;
+using NetCore.Container.Module;
+using NetCore.ExceptionHandling.Module;
+using NetCore.Logging.Module;
+using NetCore.Mapper.Module;
+using NetCore.Redis.Module;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Repository;
@@ -12,17 +15,20 @@ namespace StokTakip.Customer.Container;
 
 public class Bootstrapper
 {
-    public static ILifetimeScope Container { get; private set; }
+    public static ILifetimeScope? Container { get; private set; }
 
     public static void RegisterModules(ContainerBuilder builder)
     {
         builder.RegisterModule<NetCoreModule>();
         builder.RegisterModule<MediatRModule<GetCustomerHandler>>();
-
-        builder.RegisterType(typeof(AutoMapperConfiguration)).As(typeof(IAutoMapperConfiguration)).AsSelf().InstancePerLifetimeScope();
-        builder.RegisterType<CustomerDbContext>().As<DbContext>().InstancePerLifetimeScope();
+        builder.RegisterModule<MapperModule>();
+        builder.RegisterModule<RedisDistributedCacheModule>();
+        builder.RegisterModule<RedisDistributedLockModule>();
+        builder.RegisterModule<LoggingModule>();
+        builder.RegisterModule<ExceptionHandlingModule>();
         builder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
         builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();
+        builder.RegisterType<AutoMapperConfiguration>().As<IAutoMapperConfiguration>().InstancePerLifetimeScope();
     }
 
     public static void SetContainer(ILifetimeScope lifetimeScope)

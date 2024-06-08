@@ -2,8 +2,8 @@
 
 public interface ICacheRepository
 {
-    Task<TModel> GetCacheAsync<TModel>(string key);
-    Task<TModel> GetCacheAsync<TModel>(string key, CancellationToken cancellationToken);
+    Task<TModel?> GetCacheAsync<TModel>(string key);
+    Task<TModel?> GetCacheAsync<TModel>(string key, CancellationToken cancellationToken);
 
     Task SetCacheAsync(string key, object value, int time);
     Task SetCacheAsync(string key, object value, int time, CancellationToken cancellationToken);

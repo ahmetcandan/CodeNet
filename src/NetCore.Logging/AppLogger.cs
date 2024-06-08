@@ -1,13 +1,12 @@
 ﻿using NetCore.Abstraction;
 using NetCore.Abstraction.Enum;
 using NetCore.Abstraction.Extension;
-using NetCore.Abstraction.Model;
 using Newtonsoft.Json;
 using System.Reflection;
 
 namespace NetCore.Logging;
 
-public class AppLogger(IQService QService, IIdentityContext IdentityContext) : IAppLogger
+public class AppLogger(IIdentityContext IdentityContext) : IAppLogger
 {
     public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
@@ -33,16 +32,17 @@ public class AppLogger(IQService QService, IIdentityContext IdentityContext) : I
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null)
     {
-        QService.Post(Settings.LOG_CHANNEL_NAME, new LogModel
-        {
-            AssemblyName = assemblyName ?? "unknow",
-            ClassName = className,
-            MethodName = methodName,
-            LogTime = logTime.ToString(),
-            Username = IdentityContext.UserName,
-            Data = data,
-            RequestId = IdentityContext.RequestId,
-            ElapsedDuration = elapsedDuration
-        });
+        Console.WriteLine($"{{\"LogTime\": \"{logTime}\", \"AssemblyName\": \"{assemblyName}\", \"ClassName\":  \"{className}\", \"MethodName\": \"{methodName}\", \"Username\": \"{IdentityContext.UserName}\", \"RequestId\": \"{IdentityContext.RequestId}\", \"Data\": \"{data.Replace("\"", "'")}\", \"ElapsedDuration\": {(elapsedDuration.HasValue ? elapsedDuration.ToString() : "null")}}}");
+        //QService.Post(Settings.LOG_CHANNEL_NAME, new LogModel
+        //{
+        //    AssemblyName = assemblyName ?? "unknow",
+        //    ClassName = className,
+        //    MethodName = methodName,
+        //    LogTime = logTime.ToString(),
+        //    Username = IdentityContext.UserName,
+        //    Data = data,
+        //    RequestId = IdentityContext.RequestId,
+        //    ElapsedDuration = elapsedDuration
+        //});
     }
 }

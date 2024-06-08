@@ -8,6 +8,9 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\NetCore.Container\NetCore.Container.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.Logging\NetCore.Logging.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.Mapper\NetCore.Mapper.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.Redis\NetCore.Redis.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Repository\StokTakip.Customer.Repository.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Service\StokTakip.Customer.Service.csproj" />
 	</ItemGroup>

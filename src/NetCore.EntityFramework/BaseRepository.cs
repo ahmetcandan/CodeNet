@@ -3,7 +3,7 @@ using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
 using System.Linq.Expressions;
 
-namespace NetCore.Repository;
+namespace NetCore.EntityFramework;
 
 public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBaseEntity>(dbContext), IBaseRepository<TBaseEntity> where TBaseEntity : class, IBaseEntity
 {

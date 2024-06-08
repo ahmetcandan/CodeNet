@@ -11,9 +11,11 @@ public class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRe
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public async Task<TModel> GetCacheAsync<TModel>(string key, CancellationToken cancellationToken)
+    public async Task<TModel?> GetCacheAsync<TModel>(string key, CancellationToken cancellationToken)
     {
         var json = await DistributedCache.GetStringAsync(key, cancellationToken);
+        if (string.IsNullOrEmpty(json))
+            return default;
         return JsonConvert.DeserializeObject<TModel>(json);
     }
 
@@ -22,7 +24,7 @@ public class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRe
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public async Task<TModel> GetCacheAsync<TModel>(string key)
+    public async Task<TModel?> GetCacheAsync<TModel>(string key)
     {
         return await GetCacheAsync<TModel>(key, CancellationToken.None);
     }

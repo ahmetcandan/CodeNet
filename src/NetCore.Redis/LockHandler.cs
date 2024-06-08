@@ -2,9 +2,10 @@
 using MediatR;
 using NetCore.Abstraction.Model;
 using NetCore.Cache;
+using NetCore.Container;
 using RedLockNet;
 
-namespace NetCore.Container;
+namespace NetCore.Redis;
 
 public class LockHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDistributedLockFactory LockFactory) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {

@@ -7,13 +7,20 @@ using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
 using System.Net;
 
-namespace NetCore.Core.Extensions;
+namespace NetCore.Extensions;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Add Redis Distributed Cache
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type RedisSettings</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddRedisDistributedCache(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>()!;
+        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         webBuilder.Services.AddStackExchangeRedisCache(option =>
          {
              option.Configuration = $"{redisSettings.Hostname}:{redisSettings.Port}";
@@ -22,9 +29,16 @@ public static class ServiceCollectionExtensions
         return webBuilder;
     }
 
+    /// <summary>
+    /// Add Redis Distributed Lock
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type RedisSettings</param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddRedisDistributedLock(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>()!;
+        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         var ipAddresses = Dns.GetHostAddresses(redisSettings.Hostname);
         var endPoints = new List<RedLockEndPoint>
         {

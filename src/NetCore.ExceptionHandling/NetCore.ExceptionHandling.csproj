@@ -6,4 +6,9 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
+	<ItemGroup>
+	  <ProjectReference Include="..\NetCore.Container\NetCore.Container.csproj" />
+	  <ProjectReference Include="..\NetCore.Core\NetCore.Core.csproj" />
+	</ItemGroup>
+
 </Project>

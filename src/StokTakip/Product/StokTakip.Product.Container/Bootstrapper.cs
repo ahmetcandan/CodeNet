@@ -1,6 +1,9 @@
 ﻿using Autofac;
 using Microsoft.EntityFrameworkCore;
-using NetCore.Container;
+using NetCore.Container.Module;
+using NetCore.Logging.Module;
+using NetCore.Mapper.Module;
+using NetCore.Redis.Module;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Repository;
@@ -11,13 +14,16 @@ namespace StokTakip.Product.Container;
 
 public class Bootstrapper
 {
-    public static ILifetimeScope Container { get; private set; }
+    public static ILifetimeScope? Container { get; private set; }
 
     public static void RegisterModules(ContainerBuilder builder)
     {
         builder.RegisterModule<NetCoreModule>();
         builder.RegisterModule<MediatRModule<GetProductHandler>>();
-
+        builder.RegisterModule<MapperModule>();
+        builder.RegisterModule<RedisDistributedCacheModule>();
+        builder.RegisterModule<RedisDistributedLockModule>();
+        builder.RegisterModule<LoggingModule>();
         builder.RegisterType<ProductDbContext>().As<DbContext>().InstancePerLifetimeScope();
         builder.RegisterType<ProductRepository>().As<IProductRepository>().InstancePerLifetimeScope();
         builder.RegisterType<ProductService>().As<IProductService>().InstancePerLifetimeScope();

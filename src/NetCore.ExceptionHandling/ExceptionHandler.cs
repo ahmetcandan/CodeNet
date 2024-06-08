@@ -2,9 +2,9 @@
 using MediatR;
 using NetCore.Abstraction;
 using NetCore.Abstraction.Model;
-using NetCore.ExceptionHandling;
+using NetCore.Container;
 
-namespace NetCore.Container;
+namespace NetCore.ExceptionHandling;
 
 public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {

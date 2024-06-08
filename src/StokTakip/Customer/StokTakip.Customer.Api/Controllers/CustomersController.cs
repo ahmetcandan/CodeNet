@@ -9,7 +9,7 @@ namespace StokTakip.Customer.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class CustomersController(IMediator mediator) : ControllerBase
+public class CustomersController(IMediator mediator, ILogger<CustomersController> logger) : ControllerBase
 {
     private readonly IMediator _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
 

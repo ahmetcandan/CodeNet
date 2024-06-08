@@ -3,7 +3,7 @@ using StokTakip.Product.Model;
 
 namespace StokTakip.Product.Repository;
 
-public partial class ProductDbContext(DbContextOptions<DbContext> options) : DbContext(options)
+public partial class ProductDbContext(DbContextOptions<ProductDbContext> options) : DbContext(options)
 {
     public virtual DbSet<Model.Product> Products { get; set; }
     public virtual DbSet<Category> Categories { get; set; }

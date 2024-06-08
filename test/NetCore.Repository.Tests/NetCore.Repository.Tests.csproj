@@ -24,7 +24,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\src\NetCore.Repository\NetCore.Repository.csproj" />
+	  <ProjectReference Include="..\..\src\NetCore.EntityFramework\NetCore.EntityFramework.csproj" />
 	</ItemGroup>
 
 </Project>

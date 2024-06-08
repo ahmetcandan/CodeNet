@@ -2,15 +2,19 @@
 using MediatR;
 using System.Reflection;
 
-namespace NetCore.Container;
+namespace NetCore.Container.Module;
 
-public class MediatRModule<TRequestHandler> : Autofac.Module
+/// <summary>
+/// MediatR Module
+/// </summary>
+/// <typeparam name="THandlerType">Type of Handler</typeparam>
+public class MediatRModule<THandlerType> : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
         builder.RegisterAssemblyTypes(typeof(IMediator).GetTypeInfo().Assembly).AsImplementedInterfaces();
 
-        builder.RegisterAssemblyTypes(typeof(TRequestHandler).Assembly)
+        builder.RegisterAssemblyTypes(typeof(THandlerType).Assembly)
             .AsClosedTypesOf(typeof(IRequestHandler<,>))
             .AsImplementedInterfaces()
             .InstancePerLifetimeScope();

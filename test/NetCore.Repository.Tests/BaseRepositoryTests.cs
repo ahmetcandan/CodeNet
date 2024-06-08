@@ -1,9 +1,9 @@
 using Microsoft.EntityFrameworkCore;
 using NetCore.Abstraction;
-using NetCore.Repository.Tests.Mock;
-using NetCore.Repository.Tests.Mock.Model;
+using NetCore.EntityFramework.Tests.Mock;
+using NetCore.EntityFramework.Tests.Mock.Model;
 
-namespace NetCore.Repository.Tests
+namespace NetCore.EntityFramework.Tests
 {
     public class BaseRepositoryTests
     {

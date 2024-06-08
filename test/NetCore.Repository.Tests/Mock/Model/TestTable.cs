@@ -1,6 +1,6 @@
 ﻿using NetCore.Abstraction.Model;
 
-namespace NetCore.Repository.Tests.Mock.Model
+namespace NetCore.EntityFramework.Tests.Mock.Model
 {
     public class TestTable : TracingEntity
     {

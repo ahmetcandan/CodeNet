@@ -7,12 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AutoMapper" Version="13.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\..\..\NetCore.Cache\NetCore.Cache.csproj" />
 		<ProjectReference Include="..\..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.Mapper\NetCore.Mapper.csproj" />
 		<ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
 	</ItemGroup>
 

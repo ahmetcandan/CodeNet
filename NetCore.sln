@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "StokTakip", "StokTakip", "{
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Abstraction", "src\NetCore.Abstraction\NetCore.Abstraction.csproj", "{13621376-0547-4231-85E7-3B27D662E5D3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.Repository", "src\NetCore.Repository\NetCore.Repository.csproj", "{3ABB7B53-78F2-4E84-957F-3A1D4CD3DF9C}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.EntityFramework", "src\NetCore.EntityFramework\NetCore.EntityFramework.csproj", "{3ABB7B53-78F2-4E84-957F-3A1D4CD3DF9C}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NetCore.MongoDB", "src\NetCore.MongoDB\NetCore.MongoDB.csproj", "{32C1FEED-124B-47F1-B014-131A4F7F4CBD}"
 EndProject
@@ -93,6 +93,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "sql", "sql", "{0038FE54-3C7
 	ProjectSection(SolutionItems) = preProject
 		NetCore.sql = NetCore.sql
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NetCore.Mapper", "src\NetCore.Mapper\NetCore.Mapper.csproj", "{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -248,6 +250,10 @@ Global
 		{D05F5506-743D-49D4-803D-0D250210BE06}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D05F5506-743D-49D4-803D-0D250210BE06}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D05F5506-743D-49D4-803D-0D250210BE06}.Release|Any CPU.Build.0 = Release|Any CPU
+		{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -294,6 +300,7 @@ Global
 		{69F6A5D1-759D-44E1-86ED-10E9B5A401BB} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{8DAD3A78-27DB-42D7-AB9D-5EBEC2CFBB8F} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{D05F5506-743D-49D4-803D-0D250210BE06} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{627A6CF8-5A0F-4404-B7B6-3C6BEBD59036} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

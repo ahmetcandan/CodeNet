@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using NetCore.Abstraction;
-using NetCore.Repository;
+using NetCore.EntityFramework;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Model;
 using StokTakip.Product.Model.ViewModel;
@@ -11,7 +11,7 @@ public class ProductRepository : TracingRepository<Model.Product>, IProductRepos
 {
     private readonly DbSet<Category> _categories;
 
-    public ProductRepository(DbContext context, IIdentityContext identityContext) : base(context, identityContext)
+    public ProductRepository(ProductDbContext context, IIdentityContext identityContext) : base(context, identityContext)
     {
         _categories = _dbContext.Set<Category>();
     }

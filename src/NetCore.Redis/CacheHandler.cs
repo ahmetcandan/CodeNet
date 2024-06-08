@@ -3,9 +3,10 @@ using MediatR;
 using Microsoft.Extensions.Caching.Distributed;
 using NetCore.Abstraction.Model;
 using NetCore.Cache;
+using NetCore.Container;
 using Newtonsoft.Json;
 
-namespace NetCore.Container;
+namespace NetCore.Redis;
 
 public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDistributedCache DistributedCache) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {
