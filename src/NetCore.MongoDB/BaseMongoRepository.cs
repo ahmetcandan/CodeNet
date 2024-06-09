@@ -6,11 +6,19 @@ using System.Linq.Expressions;
 
 namespace NetCore.MongoDB;
 
-public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsyncRepository<TModel> where TModel : INoSqlModel, new()
+/// <summary>
+/// MongoDB Repository
+/// </summary>
+/// <typeparam name="TModel"></typeparam>
+public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBAsyncRepository<TModel> where TModel : class, new()
 {
     private readonly IMongoCollection<TModel> _mongoCollection;
     private readonly MongoDBSettings _settings;
 
+    /// <summary>
+    /// MongoDB Repository
+    /// </summary>
+    /// <param name="options"></param>
     public BaseMongoRepository(IOptions<MongoDBSettings> options)
     {
         _settings = options.Value;
@@ -20,85 +28,145 @@ public class BaseMongoRepository<TModel> : INoSqlRepository<TModel>, INoSqlAsync
         _mongoCollection = database.GetCollection<TModel>(_settings.CollectionName);
     }
 
-    public virtual List<TModel> GetList()
-    {
-        return _mongoCollection.Find(c => true).ToList();
-    }
-
+    /// <summary>
+    /// Get List
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     public virtual List<TModel> GetList(Expression<Func<TModel, bool>> filter)
     {
         return _mongoCollection.Find(filter).ToList();
     }
 
-    public virtual TModel GetById(string id)
+    /// <summary>
+    /// Get By ID
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual TModel GetById(Expression<Func<TModel, bool>> filter)
     {
-        return _mongoCollection.Find(m => m.Id == id).FirstOrDefault();
+        return _mongoCollection.Find(filter).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     public virtual TModel Create(TModel model)
     {
         _mongoCollection.InsertOne(model);
         return model;
     }
 
-    public virtual void Update(string id, TModel model)
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="model"></param>
+    public virtual void Update(Expression<Func<TModel, bool>> filter, TModel model)
     {
-        _mongoCollection.ReplaceOne(m => m.Id == id, model);
+        _mongoCollection.ReplaceOne(filter, model);
     }
 
-    public virtual void Delete(TModel model)
+    /// <summary>
+    /// Delete
+    /// </summary>
+    /// <param name="filter"></param>
+    public virtual void Delete(Expression<Func<TModel, bool>> filter)
     {
-        _mongoCollection.DeleteOne(m => m.Id == model.Id);
+        _mongoCollection.DeleteOne(filter);
     }
 
-    public virtual void Delete(string id)
+    /// <summary>
+    /// Exists
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual bool Exists(Expression<Func<TModel, bool>> filter)
     {
-        _mongoCollection.DeleteOne(m => m.Id == id);
+        return _mongoCollection.CountDocuments(filter) > 0;
     }
 
-    public virtual bool ContainsId(string id)
+    /// <summary>
+    /// Count
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual long Count(Expression<Func<TModel, bool>> filter)
     {
-        return _mongoCollection.CountDocuments(c => c.Id == id) > 0;
+        return _mongoCollection.CountDocuments(filter);
     }
 
-    public virtual async Task<List<TModel>> GetListAsync()
-    {
-        return (await _mongoCollection.FindAsync(c => true)).ToList();
-    }
-
+    /// <summary>
+    /// Get List
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
     public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter)
     {
         return (await _mongoCollection.FindAsync(filter)).ToList();
     }
 
-    public virtual async Task<TModel> GetByIdAsync(string id)
+    /// <summary>
+    /// Get By ID
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.FindAsync(m => m.Id == id)).FirstOrDefault();
+        return (await _mongoCollection.FindAsync(filter)).FirstOrDefault();
     }
 
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="model"></param>
+    /// <returns></returns>
     public virtual async Task<TModel> CreateAsync(TModel model)
     {
         await _mongoCollection.InsertOneAsync(model);
         return model;
     }
 
-    public virtual async Task UpdateAsync(string id, TModel model)
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="model"></param>
+    /// <returns></returns>
+    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model)
     {
-        await _mongoCollection.ReplaceOneAsync(m => m.Id == id, model);
+        await _mongoCollection.ReplaceOneAsync(filter, model);
     }
 
-    public virtual async Task DeleteAsync(TModel model)
+    /// <summary>
+    /// Delete
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter)
     {
-        await _mongoCollection.DeleteOneAsync(m => m.Id == model.Id);
+        await _mongoCollection.DeleteOneAsync(filter);
     }
 
-    public virtual async Task DeleteAsync(string id)
+    /// <summary>
+    /// Exists
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter)
     {
-        await _mongoCollection.DeleteOneAsync(m => m.Id == id);
+        return (await _mongoCollection.CountDocumentsAsync(filter)) > 0;
     }
 
-    public virtual async Task<bool> ContainsIdAsync(string id)
+    /// <summary>
+    /// Count
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <returns></returns>
+    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.CountDocumentsAsync(c => c.Id == id)) > 0;
+        return (await _mongoCollection.CountDocumentsAsync(filter));
     }
 }
