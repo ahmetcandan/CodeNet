@@ -8,6 +8,8 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\..\..\NetCore.EntityFramework\NetCore.EntityFramework.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.MongoDB\NetCore.MongoDB.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

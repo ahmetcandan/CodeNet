@@ -1,14 +1,13 @@
 ﻿using Autofac;
 
-namespace NetCore.MongoDB.Module;
+namespace NetCore.Abstraction.Module;
 
-public class MongoDBModule<TMongoDBRepository, TModel> : Autofac.Module
-        where TMongoDBRepository : BaseMongoRepository<TModel>
-        where TModel : class, new()
+public class MongoDBModule<TMongoDBContext> : Autofac.Module
+        where TMongoDBContext : MongoDBContext
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<TMongoDBRepository>().As<TMongoDBRepository>().InstancePerLifetimeScope();
+        builder.RegisterType<TMongoDBContext>().As<MongoDBContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }

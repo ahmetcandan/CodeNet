@@ -1,31 +1,27 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using NetCore.Abstraction;
+﻿using MongoDB.Driver;
 using NetCore.Abstraction.Model;
 using System.Linq.Expressions;
 
-namespace NetCore.MongoDB;
+namespace NetCore.Abstraction;
 
 /// <summary>
 /// MongoDB Repository
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
-public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBAsyncRepository<TModel> where TModel : class, new()
+public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
 {
     private readonly IMongoCollection<TModel> _mongoCollection;
-    private readonly MongoDBSettings _settings;
 
     /// <summary>
     /// MongoDB Repository
     /// </summary>
     /// <param name="options"></param>
-    public BaseMongoRepository(IOptions<MongoDBSettings> options)
+    public BaseMongoRepository(MongoDBContext dbContext)
     {
-        _settings = options.Value;
-        var client = new MongoClient(_settings.ConnectionString);
-        var databaseName = string.IsNullOrEmpty(_settings.DatabaseName) ? MongoUrl.Create(_settings.ConnectionString).DatabaseName : _settings.DatabaseName;
-        var database = client.GetDatabase(databaseName);
-        _mongoCollection = database.GetCollection<TModel>(_settings.CollectionName);
+        if (typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute)
+            throw new NullReferenceException("CollectionNameAttribute is not contains");
+
+        _mongoCollection = dbContext.Set<TModel>(collectionAttribute.Name);
     }
 
     /// <summary>
@@ -105,7 +101,18 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.FindAsync(filter)).ToList();
+        return await GetListAsync(filter, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Get List
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    {
+        return (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToList();
     }
 
     /// <summary>
@@ -115,7 +122,18 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.FindAsync(filter)).FirstOrDefault();
+        return await GetByIdAsync(filter, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Get By ID
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    {
+        return (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefault();
     }
 
     /// <summary>
@@ -125,7 +143,19 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task<TModel> CreateAsync(TModel model)
     {
-        await _mongoCollection.InsertOneAsync(model);
+        await CreateAsync(model, CancellationToken.None);
+        return model;
+    }
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<TModel> CreateAsync(TModel model, CancellationToken cancellationToken)
+    {
+        await _mongoCollection.InsertOneAsync(model, cancellationToken: cancellationToken);
         return model;
     }
 
@@ -137,7 +167,19 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model)
     {
-        await _mongoCollection.ReplaceOneAsync(filter, model);
+        await UpdateAsync(filter, model, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="model"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model, CancellationToken cancellationToken)
+    {
+        await _mongoCollection.ReplaceOneAsync(filter, model, cancellationToken: cancellationToken);
     }
 
     /// <summary>
@@ -147,7 +189,18 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter)
     {
-        await _mongoCollection.DeleteOneAsync(filter);
+        await DeleteAsync(filter, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Delete
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    {
+        await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
     }
 
     /// <summary>
@@ -157,7 +210,18 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.CountDocumentsAsync(filter)) > 0;
+        return await ExistsAsync(filter, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Exists
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    {
+        return (await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken)) > 0;
     }
 
     /// <summary>
@@ -167,6 +231,17 @@ public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel>, IMongoDBA
     /// <returns></returns>
     public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter)
     {
-        return (await _mongoCollection.CountDocumentsAsync(filter));
+        return (await CountAsync(filter, CancellationToken.None));
+    }
+
+    /// <summary>
+    /// Count
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    {
+        return (await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken));
     }
 }

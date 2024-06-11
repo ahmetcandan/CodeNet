@@ -1,5 +1,7 @@
 using Autofac.Extensions.DependencyInjection;
+using NetCore.Abstraction.Model;
 using NetCore.Extensions;
+using NetCore.Abstraction.Extensions;
 using StokTakip.Customer.Container;
 using StokTakip.Customer.Repository;
 
@@ -9,6 +11,7 @@ builder.AddNetCore("Application");
 builder.AddAuthentication("JWT", "public_key.pem");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
+builder.AddMongoDB<MongoDBSettings>("MongoDB");
 builder.AddSqlServer<CustomerDbContext>("SqlServer");
 builder.AddLogging();
 

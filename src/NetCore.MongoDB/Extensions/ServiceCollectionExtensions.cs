@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetCore.Abstraction.Model;
 
-namespace NetCore.MongoDB.Extensions;
+namespace NetCore.Abstraction.Extensions;
 
 public static class ServiceCollectionExtensions
 {

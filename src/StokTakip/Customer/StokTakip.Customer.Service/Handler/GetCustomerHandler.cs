@@ -11,5 +11,7 @@ public class GetCustomerHandler(ICustomerService CustomerService) : IRequestHand
 {
     [Cache(Time = 10)]
     public async Task<ResponseBase<CustomerResponse>> Handle(GetCustomerRequest request, CancellationToken cancellationToken)
-        => new ResponseBase<CustomerResponse>(await CustomerService.GetCustomer(request.Id, cancellationToken));
+    {
+        return new ResponseBase<CustomerResponse>(await CustomerService.GetCustomer(request.Id, cancellationToken));
+    }
 }
