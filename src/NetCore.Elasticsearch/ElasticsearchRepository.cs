@@ -11,14 +11,16 @@ public class ElasticsearchRepository<TModel> : IElasticsearchRepository<TModel> 
     protected readonly ElasticsearchClient _elasticsearchClient;
     private readonly string _indexName;
 
-    public ElasticsearchRepository(IOptions<ElasticsearchSettings> config, string indexName)
+    public ElasticsearchRepository(IOptions<ElasticsearchSettings> config)
     {
-        _indexName = indexName;
         var handler = new HttpClientHandler
         {
             ServerCertificateCustomValidationCallback = (sender, cert, chain, sslPolicyErrors) => true
         };
 
+        _indexName = ((typeof(TModel).GetCustomAttributes(typeof(IndexNameAttribute), true).FirstOrDefault() is not IndexNameAttribute indexAttribute)
+                ? typeof(TModel).Name
+                : indexAttribute.Name).ToLower();
         var settings = new ElasticsearchClientSettings(new Uri(config.Value.HostName))
             .Authentication(new BasicAuthentication(config.Value.Username, config.Value.Password))
             .ServerCertificateValidationCallback((o, cer, chain, errors) => true);

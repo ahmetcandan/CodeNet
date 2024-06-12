@@ -4,7 +4,7 @@ using NetCore.Abstraction.Model;
 
 namespace NetCore.Elasticsearch;
 
-public class LogRepository(IOptions<ElasticsearchSettings> Config) : ElasticsearchRepository<LogModel>(Config, Settings.LOG_INDEX_NAME), ILogRepository
+public class LogRepository(IOptions<ElasticsearchSettings> Config) : ElasticsearchRepository<LogModel>(Config), ILogRepository
 {
     public Task<bool> AddAsync(LogModel model) => InsertAsync(model);
 }

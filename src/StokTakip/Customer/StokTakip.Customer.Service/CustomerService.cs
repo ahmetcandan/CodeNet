@@ -2,14 +2,13 @@
 using NetCore.ExceptionHandling;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
-using StokTakip.Customer.Contract.Model;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Service.Mapper;
 
 namespace StokTakip.Customer.Service;
 
-public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper, IRabbitMQProducerService<KeyValueModel> rabbitMQService) : BaseService, ICustomerService
+public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper) : BaseService, ICustomerService
 {
     public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
@@ -29,12 +28,6 @@ public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapper
 
     public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
     {
-        rabbitMQService.Publish(new KeyValueModel
-        {
-            Key = "email",
-            Value = "candanahm@gmail.com",
-            _id = Guid.NewGuid()
-        });
         var result = await CustomerRepository.GetAsync([customerId], cancellationToken) ?? throw new UserLevelException("01", "Kullanıcı bulunamadı!");
         return Mapper.MapObject<Model.Customer, CustomerResponse>(result);
     }

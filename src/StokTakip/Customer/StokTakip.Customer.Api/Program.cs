@@ -1,9 +1,9 @@
 using Autofac.Extensions.DependencyInjection;
 using NetCore.Extensions;
-using NetCore.Abstraction.Extensions;
 using StokTakip.Customer.Container;
 using StokTakip.Customer.Repository;
 using StokTakip.Customer.Contract.Model;
+using NetCore.Abstraction.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
@@ -13,6 +13,7 @@ builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
 builder.AddRabbitMQ("RabbitMQ");
 builder.AddMongoDB("MongoDB");
+builder.AddElasticsearch("Elasticsearch");
 builder.AddSqlServer<CustomerDbContext>("SqlServer");
 builder.AddLogging();
 

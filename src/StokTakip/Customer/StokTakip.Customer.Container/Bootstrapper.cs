@@ -3,7 +3,6 @@ using NetCore.Container.Module;
 using NetCore.ExceptionHandling.Module;
 using NetCore.Logging.Module;
 using NetCore.Mapper.Module;
-using NetCore.Abstraction.Module;
 using NetCore.Redis.Module;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
@@ -14,6 +13,7 @@ using StokTakip.Customer.Service.Mapper;
 using NetCore.RabbitMQ.Module;
 using StokTakip.Customer.Contract.Model;
 using NetCore.Abstraction;
+using NetCore.MongoDB.Module;
 
 namespace StokTakip.Customer.Container;
 
@@ -33,6 +33,7 @@ public class Bootstrapper
         builder.RegisterModule<RabbitMQProducerModule<KeyValueModel>>();
         builder.RegisterModule<RabbitMQConsumerModule<KeyValueModel>>();
         builder.RegisterModule<ExceptionHandlingModule>();
+        builder.RegisterModule<ElasticsearchModule<ElasticModel>>();
         builder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
         builder.RegisterType<KeyValueMongoRepository>().As<IKeyValueRepository>().InstancePerLifetimeScope();
         builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();

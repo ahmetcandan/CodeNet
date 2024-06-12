@@ -1,7 +1,12 @@
 ﻿using Autofac;
+using NetCore.Abstraction;
 
-namespace NetCore.Abstraction.Module;
+namespace NetCore.MongoDB.Module;
 
+/// <summary>
+/// MongoDB Module
+/// </summary>
+/// <typeparam name="TMongoDBContext"></typeparam>
 public class MongoDBModule<TMongoDBContext> : Autofac.Module
         where TMongoDBContext : MongoDBContext
 {
@@ -12,6 +17,9 @@ public class MongoDBModule<TMongoDBContext> : Autofac.Module
     }
 }
 
+/// <summary>
+/// MongoDB Module
+/// </summary>
 public class MongoDBModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)

@@ -1,5 +1,6 @@
 ﻿namespace NetCore.Abstraction.Model;
 
+[IndexName("logs")]
 public class LogModel : ElasticsearchModel
 {
     public virtual Guid RequestId { get; set; }
