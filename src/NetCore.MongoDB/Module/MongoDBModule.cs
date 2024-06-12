@@ -7,7 +7,7 @@ public class MongoDBModule<TMongoDBContext> : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<TMongoDBContext>().As<MongoDBContext>().InstancePerLifetimeScope();
+        builder.RegisterType<TMongoDBContext>().As<TMongoDBContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }
