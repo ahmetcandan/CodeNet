@@ -10,6 +10,7 @@
 		<ProjectReference Include="..\..\..\NetCore.Cache\NetCore.Cache.csproj" />
 		<ProjectReference Include="..\..\..\NetCore.ExceptionHandling\NetCore.ExceptionHandling.csproj" />
 		<ProjectReference Include="..\..\..\NetCore.Mapper\NetCore.Mapper.csproj" />
+		<ProjectReference Include="..\..\..\NetCore.RabbitMQ\NetCore.RabbitMQ.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

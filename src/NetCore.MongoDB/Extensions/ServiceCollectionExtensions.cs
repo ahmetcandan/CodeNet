@@ -7,7 +7,18 @@ namespace NetCore.Abstraction.Extensions;
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Add MongoDB BaseMongoRepository<TModel>
+    /// Add MongoDB Settings
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static WebApplicationBuilder AddMongoDB(this WebApplicationBuilder webBuilder, string sectionName)
+    {
+        webBuilder.AddMongoDB<MongoDBSettings>(sectionName);
+        return webBuilder;
+    }
+    /// <summary>
+    /// Add MongoDB Settings
     /// </summary>
     /// <typeparam name="TMongoSettings">TMongoSettings is MongoDBSettings</typeparam>
     /// <param name="webBuilder"></param>

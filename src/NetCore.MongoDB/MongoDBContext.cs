@@ -15,8 +15,11 @@ public class MongoDBContext
         _database = client.GetDatabase(databaseName);
     }
 
-    public IMongoCollection<TModel> Set<TModel>(string collectionName) where TModel : class, IBaseMongoDBModel
+    public IMongoCollection<TModel> Set<TModel>() where TModel : class, IBaseMongoDBModel
     {
+        string collectionName = (typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute)
+                ? typeof(TModel).Name
+                : collectionAttribute.Name;
         return _database.GetCollection<TModel>(collectionName);
     }
 }

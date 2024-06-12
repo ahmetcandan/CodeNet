@@ -11,3 +11,12 @@ public class MongoDBModule<TMongoDBContext> : Autofac.Module
         base.Load(builder);
     }
 }
+
+public class MongoDBModule : Autofac.Module
+{
+    protected override void Load(ContainerBuilder builder)
+    {
+        builder.RegisterType<MongoDBContext>().As<MongoDBContext>().InstancePerLifetimeScope();
+        base.Load(builder);
+    }
+}

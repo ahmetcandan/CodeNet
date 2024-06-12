@@ -3,13 +3,62 @@ using NetCore.Abstraction;
 
 namespace NetCore.RabbitMQ.Module;
 
-public class RabbitMQModule<TRabbitMQService, TData> : Autofac.Module
-    where TRabbitMQService : IRabbitMQService<TData>
+/// <summary>
+/// RabbitMQ Producer Module
+/// </summary>
+/// <typeparam name="TRabbitMQProducerService"></typeparam>
+/// <typeparam name="TData"></typeparam>
+public class RabbitMQProducerModule<TRabbitMQProducerService, TData> : Autofac.Module
+    where TRabbitMQProducerService : IRabbitMQProducerService<TData>
     where TData : class, new()
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<TRabbitMQService>().As<TRabbitMQService>().InstancePerLifetimeScope();
+        builder.RegisterType<TRabbitMQProducerService>().As<TRabbitMQProducerService>().InstancePerLifetimeScope();
+        base.Load(builder);
+    }
+}
+
+/// <summary>
+/// RabbitMQ Producer Module
+/// </summary>
+/// <typeparam name="TData"></typeparam>
+public class RabbitMQProducerModule<TData> : Autofac.Module
+    where TData : class, new()
+{
+    protected override void Load(ContainerBuilder builder)
+    {
+        builder.RegisterType<RabbitMQProducerService<TData>>().As<IRabbitMQProducerService<TData>>().InstancePerLifetimeScope();
+        base.Load(builder);
+    }
+}
+
+/// <summary>
+/// RabbitMQ Producer Module
+/// </summary>
+/// <typeparam name="TRabbitMQConsumerService"></typeparam>
+/// <typeparam name="TData"></typeparam>
+public class RabbitMQConsumerModule<TRabbitMQConsumerService, TData> : Autofac.Module
+    where TRabbitMQConsumerService : IRabbitMQConsumerService<TData>
+    where TData : class, new()
+{
+    protected override void Load(ContainerBuilder builder)
+    {
+        builder.RegisterType<TRabbitMQConsumerService>().As<TRabbitMQConsumerService>().SingleInstance();
+        base.Load(builder);
+    }
+}
+
+/// <summary>
+/// RabbitMQ Producer Module
+/// </summary>
+/// <typeparam name="TData"></typeparam>
+public class RabbitMQConsumerModule<TData> : Autofac.Module
+    where TData : class, new()
+{
+    protected override void Load(ContainerBuilder builder)
+    {
+        builder.RegisterType<RabbitMQConsumerService<TData>>().As<IRabbitMQConsumerService<TData>>().SingleInstance();
         base.Load(builder);
     }
 }

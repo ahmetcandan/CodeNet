@@ -8,21 +8,13 @@ namespace NetCore.Abstraction;
 /// MongoDB Repository
 /// </summary>
 /// <typeparam name="TModel"></typeparam>
-public class BaseMongoRepository<TModel> : IMongoDBRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
+/// <remarks>
+/// MongoDB Repository
+/// </remarks>
+/// <param name="options"></param>
+public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
 {
-    private readonly IMongoCollection<TModel> _mongoCollection;
-
-    /// <summary>
-    /// MongoDB Repository
-    /// </summary>
-    /// <param name="options"></param>
-    public BaseMongoRepository(MongoDBContext dbContext)
-    {
-        if (typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute)
-            throw new NullReferenceException("CollectionNameAttribute is not contains");
-
-        _mongoCollection = dbContext.Set<TModel>(collectionAttribute.Name);
-    }
+    private readonly IMongoCollection<TModel> _mongoCollection = dbContext.Set<TModel>();
 
     /// <summary>
     /// Get List
