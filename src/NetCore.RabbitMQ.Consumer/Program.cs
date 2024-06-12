@@ -13,7 +13,8 @@ var settings = JObject.Parse(appSettingsJson);
 
 var elasticOption = Options.Create(settings.SelectToken("Elasticsearch")!.ToObject<ElasticsearchSettings>()!);
 var rabbitMqSetting = settings.SelectToken("RabbitMQ")!.ToObject<RabbitMQSettings>()!;
-var elasticsearchRepo = new ElasticsearchRepository<LogModel>(elasticOption);
+var elasticDbContext = new ElasticsearchDBContext(elasticOption);
+var elasticsearchRepo = new ElasticsearchRepository<LogModel>(elasticDbContext);
 
 var factory = new ConnectionFactory()
 {

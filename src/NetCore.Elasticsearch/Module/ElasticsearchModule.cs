@@ -1,19 +1,17 @@
 ﻿using Autofac;
-using NetCore.Abstraction;
 using NetCore.Elasticsearch;
 
 namespace NetCore.RabbitMQ.Module;
 
 /// <summary>
-/// Elasticsearch Module
 /// </summary>
-/// <typeparam name="TModel"></typeparam>
-public class ElasticsearchModule<TModel> : Autofac.Module
-    where TModel : class, IElasticsearchModel, new()
+/// <typeparam name="TElasticsearchDBContext"></typeparam>
+public class ElasticsearchModule<TElasticsearchDBContext> : Autofac.Module
+    where TElasticsearchDBContext : ElasticsearchDBContext
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<ElasticsearchRepository<TModel>>().As<IElasticsearchRepository<TModel>>().InstancePerLifetimeScope();
+        builder.RegisterType<TElasticsearchDBContext>().As<TElasticsearchDBContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }
@@ -21,15 +19,11 @@ public class ElasticsearchModule<TModel> : Autofac.Module
 /// <summary>
 /// Elasticsearch Module
 /// </summary>
-/// <typeparam name="TElasticsearchRepository"></typeparam>
-/// <typeparam name="TModel"></typeparam>
-public class ElasticsearchModule<TElasticsearchRepository, TModel> : Autofac.Module
-    where TModel : class, IElasticsearchModel, new()
-    where TElasticsearchRepository : IElasticsearchRepository<TModel>
+public class ElasticsearchModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<TElasticsearchRepository>().As<IElasticsearchRepository<TModel>>().InstancePerLifetimeScope();
+        builder.RegisterType<ElasticsearchDBContext>().As<ElasticsearchDBContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }

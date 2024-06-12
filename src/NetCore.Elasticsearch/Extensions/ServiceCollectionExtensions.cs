@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using NetCore.Abstraction.Model;
 
-namespace NetCore.Abstraction.Extensions;
+namespace NetCore.Extensions;
 
 public static class ServiceCollectionExtensions
 {

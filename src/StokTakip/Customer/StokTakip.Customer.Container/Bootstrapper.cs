@@ -33,7 +33,7 @@ public class Bootstrapper
         builder.RegisterModule<RabbitMQProducerModule<KeyValueModel>>();
         builder.RegisterModule<RabbitMQConsumerModule<KeyValueModel>>();
         builder.RegisterModule<ExceptionHandlingModule>();
-        builder.RegisterModule<ElasticsearchModule<ElasticModel>>();
+        builder.RegisterModule<ElasticsearchModule>();
         builder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
         builder.RegisterType<KeyValueMongoRepository>().As<IKeyValueRepository>().InstancePerLifetimeScope();
         builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();

@@ -3,7 +3,6 @@ using NetCore.Extensions;
 using StokTakip.Customer.Container;
 using StokTakip.Customer.Repository;
 using StokTakip.Customer.Contract.Model;
-using NetCore.Abstraction.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
