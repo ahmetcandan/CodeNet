@@ -5,7 +5,23 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
 		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet Redis</Title>
+		<Description>CodeNet Redis package.</Description>
+		<Copyright>Copyright 2024</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.0.1</Version>
 	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\ico.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.Extensions.Caching.Abstractions" Version="8.0.0" />
@@ -14,9 +30,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CodeNet.Cache\CodeNet.Cache.csproj" />
-	  <ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
-	  <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+		<ProjectReference Include="..\CodeNet.Cache\CodeNet.Cache.csproj" />
+		<ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
+		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -7,7 +7,7 @@ namespace CodeNet.Container.Module;
 /// <summary>
 /// CodeNet Module
 /// </summary>
-public class NetCoreModule : Autofac.Module
+public class CodeNetModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {

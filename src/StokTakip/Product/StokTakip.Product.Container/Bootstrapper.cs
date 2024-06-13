@@ -18,7 +18,7 @@ public class Bootstrapper
 
     public static void RegisterModules(ContainerBuilder builder)
     {
-        builder.RegisterModule<NetCoreModule>();
+        builder.RegisterModule<CodeNetModule>();
         builder.RegisterModule<MediatRModule<GetProductHandler>>();
         builder.RegisterModule<MapperModule>();
         builder.RegisterModule<RedisDistributedCacheModule>();
