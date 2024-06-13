@@ -1,0 +1,30 @@
+﻿using Autofac;
+using MediatR;
+using CodeNet.Abstraction.Model;
+using CodeNet.Cache;
+using CodeNet.Container;
+using RedLockNet;
+
+namespace CodeNet.Redis;
+
+public class LockHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDistributedLockFactory LockFactory) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
+{
+    public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
+    {
+        var methodBase = GetHandlerMethodInfo(LifetimeScope);
+
+        if (methodBase?.GetCustomAttributes(typeof(LockAttribute), true).FirstOrDefault() is not LockAttribute distributedLockAttribute)
+            return await next();
+
+        using var redLock = await LockFactory.CreateLockAsync(GetKey(methodBase, request), TimeSpan.FromSeconds(distributedLockAttribute.ExpiryTime));
+        return redLock.IsAcquired
+            ? await next()
+            : new TResponse
+            {
+                IsSuccessfull = false,
+                Message = "Distributed Lock Fail !",
+                MessageCode = "012",
+                FromCache = false
+            };
+    }
+}

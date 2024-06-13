@@ -7,7 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\NetCore.Abstraction\NetCore.Abstraction.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.Abstraction\CodeNet.Abstraction.csproj" />
 	</ItemGroup>
 
 </Project>

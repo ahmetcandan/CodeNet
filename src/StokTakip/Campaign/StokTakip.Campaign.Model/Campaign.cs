@@ -1,4 +1,4 @@
-﻿using NetCore.Abstraction.Model;
+﻿using CodeNet.Abstraction.Model;
 
 namespace StokTakip.Campaign.Model;
 

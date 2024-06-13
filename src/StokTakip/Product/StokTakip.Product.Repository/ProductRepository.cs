@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using NetCore.Abstraction;
-using NetCore.EntityFramework;
+using CodeNet.Abstraction;
+using CodeNet.EntityFramework;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Model;
 using StokTakip.Product.Model.ViewModel;

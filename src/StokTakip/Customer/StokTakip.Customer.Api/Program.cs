@@ -1,5 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
-using NetCore.Extensions;
+using CodeNet.Extensions;
 using StokTakip.Customer.Container;
 using StokTakip.Customer.Repository;
 using StokTakip.Customer.Contract.Model;

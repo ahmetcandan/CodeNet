@@ -1,4 +1,4 @@
-﻿using NetCore.Abstraction.Model;
+﻿using CodeNet.Abstraction.Model;
 using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Product.Model;

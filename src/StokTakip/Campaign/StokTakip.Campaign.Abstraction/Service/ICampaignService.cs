@@ -1,4 +1,4 @@
-﻿using NetCore.Abstraction;
+﻿using CodeNet.Abstraction;
 using StokTakip.Campaign.Contract.Request;
 using StokTakip.Campaign.Contract.Response;
 

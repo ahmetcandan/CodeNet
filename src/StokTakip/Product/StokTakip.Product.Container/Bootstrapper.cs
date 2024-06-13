@@ -1,9 +1,9 @@
 ﻿using Autofac;
 using Microsoft.EntityFrameworkCore;
-using NetCore.Container.Module;
-using NetCore.Logging.Module;
-using NetCore.Mapper.Module;
-using NetCore.Redis.Module;
+using CodeNet.Container.Module;
+using CodeNet.Logging.Module;
+using CodeNet.Mapper.Module;
+using CodeNet.Redis.Module;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Repository;

@@ -7,9 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\NetCore.Container\NetCore.Container.csproj" />
-    <ProjectReference Include="..\..\..\NetCore.Logging\NetCore.Logging.csproj" />
-    <ProjectReference Include="..\..\..\NetCore.Redis\NetCore.Redis.csproj" />
+    <ProjectReference Include="..\..\..\CodeNet.Container\CodeNet.Container.csproj" />
+    <ProjectReference Include="..\..\..\CodeNet.Logging\CodeNet.Logging.csproj" />
+    <ProjectReference Include="..\..\..\CodeNet.Redis\CodeNet.Redis.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Repository\StokTakip.Product.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Service\StokTakip.Product.Service.csproj" />
   </ItemGroup>

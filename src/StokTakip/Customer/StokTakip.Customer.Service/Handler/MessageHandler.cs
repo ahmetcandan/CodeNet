@@ -1,5 +1,5 @@
-﻿using NetCore.Abstraction;
-using NetCore.Abstraction.Model;
+﻿using CodeNet.Abstraction;
+using CodeNet.Abstraction.Model;
 using StokTakip.Customer.Contract.Model;
 
 namespace StokTakip.Customer.Service.Handler;

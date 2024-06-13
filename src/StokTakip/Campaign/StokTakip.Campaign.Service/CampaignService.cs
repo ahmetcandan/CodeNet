@@ -1,5 +1,5 @@
-﻿using NetCore.Abstraction;
-using NetCore.ExceptionHandling;
+﻿using CodeNet.Abstraction;
+using CodeNet.ExceptionHandling;
 using StokTakip.Campaign.Abstraction.Repository;
 using StokTakip.Campaign.Abstraction.Service;
 using StokTakip.Campaign.Contract.Request;

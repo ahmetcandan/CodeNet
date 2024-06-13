@@ -1,8 +1,8 @@
 ﻿using Autofac;
-using NetCore.Container.Module;
-using NetCore.Logging.Module;
-using NetCore.Mapper.Module;
-using NetCore.Redis.Module;
+using CodeNet.Container.Module;
+using CodeNet.Logging.Module;
+using CodeNet.Mapper.Module;
+using CodeNet.Redis.Module;
 using StokTakip.Campaign.Abstraction.Repository;
 using StokTakip.Campaign.Abstraction.Service;
 using StokTakip.Campaign.Repository;

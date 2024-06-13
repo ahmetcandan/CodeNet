@@ -1,4 +1,4 @@
-﻿using NetCore.Abstraction;
+﻿using CodeNet.Abstraction;
 
 namespace StokTakip.Customer.Contract.Model;
 

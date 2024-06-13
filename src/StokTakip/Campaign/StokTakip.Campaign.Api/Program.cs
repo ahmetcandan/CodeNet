@@ -1,5 +1,5 @@
 using Autofac.Extensions.DependencyInjection;
-using NetCore.Extensions;
+using CodeNet.Extensions;
 using StokTakip.Campaign.Container;
 using StokTakip.Campaign.Repository;
 

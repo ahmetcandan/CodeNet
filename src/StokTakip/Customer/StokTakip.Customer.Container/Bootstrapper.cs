@@ -1,19 +1,19 @@
 ﻿using Autofac;
-using NetCore.Container.Module;
-using NetCore.ExceptionHandling.Module;
-using NetCore.Logging.Module;
-using NetCore.Mapper.Module;
-using NetCore.Redis.Module;
+using CodeNet.Container.Module;
+using CodeNet.ExceptionHandling.Module;
+using CodeNet.Logging.Module;
+using CodeNet.Mapper.Module;
+using CodeNet.Redis.Module;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Repository;
 using StokTakip.Customer.Service;
 using StokTakip.Customer.Service.Handler;
 using StokTakip.Customer.Service.Mapper;
-using NetCore.RabbitMQ.Module;
+using CodeNet.RabbitMQ.Module;
 using StokTakip.Customer.Contract.Model;
-using NetCore.Abstraction;
-using NetCore.MongoDB.Module;
+using CodeNet.Abstraction;
+using CodeNet.MongoDB.Module;
 
 namespace StokTakip.Customer.Container;
 

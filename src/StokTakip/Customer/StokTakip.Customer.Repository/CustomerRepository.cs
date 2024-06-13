@@ -1,5 +1,5 @@
-﻿using NetCore.Abstraction;
-using NetCore.EntityFramework;
+﻿using CodeNet.Abstraction;
+using CodeNet.EntityFramework;
 using StokTakip.Customer.Abstraction.Repository;
 
 namespace StokTakip.Customer.Repository;
