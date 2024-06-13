@@ -7,10 +7,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\CodeNet.Cache\CodeNet.Cache.csproj" />
-		<ProjectReference Include="..\..\..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
-		<ProjectReference Include="..\..\..\CodeNet.Mapper\CodeNet.Mapper.csproj" />
-		<ProjectReference Include="..\..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
+	  <PackageReference Include="CodeNet.Cache" Version="1.0.1" />
+	  <PackageReference Include="CodeNet.ExceptionHandling" Version="1.0.1" />
+	  <PackageReference Include="CodeNet.Mapper" Version="1.0.1" />
+	  <PackageReference Include="CodeNet.RabbitMQ" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

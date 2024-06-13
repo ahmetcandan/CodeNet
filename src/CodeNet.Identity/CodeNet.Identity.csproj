@@ -9,14 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<PackageReference Include="CodeNet.EntityFramework" Version="1.0.1" />
+		<PackageReference Include="CodeNet.ExceptionHandling" Version="1.0.1" />
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
-		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
-		<ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
 	</ItemGroup>
 
 </Project>

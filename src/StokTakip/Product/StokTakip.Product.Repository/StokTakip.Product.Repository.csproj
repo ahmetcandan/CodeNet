@@ -7,7 +7,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
+	  <PackageReference Include="CodeNet.EntityFramework" Version="1.0.1" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
 	</ItemGroup>
 

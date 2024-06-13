@@ -7,9 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CodeNet.Container\CodeNet.Container.csproj" />
-    <ProjectReference Include="..\..\..\CodeNet.Logging\CodeNet.Logging.csproj" />
-    <ProjectReference Include="..\..\..\CodeNet.Redis\CodeNet.Redis.csproj" />
+    <PackageReference Include="CodeNet.Logging" Version="1.0.1" />
+    <PackageReference Include="CodeNet.Redis" Version="1.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\StokTakip.Product.Repository\StokTakip.Product.Repository.csproj" />
     <ProjectReference Include="..\StokTakip.Product.Service\StokTakip.Product.Service.csproj" />
   </ItemGroup>

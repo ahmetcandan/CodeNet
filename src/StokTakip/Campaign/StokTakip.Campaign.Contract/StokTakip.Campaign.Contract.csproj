@@ -7,11 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <PackageReference Include="CodeNet.Abstraction" Version="1.0.1" />
 	  <PackageReference Include="MediatR" Version="12.2.0" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\..\..\CodeNet.Abstraction\CodeNet.Abstraction.csproj" />
 	</ItemGroup>
 
 </Project>
