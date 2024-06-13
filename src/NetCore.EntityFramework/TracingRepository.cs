@@ -4,7 +4,8 @@ using NetCore.Abstraction.Model;
 
 namespace NetCore.EntityFramework;
 
-public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IIdentityContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
+public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IIdentityContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity> 
+    where TTracingEntity : class, ITracingEntity
 {
     public override TTracingEntity Add(TTracingEntity entity)
     {

@@ -5,7 +5,8 @@ using System.Linq.Expressions;
 
 namespace NetCore.EntityFramework;
 
-public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBaseEntity>(dbContext), IBaseRepository<TBaseEntity> where TBaseEntity : class, IBaseEntity
+public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBaseEntity>(dbContext), IBaseRepository<TBaseEntity> 
+    where TBaseEntity : class, IBaseEntity
 {
     public override TBaseEntity Remove(TBaseEntity entity)
     {
