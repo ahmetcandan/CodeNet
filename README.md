@@ -1,4 +1,4 @@
-![Logo](https://raw.githubusercontent.com/ahmetcandan/CodeNet/master/ico.png?token=GHSAT0AAAAAACTEDK6REAO552UCPON4H7LCZTMCHLA) 
+![Logo](https://raw.githubusercontent.com/ahmetcandan/ImageHandler/master/ico.png) 
 # CodeNet
 
 ## CodeNet.Abstraction
@@ -91,9 +91,52 @@ builder.AddElasticsearch("Elasticsearch");
 var app = builder.Build();
 //...
 app.Run();
+```
+
+
+## CodeNet.EntityFramework
+
+CodeNet.EntityFramework is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework/) to install CodeNet.EntityFramework.
+
+```bash
+dotnet add package CodeNet.EntityFramework
+```
+
+### Usage
+#### appSettings.json
+```json
+{
+  "ConnectionStrings": {
+    "SqlServer": "Data Source=localhost;Initial Catalog=TestDB;TrustServerCertificate=true"
+  }
+}
+```
+#### program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.AddSqlServer("SqlServer");
+//...
+
 var app = builder.Build();
 //...
 app.Run();
+```
+
+
+## CodeNet.ExceptionHandling
+
+CodeNet.ExceptionHandling is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.ExceptionHandling/) to install CodeNet.ExceptionHandling.
+
+```bash
+dotnet add package CodeNet.ExceptionHandling
 ```
 
 ## CodeNet.Identity
@@ -150,5 +193,197 @@ builder.AddIdentity("SqlServer", "Identity");
 var app = builder.Build();
 
 app.UseNetCore(builder.Configuration, "Application");
+app.Run();
+```
+
+
+## CodeNet.Logging
+
+CodeNet.Logging is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Logging/) to install CodeNet.Logging.
+
+```bash
+dotnet add package CodeNet.Logging
+```
+
+#### program.cs
+```csharp
+using CodeNet.Logging.Module;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseNetCoreContainer(containerBuilder =>
+{
+    containerBuilder.RegisterModule<LoggingModule>();
+});
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
+
+## CodeNet.Mapper
+
+CodeNet.Mapper is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Mapper/) to install CodeNet.Mapper.
+
+```bash
+dotnet add package CodeNet.Mapper
+```
+
+#### program.cs
+```csharp
+using CodeNet.Mapper.Module;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseNetCoreContainer(containerBuilder =>
+{
+    containerBuilder.RegisterModule<MapperModule>();
+});
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
+
+## CodeNet.MongoDB
+
+CodeNet.MongoDB is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MongoDB/) to install CodeNet.MongoDB.
+
+```bash
+dotnet add package CodeNet.MongoDB
+```
+
+### Usage
+#### appSettings.json
+```json
+{
+  "MongoDB": {
+    "ConnectionString": "mongodb://localhost:27017",
+    "DatabaseName": "CodeNet"
+  }
+}
+```
+#### program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.AddMongoDB("MongoDB");
+builder.Host.UseNetCoreContainer(containerBuilder =>
+{
+    containerBuilder.RegisterModule<MongoDBModule>();
+});
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
+
+## CodeNet.RabbitMQ
+
+CodeNet.RabbitMQ is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.RabbitMQ/) to install CodeNet.RabbitMQ.
+
+```bash
+dotnet add package CodeNet.RabbitMQ
+```
+
+### Usage
+#### appSettings.json
+```json
+{
+  "RabbitMQ": {
+    "Hostname": "localhost",
+    "Username": "guest",
+    "Password": "guest",
+    "Exchange": "",
+    "RoutingKey": "RoutingKey",
+    "Queue": "QueueName",
+    "Durable": false,
+    "AutoDelete": false,
+    "Exclusive": false,
+    "AutoAck": true
+  }
+}
+```
+#### program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.AddRabbitMQ("RabbitMQ");
+builder.Host.UseNetCoreContainer(containerBuilder =>
+{
+    //for Producer
+    containerBuilder.RegisterModule<RabbitMQProducerModule<QueueModel>>();
+
+    //for Consumer
+    containerBuilder.RegisterModule<RabbitMQConsumerModule<QueueModel>>();
+});
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
+
+## CodeNet.Redis
+
+CodeNet.Redis is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Redis/) to install CodeNet.Redis.
+
+```bash
+dotnet add package CodeNet.Redis
+```
+
+### Usage
+#### appSettings.json
+```json
+{
+  "Redis": {
+    "Hostname": "localhost",
+    "Port": 6379
+  }
+}
+```
+#### program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+//for Distributed Cache
+builder.AddRedisDistributedCache("Redis");
+
+//for Distributed Lock
+builder.AddRedisDistributedLock("Redis");
+builder.Host.UseNetCoreContainer(containerBuilder =>
+{
+    //for Distributed Cache
+    containerBuilder.RegisterModule<RedisDistributedCacheModule>();
+
+    //for Distributed Lock
+    containerBuilder.RegisterModule<RedisDistributedLockModule>();
+});
+//...
+
+var app = builder.Build();
+//...
 app.Run();
 ```
