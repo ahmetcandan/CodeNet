@@ -10,11 +10,13 @@ builder.Host.UseNetCoreContainer(containerBuilder =>
     containerBuilder.RegisterModule<MediatRModule<GenerateTokenRequestHandler>>();
     containerBuilder.RegisterModule<IdentityModule>();
 });
-builder.AddNetCore("Application");
-builder.AddAuthentication("Identity");
-builder.AddIdentity("SqlServer", "Identity");
+
+builder.AddNetCore("Application")
+       .AddAuthentication("Identity")
+       .AddIdentity("SqlServer", "Identity")
+       .AddSqlServer("SqlServer");
 
 var app = builder.Build();
 
-app.UseNetCore(builder.Configuration, "Application");
-app.Run();
+app.UseNetCore(builder.Configuration, "Application")
+    .Run();

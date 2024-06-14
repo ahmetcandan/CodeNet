@@ -13,23 +13,23 @@ public static class ServiceCollectionExtensions
     /// <param name="webBuilder"></param>
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddSqlServer(this WebApplicationBuilder webBuilder, string connectionName)
+    public static WebApplicationBuilder AddMySQL(this WebApplicationBuilder webBuilder, string connectionName)
     {
-        webBuilder.AddSqlServer<DbContext>(connectionName);
+        webBuilder.AddMySQL<DbContext>(connectionName);
         return webBuilder;
     }
 
-    /// <summary>    
-    /// Add Sql Server
+    /// <summary>
+    /// Add Npgsql
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     /// <param name="webBuilder"></param>
-    /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
+    /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddSqlServer<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) 
+    public static WebApplicationBuilder AddMySQL<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) 
         where TDbContext : DbContext
     {
-        webBuilder.Services.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration.GetConnectionString(connectionName)));
+        webBuilder.Services.AddDbContext<TDbContext>(options => options.UseMySQL(webBuilder.Configuration.GetConnectionString(connectionName)!));
         return webBuilder;
     }
 }

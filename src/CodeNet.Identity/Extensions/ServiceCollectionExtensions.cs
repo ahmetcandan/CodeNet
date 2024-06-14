@@ -14,9 +14,8 @@ public static class ServiceCollectionExtensions
     /// <param name="webBuilder"></param>
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type IdentityConfig</param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder webBuilder, string sqlConnectionName, string sectionName)
+    public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        webBuilder.AddSqlServer<ApplicationDbContext>(sqlConnectionName);
         webBuilder.Services.Configure<IdentityConfig>(webBuilder.Configuration.GetSection(sectionName));
         webBuilder.Services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<ApplicationDbContext>()
