@@ -2,6 +2,7 @@
 
 public class AuthenticationSettings
 {
-    public string ValidAudience { get; set; }
-    public string ValidIssuer { get; set; }
+    public required string ValidAudience { get; set; }
+    public required string ValidIssuer { get; set; }
+    public required string PublicKeyPath { get; set; }
 }

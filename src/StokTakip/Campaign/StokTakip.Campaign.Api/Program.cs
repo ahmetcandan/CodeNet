@@ -6,7 +6,7 @@ using StokTakip.Campaign.Repository;
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
 builder.AddNetCore("Application");
-builder.AddAuthentication("JWT", "public_key.pem");
+builder.AddAuthentication("JWT");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
 builder.AddSqlServer<CampaignDbContext>("SqlServer");

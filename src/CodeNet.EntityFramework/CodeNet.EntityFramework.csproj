@@ -13,7 +13,8 @@
 		<Description>CodeNet Entity Framework package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.1</Version>
+		<Version>1.0.2</Version>
+		<Authors>CodeNet</Authors>
 	</PropertyGroup>
 
 	<ItemGroup>

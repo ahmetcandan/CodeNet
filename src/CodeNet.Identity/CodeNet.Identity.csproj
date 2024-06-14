@@ -1,18 +1,36 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<Nullable>enable</Nullable>
-		<UserSecretsId>0de46c11-b073-49a8-a229-2f0e3f7da028</UserSecretsId>
-		<ImplicitUsings>enable</ImplicitUsings>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet Identity</Title>
+		<Description>CodeNet Identity package.</Description>
+		<Copyright>Copyright 2024</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.0.2</Version>
+		<Authors>CodeNet</Authors>
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="CodeNet.EntityFramework" Version="1.0.1" />
-		<PackageReference Include="CodeNet.ExceptionHandling" Version="1.0.1" />
+		<None Include="..\..\ico.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.3" />
-		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.3" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
+		<ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using CodeNet.Abstraction.Model;
 using CodeNet.Identity.Manager;
 using CodeNet.Identity.Model;
 
-namespace CodeNet.Identity.Handler
+namespace CodeNet.Identity.Api.Handler
 {
     public class GenerateTokenRequestHandler(IIdentityTokenManager IdentityTokenManager) : IRequestHandler<LoginModel, ResponseBase<TokenResponse>>
     {

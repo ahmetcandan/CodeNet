@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using CodeNet.Abstraction.Model;
 using CodeNet.Identity.Model;
 
-namespace CodeNet.Identity.Controllers;
+namespace CodeNet.Identity.Api.Controllers;
 
 [Route("[controller]")]
 [Authorize(Roles = "admin")]

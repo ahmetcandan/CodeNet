@@ -67,13 +67,12 @@ public static class ServiceCollectionExtensions
     /// </summary>
     /// <param name="webBuilder"></param>
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type AuthenticationSettings</param>
-    /// <param name="publicKeyPath">Application must contain the pem file</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder webBuilder, string sectionName, string publicKeyPath)
+    public static WebApplicationBuilder AddAuthentication(this WebApplicationBuilder webBuilder, string sectionName)
     {
         var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
-        var rsa = AsymmetricKeyEncryption.CreateRSA(publicKeyPath);
+        var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
         webBuilder.Services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
