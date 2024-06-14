@@ -7,8 +7,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Abstraction" Version="1.0.2" />
-	  <PackageReference Include="MediatR" Version="12.2.0" />
+	  <PackageReference Include="CodeNet.Container" Version="1.0.2" />
 	</ItemGroup>
 
 </Project>
