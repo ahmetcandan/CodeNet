@@ -27,6 +27,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
 	  <ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
 	  <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>

@@ -27,6 +27,13 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="MongoDB.Driver" Version="2.24.0" />
 	</ItemGroup>
 
