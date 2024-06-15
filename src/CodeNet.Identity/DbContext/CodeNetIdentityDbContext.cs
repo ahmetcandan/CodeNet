@@ -4,6 +4,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.Identity.DbContext;
 
-public class ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public class CodeNetIdentityDbContext(DbContextOptions<CodeNetIdentityDbContext> options) : IdentityDbContext<IdentityUser>(options)
 {
 }

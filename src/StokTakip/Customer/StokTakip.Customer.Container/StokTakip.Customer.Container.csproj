@@ -7,8 +7,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Logging" Version="1.0.2" />
-	  <PackageReference Include="CodeNet.Redis" Version="1.0.2" />
+	  <PackageReference Include="CodeNet.Logging" Version="1.0.4" />
+	  <PackageReference Include="CodeNet.Redis" Version="1.0.4" />
 	</ItemGroup>
 
 	<ItemGroup>

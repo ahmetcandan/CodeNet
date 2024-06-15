@@ -7,7 +7,7 @@ using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
 using System.Net;
 
-namespace CodeNet.Extensions;
+namespace CodeNet.Redis.Extensions;
 
 public static class ServiceCollectionExtensions
 {

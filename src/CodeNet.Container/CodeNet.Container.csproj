@@ -13,7 +13,7 @@
 		<Description>It includes modules from MediatR and CodeNet.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.3</Version>
+		<Version>1.0.4</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -35,7 +35,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="Autofac" Version="8.0.0" />
-		<PackageReference Include="MediatR" Version="12.2.0" />
+		<PackageReference Include="MediatR" Version="12.3.0" />
 	</ItemGroup>
 
 	<ItemGroup>

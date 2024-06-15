@@ -11,7 +11,7 @@ using CodeNet.Abstraction.Model;
 using CodeNet.Core;
 using Swashbuckle.AspNetCore.Filters;
 
-namespace CodeNet.Extensions;
+namespace CodeNet.Core.Extensions;
 
 public static class ServiceCollectionExtensions
 {

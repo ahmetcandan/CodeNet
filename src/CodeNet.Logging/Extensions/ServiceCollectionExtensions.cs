@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Logging;
 
-namespace CodeNet.Extensions;
+namespace CodeNet.Logging.Extensions;
 
 public static class ServiceCollectionExtensions
 {

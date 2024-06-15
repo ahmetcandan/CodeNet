@@ -2,7 +2,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using CodeNet.Abstraction.Model;
 
-namespace CodeNet.Extensions;
+namespace CodeNet.MongoDB.Extensions;
 
 public static class ServiceCollectionExtensions
 {

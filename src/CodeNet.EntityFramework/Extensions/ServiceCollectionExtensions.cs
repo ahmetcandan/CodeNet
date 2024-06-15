@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeNet.Extensions;
+namespace CodeNet.EntityFramework.Extensions;
 
 public static class ServiceCollectionExtensions
 {
@@ -29,7 +29,33 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddSqlServer<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) 
         where TDbContext : DbContext
     {
-        webBuilder.Services.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration.GetConnectionString(connectionName)));
+        webBuilder.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration, connectionName));
+        return webBuilder;
+    }
+
+    /// <summary>
+    /// Use Sql Server
+    /// </summary>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
+    /// <returns></returns>
+    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, ConfigurationManager configuration, string connectionName)
+    {
+        return optionsBuilder.UseSqlServer(configuration.GetConnectionString(connectionName));
+    }
+
+    /// <summary>
+    /// Add DbContext Other Database
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="webBuilder"></param>
+    /// <param name="optionsAction"></param>
+    /// <returns></returns>
+    public static WebApplicationBuilder AddDbContext<TDbContext>(this WebApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction)
+        where TDbContext : DbContext
+    {
+        webBuilder.Services.AddDbContext<TDbContext>(optionsAction);
         return webBuilder;
     }
 }
