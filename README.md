@@ -123,7 +123,7 @@ dotnet add package CodeNet.EntityFramework
 ```
 
 ### Usage
-> appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -131,7 +131,7 @@ dotnet add package CodeNet.EntityFramework
   }
 }
 ```
-> program.cs
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseNetCoreContainer(containerBuilder =>
@@ -146,7 +146,7 @@ var app = builder.Build();
 //...
 app.Run();
 ```
-> DbContext
+DbContext
 ```csharp
 public partial class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : DbContext(options)
 {
@@ -154,7 +154,7 @@ public partial class CustomerDbContext(DbContextOptions<CustomerDbContext> optio
     public virtual DbSet<Employee> Employees { get; set; }
 }
 ```
-> Repository
+Repository
 ```csharp
 public class CustomerRepository(CustomerDbContext context, IIdentityContext identityContext) : 
     TracingRepository<Model.Customer>(context, identityContext), ICustomerRepository
@@ -162,7 +162,7 @@ public class CustomerRepository(CustomerDbContext context, IIdentityContext iden
 }
 ```
 
-> Repository Usage
+Repository Usage
 ```csharp
 public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper) : BaseService, ICustomerService
 {
@@ -759,3 +759,8 @@ public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<Te
     }
 }
 ```
+
+## Contact
+> [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/ahmetcandan)
+
+> candanahm@gmail.com
