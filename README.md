@@ -1,4 +1,6 @@
 ![Logo](https://raw.githubusercontent.com/ahmetcandan/ImageHandler/master/ico.png) 
+
+---
 # CodeNet
 
 ## CodeNet.Core
@@ -49,6 +51,7 @@ app.UseCodeNet(builder.Configuration, "Application");
 app.Run();
 ```
 
+---
 ## CodeNet.Elasticsearch
 
 CodeNet.Elasticsearch is a .Net library.
@@ -110,6 +113,7 @@ public class ElasticModel : IElasticsearchModel
 }
 ```
 
+---
 ## CodeNet.EntityFramework
 
 CodeNet.EntityFramework is a .Net library.
@@ -202,6 +206,7 @@ public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapper
 }
 ```
 
+---
 ## CodeNet.EntityFramework.InMemory
 
 CodeNet.EntityFramework.InMemory is a .Net library.
@@ -226,6 +231,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.EntityFramework.MySQL
 
 CodeNet.EntityFramework.MySQL is a .Net library.
@@ -258,6 +264,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.EntityFramework.Oracle
 
 CodeNet.EntityFramework.Oracle is a .Net library.
@@ -290,6 +297,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.EntityFramework.PostgreSQL
 
 CodeNet.EntityFramework.PostgreSQL is a .Net library.
@@ -322,6 +330,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.EntityFramework.Sqlite
 
 CodeNet.EntityFramework.Sqlite is a .Net library.
@@ -354,6 +363,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.ExceptionHandling
 
 CodeNet.ExceptionHandling is a .Net library.
@@ -384,6 +394,7 @@ app.UseErrorController();
 app.Run();
 ```
 
+---
 ## CodeNet.Identity
 
 This is a .Net library.
@@ -444,6 +455,7 @@ builder.Build()
     .Run();
 ```
 
+---
 ## CodeNet.Logging
 
 CodeNet.Logging is a .Net library.
@@ -475,6 +487,7 @@ app.UseLogging();
 app.Run();
 ```
 
+---
 ## CodeNet.Mapper
 
 CodeNet.Mapper is a .Net library.
@@ -504,6 +517,7 @@ var app = builder.Build();
 app.Run();
 ```
 
+---
 ## CodeNet.MongoDB
 
 CodeNet.MongoDB is a .Net library.
@@ -558,6 +572,7 @@ public class KeyValueModel : BaseMongoDBModel
 }
 ```
 
+---
 ## CodeNet.RabbitMQ
 
 CodeNet.RabbitMQ is a .Net library.
@@ -634,6 +649,7 @@ public class MessageConsumerHandler : IRabbitMQConsumerHandler<KeyValueModel>
 }
 ```
 
+---
 ## CodeNet.Redis
 
 CodeNet.Redis is a .Net library.
@@ -760,7 +776,43 @@ public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<Te
 }
 ```
 
-## Contact
-> [![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://linkedin.com/in/ahmetcandan)
+---
+## Skils
+<div align="left">
+  <img src="https://cdn.simpleicons.org/dotnet/512BD4" height="30" alt="dot-net logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/csharp/csharp-original.svg" height="30" alt="csharp logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/microsoftsqlserver/microsoftsqlserver-plain.svg" height="30" alt="microsoftsqlserver logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/oracle/oracle-original.svg" height="30" alt="oracle logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" height="30" alt="mysql logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/postgresql/postgresql-original.svg" height="30" alt="postgresql logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/sqlite/sqlite-original.svg" height="30" alt="sqlite logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mongodb/mongodb-original.svg" height="30" alt="mongodb logo"  />
+  <img width="12" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redis/redis-original.svg" height="30" alt="redis logo"  />
+  <img width="12" />
+  <img src="https://cdn.simpleicons.org/rabbitmq/FF6600" height="30" alt="rabbitmq logo"  />
+</div>
 
-> candanahm@gmail.com
+---
+## Contact
+<div align="left">
+    <a href="mailto:candanahm@gmail.com">
+  <img src="https://img.shields.io/static/v1?message=Gmail&logo=gmail&label=&color=D14836&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="gmail logo" /></a>
+  <a href="https://linkedin.com/in/ahmetcandan">
+  <img src="https://img.shields.io/static/v1?message=LinkedIn&logo=linkedin&label=&color=0077B5&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="linkedin logo" /></a>
+  <a href="https://x.com/ahmetcndan">
+  <img src="https://img.shields.io/static/v1?message=Twitter&logo=twitter&label=&color=1DA1F2&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="twitter logo" /></a>
+  <a href="https://stackoverflow.com/users/7229379/ahmet-candan">
+  <img src="https://img.shields.io/static/v1?message=Stackoverflow&logo=stackoverflow&label=&color=FE7A16&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="stackoverflow logo"  /></a>
+  <a href="https://www.hackerrank.com/profile/ahmetcandan">
+  <img src="https://img.shields.io/static/v1?message=HackerRank&logo=hackerrank&label=&color=2EC866&logoColor=white&labelColor=&style=for-the-badge" height="35" alt="hackerrank logo"  /></a>
+</div>
+
+---
