@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using CodeNet.Identity.Model;
 
 namespace CodeNet.Identity.Api.Controllers;

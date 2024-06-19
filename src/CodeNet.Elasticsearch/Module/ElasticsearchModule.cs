@@ -7,7 +7,7 @@ namespace CodeNet.RabbitMQ.Module;
 /// </summary>
 /// <typeparam name="TElasticsearchDBContext"></typeparam>
 public class ElasticsearchModule<TElasticsearchDBContext> : Autofac.Module
-    where TElasticsearchDBContext : ElasticsearchDBContext
+    where TElasticsearchDBContext : ElasticsearchDbContext
 {
     protected override void Load(ContainerBuilder builder)
     {
@@ -23,7 +23,7 @@ public class ElasticsearchModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<ElasticsearchDBContext>().As<ElasticsearchDBContext>().InstancePerLifetimeScope();
+        builder.RegisterType<ElasticsearchDbContext>().As<ElasticsearchDbContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }

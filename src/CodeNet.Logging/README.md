@@ -10,7 +10,8 @@ Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Logging/) t
 dotnet add package CodeNet.Logging
 ```
 
-#### program.cs
+### Usage
+program.cs
 ```csharp
 using CodeNet.Logging.Module;
 
@@ -19,9 +20,11 @@ builder.Host.UseNetCoreContainer(containerBuilder =>
 {
     containerBuilder.RegisterModule<LoggingModule>();
 });
-//..
+builder.AddLogging("Logging");
+//...
 
 var app = builder.Build();
-//..
+app.UseLogging();
+//...
 app.Run();
 ```

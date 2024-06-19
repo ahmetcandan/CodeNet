@@ -1,4 +1,5 @@
-﻿using CodeNet.Abstraction;
+﻿using CodeNet.Elasticsearch.Attributes;
+using CodeNet.Elasticsearch.Models;
 
 namespace StokTakip.Customer.Contract.Model;
 

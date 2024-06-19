@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CodeNet.Container.Module;
+using CodeNet.Core.Module;
 using CodeNet.ExceptionHandling.Module;
 using CodeNet.Logging.Module;
 using CodeNet.Mapper.Module;
@@ -12,8 +12,8 @@ using StokTakip.Customer.Service.Handler;
 using StokTakip.Customer.Service.Mapper;
 using CodeNet.RabbitMQ.Module;
 using StokTakip.Customer.Contract.Model;
-using CodeNet.Abstraction;
 using CodeNet.MongoDB.Module;
+using CodeNet.RabbitMQ.Services;
 
 namespace StokTakip.Customer.Container;
 

@@ -1,5 +1,4 @@
-﻿using CodeNet.Abstraction;
-using CodeNet.ExceptionHandling;
+﻿using CodeNet.ExceptionHandling;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
@@ -8,7 +7,7 @@ using StokTakip.Customer.Service.Mapper;
 
 namespace StokTakip.Customer.Service;
 
-public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper) : BaseService, ICustomerService
+public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper) : ICustomerService
 {
     public async Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken)
     {

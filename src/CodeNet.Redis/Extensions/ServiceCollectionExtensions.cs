@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.Redis.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Abstraction.Model;
 using RedLockNet;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;

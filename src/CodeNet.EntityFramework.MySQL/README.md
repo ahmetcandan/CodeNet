@@ -11,7 +11,7 @@ dotnet add package CodeNet.EntityFramework.MySQL
 ```
 
 ### Usage
-#### appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -19,7 +19,7 @@ dotnet add package CodeNet.EntityFramework.MySQL
   }
 }
 ```
-#### program.cs
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMySQL("MySQL");

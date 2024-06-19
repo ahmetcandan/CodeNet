@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace CodeNet.Identity.Model;

@@ -1,6 +1,6 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Identity;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using CodeNet.Identity.Manager;
 using CodeNet.Identity.Model;
 

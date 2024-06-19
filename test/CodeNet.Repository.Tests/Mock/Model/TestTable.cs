@@ -1,4 +1,4 @@
-﻿using CodeNet.Abstraction.Model;
+﻿using CodeNet.EntityFramework.Models;
 
 namespace CodeNet.EntityFramework.Tests.Mock.Model
 {

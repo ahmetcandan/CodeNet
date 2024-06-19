@@ -1,5 +1,4 @@
 ﻿using Autofac;
-using CodeNet.Abstraction;
 
 namespace CodeNet.MongoDB.Module;
 

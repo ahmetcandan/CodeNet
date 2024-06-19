@@ -1,5 +1,8 @@
 using Autofac.Extensions.DependencyInjection;
-using CodeNet.Extensions;
+using CodeNet.Core.Extensions;
+using CodeNet.EntityFramework.Extensions;
+using CodeNet.Logging.Extensions;
+using CodeNet.Redis.Extensions;
 using StokTakip.Campaign.Container;
 using StokTakip.Campaign.Repository;
 

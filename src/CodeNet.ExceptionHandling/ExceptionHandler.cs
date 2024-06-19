@@ -1,8 +1,8 @@
 ﻿using Autofac;
 using MediatR;
-using CodeNet.Abstraction;
-using CodeNet.Abstraction.Model;
-using CodeNet.Container;
+using CodeNet.Core;
+using CodeNet.Core.Models;
+using CodeNet.Logging;
 
 namespace CodeNet.ExceptionHandling;
 

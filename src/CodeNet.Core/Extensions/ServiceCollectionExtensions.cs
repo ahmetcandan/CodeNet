@@ -1,5 +1,7 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
+using CodeNet.Core.Security;
+using CodeNet.Core.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
@@ -7,8 +9,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using CodeNet.Abstraction.Model;
-using CodeNet.Core;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace CodeNet.Core.Extensions;
@@ -21,7 +21,7 @@ public static class ServiceCollectionExtensions
     /// <param name="hostBuilder"></param>
     /// <param name="configureDelegate"></param>
     /// <returns></returns>
-    public static IHostBuilder UseNetCoreContainer(this IHostBuilder hostBuilder, Action<ContainerBuilder> configureDelegate)
+    public static IHostBuilder UseCodeNetContainer(this IHostBuilder hostBuilder, Action<ContainerBuilder> configureDelegate)
     {
         hostBuilder.UseServiceProviderFactory(new AutofacServiceProviderFactory());
         return hostBuilder.ConfigureContainer(configureDelegate);
@@ -34,8 +34,14 @@ public static class ServiceCollectionExtensions
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static WebApplicationBuilder AddNetCore(this WebApplicationBuilder webBuilder, string sectionName)
+    public static WebApplicationBuilder AddCodeNet(this WebApplicationBuilder webBuilder, string sectionName)
     {
+        Console.WriteLine(@"
+   ___            _         _  _         _   
+  / __|  ___   __| |  ___  | \| |  ___  | |_ 
+ | (__  / _ \ / _` | / -_) | .` | / -_) |  _|
+  \___| \___/ \__,_| \___| |_|\_| \___|  \__|
+                                             ");
         var applicationSettings = webBuilder.Configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         
         webBuilder.Services.AddSwaggerGen(c =>
@@ -106,14 +112,13 @@ public static class ServiceCollectionExtensions
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static WebApplication UseNetCore(this WebApplication app, IConfiguration configuration, string sectionName)
+    public static WebApplication UseCodeNet(this WebApplication app, IConfiguration configuration, string sectionName)
     {
         var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
 
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
-
-        app.UseExceptionHandler("/Error");
+        
         app.UseSwagger();
         app.UseSwaggerUI(c => c.SwaggerEndpoint($"/swagger/{applicationSettings.Version}/swagger.json", $"{applicationSettings.Title} {applicationSettings.Version}"));
         app.UseHttpsRedirection();

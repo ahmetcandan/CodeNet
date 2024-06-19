@@ -11,7 +11,7 @@ dotnet add package CodeNet.MongoDB
 ```
 
 ### Usage
-#### appSettings.json
+appSettings.json
 ```json
 {
   "MongoDB": {
@@ -20,17 +20,34 @@ dotnet add package CodeNet.MongoDB
   }
 }
 ```
-#### program.cs
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMongoDB("MongoDB");
 builder.Host.UseNetCoreContainer(containerBuilder =>
 {
-    containerBuilder.RegisterModule<MongoDBModule>();
+    containerBuilder.AddModule<MongoDBModule>();
+    containerBuilder.RegisterType<SampleRepository>().As<ISampleRepository>().InstancePerLifetimeScope();
 });
 //...
 
 var app = builder.Build();
 //...
 app.Run();
+```
+Sample Repositoriy
+```csharp
+public class SampleRepository(MongoDBContext dbContext) : BaseMongoRepository<KeyValueModel>(dbContext), ISampleRepository
+{
+    //...
+}
+```
+KeyValueModel
+```csharp
+[CollectionName("KeyValue")]
+public class KeyValueModel : BaseMongoDBModel
+{
+    public string Key { get; set; }
+    public string Value { get; set; }
+}
 ```

@@ -1,8 +1,8 @@
-# CodeNet.Identity
+## CodeNet.Identity
 
 This is a .Net library.
 
-## Installation
+### Installation
 
 Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Identity/) to install CodeNet.Identity.
 
@@ -10,8 +10,8 @@ Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Identity/) 
 dotnet add package CodeNet.Identity
 ```
 
-## Usage
-### appSettings.json
+### Usage
+appSettings.json
 ```json
 {
   "Application": {
@@ -31,7 +31,7 @@ dotnet add package CodeNet.Identity
   }
 }
 ```
-### program.cs
+program.cs
 ```csharp
 using Autofac;
 using CodeNet.Container.Module;

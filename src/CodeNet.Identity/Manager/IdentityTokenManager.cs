@@ -1,12 +1,12 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using CodeNet.Abstraction.Model;
-using CodeNet.Core;
+using CodeNet.Core.Models;
 using CodeNet.ExceptionHandling;
 using CodeNet.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CodeNet.Core.Security;
 
 namespace CodeNet.Identity.Manager;
 

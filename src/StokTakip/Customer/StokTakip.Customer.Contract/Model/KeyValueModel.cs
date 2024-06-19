@@ -1,5 +1,5 @@
-﻿using CodeNet.Abstraction.Model;
-using CodeNet.Abstraction;
+﻿using CodeNet.MongoDB;
+using CodeNet.MongoDB.Models;
 
 namespace StokTakip.Customer.Contract.Model;
 

@@ -10,7 +10,8 @@ Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFrame
 dotnet add package CodeNet.EntityFramework.InMemory
 ```
 
-#### program.cs
+### Usage
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddInMemoryDB("DatabaseName");

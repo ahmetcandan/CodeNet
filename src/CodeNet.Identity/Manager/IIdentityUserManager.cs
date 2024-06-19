@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Identity;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using CodeNet.Identity.Model;
 
 namespace CodeNet.Identity.Manager;

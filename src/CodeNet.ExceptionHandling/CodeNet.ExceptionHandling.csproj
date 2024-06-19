@@ -13,7 +13,7 @@
 		<Description>CodeNet Exception Handler package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -34,8 +34,8 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
 	  <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+	  <ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
 	</ItemGroup>
 
 </Project>

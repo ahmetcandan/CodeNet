@@ -1,5 +1,5 @@
-﻿using CodeNet.Abstraction;
-using CodeNet.Abstraction.Model;
+﻿using CodeNet.RabbitMQ.Models;
+using CodeNet.RabbitMQ.Services;
 using StokTakip.Customer.Contract.Model;
 
 namespace StokTakip.Customer.Service.Handler;

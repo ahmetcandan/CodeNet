@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CodeNet.Abstraction;
+using CodeNet.RabbitMQ.Services;
 
 namespace CodeNet.RabbitMQ.Module;
 

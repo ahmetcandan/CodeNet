@@ -1,4 +1,5 @@
-﻿using CodeNet.Abstraction;
+﻿using CodeNet.MongoDB;
+using CodeNet.MongoDB.Repositories;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Contract.Model;
 
