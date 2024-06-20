@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CodeNet.Logging;
 
-public class AppLogger(IIdentityContext IdentityContext, ILogger Logger) : IAppLogger
+internal class AppLogger(IIdentityContext IdentityContext, ILogger Logger) : IAppLogger
 {
     public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 

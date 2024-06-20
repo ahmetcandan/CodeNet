@@ -5,7 +5,7 @@ using CodeNet.Identity.Model;
 
 namespace CodeNet.Identity.Manager;
 
-public class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager) : IIdentityUserManager
+internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager) : IIdentityUserManager
 {
     public async Task<ResponseBase<IdentityResult>> CreateUser(RegisterUserModel model)
     {

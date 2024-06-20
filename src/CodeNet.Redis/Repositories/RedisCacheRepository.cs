@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace CodeNet.Redis.Repositories;
 
-public class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRepository
+internal class RedisCacheRepository(IDistributedCache DistributedCache) : ICacheRepository
 {
     /// <summary>
     /// Get Cache value

@@ -7,8 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\..\..\CodeNet.Elasticsearch\CodeNet.Elasticsearch.csproj" />
-	  <ProjectReference Include="..\..\..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
+	  <Folder Include="Model\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
 </Project>

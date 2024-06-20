@@ -7,7 +7,7 @@ using System.Data;
 
 namespace CodeNet.Identity.Manager;
 
-public class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIdentityRoleManager
+internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIdentityRoleManager
 {
     public async Task<ResponseBase> CreateRole(CreateRoleModel model)
     {

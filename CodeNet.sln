@@ -100,6 +100,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.Ora
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.Sqlite", "src\CodeNet.EntityFramework.Sqlite\CodeNet.EntityFramework.Sqlite.csproj", "{77E10243-54BE-4C60-B2EC-1A8EC19705AF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.HttpClient", "src\CodeNet.HttpClient\CodeNet.HttpClient.csproj", "{4CE511AB-676E-4980-91ED-993B2A68AE44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -266,6 +268,10 @@ Global
 		{77E10243-54BE-4C60-B2EC-1A8EC19705AF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{77E10243-54BE-4C60-B2EC-1A8EC19705AF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{77E10243-54BE-4C60-B2EC-1A8EC19705AF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE511AB-676E-4980-91ED-993B2A68AE44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE511AB-676E-4980-91ED-993B2A68AE44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE511AB-676E-4980-91ED-993B2A68AE44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE511AB-676E-4980-91ED-993B2A68AE44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -315,6 +321,7 @@ Global
 		{CACF57E0-955E-47D2-BE5B-42B452CA0092} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{AD33BD55-4F0A-48DE-9820-467BDCD2CC6D} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{77E10243-54BE-4C60-B2EC-1A8EC19705AF} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{4CE511AB-676E-4980-91ED-993B2A68AE44} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

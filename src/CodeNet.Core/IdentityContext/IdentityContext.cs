@@ -3,7 +3,7 @@ using System.Security.Claims;
 
 namespace CodeNet.Core;
 
-public class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIdentityContext
+internal class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIdentityContext
 {
     private Guid? _requestId;
     public Guid RequestId

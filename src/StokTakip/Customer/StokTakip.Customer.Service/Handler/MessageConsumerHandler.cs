@@ -4,9 +4,9 @@ using StokTakip.Customer.Contract.Model;
 
 namespace StokTakip.Customer.Service.Handler;
 
-public class MessageHandler : IRabbitMQConsumerHandler<KeyValueModel>
+public class MessageConsumerHandler : IRabbitMQConsumerHandler<MongoModel>
 {
-    public void Handler(ReceivedMessageEventArgs<KeyValueModel> args)
+    public void Handler(ReceivedMessageEventArgs<MongoModel> args)
     {
         Console.WriteLine($"MessageId: {args.MessageId}, Value: {args.Data.Value}");
     }

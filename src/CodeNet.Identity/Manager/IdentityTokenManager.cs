@@ -10,7 +10,7 @@ using CodeNet.Core.Security;
 
 namespace CodeNet.Identity.Manager;
 
-public class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<IdentityConfig> JwtConfig) : IIdentityTokenManager
+internal class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<IdentityConfig> JwtConfig) : IIdentityTokenManager
 {
     public async Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model)
     {

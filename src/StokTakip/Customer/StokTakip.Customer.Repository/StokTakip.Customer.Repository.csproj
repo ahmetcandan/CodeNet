@@ -7,9 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\CodeNet.Elasticsearch\CodeNet.Elasticsearch.csproj" />
-		<ProjectReference Include="..\..\..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
-		<ProjectReference Include="..\..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

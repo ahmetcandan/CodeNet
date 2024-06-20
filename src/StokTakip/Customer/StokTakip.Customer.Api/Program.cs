@@ -28,6 +28,6 @@ var container = app.Services.GetAutofacRoot();
 Bootstrapper.SetContainer(container);
 
 app.UseCodeNet(builder.Configuration, "Application");
-app.UseRabbitMQConsumer<KeyValueModel>();
+app.UseRabbitMQConsumer<MongoModel>();
 app.UseLogging();
 app.Run();

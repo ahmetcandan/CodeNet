@@ -5,6 +5,6 @@ using StokTakip.Customer.Contract.Model;
 
 namespace StokTakip.Customer.Repository;
 
-public class KeyValueMongoRepository(MongoDBContext dbContext) : BaseMongoRepository<KeyValueModel>(dbContext), IKeyValueRepository
+public class KeyValueMongoRepository(MongoDBContext dbContext) : BaseMongoRepository<MongoModel>(dbContext), IKeyValueRepository
 {
 }

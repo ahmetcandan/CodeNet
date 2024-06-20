@@ -23,12 +23,12 @@ public static class Converter
         return result;
     }
 
-    public static T Convert<T>(this object value)
+    public static T? Convert<T>(this object value)
     {
         return value.Convert(default(T));
     }
 
-    public static bool TryParse<T>(string source, out T value)
+    public static bool TryParse<T>(string source, out T? value)
     {
 
         TypeConverter converter = TypeDescriptor.GetConverter(typeof(T));
@@ -36,7 +36,7 @@ public static class Converter
         try
         {
 
-            value = (T)converter.ConvertFromString(source);
+            value = (T?)converter.ConvertFromString(source);
             return true;
         }
         catch
@@ -48,7 +48,7 @@ public static class Converter
 
     }
 
-    public static bool TryChangeType<T>(object source, out T value)
+    public static bool TryChangeType<T>(object source, out T? value)
     {
         try
         {
@@ -70,7 +70,7 @@ public static class Converter
         T result = new();
         var valueProperties = value.GetType().GetProperties();
         var convertProperties = typeof(T).GetProperties();
-        MethodInfo convertMethod = null;
+        MethodInfo? convertMethod = null;
         foreach (var property in from c in convertProperties
                                  join v in valueProperties
                                  on 1 equals 1
@@ -84,7 +84,7 @@ public static class Converter
             {
                 if (convertMethod == null)
                     convertMethod = typeof(Converter).GetMethod("Convert", new Type[] { property.convertProperty.PropertyType });
-                var resultPropValue = convertMethod.MakeGenericMethod(property.convertProperty.PropertyType).Invoke(null, [propValue]);
+                var resultPropValue = convertMethod?.MakeGenericMethod(property.convertProperty.PropertyType).Invoke(null, [propValue]);
                 property.convertProperty.SetValue(result, resultPropValue);
             }
         }

@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 
 namespace CodeNet.Redis.Handler;
 
-public class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDistributedCache DistributedCache) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
+internal class CacheHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IDistributedCache DistributedCache) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
