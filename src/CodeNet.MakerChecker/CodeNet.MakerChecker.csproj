@@ -9,8 +9,8 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageIcon>ico.png</PackageIcon>
-		<Title>CodeNet Http Client</Title>
-		<Description>CodeNet HttpClient package.</Description>
+		<Title>CodeNet Maker Checker</Title>
+		<Description>CodeNet Maker Checker package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
 		<Version>1.0.5</Version>
@@ -34,7 +34,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
+		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
 	</ItemGroup>
 
 </Project>
