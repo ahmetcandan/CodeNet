@@ -5,9 +5,9 @@ namespace CodeNet.EntityFramework.Repositories;
 
 public interface IRepository<TEntity> where TEntity : IEntity
 {
-    TEntity Get(params object[] keyValues);
-    Task<TEntity> GetAsync(params object[] keyValues);
-    Task<TEntity> GetAsync(object[] keyValues, CancellationToken cancellationToken);
+    TEntity? Get(params object[] keyValues);
+    Task<TEntity?> GetAsync(params object[] keyValues);
+    Task<TEntity?> GetAsync(object[] keyValues, CancellationToken cancellationToken);
     Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> Find(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 

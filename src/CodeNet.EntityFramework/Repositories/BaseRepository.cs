@@ -7,18 +7,39 @@ namespace CodeNet.EntityFramework.Repositories;
 public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBaseEntity>(dbContext), IBaseRepository<TBaseEntity>
     where TBaseEntity : class, IBaseEntity
 {
+    private readonly bool _isSoftDelete = typeof(TBaseEntity).GetInterface(nameof(ISoftDelete)) is not null;
+
     public override TBaseEntity Remove(TBaseEntity entity)
     {
-        entity.IsDeleted = true;
-        return Update(entity);
+        if (_isSoftDelete)
+        {
+            entity.IsDeleted = true;
+            return Update(entity);
+        }
+
+        return base.Remove(entity);
+    }
+
+    public virtual TBaseEntity HardDelete(TBaseEntity entity)
+    {
+        return base.Remove(entity);
     }
 
     public override IEnumerable<TBaseEntity> RemoveRange(IEnumerable<TBaseEntity> entities)
     {
-        foreach (var entity in entities)
-            entity.IsDeleted = true;
+        if (_isSoftDelete)
+        {
+            foreach (var entity in entities)
+                entity.IsDeleted = true;
+            return UpdateRange(entities);
+        }
 
-        return UpdateRange(entities);
+        return base.RemoveRange(entities);
+    }
+
+    public virtual IEnumerable<TBaseEntity> HardDeleteRange(IEnumerable<TBaseEntity> entities)
+    {
+        return base.RemoveRange(entities);
     }
 
     public override Task<List<TBaseEntity>> Find(Expression<Func<TBaseEntity, bool>> predicate)

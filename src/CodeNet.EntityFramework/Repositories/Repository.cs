@@ -71,17 +71,17 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         return await _dbContext.Set<TEntity>().Where(predicate).ToListAsync(cancellationToken);
     }
 
-    public virtual TEntity Get(params object[] keyValues)
+    public virtual TEntity? Get(params object[] keyValues)
     {
         return _dbContext.Set<TEntity>().Find(keyValues);
     }
 
-    public virtual Task<TEntity> GetAsync(params object[] keyValues)
+    public virtual Task<TEntity?> GetAsync(params object[] keyValues)
     {
         return GetAsync(keyValues, CancellationToken.None);
     }
 
-    public virtual async Task<TEntity> GetAsync(object[] keyValues, CancellationToken cancellationToken)
+    public virtual async Task<TEntity?> GetAsync(object[] keyValues, CancellationToken cancellationToken)
     {
         return await _dbContext.Set<TEntity>().FindAsync(keyValues, cancellationToken);
     }

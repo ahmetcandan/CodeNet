@@ -6,4 +6,6 @@ namespace CodeNet.EntityFramework.Repositories;
 public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity> where TBaseEntity : class, IBaseEntity
 {
     Task<List<TBaseEntity>> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default);
+    TBaseEntity HardDelete(TBaseEntity entity);
+    IEnumerable<TBaseEntity> HardDeleteRange(IEnumerable<TBaseEntity> entities);
 }
