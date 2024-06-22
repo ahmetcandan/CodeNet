@@ -1,6 +1,7 @@
 ﻿using Autofac;
 using MediatR;
-using CodeNet.Abstraction;
+using CodeNet.Redis.Handler;
+using CodeNet.Redis.Repositories;
 
 namespace CodeNet.Redis.Module;
 

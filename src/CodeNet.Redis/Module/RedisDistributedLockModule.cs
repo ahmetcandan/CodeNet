@@ -1,4 +1,5 @@
 ﻿using Autofac;
+using CodeNet.Redis.Handler;
 using MediatR;
 
 namespace CodeNet.Redis.Module;

@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using CodeNet.ExceptionHandling;
 using CodeNet.Identity.Model;
 using System.Data;
 
 namespace CodeNet.Identity.Manager;
 
-public class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIdentityRoleManager
+internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIdentityRoleManager
 {
     public async Task<ResponseBase> CreateRole(CreateRoleModel model)
     {

@@ -1,12 +1,12 @@
 ﻿using Autofac;
 using MediatR;
-using CodeNet.Abstraction;
-using CodeNet.Abstraction.Model;
-using CodeNet.Container;
+using CodeNet.Core;
+using CodeNet.Core.Models;
+using CodeNet.Logging;
 
 namespace CodeNet.ExceptionHandling;
 
-public class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
+internal class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScope, IAppLogger AppLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {

@@ -7,7 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Abstraction" Version="1.0.4" />
+	  <ProjectReference Include="..\..\..\CodeNet.Elasticsearch\CodeNet.Elasticsearch.csproj" />
+	  <ProjectReference Include="..\..\..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
+	  <ProjectReference Include="..\..\..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
 	</ItemGroup>
 
 </Project>

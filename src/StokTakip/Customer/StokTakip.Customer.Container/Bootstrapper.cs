@@ -1,5 +1,5 @@
 ﻿using Autofac;
-using CodeNet.Container.Module;
+using CodeNet.Core.Module;
 using CodeNet.ExceptionHandling.Module;
 using CodeNet.Logging.Module;
 using CodeNet.Mapper.Module;
@@ -12,8 +12,8 @@ using StokTakip.Customer.Service.Handler;
 using StokTakip.Customer.Service.Mapper;
 using CodeNet.RabbitMQ.Module;
 using StokTakip.Customer.Contract.Model;
-using CodeNet.Abstraction;
 using CodeNet.MongoDB.Module;
+using CodeNet.RabbitMQ.Services;
 
 namespace StokTakip.Customer.Container;
 
@@ -30,15 +30,15 @@ public class Bootstrapper
         builder.RegisterModule<RedisDistributedLockModule>();
         builder.RegisterModule<LoggingModule>();
         builder.RegisterModule<MongoDBModule>();
-        builder.RegisterModule<RabbitMQProducerModule<KeyValueModel>>();
-        builder.RegisterModule<RabbitMQConsumerModule<KeyValueModel>>();
+        builder.RegisterModule<RabbitMQProducerModule<MongoModel>>();
+        builder.RegisterModule<RabbitMQConsumerModule<MongoModel>>();
         builder.RegisterModule<ExceptionHandlingModule>();
         builder.RegisterModule<ElasticsearchModule>();
         builder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
         builder.RegisterType<KeyValueMongoRepository>().As<IKeyValueRepository>().InstancePerLifetimeScope();
         builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();
         builder.RegisterType<AutoMapperConfiguration>().As<IAutoMapperConfiguration>().InstancePerLifetimeScope();
-        builder.RegisterType<MessageHandler>().As<IRabbitMQConsumerHandler<KeyValueModel>>().InstancePerLifetimeScope();
+        builder.RegisterType<MessageConsumerHandler>().As<IRabbitMQConsumerHandler<MongoModel>>().InstancePerLifetimeScope();
     }
 
     public static void SetContainer(ILifetimeScope lifetimeScope)

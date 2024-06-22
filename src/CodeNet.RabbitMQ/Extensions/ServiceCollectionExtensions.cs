@@ -1,31 +1,55 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.RabbitMQ.Services;
+using CodeNet.RabbitMQ.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Abstraction;
-using CodeNet.Abstraction.Model;
 
 namespace CodeNet.RabbitMQ.Extensions;
 
 public static class ServiceCollectionExtensions
 {
     /// <summary>
-    /// Add RabbitMQ Settings
+    /// Add RabbitMQ Consumer Settings
     /// </summary>
     /// <param name="webBuilder"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddRabbitMQ(this WebApplicationBuilder webBuilder, string sectionName)
+    public static WebApplicationBuilder AddRabbitMQConsumer(this WebApplicationBuilder webBuilder, string sectionName)
     {
-        webBuilder.AddRabbitMQ<RabbitMQSettings>(sectionName);
+        webBuilder.AddRabbitMQConsumer<RabbitMQConsumerSettings>(sectionName);
         return webBuilder;
     }
 
     /// <summary>
-    /// Add RabbitMQ Settings
+    /// Add RabbitMQ Consumer Settings
     /// </summary>
     /// <param name="webBuilder"></param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddRabbitMQ<TRabbitMQSettings>(this WebApplicationBuilder webBuilder, string sectionName) 
-        where TRabbitMQSettings : RabbitMQSettings
+    public static WebApplicationBuilder AddRabbitMQConsumer<TRabbitMQSettings>(this WebApplicationBuilder webBuilder, string sectionName) 
+        where TRabbitMQSettings : RabbitMQConsumerSettings
+    {
+        webBuilder.Services.Configure<TRabbitMQSettings>(webBuilder.Configuration.GetSection(sectionName));
+        return webBuilder;
+    }
+
+    /// <summary>
+    /// Add RabbitMQ Producer Settings
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static WebApplicationBuilder AddRabbitMQProducer(this WebApplicationBuilder webBuilder, string sectionName)
+    {
+        webBuilder.AddRabbitMQProducer<RabbitMQProducerSettings>(sectionName);
+        return webBuilder;
+    }
+
+    /// <summary>
+    /// Add RabbitMQ Producer Settings
+    /// </summary>
+    /// <param name="webBuilder"></param>
+    /// <returns></returns>
+    public static WebApplicationBuilder AddRabbitMQProducer<TRabbitMQSettings>(this WebApplicationBuilder webBuilder, string sectionName)
+        where TRabbitMQSettings : RabbitMQProducerSettings
     {
         webBuilder.Services.Configure<TRabbitMQSettings>(webBuilder.Configuration.GetSection(sectionName));
         return webBuilder;

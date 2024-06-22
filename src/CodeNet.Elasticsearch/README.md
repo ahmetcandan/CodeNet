@@ -11,17 +11,17 @@ dotnet add package CodeNet.Elasticsearch
 ```
 
 ### Usage
-#### appSettings.json
+appSettings.json
 ```json
 {
   "Elasticsearch": {
+    "Hostname": "localhost:9200",
     "Username": "elastic",
-    "Password": "password",
-    "Hostname": "localhost"
+    "Password": "password"
   }
 }
 ```
-#### program.cs
+program.cs
 ```csharp
 using CodeNet.Elasticsearch.Module;
 
@@ -36,4 +36,25 @@ builder.AddElasticsearch("Elasticsearch");
 var app = builder.Build();
 //...
 app.Run();
+```
+Repository
+```csharp
+public class TestElasticRepository : ElasticsearchRepository<ElasticModel>
+{
+    public TestElasticRepository(ElasticsearchDbContext dbContext) : base(dbContext)
+    {
+        //...
+    }
+}
+```
+Model
+```csharp
+[IndexName("Test")]
+public class ElasticModel : IElasticsearchModel
+{
+    public Guid Id { get; set; }
+    public DateTime Date { get; set; }
+    public string Code { get; set; }
+    public string Name { get; set; }
+}
 ```

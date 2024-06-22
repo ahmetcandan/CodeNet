@@ -13,10 +13,11 @@
 		<Description>CodeNet Identity package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Identity;JWT;Token;UserRole</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -40,13 +41,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
 		<ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
-	</ItemGroup>
-
-	<ItemGroup>
-	  <None Update="README.md">
-	    <Pack>True</Pack>
-	    <PackagePath>\</PackagePath>
-	  </None>
 	</ItemGroup>
 
 </Project>

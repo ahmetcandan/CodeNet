@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;

@@ -7,13 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Elasticsearch" Version="1.0.4" />
-	  <PackageReference Include="CodeNet.EntityFramework" Version="1.0.4" />
-	  <PackageReference Include="CodeNet.MongoDB" Version="1.0.4" />
-	  <PackageReference Include="CodeNet.RabbitMQ" Version="1.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

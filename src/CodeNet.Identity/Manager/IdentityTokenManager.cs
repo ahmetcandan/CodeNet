@@ -1,16 +1,16 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
-using CodeNet.Abstraction.Model;
-using CodeNet.Core;
+using CodeNet.Core.Models;
 using CodeNet.ExceptionHandling;
 using CodeNet.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using CodeNet.Core.Security;
 
 namespace CodeNet.Identity.Manager;
 
-public class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<IdentityConfig> JwtConfig) : IIdentityTokenManager
+internal class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleManager<IdentityRole> RoleManager, IOptions<IdentityConfig> JwtConfig) : IIdentityTokenManager
 {
     public async Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model)
     {

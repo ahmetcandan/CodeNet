@@ -11,7 +11,7 @@ dotnet add package CodeNet.EntityFramework.PostgreSQL
 ```
 
 ### Usage
-#### appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -19,7 +19,7 @@ dotnet add package CodeNet.EntityFramework.PostgreSQL
   }
 }
 ```
-#### program.cs
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddNpgsql("PostgreSQL");

@@ -1,17 +1,17 @@
-## CodeNet.EntityFramework.PostgreSQL
+## CodeNet.EntityFramework.Sqlite
 
-CodeNet.EntityFramework.PostgreSQL is a .Net library.
+CodeNet.EntityFramework.Sqlite is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.PostgreSQL/) to install CodeNet.EntityFramework.PostgreSQL.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Sqlite/) to install CodeNet.EntityFramework.Sqlite.
 
 ```bash
-dotnet add package CodeNet.EntityFramework.PostgreSQL
+dotnet add package CodeNet.EntityFramework.Sqlite
 ```
 
 ### Usage
-#### appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -19,7 +19,7 @@ dotnet add package CodeNet.EntityFramework.PostgreSQL
   }
 }
 ```
-#### program.cs
+program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSqlite("Sqlite");

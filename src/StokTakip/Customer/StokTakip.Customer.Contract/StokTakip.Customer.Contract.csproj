@@ -7,7 +7,11 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Container" Version="1.0.4" />
+	  <Folder Include="Model\" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
 </Project>

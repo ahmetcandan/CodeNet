@@ -13,10 +13,11 @@
 		<Description>CodeNet Logging package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Logging;AppLoger;Log</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -35,11 +36,12 @@
 
 	<ItemGroup>
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+		<PackageReference Include="Serilog.AspNetCore" Version="8.0.1" />
+		<PackageReference Include="Serilog.Sinks.Elasticsearch" Version="10.0.0" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.Container\CodeNet.Container.csproj" />
-		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+	  <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
 </Project>

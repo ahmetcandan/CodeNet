@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using CodeNet.Abstraction;
 using CodeNet.EntityFramework.Tests.Mock.Model;
+using CodeNet.EntityFramework.Repositories;
+using CodeNet.Core;
 
 namespace CodeNet.EntityFramework.Tests.Mock
 {

@@ -13,10 +13,11 @@
 		<Description>CodeNet Core package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.4</Version>
+		<Version>1.0.5</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Core</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -34,17 +35,15 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<PackageReference Include="Autofac" Version="8.0.0" />
 		<PackageReference Include="Autofac.Extensions.DependencyInjection" Version="9.0.0" />
+		<PackageReference Include="MediatR" Version="12.3.0" />
 		<PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.6" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.6" />
 		<PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="8.0.6" />
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.1" />
 		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
 		<PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.Abstraction\CodeNet.Abstraction.csproj" />
 	</ItemGroup>
 
 </Project>

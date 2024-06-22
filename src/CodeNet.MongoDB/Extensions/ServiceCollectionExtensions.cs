@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.MongoDB.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Abstraction.Model;
 
 namespace CodeNet.MongoDB.Extensions;
 

@@ -1,6 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.Elasticsearch.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Abstraction.Model;
 
 namespace CodeNet.Elasticsearch.Extensions;
 

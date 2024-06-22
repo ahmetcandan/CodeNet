@@ -1,7 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CodeNet.Abstraction.Model;
+using CodeNet.Core.Models;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 
