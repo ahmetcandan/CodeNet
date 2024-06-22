@@ -9,6 +9,8 @@ public interface IMakerCheckerRepository<TMakerCheckerEntity>
     Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity);
     Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken);
     TMakerCheckerEntity Update(TMakerCheckerEntity entity);
-    List<MakerCheckerFlow> GetMakerCheckerFlows();
-    Task<List<MakerCheckerFlow>> GetAsyncMakerCheckerFlows(CancellationToken cancellationToken);
+    void Approve(TMakerCheckerEntity entity);
+    Task ApproveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
+    void Reject(TMakerCheckerEntity entity);
+    Task RejectAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
 }

@@ -2,7 +2,7 @@
 
 namespace CodeNet.MakerChecker.Models;
 
-public class MakerCheckerEntity : TracingEntity, IMakerCheckerEntity
+public abstract class MakerCheckerEntity : TracingEntity, IMakerCheckerEntity
 {
     private Guid _referenceId;
     private ApproveStatus _approveStatus;
