@@ -17,6 +17,7 @@
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;EntityFramework;EntityFrameworkCore;SqlServer;Repository;GenericRepository</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
