@@ -11,7 +11,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleMa
     {
         var userExists = await UserManager.FindByNameAsync(model.Username);
         if (userExists is not null)
-            throw new UserLevelException("001", "User already exists!");
+            throw new UserLevelException("ID001", "User already exists!");
 
         var user = new IdentityUser()
         {
@@ -23,13 +23,13 @@ internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleMa
         if (result.Succeeded && model.Roles != null && model.Roles.Count > 0)
             await UserManager.AddToRolesAsync(user, model.Roles);
         return !result.Succeeded
-            ? throw new UserLevelException("003", "User creation failed! Please check user details and try again.")
+            ? throw new UserLevelException("ID003", "User creation failed! Please check user details and try again.")
             : new ResponseBase<IdentityResult>(result);
     }
 
     public async Task<ResponseBase> EditUserRoles(UpdateUserRolesModel model)
     {
-        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("002", "User not found!");
+        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("ID002", "User not found!");
         var currentRoles = await UserManager.GetRolesAsync(user);
 
         // delete roles
@@ -45,7 +45,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleMa
     {
         UserLevelException.ThrowIfNull(model?.Claims);
 
-        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("002", "User not found!");
+        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("ID002", "User not found!");
         var currentClaims = await UserManager.GetClaimsAsync(user);
 
         // delete roles
@@ -59,7 +59,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleMa
 
     public async Task<ResponseBase<UserModel>> GetUser(string username)
     {
-        var user = await UserManager.FindByNameAsync(username) ?? throw new UserLevelException("002", "User not found!");
+        var user = await UserManager.FindByNameAsync(username) ?? throw new UserLevelException("ID002", "User not found!");
         var claims = await UserManager.GetClaimsAsync(user);
         var roles = await UserManager.GetRolesAsync(user);
         foreach (var roleName in roles)
@@ -82,7 +82,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> UserManager, RoleMa
 
     public async Task<ResponseBase> RemoveUser(RemoveUserModel model)
     {
-        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("002", "User not found!");
+        var user = await UserManager.FindByNameAsync(model.Username) ?? throw new UserLevelException("ID002", "User not found!");
         await UserManager.DeleteAsync(user);
 
         return new ResponseBase(true, "000", "User removed successfully!");

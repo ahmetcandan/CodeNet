@@ -63,6 +63,6 @@ internal class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleM
                          }
             });
         }
-        throw new UserLevelException("101", "Error: username or password incorrect.");
+        throw new UserLevelException("ID101", "Error: username or password incorrect.");
     }
 }

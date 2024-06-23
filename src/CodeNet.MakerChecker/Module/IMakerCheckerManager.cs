@@ -16,4 +16,6 @@ public interface IMakerCheckerManager
     Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, CancellationToken cancellationToken = default);
     FlowUpdateModel DeleteFlow(Guid flowId);
     Task<FlowUpdateModel> DeleteFlowAsync(Guid flowId, CancellationToken cancellationToken = default);
+    List<MakerCheckerPending> GetPendingList();
+    Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default);
 }

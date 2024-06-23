@@ -28,6 +28,10 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
     public override TMakerCheckerEntity Add(TMakerCheckerEntity entity)
     {
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
+
+        var flows = GetMakerCheckerFlowListQueryable().ToList();
+        _makerCheckerHistoryRepository.AddRange(flows.Select(f => NewHistory(f, entity.ReferenceId)));
+
         return base.Add(entity);
     }
 
@@ -39,12 +43,20 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
     public override async Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
     {
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
+
+        var flows = await GetMakerCheckerFlowListQueryable().ToListAsync(cancellationToken);
+        await _makerCheckerHistoryRepository.AddRangeAsync(flows.Select(f => NewHistory(f, entity.ReferenceId)), cancellationToken);
+
         return await base.AddAsync(entity, cancellationToken);
     }
 
     public override TMakerCheckerEntity Update(TMakerCheckerEntity entity)
     {
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
+
+        var flows = GetMakerCheckerFlowListQueryable().ToList();
+        _makerCheckerHistoryRepository.AddRange(flows.Select(f => NewHistory(f, entity.ReferenceId)));
+
         return base.Update(entity);
     }
 
@@ -133,15 +145,24 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
     {
         return (from definition in _makerCheckerDefinitions
                 join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
-                join history in _makerCheckerHistories.Where(h => h.IsActive && !h.IsDeleted && h.ReferenceId == referenceId) on flow.Id equals history.MakerCheckerFlowId
-                    into historyGroup
-                from history in historyGroup.DefaultIfEmpty()
-                where definition.EntityName == _entityName
-                    && flow.IsActive && !flow.IsDeleted
-                    && definition.IsActive && !definition.IsDeleted
+                join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
+                where definition.EntityName == _entityName && history.ReferenceId == referenceId
+                    && flow.Validate
+                    && definition.Validate
+                    && history.Validate
                 select new MakerCheckerFlowHistory { MakerCheckerFlow = flow, MakerCheckerHistory = history })
                 .Distinct()
                 .OrderBy(c => c.MakerCheckerFlow.Order);
+    }
+
+    private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
+    {
+        return (from definition in _makerCheckerDefinitions
+                join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
+                where definition.EntityName == _entityName
+                    && definition.IsActive && !definition.IsDeleted
+                    && flow.IsActive && !flow.IsDeleted
+                select flow);
     }
 
     private static void EntityResetStatus(TMakerCheckerEntity entity)
@@ -149,4 +170,12 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
         entity.SetNewReferenceId();
         entity.SetApproveStatus(ApproveStatus.Pending);
     }
+
+    private static MakerCheckerHistory NewHistory(MakerCheckerFlow flow, Guid referenceId) => new()
+    {
+        Id = Guid.NewGuid(),
+        ApproveStatus = ApproveStatus.Pending,
+        MakerCheckerFlowId = flow.Id,
+        ReferenceId = referenceId
+    };
 }

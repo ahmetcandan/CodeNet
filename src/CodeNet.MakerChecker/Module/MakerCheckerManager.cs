@@ -139,4 +139,14 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
             Order = result.Order
         };
     }
+
+    public List<MakerCheckerPending> GetPendingList()
+    {
+        return _makerCheckerFlowRepository.GetPendingList();
+    }
+
+    public Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default)
+    {
+        return _makerCheckerFlowRepository.GetPendingListAsync(cancellationToken);
+    }
 }
