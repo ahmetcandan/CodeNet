@@ -94,7 +94,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.InM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.PostgreSQL", "src\CodeNet.EntityFramework.PostgreSQL\CodeNet.EntityFramework.PostgreSQL.csproj", "{C946CBE7-1DA5-4768-AFF7-13DEFA1BD756}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.MySQL", "src\CodeNet.EntityFramework.MySql\CodeNet.EntityFramework.MySQL.csproj", "{CACF57E0-955E-47D2-BE5B-42B452CA0092}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.MySQL", "src\CodeNet.EntityFramework.MySQL\CodeNet.EntityFramework.MySQL.csproj", "{CACF57E0-955E-47D2-BE5B-42B452CA0092}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EntityFramework.Oracle", "src\CodeNet.EntityFramework.Oracle\CodeNet.EntityFramework.Oracle.csproj", "{AD33BD55-4F0A-48DE-9820-467BDCD2CC6D}"
 EndProject
