@@ -44,12 +44,12 @@ public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Reposit
 
     public override List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate)
     {
-        return Find(predicate, true, false);
+        return Find(predicate, true);
     }
 
-    public virtual List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false)
+    public virtual List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true)
     {
-        return base.Find(AddCondition(c => c.IsActive == isActive && c.IsDeleted == isDeleted, predicate));
+        return base.Find(AddCondition(c => c.IsActive == isActive, predicate));
     }
 
     public override Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate)
@@ -59,12 +59,12 @@ public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Reposit
 
     public override Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return FindAsync(predicate, true, false, cancellationToken);
+        return FindAsync(predicate, true, cancellationToken);
     }
 
-    public virtual Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default)
+    public virtual Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, CancellationToken cancellationToken = default)
     {
-        return base.FindAsync(AddCondition(c => c.IsActive == isActive && c.IsDeleted == isDeleted, predicate), cancellationToken);
+        return base.FindAsync(AddCondition(c => c.IsActive == isActive, predicate), cancellationToken);
     }
 
     protected static Expression<Func<TBaseEntity, bool>> AddCondition(Expression<Func<TBaseEntity, bool>> originalPredicate, Expression<Func<TBaseEntity, bool>> additionalCondition)

@@ -4,10 +4,10 @@ namespace CodeNet.MakerChecker;
 
 public interface IMakerCheckerManager
 {
-    Guid InsertDefinition(DefinitionInserModel definition);
-    Task<Guid> InsertDefinitionAsync(DefinitionInserModel definition, CancellationToken cancellationToken = default);
-    DefinitionUpdateModel UpdateDefinition(DefinitionUpdateModel definition);
-    Task<DefinitionUpdateModel> UpdateDefinitionAsync(DefinitionUpdateModel definition, CancellationToken cancellationToken = default);
+    Guid InsertDefinition<TMakerCheckerEntity>() where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default) where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    DefinitionUpdateModel UpdateDefinition<TMakerCheckerEntity>(DefinitionUpdateModel definition) where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    Task<DefinitionUpdateModel> UpdateDefinitionAsync<TMakerCheckerEntity>(DefinitionUpdateModel definition, CancellationToken cancellationToken = default) where TMakerCheckerEntity : class, IMakerCheckerEntity;
     DefinitionUpdateModel DeleteDefinition(Guid definitionId);
     Task<DefinitionUpdateModel> DeleteDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default);
     Guid InsertFlow(FlowInserModel flow);

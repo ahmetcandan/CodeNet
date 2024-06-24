@@ -31,8 +31,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
 
         var flows = GetMakerCheckerFlowListQueryable().ToList();
-        foreach (var flow in flows)
-            _makerCheckerHistoryRepository.Add(NewHistory(flow, entity.ReferenceId));
+        for (int i = 0; i < flows.Count; i++)
+            _makerCheckerHistoryRepository.Add(NewHistory(flows[i], entity.ReferenceId, i == 0));
 
         return base.Add(entity);
     }
@@ -47,7 +47,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
 
         var flows = await GetMakerCheckerFlowListQueryable().ToListAsync(cancellationToken);
-        await _makerCheckerHistoryRepository.AddRangeAsync(flows.Select(f => NewHistory(f, entity.ReferenceId)), cancellationToken);
+        for (int i = 0; i < flows.Count; i++)
+            _makerCheckerHistoryRepository.Add(NewHistory(flows[i], entity.ReferenceId, i == 0));
 
         return await base.AddAsync(entity, cancellationToken);
     }
@@ -57,7 +58,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
 
         var flows = GetMakerCheckerFlowListQueryable().ToList();
-        _makerCheckerHistoryRepository.AddRange(flows.Select(f => NewHistory(f, entity.ReferenceId)));
+        for (int i = 0; i < flows.Count; i++)
+            _makerCheckerHistoryRepository.Add(NewHistory(flows[i], entity.ReferenceId, i == 0));
 
         return base.Update(entity);
     }
@@ -65,34 +67,30 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     public void Approve(TMakerCheckerEntity entity)
     {
         var flowHistories = GetMakerCheckerFlowHistoryListQueryable(entity.ReferenceId).ToList();
-        var history = ApproveEntity(entity, flowHistories);
-        _makerCheckerHistoryRepository.Add(history);
+        ApproveEntity(entity, flowHistories);
     }
 
     public async Task ApproveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default)
     {
         var flowHistories = await GetMakerCheckerFlowHistoryListQueryable(entity.ReferenceId).ToListAsync(cancellationToken);
-        var history = ApproveEntity(entity, flowHistories);
-        await _makerCheckerHistoryRepository.AddAsync(history, cancellationToken);
+        ApproveEntity(entity, flowHistories);
     }
 
     public void Reject(TMakerCheckerEntity entity)
     {
         var flowHistories = GetMakerCheckerFlowHistoryListQueryable(entity.ReferenceId).ToList();
-        var history = RejectEntity(entity, flowHistories);
-        _makerCheckerHistoryRepository.Add(history);
+        RejectEntity(entity, flowHistories);
     }
 
     public async Task RejectAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default)
     {
         var flowHistories = await GetMakerCheckerFlowHistoryListQueryable(entity.ReferenceId).ToListAsync(cancellationToken);
-        var history = RejectEntity(entity, flowHistories);
-        await _makerCheckerHistoryRepository.AddAsync(history, cancellationToken);
+        RejectEntity(entity, flowHistories);
     }
 
-    private MakerCheckerHistory ApproveEntity(TMakerCheckerEntity entity, List<MakerCheckerFlowHistory> flowHistories)
+    private void ApproveEntity(TMakerCheckerEntity entity, List<MakerCheckerFlowHistory> flowHistories)
     {
-        var flowHistory = flowHistories.FirstOrDefault(c => c.MakerCheckerHistory is null || c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Pending) ?? throw new UserLevelException("MC001", "No records found to approve.");
+        var flowHistory = flowHistories.FirstOrDefault(c => c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending && c.MakerCheckerHistory.IsActive) ?? throw new UserLevelException("MC001", "No records found to approve.");
         var username = _identityContext.UserName;
         var roles = _identityContext.Roles;
 
@@ -106,21 +104,24 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         if (approvedCount + 1 >= flowHistories.Count)
             entity.SetApproveStatus(ApproveStatus.Approved);
 
-        return new()
+        var nextHistory = flowHistories.FirstOrDefault(c => c.MakerCheckerFlow.Order > flowHistory.MakerCheckerFlow.Order)?.MakerCheckerHistory;
+        if (nextHistory is not null)
         {
-            Id = Guid.NewGuid(),
-            MakerCheckerFlowId = flowHistory.MakerCheckerFlow.Id,
-            ReferenceId = entity.ReferenceId,
-            ApproveStatus = ApproveStatus.Approved
-        };
+            nextHistory.IsActive = true;
+            _makerCheckerHistoryRepository.Update(nextHistory);
+        }
+
+        flowHistory.MakerCheckerHistory.IsActive = false;
+        flowHistory.MakerCheckerHistory.ApproveStatus = ApproveStatus.Approved;
+        _makerCheckerHistoryRepository.Update(flowHistory.MakerCheckerHistory);
     }
 
-    private MakerCheckerHistory RejectEntity(TMakerCheckerEntity entity, List<MakerCheckerFlowHistory> flowHistories)
+    private void RejectEntity(TMakerCheckerEntity entity, List<MakerCheckerFlowHistory> flowHistories)
     {
         if (flowHistories.Any(c => c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Rejected))
             throw new UserLevelException("MC004", "This registration was previously rejected.");
 
-        var flowHistory = flowHistories.FirstOrDefault(c => c.MakerCheckerHistory is null || c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Pending) ?? throw new UserLevelException("MC005", "No record found to reject.");
+        var flowHistory = flowHistories.FirstOrDefault(c => c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending && c.MakerCheckerHistory.IsActive) ?? throw new UserLevelException("MC005", "No record found to reject.");
         var username = _identityContext.UserName;
         var roles = _identityContext.Roles;
 
@@ -130,17 +131,13 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         if (flowHistory.MakerCheckerFlow.ApproveType is ApproveType.Role && !roles.Any(r => r.Equals(flowHistory.MakerCheckerFlow.Approver)))
             throw new UserLevelException("MC006", "Reject cannot be made with this user.");
 
-        var approvedCount = flowHistories.Count(c => c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Approved);
-        if (approvedCount + 1 >= flowHistories.Count)
-            entity.SetApproveStatus(ApproveStatus.Approved);
-
-        return new()
+        entity.SetApproveStatus(ApproveStatus.Rejected);
+        foreach (var item in flowHistories)
         {
-            Id = Guid.NewGuid(),
-            MakerCheckerFlowId = flowHistory.MakerCheckerFlow.Id,
-            ReferenceId = entity.ReferenceId,
-            ApproveStatus = ApproveStatus.Rejected
-        };
+            item.MakerCheckerHistory.IsActive = false;
+            item.MakerCheckerHistory.ApproveStatus = ApproveStatus.Rejected;
+            _makerCheckerHistoryRepository.Update(item.MakerCheckerHistory);
+        }
     }
 
     private IQueryable<MakerCheckerFlowHistory> GetMakerCheckerFlowHistoryListQueryable(Guid referenceId)
@@ -151,7 +148,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
                 where definition.EntityName == _entityName && history.ReferenceId == referenceId
                     && flow.IsActive && !flow.IsDeleted
                     && definition.IsActive && !definition.IsDeleted
-                    && history.IsActive && !history.IsDeleted
+                    && !history.IsDeleted
                 select new MakerCheckerFlowHistory { MakerCheckerFlow = flow, MakerCheckerHistory = history })
                 .Distinct()
                 .OrderBy(c => c.MakerCheckerFlow.Order);
@@ -164,6 +161,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
                 where definition.EntityName == _entityName
                     && definition.IsActive && !definition.IsDeleted
                     && flow.IsActive && !flow.IsDeleted
+                orderby flow.Order
                 select flow);
     }
 
@@ -173,12 +171,13 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         entity.SetApproveStatus(ApproveStatus.Pending);
     }
 
-    private static MakerCheckerHistory NewHistory(MakerCheckerFlow flow, Guid referenceId) => new()
+    private static MakerCheckerHistory NewHistory(MakerCheckerFlow flow, Guid referenceId, bool isActive) => new()
     {
         Id = Guid.NewGuid(),
         ApproveStatus = ApproveStatus.Pending,
         MakerCheckerFlowId = flow.Id,
-        ReferenceId = referenceId
+        ReferenceId = referenceId,
+        IsActive = isActive
     };
 
     public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate)
@@ -188,31 +187,41 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
 
     public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, CancellationToken cancellationToken)
     {
-        return FindAsync(predicate, true, false, cancellationToken);
+        return FindAsync(predicate, true, cancellationToken);
     }
 
-    public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default)
+    public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true, CancellationToken cancellationToken = default)
     {
-        return base.FindAsync(AddCondition(c => c.ApproveStatus == ApproveStatus.Approved, predicate), isActive, isDeleted, cancellationToken);
+        return FindByStatusAsync(predicate, ApproveStatus.Approved, isActive);
     }
 
     public override List<TMakerCheckerEntity> Find(Expression<Func<TMakerCheckerEntity, bool>> predicate)
     {
-        return Find(predicate, true, false);
+        return Find(predicate, true);
     }
 
-    public override List<TMakerCheckerEntity> Find(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true, bool isDeleted = false)
+    public override List<TMakerCheckerEntity> Find(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true)
     {
-        return base.Find(AddCondition(c => c.ApproveStatus == ApproveStatus.Approved, predicate), isActive, isDeleted);
+        return FindByStatus(predicate, ApproveStatus.Approved, isActive);
     }
 
-    public virtual List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus)
+    public virtual List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true)
     {
-        return base.Find(AddCondition(c => c.ApproveStatus == approveStatus, predicate), true, false);
+        return base.Find(AddCondition(c => c.ApproveStatus == approveStatus, predicate), isActive);
     }
 
-    public virtual Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, CancellationToken cancellationToken = default)
+    public virtual Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default)
     {
-        return base.FindAsync(AddCondition(c => c.ApproveStatus == approveStatus, predicate), true, false, cancellationToken);
+        return base.FindAsync(AddCondition(c => c.ApproveStatus == approveStatus, predicate), isActive, cancellationToken);
+    }
+
+    public virtual TMakerCheckerEntity? GetByReferenceId(Guid referenceId, ApproveStatus approveStatus, bool isActive = true)
+    {
+        return _entities.FirstOrDefault(c => c.ReferenceId == referenceId && c.IsActive == isActive && !c.IsDeleted && c.ApproveStatus == approveStatus);
+    }
+
+    public virtual Task<TMakerCheckerEntity?> GetByReferenceIdAsync(Guid referenceId, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default)
+    {
+        return _entities.FirstOrDefaultAsync(c => c.ReferenceId == referenceId && c.IsActive == isActive && !c.IsDeleted && c.ApproveStatus == approveStatus, cancellationToken);
     }
 }

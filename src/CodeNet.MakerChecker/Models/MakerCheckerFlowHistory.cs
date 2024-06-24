@@ -3,5 +3,5 @@
 internal class MakerCheckerFlowHistory
 {
     public required MakerCheckerFlow MakerCheckerFlow { get; set; }
-    public MakerCheckerHistory? MakerCheckerHistory { get; set; }
+    public required MakerCheckerHistory MakerCheckerHistory { get; set; }
 }

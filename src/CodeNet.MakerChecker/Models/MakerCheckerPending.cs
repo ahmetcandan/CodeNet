@@ -4,6 +4,6 @@ public class MakerCheckerPending
 {
     public Guid ReferenceId { get; set; }
     public required MakerCheckerHistory History { get; set; }
-    public required string EntityName { get; set; }
     public required MakerCheckerFlow Flow { get; set; }
+    public required string EntityName { get; set; }
 }

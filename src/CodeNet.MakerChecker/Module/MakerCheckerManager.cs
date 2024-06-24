@@ -10,41 +10,45 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     private readonly MakerCheckerDefinitionRepository _makerCheckerDefinitionRepository = new(dbContext, identityContext);
     private readonly MakerCheckerFlowRepository _makerCheckerFlowRepository = new(dbContext, identityContext);
 
-    public Guid InsertDefinition(DefinitionInserModel definition)
+    public Guid InsertDefinition<TMakerCheckerEntity>()
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
         var result = _makerCheckerDefinitionRepository.Add(new MakerCheckerDefinition
         {
-            EntityName = definition.EntityName,
+            EntityName = typeof(TMakerCheckerEntity).Name,
             Id = Guid.NewGuid()
         });
         _makerCheckerDefinitionRepository.SaveChanges();
         return result.Id;
     }
 
-    public async Task<Guid> InsertDefinitionAsync(DefinitionInserModel definition, CancellationToken cancellationToken = default)
+    public async Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default) 
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
         var result = await _makerCheckerDefinitionRepository.AddAsync(new MakerCheckerDefinition
         {
-            EntityName = definition.EntityName,
+            EntityName = typeof(TMakerCheckerEntity).Name,
             Id = Guid.NewGuid()
         }, cancellationToken);
         await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return result.Id;
     }
 
-    public DefinitionUpdateModel UpdateDefinition(DefinitionUpdateModel definition)
+    public DefinitionUpdateModel UpdateDefinition<TMakerCheckerEntity>(DefinitionUpdateModel definition)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
         var updateModel = _makerCheckerDefinitionRepository.Get(definition.Id) ?? throw new UserLevelException("MC007", "No records found to update.");
-        updateModel.EntityName = definition.EntityName;
+        updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
         _makerCheckerDefinitionRepository.Update(updateModel);
         _makerCheckerDefinitionRepository.SaveChanges();
         return definition;
     }
 
-    public async Task<DefinitionUpdateModel> UpdateDefinitionAsync(DefinitionUpdateModel definition, CancellationToken cancellationToken = default)
+    public async Task<DefinitionUpdateModel> UpdateDefinitionAsync<TMakerCheckerEntity>(DefinitionUpdateModel definition, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
         var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definition.Id], cancellationToken) ?? throw new UserLevelException("MC007", "No records found to update.");
-        updateModel.EntityName = definition.EntityName;
+        updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
         _makerCheckerDefinitionRepository.Update(updateModel);
         await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return definition;
@@ -57,7 +61,6 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         _makerCheckerDefinitionRepository.SaveChanges();
         return new DefinitionUpdateModel
         {
-            EntityName = result.EntityName,
             Id = result.Id
         };
     }
@@ -69,7 +72,6 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return new DefinitionUpdateModel
         {
-            EntityName = result.EntityName,
             Id = result.Id
         };
     }

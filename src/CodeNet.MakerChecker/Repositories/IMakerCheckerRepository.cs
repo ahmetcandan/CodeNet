@@ -14,6 +14,8 @@ public interface IMakerCheckerRepository<TMakerCheckerEntity>
     Task ApproveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
     void Reject(TMakerCheckerEntity entity);
     Task RejectAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
-    List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus);
-    Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, CancellationToken cancellationToken = default);
+    List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true);
+    Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default);
+    TMakerCheckerEntity? GetByReferenceId(Guid referenceId, ApproveStatus approveStatus, bool isActive = true);
+    Task<TMakerCheckerEntity?> GetByReferenceIdAsync(Guid referenceId, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default);
 }

@@ -75,8 +75,6 @@ namespace CodeNet.EntityFramework.Tests
                 Assert.That(insertedData.IsDeleted, Is.True);
             });
             #endregion
-
-            Assert.Pass();
         }
     }
 }

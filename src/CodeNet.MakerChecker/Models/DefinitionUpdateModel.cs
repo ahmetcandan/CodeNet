@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.MakerChecker.Models;
 
-public class DefinitionUpdateModel : DefinitionInserModel
+public class DefinitionUpdateModel
 {
     public Guid Id { get; set; }
 }
