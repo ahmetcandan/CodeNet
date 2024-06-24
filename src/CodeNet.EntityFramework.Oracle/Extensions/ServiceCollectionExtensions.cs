@@ -45,4 +45,18 @@ public static class ServiceCollectionExtensions
     {
         return optionsBuilder.UseOracle(configuration.GetConnectionString(connectionName)!);
     }
+
+    /// <summary>
+    /// Use Oracle
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
+    /// <returns></returns>
+    public static DbContextOptionsBuilder UseOracle<TDbContext>(this DbContextOptionsBuilder<TDbContext> optionsBuilder, ConfigurationManager configuration, string connectionName)
+        where TDbContext : DbContext
+    {
+        return optionsBuilder.UseOracle(configuration.GetConnectionString(connectionName)!);
+    }
 }

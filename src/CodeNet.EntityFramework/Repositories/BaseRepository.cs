@@ -42,22 +42,32 @@ public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Reposit
         return base.RemoveRange(entities);
     }
 
-    public override Task<List<TBaseEntity>> Find(Expression<Func<TBaseEntity, bool>> predicate)
+    public override List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate)
     {
-        return Find(predicate, CancellationToken.None);
+        return Find(predicate, true, false);
     }
 
-    public override Task<List<TBaseEntity>> Find(Expression<Func<TBaseEntity, bool>> predicate, CancellationToken cancellationToken)
+    public virtual List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false)
     {
-        return Find(predicate, true, false, cancellationToken);
+        return base.Find(AddCondition(c => c.IsActive == isActive && c.IsDeleted == isDeleted, predicate));
     }
 
-    public virtual Task<List<TBaseEntity>> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default)
+    public override Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate)
     {
-        return base.Find(AddCondition(c => c.IsActive == isActive && c.IsDeleted == isDeleted, predicate), cancellationToken);
+        return FindAsync(predicate, CancellationToken.None);
     }
 
-    private static Expression<Func<TBaseEntity, bool>> AddCondition(Expression<Func<TBaseEntity, bool>> originalPredicate, Expression<Func<TBaseEntity, bool>> additionalCondition)
+    public override Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return FindAsync(predicate, true, false, cancellationToken);
+    }
+
+    public virtual Task<List<TBaseEntity>> FindAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default)
+    {
+        return base.FindAsync(AddCondition(c => c.IsActive == isActive && c.IsDeleted == isDeleted, predicate), cancellationToken);
+    }
+
+    protected static Expression<Func<TBaseEntity, bool>> AddCondition(Expression<Func<TBaseEntity, bool>> originalPredicate, Expression<Func<TBaseEntity, bool>> additionalCondition)
     {
         var parameter = Expression.Parameter(typeof(TBaseEntity));
         var body = Expression.AndAlso(

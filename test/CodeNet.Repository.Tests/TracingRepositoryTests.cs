@@ -5,7 +5,7 @@ using CodeNet.Core;
 
 namespace CodeNet.EntityFramework.Tests
 {
-    public class BaseRepositoryTests
+    public class TracingRepositoryTests
     {
         [SetUp]
         public void Setup()

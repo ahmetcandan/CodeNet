@@ -3,10 +3,11 @@ using CodeNet.EntityFramework.Repositories;
 using CodeNet.ExceptionHandling;
 using CodeNet.MakerChecker.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMakerCheckerEntity>, IMakerCheckerRepository<TMakerCheckerEntity>
+public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMakerCheckerEntity>, IMakerCheckerRepository<TMakerCheckerEntity>
     where TMakerCheckerEntity : class, IMakerCheckerEntity
 {
     private readonly DbSet<MakerCheckerDefinition> _makerCheckerDefinitions;
@@ -30,7 +31,8 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
 
         var flows = GetMakerCheckerFlowListQueryable().ToList();
-        _makerCheckerHistoryRepository.AddRange(flows.Select(f => NewHistory(f, entity.ReferenceId)));
+        foreach (var flow in flows)
+            _makerCheckerHistoryRepository.Add(NewHistory(flow, entity.ReferenceId));
 
         return base.Add(entity);
     }
@@ -147,9 +149,9 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
                 join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
                 join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
                 where definition.EntityName == _entityName && history.ReferenceId == referenceId
-                    && flow.Validate
-                    && definition.Validate
-                    && history.Validate
+                    && flow.IsActive && !flow.IsDeleted
+                    && definition.IsActive && !definition.IsDeleted
+                    && history.IsActive && !history.IsDeleted
                 select new MakerCheckerFlowHistory { MakerCheckerFlow = flow, MakerCheckerHistory = history })
                 .Distinct()
                 .OrderBy(c => c.MakerCheckerFlow.Order);
@@ -178,4 +180,39 @@ public class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMa
         MakerCheckerFlowId = flow.Id,
         ReferenceId = referenceId
     };
+
+    public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate)
+    {
+        return FindAsync(predicate, CancellationToken.None);
+    }
+
+    public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return FindAsync(predicate, true, false, cancellationToken);
+    }
+
+    public override Task<List<TMakerCheckerEntity>> FindAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true, bool isDeleted = false, CancellationToken cancellationToken = default)
+    {
+        return base.FindAsync(AddCondition(c => c.ApproveStatus == ApproveStatus.Approved, predicate), isActive, isDeleted, cancellationToken);
+    }
+
+    public override List<TMakerCheckerEntity> Find(Expression<Func<TMakerCheckerEntity, bool>> predicate)
+    {
+        return Find(predicate, true, false);
+    }
+
+    public override List<TMakerCheckerEntity> Find(Expression<Func<TMakerCheckerEntity, bool>> predicate, bool isActive = true, bool isDeleted = false)
+    {
+        return base.Find(AddCondition(c => c.ApproveStatus == ApproveStatus.Approved, predicate), isActive, isDeleted);
+    }
+
+    public virtual List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus)
+    {
+        return base.Find(AddCondition(c => c.ApproveStatus == approveStatus, predicate), true, false);
+    }
+
+    public virtual Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, CancellationToken cancellationToken = default)
+    {
+        return base.FindAsync(AddCondition(c => c.ApproveStatus == approveStatus, predicate), true, false, cancellationToken);
+    }
 }

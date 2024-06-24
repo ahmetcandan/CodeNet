@@ -37,7 +37,9 @@ internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
         return (from definition in _makerCheckerDefinitions
                       join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
                       join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
-                      where definition.Validate && flow.Validate && history.Validate
+                      where definition.IsActive && !definition.IsDeleted 
+                        && flow.IsActive && !flow.IsDeleted 
+                        && history.IsActive && !history.IsDeleted
                       select new { Definition = definition, Flow = flow, History = history })
                       .GroupBy(c => c.History.ReferenceId)
                       .Select(c =>

@@ -44,4 +44,18 @@ public static class ServiceCollectionExtensions
     {
         return optionsBuilder.UseNpgsql(configuration.GetConnectionString(connectionName));
     }
+
+    /// <summary>
+    /// Use PostgeSQL
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
+    /// <returns></returns>
+    public static DbContextOptionsBuilder UseNpgsql<TDbContext>(this DbContextOptionsBuilder<TDbContext> optionsBuilder, ConfigurationManager configuration, string connectionName)
+        where TDbContext : DbContext
+    {
+        return optionsBuilder.UseNpgsql(configuration.GetConnectionString(connectionName));
+    }
 }

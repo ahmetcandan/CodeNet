@@ -44,4 +44,17 @@ public static class ServiceCollectionExtensions
     {
         return InMemoryDbContextOptionsExtensions.UseInMemoryDatabase(optionsBuilder, databaseName);
     }
+
+    /// <summary>
+    /// Use InMemory DB
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="databaseName"></param>
+    /// <returns></returns>
+    public static DbContextOptionsBuilder<TDbContext> UseInMemoryDatabase<TDbContext>(this DbContextOptionsBuilder<TDbContext> optionsBuilder, string databaseName)
+        where TDbContext : DbContext
+    {
+        return InMemoryDbContextOptionsExtensions.UseInMemoryDatabase(optionsBuilder, databaseName);
+    }
 }

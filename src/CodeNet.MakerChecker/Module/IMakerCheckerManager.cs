@@ -11,7 +11,7 @@ public interface IMakerCheckerManager
     DefinitionUpdateModel DeleteDefinition(Guid definitionId);
     Task<DefinitionUpdateModel> DeleteDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default);
     Guid InsertFlow(FlowInserModel flow);
-    Task<Guid> InsertFlowAsync(FlowInserModel flow);
+    Task<Guid> InsertFlowAsync(FlowInserModel flow, CancellationToken cancellationToken = default);
     FlowUpdateModel UpdateFlow(FlowUpdateModel flow);
     Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, CancellationToken cancellationToken = default);
     FlowUpdateModel DeleteFlow(Guid flowId);

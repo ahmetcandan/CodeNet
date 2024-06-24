@@ -1,4 +1,5 @@
 ﻿using CodeNet.MakerChecker.Models;
+using System.Linq.Expressions;
 
 namespace CodeNet.MakerChecker.Repositories;
 
@@ -13,4 +14,6 @@ public interface IMakerCheckerRepository<TMakerCheckerEntity>
     Task ApproveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
     void Reject(TMakerCheckerEntity entity);
     Task RejectAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
+    List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus);
+    Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, CancellationToken cancellationToken = default);
 }

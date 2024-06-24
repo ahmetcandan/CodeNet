@@ -17,6 +17,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
             EntityName = definition.EntityName,
             Id = Guid.NewGuid()
         });
+        _makerCheckerDefinitionRepository.SaveChanges();
         return result.Id;
     }
 
@@ -27,6 +28,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
             EntityName = definition.EntityName,
             Id = Guid.NewGuid()
         }, cancellationToken);
+        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return result.Id;
     }
 
@@ -35,6 +37,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         var updateModel = _makerCheckerDefinitionRepository.Get(definition.Id) ?? throw new UserLevelException("MC007", "No records found to update.");
         updateModel.EntityName = definition.EntityName;
         _makerCheckerDefinitionRepository.Update(updateModel);
+        _makerCheckerDefinitionRepository.SaveChanges();
         return definition;
     }
 
@@ -43,6 +46,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definition.Id], cancellationToken) ?? throw new UserLevelException("MC007", "No records found to update.");
         updateModel.EntityName = definition.EntityName;
         _makerCheckerDefinitionRepository.Update(updateModel);
+        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return definition;
     }
 
@@ -50,6 +54,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     {
         var updateModel = _makerCheckerDefinitionRepository.Get(definitionId) ?? throw new UserLevelException("MC009", "No records found to delete.");
         var result = _makerCheckerDefinitionRepository.Remove(updateModel);
+        _makerCheckerDefinitionRepository.SaveChanges();
         return new DefinitionUpdateModel
         {
             EntityName = result.EntityName,
@@ -61,6 +66,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     {
         var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definitionId], cancellationToken) ?? throw new UserLevelException("MC009", "No records found to delete.");
         var result = _makerCheckerDefinitionRepository.Remove(updateModel);
+        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return new DefinitionUpdateModel
         {
             EntityName = result.EntityName,
@@ -74,23 +80,27 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         {
             Approver = flow.Approver,
             ApproveType = flow.ApproveType,
+            Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
             MakerCheckerDefinitionId = flow.DefinitionId
         });
+        _makerCheckerFlowRepository.SaveChanges();
         return result.Id;
     }
 
-    public async Task<Guid> InsertFlowAsync(FlowInserModel flow)
+    public async Task<Guid> InsertFlowAsync(FlowInserModel flow, CancellationToken cancellationToken = default)
     {
         var result = await _makerCheckerFlowRepository.AddAsync(new MakerCheckerFlow
         {
             Approver = flow.Approver,
             ApproveType = flow.ApproveType,
+            Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
             MakerCheckerDefinitionId = flow.DefinitionId
-        });
+        }, cancellationToken);
+        await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return result.Id;
     }
 
@@ -99,7 +109,9 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         var updateModel = _makerCheckerFlowRepository.Get(flow.Id) ?? throw new UserLevelException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
+        updateModel.Description = flow.Description;
         _makerCheckerFlowRepository.Update(updateModel);
+        _makerCheckerFlowRepository.SaveChanges();
         return flow;
     }
 
@@ -108,7 +120,9 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         var updateModel = await _makerCheckerFlowRepository.GetAsync([flow.Id], cancellationToken) ?? throw new UserLevelException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
+        updateModel.Description = flow.Description;
         _makerCheckerFlowRepository.Update(updateModel);
+        await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return flow;
     }
 
@@ -116,11 +130,13 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     {
         var updateModel = _makerCheckerFlowRepository.Get(flowId) ?? throw new UserLevelException("MC010", "No records found to delete.");
         var result = _makerCheckerFlowRepository.Remove(updateModel);
+        _makerCheckerFlowRepository.SaveChanges();
         return new FlowUpdateModel
         {
             Approver = result.Approver,
             ApproveType = result.ApproveType,
             Id = flowId,
+            Description = result.Description,
             DefinitionId = result.MakerCheckerDefinitionId,
             Order = result.Order
         };
@@ -130,11 +146,13 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     {
         var updateModel = await _makerCheckerFlowRepository.GetAsync([flowId], cancellationToken) ?? throw new UserLevelException("MC010", "No records found to delete.");
         var result = _makerCheckerFlowRepository.Remove(updateModel);
+        await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return new FlowUpdateModel
         {
             Approver = result.Approver,
             ApproveType = result.ApproveType,
             Id = flowId,
+            Description = result.Description,
             DefinitionId = result.MakerCheckerDefinitionId,
             Order = result.Order
         };
