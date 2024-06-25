@@ -1,6 +1,6 @@
 namespace CodeNet.Core.Tests
 {
-    public class Tests
+    public class CoreTests
     {
         [SetUp]
         public void Setup()
@@ -8,7 +8,7 @@ namespace CodeNet.Core.Tests
         }
 
         [Test]
-        public void Test1()
+        public void Core_Test()
         {
             Assert.Pass();
         }

@@ -45,7 +45,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     public override async Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
     {
         MakerCheckerRepository<TMakerCheckerEntity>.EntityResetStatus(entity);
-
+        
         var flows = await GetMakerCheckerFlowListQueryable().ToListAsync(cancellationToken);
         for (int i = 0; i < flows.Count; i++)
             _makerCheckerHistoryRepository.Add(NewHistory(flows[i], entity.ReferenceId, i == 0));

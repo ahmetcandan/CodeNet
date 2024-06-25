@@ -58,7 +58,8 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     public virtual IEnumerable<TEntity> UpdateRange(IEnumerable<TEntity> entities)
     {
         _entities.AttachRange(entities);
-        _dbContext.Entry(entities).State = EntityState.Modified;
+        foreach (var entity in entities)
+            _dbContext.Entry(entity).State = EntityState.Modified;
         return entities;
     }
 
