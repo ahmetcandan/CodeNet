@@ -38,7 +38,7 @@ internal class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleM
 
             claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));
 
-            var rsa = AsymmetricKeyEncryption.CreateRSA("private_key.pem");
+            var rsa = AsymmetricKeyEncryption.CreateRSA(JwtConfig.Value.PrivateKeyPath);
 
             var token = new JwtSecurityToken(
                 issuer: JwtConfig.Value.ValidIssuer,

@@ -10,7 +10,7 @@ public static class Converter
         var result = defaultValue;
         try
         {
-            if (value == null || value == DBNull.Value) return result;
+            if (value is null || value == DBNull.Value) return result;
             result = typeof(T).IsEnum
                 ? (T)Enum.ToObject(typeof(T), value.Convert(System.Convert.ToInt32(defaultValue)))
                 : (T)System.Convert.ChangeType(value, typeof(T));
@@ -74,7 +74,7 @@ public static class Converter
         foreach (var property in from c in convertProperties
                                  join v in valueProperties
                                  on 1 equals 1
-                                 where propertyNameEquals(c.Name, v.Name)
+                                 where PropertyNameEquals(c.Name, v.Name)
                                  select new { convertProperty = c, valueProperty = v })
         {
             var propValue = property.valueProperty.GetValue(value);
@@ -83,7 +83,7 @@ public static class Converter
             else
             {
                 if (convertMethod == null)
-                    convertMethod = typeof(Converter).GetMethod("Convert", new Type[] { property.convertProperty.PropertyType });
+                    convertMethod = typeof(Converter).GetMethod("Convert", [property.convertProperty.PropertyType]);
                 var resultPropValue = convertMethod?.MakeGenericMethod(property.convertProperty.PropertyType).Invoke(null, [propValue]);
                 property.convertProperty.SetValue(result, resultPropValue);
             }
@@ -97,7 +97,7 @@ public static class Converter
         return values.Select(c => c.Map<T>());
     }
 
-    private static bool propertyNameEquals(string name1, string name2)
+    private static bool PropertyNameEquals(string name1, string name2)
     {
         return name1.ToLower().Replace("_", "").Equals(name2.Replace("_", "").ToLower());
     }

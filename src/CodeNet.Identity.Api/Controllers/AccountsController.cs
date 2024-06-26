@@ -7,11 +7,11 @@ using CodeNet.Identity.Model;
 namespace CodeNet.Identity.Api.Controllers;
 
 [Route("[controller]")]
+//[Authorize(Roles = "admin")]
 [ApiController]
 public class AccountsController(IMediator mediator) : ControllerBase
 {
     [HttpPost]
-    [Authorize(Roles = "admin")]
     [Route("register")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> Register([FromBody] RegisterUserModel model, CancellationToken cancellationToken)
@@ -20,7 +20,6 @@ public class AccountsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = "admin")]
     [Route("editroles")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> EditRoles([FromBody] UpdateUserRolesModel model, CancellationToken cancellationToken)
@@ -29,7 +28,6 @@ public class AccountsController(IMediator mediator) : ControllerBase
     }
 
     [HttpPut]
-    [Authorize(Roles = "admin")]
     [Route("editclaims")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> EditClaims([FromBody] UpdateUserClaimsModel model, CancellationToken cancellationToken)
@@ -38,7 +36,6 @@ public class AccountsController(IMediator mediator) : ControllerBase
     }
 
     [HttpGet]
-    [Authorize(Roles = "admin")]
     [Route("getuser/{username}")]
     [ProducesResponseType(200, Type = typeof(ResponseBase<UserModel>))]
     public async Task<IActionResult> GetUser(string username, CancellationToken cancellationToken)
@@ -47,7 +44,6 @@ public class AccountsController(IMediator mediator) : ControllerBase
     }
 
     [HttpDelete]
-    [Authorize(Roles = "admin")]
     [Route("removeuser")]
     [ProducesResponseType(200, Type = typeof(ResponseBase))]
     public async Task<IActionResult> RemoveUser([FromBody] RemoveUserModel model, CancellationToken cancellationToken)

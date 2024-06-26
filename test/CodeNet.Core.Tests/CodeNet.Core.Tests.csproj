@@ -25,4 +25,8 @@
 		<ProjectReference Include="..\..\src\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Mock\" />
+	</ItemGroup>
+
 </Project>

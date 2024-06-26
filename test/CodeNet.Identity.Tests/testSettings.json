@@ -1,0 +1,14 @@
+{
+  "Application": {
+    "Name": "Identity",
+    "Title": "CodeNet | Identity API",
+    "Version": "v1.0"
+  },
+  "Identity": {
+    "ValidAudience": "http://codenet",
+    "ValidIssuer": "http://login.codenet",
+    "ExpiryTime": 5.0,
+    "PublicKeyPath": "../../../public_key.pem",
+    "PrivateKeyPath": "../../../private_key.pem"
+  }
+}
