@@ -1,11 +1,11 @@
 ﻿using CodeNet.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
-using System.Threading;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity : class, IEntity
+public abstract class Repository<TEntity> : IRepository<TEntity> 
+    where TEntity : class, IEntity
 {
     protected readonly DbContext _dbContext;
     protected readonly DbSet<TEntity> _entities;
@@ -83,6 +83,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
         return _entities.Find(keyValues);
     }
 
+    public virtual TEntity? Get(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _entities.FirstOrDefault(predicate);
+    }
+
     public virtual Task<TEntity?> GetAsync(params object[] keyValues)
     {
         return GetAsync(keyValues, CancellationToken.None);
@@ -91,6 +96,16 @@ public abstract class Repository<TEntity> : IRepository<TEntity> where TEntity :
     public virtual async Task<TEntity?> GetAsync(object[] keyValues, CancellationToken cancellationToken)
     {
         return await _entities.FindAsync(keyValues, cancellationToken);
+    }
+    
+    public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
+    {
+        return GetAsync(predicate, CancellationToken.None);
+    }
+
+    public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return _entities.FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
     }
 
     public virtual TEntity Remove(TEntity entity)

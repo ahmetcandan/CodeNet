@@ -42,6 +42,36 @@ public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Reposit
         return base.RemoveRange(entities);
     }
 
+    public override TBaseEntity? Get(Expression<Func<TBaseEntity, bool>> predicate)
+    {
+        return Get(predicate: predicate, isActive: true);
+    }
+
+    public virtual TBaseEntity? Get(Expression<Func<TBaseEntity, bool>> predicate, bool isActive)
+    {
+        return base.Get(AddCondition(c => c.IsActive == isActive && !c.IsDeleted, predicate));
+    }
+
+    public override Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate)
+    {
+        return GetAsync(predicate, true);
+    }
+
+    public virtual Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive)
+    {
+        return GetAsync(predicate, isActive, CancellationToken.None);
+    }
+
+    public override Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, CancellationToken cancellationToken)
+    {
+        return GetAsync(predicate, true, cancellationToken);
+    }
+
+    public virtual Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, CancellationToken cancellationToken)
+    {
+        return base.GetAsync(AddCondition(c => c.IsActive == isActive && !c.IsDeleted, predicate), cancellationToken);
+    }
+
     public override List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate)
     {
         return Find(predicate, true);

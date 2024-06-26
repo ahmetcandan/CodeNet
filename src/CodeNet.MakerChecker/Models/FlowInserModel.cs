@@ -1,5 +1,4 @@
-﻿
-namespace CodeNet.MakerChecker.Models;
+﻿namespace CodeNet.MakerChecker.Models;
 
 public class FlowInserModel
 {

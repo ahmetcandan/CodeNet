@@ -2,6 +2,7 @@
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public interface ITracingRepository<TTracingEntity> : IBaseRepository<TTracingEntity> where TTracingEntity : class, ITracingEntity
+public interface ITracingRepository<TTracingEntity> : IBaseRepository<TTracingEntity> 
+    where TTracingEntity : class, ITracingEntity
 {
 }

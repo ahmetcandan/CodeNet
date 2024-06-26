@@ -22,7 +22,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
         return result.Id;
     }
 
-    public async Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default) 
+    public async Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
         var result = await _makerCheckerDefinitionRepository.AddAsync(new MakerCheckerDefinition

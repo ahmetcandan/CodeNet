@@ -2,6 +2,9 @@
 
 internal class MakerCheckerFlowHistory
 {
-    public required MakerCheckerFlow MakerCheckerFlow { get; set; }
     public required MakerCheckerHistory MakerCheckerHistory { get; set; }
+    public required string Approver { get; set; }
+    public ApproveType ApproveType { get; set; }
+    public byte Order { get; set; }
+    public required string EntityName { get; set; }
 }

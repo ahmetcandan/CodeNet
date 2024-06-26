@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CodeNet.Core.Models;
-using CodeNet.ExceptionHandling;
+using CodeNet.Identity.Exception;
 using CodeNet.Identity.Model;
 using System.Data;
 
@@ -13,7 +13,7 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIde
     {
         var roleExists = await RoleManager.FindByNameAsync(model.Name);
         if (roleExists is not null)
-            throw new UserLevelException("ID011", "Role already exists!");
+            throw new IdentityException("ID011", "Role already exists!");
 
         IdentityRole role = new()
         {
@@ -25,13 +25,13 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIde
         var result = await RoleManager.CreateAsync(role);
 
         return !result.Succeeded
-            ? throw new UserLevelException("ID013", "Role creation failed! Please check role details and try again.")
+            ? throw new IdentityException("ID013", "Role creation failed! Please check role details and try again.")
             : new ResponseBase(true, "000", "Role created successfully!");
     }
 
     public async Task<ResponseBase> EditRole(RoleModel model)
     {
-        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new UserLevelException("ID012", "Role not found!");
+        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
         role.Name = model.Name;
         role.NormalizedName = string.IsNullOrEmpty(model.NormalizedName)
             ? model.Name.Replace(" ", "").ToUpper()
@@ -39,13 +39,13 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIde
         var result = await RoleManager.UpdateAsync(role);
 
         return !result.Succeeded
-            ? throw new UserLevelException("ID014", "Role update failed! Please check role details and try again.")
+            ? throw new IdentityException("ID014", "Role update failed! Please check role details and try again.")
             : new ResponseBase(true, "000", "Role updated successfully!");
     }
 
     public async Task<ResponseBase> EditRoleClaims(RoleClaimsModel model)
     {
-        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new UserLevelException("ID012", "Role not found!");
+        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
         var currentClaims = await RoleManager.GetClaimsAsync(role);
 
         // delete roles
@@ -61,11 +61,11 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> RoleManager) : IIde
 
     public async Task<ResponseBase> DeleteRole(RoleModel model)
     {
-        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new UserLevelException("ID012", "Role not found!");
+        var role = await RoleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
         var result = await RoleManager.DeleteAsync(role);
 
         return !result.Succeeded
-            ? throw new UserLevelException("ID015", "Role delete failed! Please check role details and try again.")
+            ? throw new IdentityException("ID015", "Role delete failed! Please check role details and try again.")
             : new ResponseBase(true, "000", "Role deleted successfully!");
     }
 

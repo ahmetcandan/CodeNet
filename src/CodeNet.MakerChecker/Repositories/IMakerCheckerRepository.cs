@@ -1,21 +1,15 @@
-﻿using CodeNet.MakerChecker.Models;
-using System.Linq.Expressions;
+﻿using CodeNet.EntityFramework.Repositories;
+using CodeNet.MakerChecker.Models;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-public interface IMakerCheckerRepository<TMakerCheckerEntity>
+public interface IMakerCheckerRepository<TMakerCheckerEntity> : ITracingRepository<TMakerCheckerEntity>
     where TMakerCheckerEntity : class, IMakerCheckerEntity
 {
-    TMakerCheckerEntity Add(TMakerCheckerEntity entity);
-    Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity);
-    Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken);
-    TMakerCheckerEntity Update(TMakerCheckerEntity entity);
-    void Approve(TMakerCheckerEntity entity);
-    Task ApproveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
-    void Reject(TMakerCheckerEntity entity);
-    Task RejectAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken = default);
-    List<TMakerCheckerEntity> FindByStatus(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true);
-    Task<List<TMakerCheckerEntity>> FindByStatusAsync(Expression<Func<TMakerCheckerEntity, bool>> predicate, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default);
-    TMakerCheckerEntity? GetByReferenceId(Guid referenceId, ApproveStatus approveStatus, bool isActive = true);
-    Task<TMakerCheckerEntity?> GetByReferenceIdAsync(Guid referenceId, ApproveStatus approveStatus, bool isActive = true, CancellationToken cancellationToken = default);
+    TMakerCheckerEntity? Approve(MakerCheckerDraftEntity draft, string description);
+    Task<TMakerCheckerEntity?> ApproveAsync(MakerCheckerDraftEntity draft, string description, CancellationToken cancellationToken = default);
+    void Reject(MakerCheckerDraftEntity draft, string description);
+    Task RejectAsync(MakerCheckerDraftEntity draft, string description, CancellationToken cancellationToken = default);
+    MakerCheckerDraftEntity? GetDraft(Guid referenceId);
+    Task<MakerCheckerDraftEntity?> GetDraftAsync(Guid referenceId, CancellationToken cancellationToken = default);
 }

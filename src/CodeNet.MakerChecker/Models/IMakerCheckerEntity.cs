@@ -4,8 +4,6 @@ namespace CodeNet.MakerChecker.Models;
 
 public interface IMakerCheckerEntity : ITracingEntity
 {
-    Guid ReferenceId { get; }
-    ApproveStatus ApproveStatus { get; }
-    void SetNewReferenceId();
-    void SetApproveStatus(ApproveStatus approveStatus);
+    Guid ReferenceId { get; set; }
+    MakerCheckerDraftEntity NewDraft(EntryState entryState, byte order);
 }

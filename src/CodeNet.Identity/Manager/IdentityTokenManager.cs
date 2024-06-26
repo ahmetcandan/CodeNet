@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using CodeNet.Core.Models;
-using CodeNet.ExceptionHandling;
+using CodeNet.Identity.Exception;
 using CodeNet.Identity.Model;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -63,6 +63,6 @@ internal class IdentityTokenManager(UserManager<IdentityUser> UserManager, RoleM
                          }
             });
         }
-        throw new UserLevelException("ID101", "Error: username or password incorrect.");
+        throw new IdentityException("ID101", "Error: username or password incorrect.");
     }
 }

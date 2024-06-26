@@ -3,11 +3,15 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public interface IRepository<TEntity> where TEntity : IEntity
+public interface IRepository<TEntity> 
+    where TEntity : class, IEntity
 {
     TEntity? Get(params object[] keyValues);
+    TEntity? Get(Expression<Func<TEntity, bool>> predicate);
     Task<TEntity?> GetAsync(params object[] keyValues);
     Task<TEntity?> GetAsync(object[] keyValues, CancellationToken cancellationToken);
+    Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate);
+    Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
     List<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
