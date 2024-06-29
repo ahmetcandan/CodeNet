@@ -27,7 +27,7 @@ public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapper
 
     public async Task<CustomerResponse?> GetCustomer(int customerId, CancellationToken cancellationToken)
     {
-        var result = await CustomerRepository.GetAsync([customerId], cancellationToken) ?? throw new UserLevelException("01", "Kullanıcı bulunamadı!");
+        var result = await CustomerRepository.GetAsync([customerId], cancellationToken) ?? throw new CodeNetException("01", "Kullanıcı bulunamadı!");
         return Mapper.MapObject<Model.Customer, CustomerResponse>(result);
     }
 

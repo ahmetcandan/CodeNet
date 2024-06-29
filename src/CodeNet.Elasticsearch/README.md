@@ -4,7 +4,7 @@ CodeNet.Elasticsearch is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Elasticsearch/) to install CodeNet.Elasticsearch.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Elasticsearch/) to install CodeNet.Elasticsearch
 
 ```bash
 dotnet add package CodeNet.Elasticsearch

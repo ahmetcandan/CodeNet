@@ -4,7 +4,7 @@ CodeNet.MakerChecker is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MakerChecker/) to install CodeNet.MakerChecker.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MakerChecker/) to install CodeNet.MakerChecker
 
 ```bash
 dotnet add package CodeNet.MakerChecker

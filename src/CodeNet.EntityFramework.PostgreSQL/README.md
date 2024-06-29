@@ -4,7 +4,7 @@ CodeNet.EntityFramework.PostgreSQL is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.PostgreSQL/) to install CodeNet.EntityFramework.PostgreSQL.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.PostgreSQL/) to install CodeNet.EntityFramework.PostgreSQL
 
 ```bash
 dotnet add package CodeNet.EntityFramework.PostgreSQL

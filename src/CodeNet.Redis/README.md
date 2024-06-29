@@ -4,7 +4,7 @@ CodeNet.Redis is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Redis/) to install CodeNet.Redis.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Redis/) to install CodeNet.Redis
 
 ```bash
 dotnet add package CodeNet.Redis

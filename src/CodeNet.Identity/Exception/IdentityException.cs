@@ -2,6 +2,6 @@
 
 namespace CodeNet.Identity.Exception;
 
-public class IdentityException(string code, string message) : UserLevelException(code, message)
+public class IdentityException(string code, string message) : CodeNetException(code, message)
 {
 }

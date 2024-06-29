@@ -40,7 +40,7 @@ public static class ServiceCollectionExtensions
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, ConfigurationManager configuration, string connectionName)
+    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, IConfiguration configuration, string connectionName)
     {
         return optionsBuilder.UseSqlServer(configuration.GetConnectionString(connectionName));
     }

@@ -10,7 +10,7 @@ using System.Text;
 namespace CodeNet.RabbitMQ.Services;
 
 public class RabbitMQConsumerService<TData>(IOptions<RabbitMQConsumerSettings> Config)
-        : BaseRabbitMQService<TData>(Config ?? throw new NullReferenceException("Config is null")),
+        : BaseRabbitMQService(Config ?? throw new NullReferenceException("Config is null")),
           IRabbitMQConsumerService<TData>
     where TData : class, new()
 {

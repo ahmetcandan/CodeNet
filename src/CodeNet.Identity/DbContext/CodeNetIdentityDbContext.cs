@@ -2,8 +2,8 @@
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeNet.Identity.DbContext;
+namespace CodeNet.Identity;
 
-public class CodeNetIdentityDbContext(DbContextOptions<CodeNetIdentityDbContext> options) : IdentityDbContext<IdentityUser>(options)
+public class CodeNetIdentityDbContext(DbContextOptions options) : IdentityDbContext<IdentityUser>(options)
 {
 }

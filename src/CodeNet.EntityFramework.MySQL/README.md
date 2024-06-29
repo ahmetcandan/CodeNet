@@ -4,7 +4,7 @@ CodeNet.EntityFramework.MySQL is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.MySQL/) to install CodeNet.EntityFramework.MySQL.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.MySQL/) to install CodeNet.EntityFramework.MySQL
 
 ```bash
 dotnet add package CodeNet.EntityFramework.MySQL

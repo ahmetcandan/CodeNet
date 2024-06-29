@@ -15,6 +15,9 @@ public interface IRepository<TEntity>
     List<TEntity> Find(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
+    List<TEntity> GetPagingList(int page, int count);
+    Task<List<TEntity>> GetPagingListAsync(int page, int count);
+    Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken);
 
     TEntity Add(TEntity entity);
     IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities);

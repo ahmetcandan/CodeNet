@@ -1,7 +1,6 @@
 ﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 using CodeNet.EntityFramework.Extensions;
-using CodeNet.Identity.DbContext;
 using CodeNet.Identity.Model;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

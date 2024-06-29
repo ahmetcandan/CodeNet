@@ -4,7 +4,7 @@ namespace CodeNet.MakerChecker.Models;
 
 public abstract class MakerCheckerEntity : TracingEntity, IMakerCheckerEntity
 {
-    public Guid ReferenceId { get; set; }
+    public Guid? ReferenceId { get; set; }
 
     public MakerCheckerDraftEntity NewDraft(EntryState entryState, byte order)
     {

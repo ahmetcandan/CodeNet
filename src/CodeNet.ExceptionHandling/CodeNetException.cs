@@ -1,8 +1,8 @@
 ﻿namespace CodeNet.ExceptionHandling;
 
-public class UserLevelException : Exception
+public class CodeNetException : Exception
 {
-    public UserLevelException(string code, string message)
+    public CodeNetException(string code, string message)
     {
         Code = code;
         UserMessage = message;
@@ -16,7 +16,7 @@ public class UserLevelException : Exception
     public static void ThrowIfNull<TObject>(TObject obj, string parameterName = "")
     {
         if (obj is null)
-            throw new UserLevelException("400", $"{(string.IsNullOrEmpty(parameterName) ? TypeName(typeof(TObject)) : parameterName)} cannot be empty.");
+            throw new CodeNetException("400", $"{(string.IsNullOrEmpty(parameterName) ? TypeName(typeof(TObject)) : parameterName)} cannot be empty.");
     }
 
     private static string TypeName(Type type)

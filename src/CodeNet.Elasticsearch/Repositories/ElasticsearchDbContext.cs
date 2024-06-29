@@ -15,4 +15,18 @@ public class ElasticsearchDbContext(IOptions<ElasticsearchSettings> config)
 
         return new ElasticsearchClient(settings);
     }
+
+    public async Task<bool> CanConnectionAsync(CancellationToken cancellationToken)
+    {
+        try
+        {
+            Id id = new(1);
+            var result = await Set().GetScriptAsync(new GetScriptRequest(id), cancellationToken);
+            return result?.IsSuccess() ?? false;
+        }
+        catch
+        {
+            return false;
+        }
+    }
 }

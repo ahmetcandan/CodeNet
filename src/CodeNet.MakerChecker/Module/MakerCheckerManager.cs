@@ -37,7 +37,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     public DefinitionUpdateModel UpdateDefinition<TMakerCheckerEntity>(DefinitionUpdateModel definition)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
-        var updateModel = _makerCheckerDefinitionRepository.Get(definition.Id) ?? throw new UserLevelException("MC007", "No records found to update.");
+        var updateModel = _makerCheckerDefinitionRepository.Get(definition.Id) ?? throw new CodeNetException("MC007", "No records found to update.");
         updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
         _makerCheckerDefinitionRepository.Update(updateModel);
         _makerCheckerDefinitionRepository.SaveChanges();
@@ -47,7 +47,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
     public async Task<DefinitionUpdateModel> UpdateDefinitionAsync<TMakerCheckerEntity>(DefinitionUpdateModel definition, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
-        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definition.Id], cancellationToken) ?? throw new UserLevelException("MC007", "No records found to update.");
+        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definition.Id], cancellationToken) ?? throw new CodeNetException("MC007", "No records found to update.");
         updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
         _makerCheckerDefinitionRepository.Update(updateModel);
         await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
@@ -56,7 +56,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public DefinitionUpdateModel DeleteDefinition(Guid definitionId)
     {
-        var updateModel = _makerCheckerDefinitionRepository.Get(definitionId) ?? throw new UserLevelException("MC009", "No records found to delete.");
+        var updateModel = _makerCheckerDefinitionRepository.Get(definitionId) ?? throw new CodeNetException("MC009", "No records found to delete.");
         var result = _makerCheckerDefinitionRepository.Remove(updateModel);
         _makerCheckerDefinitionRepository.SaveChanges();
         return new DefinitionUpdateModel
@@ -67,7 +67,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public async Task<DefinitionUpdateModel> DeleteDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default)
     {
-        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definitionId], cancellationToken) ?? throw new UserLevelException("MC009", "No records found to delete.");
+        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definitionId], cancellationToken) ?? throw new CodeNetException("MC009", "No records found to delete.");
         var result = _makerCheckerDefinitionRepository.Remove(updateModel);
         await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
         return new DefinitionUpdateModel
@@ -108,7 +108,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public FlowUpdateModel UpdateFlow(FlowUpdateModel flow)
     {
-        var updateModel = _makerCheckerFlowRepository.Get(flow.Id) ?? throw new UserLevelException("MC008", "No records found to update.");
+        var updateModel = _makerCheckerFlowRepository.Get(flow.Id) ?? throw new CodeNetException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
         updateModel.Description = flow.Description;
@@ -119,7 +119,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public async Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, CancellationToken cancellationToken = default)
     {
-        var updateModel = await _makerCheckerFlowRepository.GetAsync([flow.Id], cancellationToken) ?? throw new UserLevelException("MC008", "No records found to update.");
+        var updateModel = await _makerCheckerFlowRepository.GetAsync([flow.Id], cancellationToken) ?? throw new CodeNetException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
         updateModel.Description = flow.Description;
@@ -130,7 +130,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public FlowUpdateModel DeleteFlow(Guid flowId)
     {
-        var updateModel = _makerCheckerFlowRepository.Get(flowId) ?? throw new UserLevelException("MC010", "No records found to delete.");
+        var updateModel = _makerCheckerFlowRepository.Get(flowId) ?? throw new CodeNetException("MC010", "No records found to delete.");
         var result = _makerCheckerFlowRepository.Remove(updateModel);
         _makerCheckerFlowRepository.SaveChanges();
         return new FlowUpdateModel
@@ -146,7 +146,7 @@ public class MakerCheckerManager(MakerCheckerDbContext dbContext, IIdentityConte
 
     public async Task<FlowUpdateModel> DeleteFlowAsync(Guid flowId, CancellationToken cancellationToken = default)
     {
-        var updateModel = await _makerCheckerFlowRepository.GetAsync([flowId], cancellationToken) ?? throw new UserLevelException("MC010", "No records found to delete.");
+        var updateModel = await _makerCheckerFlowRepository.GetAsync([flowId], cancellationToken) ?? throw new CodeNetException("MC010", "No records found to delete.");
         var result = _makerCheckerFlowRepository.Remove(updateModel);
         await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return new FlowUpdateModel

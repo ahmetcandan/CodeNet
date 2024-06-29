@@ -20,6 +20,7 @@ public static class ServiceCollectionExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddRedisDistributedCache(this WebApplicationBuilder webBuilder, string sectionName)
     {
+        webBuilder.Services.Configure<RedisSettings>(webBuilder.Configuration.GetSection(sectionName));
         var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         webBuilder.Services.AddStackExchangeRedisCache(option =>
          {
@@ -38,6 +39,7 @@ public static class ServiceCollectionExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static WebApplicationBuilder AddRedisDistributedLock(this WebApplicationBuilder webBuilder, string sectionName)
     {
+        webBuilder.Services.Configure<RedisSettings>(webBuilder.Configuration.GetSection(sectionName));
         var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
         var ipAddresses = Dns.GetHostAddresses(redisSettings.Hostname);
         var endPoints = new List<RedLockEndPoint>

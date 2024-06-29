@@ -19,7 +19,7 @@ internal class ExceptionHandler<TRequest, TResponse>(ILifetimeScope LifetimeScop
             AppLogger.ExceptionLog(ex, GetHandlerMethodInfo(LifetimeScope)!);
             return ex switch
             {
-                UserLevelException userLevelException => new TResponse
+                CodeNetException userLevelException => new TResponse
                 {
                     IsSuccessfull = false,
                     Message = userLevelException.Message,

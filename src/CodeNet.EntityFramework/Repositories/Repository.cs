@@ -68,6 +68,27 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         return _entities.Where(predicate).ToList();
     }
 
+    public virtual List<TEntity> GetPagingList(int page, int count)
+    {
+        if (page < 1 || count < 1)
+            throw new ArgumentException("Page or count cannot be less than 1");
+
+        return [.. _entities.Skip((page - 1) * count).Take(count)];
+    }
+
+    public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count)
+    {
+        return GetPagingListAsync(page, count, CancellationToken.None);
+    }
+
+    public async virtual Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken)
+    {
+        if (page < 1 || count < 1)
+            throw new ArgumentException("Page or count cannot be less than 1");
+
+        return await _entities.Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
+    }
+
     public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return FindAsync(predicate, CancellationToken.None);

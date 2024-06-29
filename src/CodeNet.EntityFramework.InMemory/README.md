@@ -4,7 +4,7 @@ CodeNet.EntityFramework.InMemory is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.InMemory/) to install CodeNet.EntityFramework.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.InMemory/) to install CodeNet.EntityFramework.InMemory
 
 ```bash
 dotnet add package CodeNet.EntityFramework.InMemory

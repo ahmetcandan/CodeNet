@@ -4,7 +4,7 @@ CodeNet.RabbitMQ is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.RabbitMQ/) to install CodeNet.RabbitMQ.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.RabbitMQ/) to install CodeNet.RabbitMQ
 
 ```bash
 dotnet add package CodeNet.RabbitMQ

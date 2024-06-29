@@ -4,7 +4,7 @@ CodeNet.EntityFramework.Oracle is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Oracle/) to install CodeNet.EntityFramework.Oracle.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Oracle/) to install CodeNet.EntityFramework.Oracle
 
 ```bash
 dotnet add package CodeNet.EntityFramework.Oracle

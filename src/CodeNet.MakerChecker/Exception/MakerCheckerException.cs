@@ -2,6 +2,6 @@
 
 namespace CodeNet.MakerChecker.Exception;
 
-public class MakerCheckerException(string code, string message) : UserLevelException(code, message)
+public class MakerCheckerException(string code, string message) : CodeNetException(code, message)
 {
 }
