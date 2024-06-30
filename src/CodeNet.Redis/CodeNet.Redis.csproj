@@ -42,6 +42,7 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+	  <ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
 	</ItemGroup>
 
 </Project>

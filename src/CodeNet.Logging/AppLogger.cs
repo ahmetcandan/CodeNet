@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CodeNet.Logging;
 
-internal class AppLogger(IIdentityContext IdentityContext, ILogger Logger) : IAppLogger
+internal class AppLogger(IIdentityContext identityContext, ILogger<AppLogger> logger) : IAppLogger
 {
     public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
@@ -22,7 +22,13 @@ internal class AppLogger(IIdentityContext IdentityContext, ILogger Logger) : IAp
 
     public void TraceLog(object data, MethodBase methodBase) => PostLogData(LogTime.Trace, methodBase, data);
 
-    protected virtual string GetObjectToString(object obj) => JsonConvert.SerializeObject(obj);
+    protected virtual string GetObjectToString(object obj)
+    {
+        if (obj.GetType() == typeof(string))
+            return obj.ToString();
+
+        return JsonConvert.SerializeObject(obj);
+    }
 
     private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long? elapsedDuration = null, Exception? exception = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration, exception: exception);
 
@@ -34,34 +40,34 @@ internal class AppLogger(IIdentityContext IdentityContext, ILogger Logger) : IAp
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null, Exception? exception = null)
     {
-        var eventId = new EventId(IdentityContext.RequestId.GetHashCode(), $"{assemblyName}_{className}_{methodName}");
+        var eventId = new EventId(identityContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}");
         string message = JsonConvert.SerializeObject(new LogModel
         {
             AssemblyName = assemblyName ?? "unknow",
             ClassName = className,
             MethodName = methodName,
             LogTime = logTime.ToString(),
-            Username = IdentityContext.UserName,
+            Username = identityContext.UserName,
             Data = data,
-            RequestId = IdentityContext.RequestId,
+            CorrelationId = identityContext.CorrelationId,
             ElapsedDuration = elapsedDuration
         }) ?? "";
         switch (logTime)
         {
             case LogTime.Entry:
-                Logger.Log(LogLevel.Information, message);
+                logger.Log(LogLevel.Information, eventId, message);
                 break;
             case LogTime.Exit:
-                Logger.Log(LogLevel.Information, message);
+                logger.Log(LogLevel.Information, eventId, message);
                 break;
             case LogTime.Trace:
-                Logger.Log(LogLevel.Trace, message);
+                logger.Log(LogLevel.Trace, eventId, message);
                 break;
             case LogTime.Error:
-                Logger.Log(LogLevel.Error, exception: exception ,message);
+                logger.Log(LogLevel.Error, eventId, exception, message);
                 break;
             default:
-                Logger.Log(LogLevel.None, message);
+                logger.Log(LogLevel.None, eventId, message);
                 break;
         }
     }

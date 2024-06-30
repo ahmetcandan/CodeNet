@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CodeNet.Core.Enums;
+using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
 namespace CodeNet.Core;
@@ -6,7 +7,7 @@ namespace CodeNet.Core;
 internal class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIdentityContext
 {
     private Guid? _requestId;
-    public Guid RequestId
+    public Guid CorrelationId
     {
         get
         {
@@ -43,6 +44,26 @@ internal class IdentityContext(IHttpContextAccessor HttpContextAccessor) : IIden
             }
 
             return null;
+        }
+    }
+
+    public CacheState CacheState
+    {
+        get
+        {
+            CacheState cacheState = CacheState.None;
+
+            var states = HttpContextAccessor?.HttpContext?.Request?.Headers?["Cache-State"];
+            if (states.HasValue)
+            {
+                var values = states.Value.ToString().Replace(" ", "").Split(',');
+                if (values.Contains(nameof(CacheState.NoCache)))
+                    cacheState |= CacheState.NoCache;
+                if (values.Contains(nameof(CacheState.ClearCache)))
+                    cacheState |= CacheState.ClearCache;
+            }
+
+            return cacheState;
         }
     }
 }

@@ -9,7 +9,7 @@ internal class CodeNetHealthCheck(IIdentityContext identityContext) : IHealthChe
     {
         try
         {
-            var requestId = identityContext.RequestId;
+            var requestId = identityContext.CorrelationId;
             if (requestId != Guid.Empty)
                 return Task.FromResult(HealthCheckResult.Healthy("This is CodeNet, standing as always. Have a good work ;) "));
 

@@ -16,7 +16,7 @@ namespace CodeNet.MakerChecker.Tests
         }
 
         [Test]
-        public void Maker_Checker_Approve_Tests()
+        public async Task Maker_Checker_Approve_Tests()
         {
             Mock<IIdentityContext> mockIdentityContext = new();
             mockIdentityContext.Setup(c => c.UserName)
@@ -25,32 +25,32 @@ namespace CodeNet.MakerChecker.Tests
                 .Returns(["Admin"]);
             var options = new DbContextOptionsBuilder<ParametersDbContext>().UseInMemoryDatabase("TestParametersDb").Options;
             var dbContext = new MockParametersDbContext(options);
-            var parameterManager = new ParameterManager(dbContext, mockIdentityContext.Object);
-            var parameterGroup = parameterManager.AddParameterGroup(new Parameters.Models.AddParameterGroupModel
+            var parameterManager = new ParameterManager(null);
+            var parameterGroup = await parameterManager.AddParameterGroupAsync(new Parameters.Models.AddParameterGroupModel
             {
                 Code = "TG",
                 ApprovalRequired = false,
                 Description = "Test Group"
             });
             Assert.That(parameterGroup, Is.Not.Null);
-            var p1 = parameterManager.AddParameter(new Parameters.Models.AddParameterModel
+            var p1 = await parameterManager.AddParameterAsync(new Parameters.Models.AddParameterModel
             {
-                Code = parameterGroup.Code + "1",
+                Code = parameterGroup.Data.Code + "1",
                 Value = "TG1_Value",
-                GroupId = parameterGroup.Id
+                GroupId = parameterGroup.Data.Id
             });
             Assert.That(p1, Is.Not.Null);
-            var p2 = parameterManager.AddParameter(new Parameters.Models.AddParameterModel
+            var p2 = await parameterManager.AddParameterAsync(new Parameters.Models.AddParameterModel
             {
-                Code = parameterGroup.Code + "2",
+                Code = parameterGroup.Data.Code + "2",
                 Value = "TG2_Value",
-                GroupId = parameterGroup.Id
+                GroupId = parameterGroup.Data.Id
             });
             Assert.That(p2, Is.Not.Null);
 
-            var parameterList = parameterManager.GetParameters(parameterGroup.Id);
+            var parameterList = await parameterManager.GetParametersAsync(parameterGroup.Data.Id);
             Assert.That(parameterList, Is.Not.Null);
-            Assert.That(parameterList.Count, Is.EqualTo(2));
+            Assert.That(parameterList.Data.Count, Is.EqualTo(2));
         }
     }
 }

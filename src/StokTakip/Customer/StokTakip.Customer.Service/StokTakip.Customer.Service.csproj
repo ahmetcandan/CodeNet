@@ -10,6 +10,7 @@
 		<ProjectReference Include="..\..\..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.Mapper\CodeNet.Mapper.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.Redis\CodeNet.Redis.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

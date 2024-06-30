@@ -18,15 +18,15 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddLogging(this WebApplicationBuilder webBuilder, string sectionName)
     {
         var loggingSettings = webBuilder.Configuration.GetSection(sectionName).Get<LoggingSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
-        Log.Logger = new LoggerConfiguration()
-        .Enrich.FromLogContext()
-        .WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(loggingSettings.ElasticsearchUrl))
-        {
-            AutoRegisterTemplate = loggingSettings.AutoRegisterTemplate,
-            IndexFormat = loggingSettings.IndexFormat,
-            ModifyConnectionSettings = configuration => configuration.BasicAuthentication(loggingSettings.Username, loggingSettings.Password)
-        })
-        .CreateLogger();
+        //Log.Logger = new LoggerConfiguration()
+        //.Enrich.FromLogContext()
+        //.WriteTo.Elasticsearch(new ElasticsearchSinkOptions(new Uri(loggingSettings.ElasticsearchUrl))
+        //{
+        //    AutoRegisterTemplate = loggingSettings.AutoRegisterTemplate,
+        //    IndexFormat = loggingSettings.IndexFormat,
+        //    ModifyConnectionSettings = configuration => configuration.BasicAuthentication(loggingSettings.Username, loggingSettings.Password)
+        //})
+        //.CreateLogger();
         return webBuilder;
     }
 

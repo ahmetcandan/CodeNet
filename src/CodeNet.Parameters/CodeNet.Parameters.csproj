@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.MakerChecker\CodeNet.MakerChecker.csproj" />
+		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
 	</ItemGroup>
 
 </Project>

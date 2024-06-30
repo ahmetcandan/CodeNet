@@ -47,11 +47,25 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         return MakerCheckerStart(entity, EntryState.Update);
     }
 
+    public override TMakerCheckerEntity Remove(TMakerCheckerEntity entity)
+    {
+        return MakerCheckerStart(entity, EntryState.Delete);
+    }
+
     public TMakerCheckerEntity? Approve(MakerCheckerDraftEntity draft, string description)
     {
         var approveStatus = ApproveEntity(draft, description, [.. GetMakerCheckerFlowHistoryListQueryable(draft.Id)]);
         if (approveStatus is ApproveStatus.Approved)
-            return base.Add(draft.GetEntity<TMakerCheckerEntity>() ?? throw new MakerCheckerException("MC012", "Convert exceptipon"));
+        {
+            var entity = draft.GetEntity<TMakerCheckerEntity>() ?? throw new MakerCheckerException("MC012", "Convert exceptipon");
+            return draft.EntryState switch
+            {
+                EntryState.Insert => base.Add(entity),
+                EntryState.Update => base.Update(entity),
+                EntryState.Delete => base.Remove(entity),
+                _ => throw new MakerCheckerException("MC014", "Invalid entry state"),
+            };
+        }
 
         return null;
     }
@@ -60,7 +74,16 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     {
         var approveStatus = ApproveEntity(draft, description, await GetMakerCheckerFlowHistoryListQueryable(draft.Id).ToListAsync(cancellationToken));
         if (approveStatus is ApproveStatus.Approved)
-            return await base.AddAsync(draft.GetEntity<TMakerCheckerEntity>() ?? throw new MakerCheckerException("MC012", "Convert exceptipon"), cancellationToken);
+        {
+            var entity = draft.GetEntity<TMakerCheckerEntity>() ?? throw new MakerCheckerException("MC012", "Convert exceptipon");
+            return draft.EntryState switch
+            {
+                EntryState.Insert => await base.AddAsync(entity, cancellationToken),
+                EntryState.Update => base.Update(entity),
+                EntryState.Delete => base.Remove(entity),
+                _ => throw new MakerCheckerException("MC014", "Invalid entry state"),
+            };
+        }
 
         return null;
     }
@@ -223,4 +246,48 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         MakerCheckerFlowId = flow.Id,
         ReferenceId = referenceId
     };
+
+    #region Obsolete
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override TMakerCheckerEntity HardDelete(TMakerCheckerEntity entity)
+    {
+        throw new MakerCheckerException("MC0013", "'HardDelete' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override IEnumerable<TMakerCheckerEntity> HardDeleteRange(IEnumerable<TMakerCheckerEntity> entities)
+    {
+        throw new MakerCheckerException("MC0013", "'HardDeleteRange' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override IEnumerable<TMakerCheckerEntity> RemoveRange(IEnumerable<TMakerCheckerEntity> entities)
+    {
+        throw new MakerCheckerException("MC0013", "'RemoveRange' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override IEnumerable<TMakerCheckerEntity> AddRange(IEnumerable<TMakerCheckerEntity> entities)
+    {
+        throw new MakerCheckerException("MC0013", "'AddRange' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override Task<IEnumerable<TMakerCheckerEntity>> AddRangeAsync(IEnumerable<TMakerCheckerEntity> entities)
+    {
+        throw new MakerCheckerException("MC0013", "'AddRangeAsync' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override Task<IEnumerable<TMakerCheckerEntity>> AddRangeAsync(IEnumerable<TMakerCheckerEntity> entities, CancellationToken cancellationToken)
+    {
+        throw new MakerCheckerException("MC0013", "'AddRangeAsync' method is not used for this 'MakerCheckerRepository'.");
+    }
+
+    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    public override IEnumerable<TMakerCheckerEntity> UpdateRange(IEnumerable<TMakerCheckerEntity> entities)
+    {
+        throw new MakerCheckerException("MC0013", "'UpdateRange' method is not used for this 'MakerCheckerRepository'.");
+    }
+    #endregion
 }

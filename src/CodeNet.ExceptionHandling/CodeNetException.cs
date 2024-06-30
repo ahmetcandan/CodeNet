@@ -1,15 +1,9 @@
 ﻿namespace CodeNet.ExceptionHandling;
 
-public class CodeNetException : Exception
+public class CodeNetException(string code, string message) : Exception
 {
-    public CodeNetException(string code, string message)
-    {
-        Code = code;
-        UserMessage = message;
-    }
-
-    public string UserMessage { get; set; }
-    public string Code { get; set; }
+    public string UserMessage { get; set; } = message;
+    public string Code { get; set; } = code;
     public override string StackTrace => string.Empty;
     public override string Message => UserMessage;
 

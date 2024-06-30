@@ -14,6 +14,7 @@ using CodeNet.HealthCheck.EntityFramework.Extensions;
 using CodeNet.HealthCheck.MongoDB.Extensions;
 using CodeNet.HealthCheck.RabbitMQ.Extensions;
 using CodeNet.HealthCheck.Elasticsearch.Extensions;
+using CodeNet.Logging.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,6 +23,7 @@ builder.AddCodeNet("Application");
 builder.AddAuthentication("JWT");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
+builder.Logging.AddConsole();
 //builder.AddRabbitMQConsumer("RabbitMQ");
 //builder.AddRabbitMQProducer("RabbitMQ");
 builder.AddMongoDB("MongoDB");
@@ -34,7 +36,7 @@ builder.Services.AddHealthChecks()
     .AddMongoDbHealthCheck()
     .AddRabbitMqHealthCheck(builder, "RabbitMQ")
     .AddElasticsearchHealthCheck();
-//builder.AddLogging("Log");
+builder.AddLogging("Log");
 
 var app = builder.Build();
 var container = app.Services.GetAutofacRoot();

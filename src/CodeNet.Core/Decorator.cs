@@ -7,12 +7,13 @@ using System.Text;
 namespace CodeNet.Core;
 
 public abstract class DecoratorBase<TRequest, TResponse> : IPipelineBehavior<TRequest, TResponse>
-     where TResponse : ResponseBase where TRequest : IRequest<TResponse>
+    where TResponse : ResponseBase
+    where TRequest : IRequest<TResponse>
 {
     public abstract Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken);
 
 
-    protected MethodBase? GetHandlerMethodInfo(ILifetimeScope lifetimeScope)
+    protected static MethodBase? GetHandlerMethodInfo(ILifetimeScope lifetimeScope)
     {
         var handler = lifetimeScope.Resolve<IRequestHandler<TRequest, TResponse>>();
         return handler != null ? handler.GetType().GetMethod("Handle") : (MethodBase?)null;
