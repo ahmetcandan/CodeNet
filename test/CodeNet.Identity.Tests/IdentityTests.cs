@@ -15,7 +15,6 @@ namespace CodeNet.Identity.Tests
     [TestFixture]
     public class IdentityTests
     {
-        WebApplication _app;
         string admin = "admin";
         string adminEmail = "admin@test.net";
         string adminPassword = "@dMin-123!";
@@ -28,6 +27,12 @@ namespace CodeNet.Identity.Tests
         [SetUp]
         public void Setup()
         {
+
+        }
+
+        [Test]
+        public async Task Add_Roles()
+        {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
             builder.Host.UseCodeNetContainer(containerBuilder =>
@@ -38,12 +43,7 @@ namespace CodeNet.Identity.Tests
             builder.AddCodeNet("Application")
                    .AddAuthentication("Identity")
                    .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
-            _app = builder.Build();
-        }
-
-        [Test]
-        public async Task Add_Roles()
-        {
+            var _app = builder.Build();
             var roleManager = _app.Services.GetRequiredService<IIdentityRoleManager>();
             foreach (var role in userRoles.Union(adminRoles))
             {
@@ -59,6 +59,17 @@ namespace CodeNet.Identity.Tests
         [Test]
         public async Task Add_Users()
         {
+            var builder = WebApplication.CreateBuilder();
+            builder.Configuration.AddJsonFile("testSettings.json");
+            builder.Host.UseCodeNetContainer(containerBuilder =>
+            {
+                containerBuilder.RegisterModule<CodeNetModule>();
+                containerBuilder.RegisterModule<IdentityModule>();
+            });
+            builder.AddCodeNet("Application")
+                   .AddAuthentication("Identity")
+                   .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+            var _app = builder.Build();
             var userManager = _app.Services.GetRequiredService<IIdentityUserManager>();
             var adminResult = await userManager.CreateUser(new Model.RegisterUserModel
             {
@@ -84,6 +95,17 @@ namespace CodeNet.Identity.Tests
         [Test]
         public async Task Generate_Token()
         {
+            var builder = WebApplication.CreateBuilder();
+            builder.Configuration.AddJsonFile("testSettings.json");
+            builder.Host.UseCodeNetContainer(containerBuilder =>
+            {
+                containerBuilder.RegisterModule<CodeNetModule>();
+                containerBuilder.RegisterModule<IdentityModule>();
+            });
+            builder.AddCodeNet("Application")
+                   .AddAuthentication("Identity")
+                   .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+            var _app = builder.Build();
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
             var tokenResult = await tokenManager.GenerateToken(new Model.LoginModel 
             {
