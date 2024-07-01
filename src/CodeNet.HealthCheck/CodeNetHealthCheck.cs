@@ -3,7 +3,7 @@ using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace CodeNet.HealthCheck;
 
-internal class CodeNetHealthCheck(IIdentityContext identityContext) : IHealthCheck
+internal class CodeNetHealthCheck(ICodeNetHttpContext identityContext) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {

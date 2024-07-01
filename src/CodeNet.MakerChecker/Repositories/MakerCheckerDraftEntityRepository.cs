@@ -4,6 +4,6 @@ using CodeNet.MakerChecker.Models;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-internal class MakerCheckerDraftEntityRepository(MakerCheckerDbContext makerCheckerDbContext, IIdentityContext identityContext) : TracingRepository<MakerCheckerDraftEntity>(makerCheckerDbContext, identityContext)
+internal class MakerCheckerDraftEntityRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetHttpContext identityContext) : TracingRepository<MakerCheckerDraftEntity>(makerCheckerDbContext, identityContext)
 {
 }

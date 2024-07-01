@@ -8,7 +8,7 @@ using MediatR;
 
 namespace CodeNet.Parameters.Handler;
 
-internal class GetParameterGroupListHandler(ParametersDbContext dbContext, IIdentityContext identityContext) : IRequestHandler<GetParameterGroupListRequest, ResponseBase<List<ParameterGroupResult>>>
+internal class GetParameterGroupListHandler(ParametersDbContext dbContext, ICodeNetHttpContext identityContext) : IRequestHandler<GetParameterGroupListRequest, ResponseBase<List<ParameterGroupResult>>>
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
 

@@ -9,7 +9,7 @@ using MediatR;
 
 namespace CodeNet.Parameters.Handler;
 
-internal class UpdateParameterGroupHandler(ParametersDbContext dbContext, IIdentityContext identityContext) : IRequestHandler<UpdateParameterGroupRequest, ResponseBase<ParameterGroupResult>>
+internal class UpdateParameterGroupHandler(ParametersDbContext dbContext, ICodeNetHttpContext identityContext) : IRequestHandler<UpdateParameterGroupRequest, ResponseBase<ParameterGroupResult>>
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
 

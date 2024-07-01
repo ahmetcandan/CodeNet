@@ -17,7 +17,7 @@ public static class ServiceCollectionExtensions
     /// <returns></returns>
     public static WebApplicationBuilder AddIdentity(this WebApplicationBuilder webBuilder, string connectionName, string sectionName)
     {
-        webBuilder.AddSqlServer<CodeNetIdentityDbContext>(connectionName);
+        webBuilder.AddDbContext<CodeNetIdentityDbContext>(connectionName);
         webBuilder.Services.Configure<IdentityConfig>(webBuilder.Configuration.GetSection(sectionName));
         webBuilder.Services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<CodeNetIdentityDbContext>()

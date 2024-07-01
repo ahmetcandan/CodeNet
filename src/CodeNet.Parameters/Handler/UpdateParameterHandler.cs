@@ -9,7 +9,7 @@ using MediatR;
 
 namespace CodeNet.Parameters.Handler;
 
-internal class UpdateParameterHandler(ParametersDbContext dbContext, IIdentityContext identityContext) : IRequestHandler<UpdateParameterRequest, ResponseBase<ParameterResult>>
+internal class UpdateParameterHandler(ParametersDbContext dbContext, ICodeNetHttpContext identityContext) : IRequestHandler<UpdateParameterRequest, ResponseBase<ParameterResult>>
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
     private readonly ParameterRepositoryResolver _parameterRepositoryResolver = new(dbContext, identityContext);
@@ -23,6 +23,9 @@ internal class UpdateParameterHandler(ParametersDbContext dbContext, IIdentityCo
         {
             parameter.Value = request.Value;
             parameter.Code = request.Code;
+            parameter.IsDefault = request.IsDefault;
+            parameter.Order = request.Order;
+
             var updateResponse = parameterRepository.Update(parameter);
             await parameterRepository.SaveChangesAsync(cancellationToken);
             return new ResponseBase<ParameterResult>(updateResponse.ToParameterResult());

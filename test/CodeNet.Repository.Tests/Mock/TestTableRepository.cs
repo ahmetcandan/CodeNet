@@ -7,7 +7,7 @@ namespace CodeNet.EntityFramework.Tests.Mock
 {
     public class TestTableRepository : TracingRepository<TestTable>
     {
-        public TestTableRepository(DbContext dbContext, IIdentityContext identityContext) : base(dbContext, identityContext)
+        public TestTableRepository(DbContext dbContext, ICodeNetHttpContext identityContext) : base(dbContext, identityContext)
         {
         }
     }

@@ -9,7 +9,7 @@ using MediatR;
 
 namespace CodeNet.Parameters.Handler;
 
-internal class DeleteParameterGroupHandler(ParametersDbContext dbContext, IIdentityContext identityContext) : IRequestHandler<DeleteParameterGroupRequest, ResponseBase<ParameterGroupResult>>
+internal class DeleteParameterGroupHandler(ParametersDbContext dbContext, ICodeNetHttpContext identityContext) : IRequestHandler<DeleteParameterGroupRequest, ResponseBase<ParameterGroupResult>>
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
 

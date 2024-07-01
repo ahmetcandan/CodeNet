@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     /// <returns></returns>
     public static WebApplicationBuilder AddMakerChecker(this WebApplicationBuilder webBuilder, string connectionName)
     {
-        webBuilder.AddSqlServer<MakerCheckerDbContext>(connectionName);
+        webBuilder.AddDbContext<MakerCheckerDbContext>(connectionName);
         return webBuilder;
     }
 
@@ -29,7 +29,7 @@ public static class ServiceCollectionExtensions
     public static WebApplicationBuilder AddMakerChecker<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName)
         where TDbContext : MakerCheckerDbContext
     {
-        webBuilder.AddSqlServer<TDbContext>(connectionName);
+        webBuilder.AddDbContext<TDbContext>(connectionName);
         return webBuilder;
     }
 

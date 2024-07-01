@@ -5,6 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.Parameters.Repositories;
 
-internal class ParameterTracingRepository(DbContext dbContext, IIdentityContext identityContext) : TracingRepository<Parameter>(dbContext, identityContext), IParameterRepository
+internal class ParameterTracingRepository(DbContext dbContext, ICodeNetHttpContext identityContext) : TracingRepository<Parameter>(dbContext, identityContext), IParameterRepository
 {
 }

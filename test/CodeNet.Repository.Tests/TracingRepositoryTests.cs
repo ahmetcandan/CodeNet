@@ -19,7 +19,7 @@ namespace CodeNet.EntityFramework.Tests
             var username = "admin";
             var options = new DbContextOptionsBuilder<DbContext>().UseInMemoryDatabase(databaseName: "TestDB").Options;
             using var context = new MockDbContext(options);
-            var mockIdentityContext = new Mock<IIdentityContext>();
+            var mockIdentityContext = new Mock<ICodeNetHttpContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
             var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
@@ -85,7 +85,7 @@ namespace CodeNet.EntityFramework.Tests
             var cancellationToken = CancellationToken.None;
             var options = new DbContextOptionsBuilder<DbContext>().UseInMemoryDatabase(databaseName: "TestAsyncDB").Options;
             using var context = new MockDbContext(options);
-            var mockIdentityContext = new Mock<IIdentityContext>();
+            var mockIdentityContext = new Mock<ICodeNetHttpContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
             var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
@@ -150,7 +150,7 @@ namespace CodeNet.EntityFramework.Tests
             var username = "admin";
             var options = new DbContextOptionsBuilder<DbContext>().UseInMemoryDatabase(databaseName: "Test2DB").Options;
             using var context = new MockDbContext(options);
-            var mockIdentityContext = new Mock<IIdentityContext>();
+            var mockIdentityContext = new Mock<ICodeNetHttpContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
             var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
@@ -202,7 +202,7 @@ namespace CodeNet.EntityFramework.Tests
             var username = "admin";
             var options = new DbContextOptionsBuilder<DbContext>().UseInMemoryDatabase(databaseName: "Test2AsyncDB").Options;
             using var context = new MockDbContext(options);
-            var mockIdentityContext = new Mock<IIdentityContext>();
+            var mockIdentityContext = new Mock<ICodeNetHttpContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
             var testRepository = new TestTableRepository(context, mockIdentityContext.Object);

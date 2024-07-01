@@ -4,7 +4,7 @@ using CodeNet.EntityFramework.Models;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, IIdentityContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity>
+public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, ICodeNetHttpContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity>
     where TTracingEntity : class, ITracingEntity
 {
     public override TTracingEntity Add(TTracingEntity entity)

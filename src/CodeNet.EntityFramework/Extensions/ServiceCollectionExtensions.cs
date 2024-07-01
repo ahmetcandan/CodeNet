@@ -13,9 +13,9 @@ public static class ServiceCollectionExtensions
     /// <param name="webBuilder"></param>
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddSqlServer(this WebApplicationBuilder webBuilder, string connectionName)
+    public static WebApplicationBuilder AddDbContext(this WebApplicationBuilder webBuilder, string connectionName)
     {
-        webBuilder.AddSqlServer<DbContext>(connectionName);
+        webBuilder.AddDbContext<DbContext>(connectionName);
         return webBuilder;
     }
 
@@ -26,7 +26,7 @@ public static class ServiceCollectionExtensions
     /// <param name="webBuilder"></param>
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
-    public static WebApplicationBuilder AddSqlServer<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) 
+    public static WebApplicationBuilder AddDbContext<TDbContext>(this WebApplicationBuilder webBuilder, string connectionName) 
         where TDbContext : DbContext
     {
         webBuilder.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration, connectionName));

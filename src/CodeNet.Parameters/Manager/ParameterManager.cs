@@ -8,6 +8,17 @@ namespace CodeNet.Parameters.Manager;
 public class ParameterManager(IMediator mediator) : IParameterManager
 {
     #region Parameter Group CRUD
+    public Task<ResponseBase<ParameterGroupWithParamsResult>> AddParameterGroupWithParamsAsync(AddParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
+    {
+        return mediator.Send(new AddParameterGroupWithParamsRequest
+        {
+            AddParameters = model.AddParameters,
+            Code = model.Code,
+            ApprovalRequired = model.ApprovalRequired,
+            Description = model.Description
+        }, cancellationToken);
+    }
+
     public Task<ResponseBase<ParameterGroupResult>> AddParameterGroupAsync(AddParameterGroupModel model, CancellationToken cancellationToken = default)
     {
         return mediator.Send((AddParameterGroupRequest)model, cancellationToken);
@@ -16,6 +27,16 @@ public class ParameterManager(IMediator mediator) : IParameterManager
     public Task<ResponseBase<ParameterGroupResult>> GetParameterGroupAsync(int parameterGroupId, CancellationToken cancellationToken = default)
     {
         return mediator.Send(new GetParameterGroupRequest { ParameterGroupId = parameterGroupId }, cancellationToken);
+    }
+
+    public Task<ResponseBase<ParameterGroupWithParamsResult>> GetParameterGroupWithParamsAsync(int parameterGroupId, CancellationToken cancellationToken = default)
+    {
+        return mediator.Send(new GetParameterGroupWithParamsRequest { ParameterGroupId = parameterGroupId }, cancellationToken);
+    }
+
+    public Task<ResponseBase<ParameterGroupWithParamsResult>> GetParameterGroupWithParamsAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
+    {
+        return mediator.Send(new GetParameterGroupWithParamsRequest { ParameterGroupCode = parameterGroupCode }, cancellationToken);
     }
 
     public Task<ResponseBase<ParameterGroupResult>> GetParameterGroupAsync(string parameterCode, CancellationToken cancellationToken = default)

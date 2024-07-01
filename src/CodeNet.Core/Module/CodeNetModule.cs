@@ -9,7 +9,7 @@ public class CodeNetModule : Autofac.Module
 {
     protected override void Load(ContainerBuilder builder)
     {
-        builder.RegisterType<IdentityContext>().As<IIdentityContext>().InstancePerLifetimeScope();
+        builder.RegisterType<CodeNetHttpContext>().As<ICodeNetHttpContext>().InstancePerLifetimeScope();
         base.Load(builder);
     }
 }

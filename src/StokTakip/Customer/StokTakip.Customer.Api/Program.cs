@@ -1,10 +1,8 @@
 using Autofac.Extensions.DependencyInjection;
 using StokTakip.Customer.Container;
 using StokTakip.Customer.Repository;
-using StokTakip.Customer.Contract.Model;
 using CodeNet.Core.Extensions;
 using CodeNet.Redis.Extensions;
-using CodeNet.RabbitMQ.Extensions;
 using CodeNet.Elasticsearch.Extensions;
 using CodeNet.MongoDB.Extensions;
 using CodeNet.EntityFramework.Extensions;
@@ -15,6 +13,8 @@ using CodeNet.HealthCheck.MongoDB.Extensions;
 using CodeNet.HealthCheck.RabbitMQ.Extensions;
 using CodeNet.HealthCheck.Elasticsearch.Extensions;
 using CodeNet.Logging.Extensions;
+using CodeNet.Parameters.Extensions;
+using CodeNet.EntityFramework.InMemory.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -28,7 +28,8 @@ builder.Logging.AddConsole();
 //builder.AddRabbitMQProducer("RabbitMQ");
 builder.AddMongoDB("MongoDB");
 builder.AddElasticsearch("Elasticsearch");
-builder.AddSqlServer<CustomerDbContext>("SqlServer");
+builder.AddDbContext<CustomerDbContext>("SqlServer");
+builder.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), "Redis");
 builder.Services.AddHealthChecks()
     .AddCodeNetHealthCheck()
     .AddEntityFrameworkHealthCheck<CustomerDbContext>()

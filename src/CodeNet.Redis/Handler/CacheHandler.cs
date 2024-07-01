@@ -7,29 +7,34 @@ using CodeNet.Redis.Attributes;
 using Newtonsoft.Json;
 using CodeNet.Logging;
 using System.Reflection;
+using Microsoft.Net.Http.Headers;
+using CodeNet.Redis.Settings;
 
 namespace CodeNet.Redis.Handler;
 
-internal class CacheHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, IDistributedCache distributedCache, IIdentityContext identityContext, IAppLogger appLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
+internal class CacheHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, IDistributedCache distributedCache, ICodeNetHttpContext httpContext, IAppLogger appLogger) : DecoratorBase<TRequest, TResponse> where TRequest : IRequest<TResponse> where TResponse : ResponseBase, new()
 {
     public override async Task<TResponse> Handle(TRequest request, RequestHandlerDelegate<TResponse> next, CancellationToken cancellationToken)
     {
-        string? key = null;
         var methodBase = GetHandlerMethodInfo(lifetimeScope);
 
-        var cacheState = identityContext.CacheState;
+        var cacheState = httpContext.CacheState;
 
         if (methodBase?.GetCustomAttributes(typeof(CacheAttribute), true).FirstOrDefault() is not CacheAttribute cacheAttribute)
             return await next();
 
         if (cacheState.HasFlag(Core.Enums.CacheState.NoCache))
+        {
+            httpContext.SetResponseHeader(HeaderNames.CacheControl, Constant.NoCache);
             return await next();
+        }
 
-         key = GetKey(methodBase, request);
-        var cacheJsonValue = await distributedCache.GetStringAsync(key, cancellationToken);
+        var key = GetKey(methodBase, request);
 
-        if (cacheState.HasFlag(Core.Enums.CacheState.ClearCache) && cacheJsonValue is not null)
+        if (cacheState.HasFlag(Core.Enums.CacheState.ClearCache))
             await distributedCache.RemoveAsync(key, cancellationToken);
+
+        var cacheJsonValue = await distributedCache.GetStringAsync(key, cancellationToken);
 
         if (string.IsNullOrEmpty(cacheJsonValue))
         {
@@ -44,6 +49,7 @@ internal class CacheHandler<TRequest, TResponse>(ILifetimeScope lifetimeScope, I
         var cacheValue = JsonConvert.DeserializeObject<TResponse>(cacheJsonValue);
         appLogger.TraceLog(cacheJsonValue, MethodBase.GetCurrentMethod());
         cacheValue!.FromCache = true;
+        httpContext.SetResponseHeader(HeaderNames.CacheControl, Constant.FromCache);
         return cacheValue;
     }
 }

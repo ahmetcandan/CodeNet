@@ -13,8 +13,11 @@ internal static class Helper
     };
     public static ParameterResult ToParameterResult(this Parameter parameter) => new()
     {
+        Id = parameter.Id,
         Code = parameter.Code,
         GroupId = parameter.GroupId,
-        Value = parameter.Value
+        Value = parameter.Value,
+        IsDefault = parameter.IsDefault,
+        Order = parameter.Order
     };
 }

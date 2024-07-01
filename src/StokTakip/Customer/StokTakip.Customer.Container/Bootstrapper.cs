@@ -14,6 +14,7 @@ using CodeNet.RabbitMQ.Module;
 using StokTakip.Customer.Contract.Model;
 using CodeNet.MongoDB.Module;
 using CodeNet.RabbitMQ.Services;
+using CodeNet.Parameters.Module;
 
 namespace StokTakip.Customer.Container;
 
@@ -34,6 +35,7 @@ public class Bootstrapper
         builder.RegisterModule<RabbitMQConsumerModule<MongoModel>>();
         builder.RegisterModule<ExceptionHandlingModule>();
         builder.RegisterModule<ElasticsearchModule>();
+        builder.RegisterModule<ParametersModule>();
         builder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
         builder.RegisterType<KeyValueMongoRepository>().As<IKeyValueRepository>().InstancePerLifetimeScope();
         builder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();

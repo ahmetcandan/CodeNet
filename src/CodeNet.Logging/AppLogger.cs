@@ -8,34 +8,34 @@ using System.Reflection;
 
 namespace CodeNet.Logging;
 
-internal class AppLogger(IIdentityContext identityContext, ILogger<AppLogger> logger) : IAppLogger
+internal class AppLogger(ICodeNetHttpContext identityContext, ILogger<AppLogger> logger) : IAppLogger
 {
-    public void EntryLog(object request, MethodBase methodBase) => PostLogData(LogTime.Entry, methodBase, request);
+    public void EntryLog(object request, MethodBase? methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
-    public void ExceptionLog(Exception exception, MethodBase methodBase) => PostLogData(LogTime.Error, methodBase, exception, exception: exception);
+    public void ExceptionLog(Exception exception, MethodBase? methodBase) => PostLogData(LogTime.Error, methodBase, exception, exception: exception);
 
-    public void ExceptionLog(Exception exception, object data, MethodBase methodBase) => PostLogData(LogTime.Error, methodBase, new { Exception = exception, Data = data }, exception: exception);
+    public void ExceptionLog(Exception exception, object data, MethodBase? methodBase) => PostLogData(LogTime.Error, methodBase, new { Exception = exception, Data = data }, exception: exception);
 
-    public void ExitLog(object response, MethodBase methodBase) => PostLogData(LogTime.Exit, methodBase, response);
+    public void ExitLog(object response, MethodBase? methodBase) => PostLogData(LogTime.Exit, methodBase, response);
 
-    public void ExitLog(object response, MethodBase methodBase, long time) => PostLogData(LogTime.Exit, methodBase, response, elapsedDuration: time);
+    public void ExitLog(object response, MethodBase? methodBase, long time) => PostLogData(LogTime.Exit, methodBase, response, elapsedDuration: time);
 
-    public void TraceLog(object data, MethodBase methodBase) => PostLogData(LogTime.Trace, methodBase, data);
+    public void TraceLog(object data, MethodBase? methodBase) => PostLogData(LogTime.Trace, methodBase, data);
 
     protected virtual string GetObjectToString(object obj)
     {
         if (obj.GetType() == typeof(string))
-            return obj.ToString();
+            return obj?.ToString() ?? string.Empty;
 
         return JsonConvert.SerializeObject(obj);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase methodBase, object data, long? elapsedDuration = null, Exception? exception = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration, exception: exception);
+    private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration, exception: exception);
 
-    private void PostLogData(LogTime logTime, MethodBase methodBase, string data, long? elapsedDuration = null, Exception? exception = null)
+    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, long? elapsedDuration = null, Exception? exception = null)
     {
-        var _methodBase = methodBase.GetMethodBase();
-        PostLogData(logTime, _methodBase!.DeclaringType!.Assembly.GetName().Name, _methodBase.DeclaringType.Name, _methodBase.Name, data, elapsedDuration: elapsedDuration, exception: exception);
+        var _methodBase = methodBase?.GetMethodBase();
+        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, elapsedDuration: elapsedDuration, exception: exception);
     }
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null, Exception? exception = null)

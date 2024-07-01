@@ -10,7 +10,7 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace CodeNet.Parameters.Handler;
 
-internal class AddParameterHandler(ParametersDbContext dbContext, IIdentityContext identityContext, ILifetimeScope lifetimeScope, IDistributedCache distributedCache) : IRequestHandler<AddParameterRequest, ResponseBase<ParameterResult>>
+internal class AddParameterHandler(ParametersDbContext dbContext, ICodeNetHttpContext identityContext, ILifetimeScope lifetimeScope, IDistributedCache distributedCache) : IRequestHandler<AddParameterRequest, ResponseBase<ParameterResult>>
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
     private readonly ParameterRepositoryResolver _parameterRepositoryResolver = new(dbContext, identityContext);
@@ -24,6 +24,8 @@ internal class AddParameterHandler(ParametersDbContext dbContext, IIdentityConte
             Code = request.Code,
             GroupId = request.GroupId,
             Value = request.Value,
+            IsDefault = request.IsDefault,
+            Order = request.Order
         };
 
         var addResponse = await parameterRepository.AddAsync(parameter, cancellationToken);

@@ -4,6 +4,6 @@ using StokTakip.Customer.Abstraction.Repository;
 
 namespace StokTakip.Customer.Repository;
 
-public class CustomerRepository(CustomerDbContext context, IIdentityContext identityContext) : TracingRepository<Model.Customer>(context, identityContext), ICustomerRepository
+public class CustomerRepository(CustomerDbContext context, ICodeNetHttpContext identityContext) : TracingRepository<Model.Customer>(context, identityContext), ICustomerRepository
 {
 }
