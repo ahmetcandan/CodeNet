@@ -1,4 +1,4 @@
-﻿using CodeNet.Abstraction;
+﻿using CodeNet.EntityFramework.Repositories;
 using StokTakip.Product.Model.ViewModel;
 
 namespace StokTakip.Product.Abstraction.Repository;

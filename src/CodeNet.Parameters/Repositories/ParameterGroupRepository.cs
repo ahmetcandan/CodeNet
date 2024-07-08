@@ -11,7 +11,7 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
 {
     private readonly DbSet<Parameter> _parameters;
 
-    public ParameterGroupRepository(DbContext dbContext, ICodeNetHttpContext identityContext) : base(dbContext, identityContext)
+    public ParameterGroupRepository(DbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
     {
         _parameters = _dbContext.Set<Parameter>();
     }

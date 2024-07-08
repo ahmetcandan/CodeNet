@@ -1,10 +1,9 @@
-﻿using CodeNet.Abstraction;
-using StokTakip.Campaign.Contract.Request;
+﻿using StokTakip.Campaign.Contract.Request;
 using StokTakip.Campaign.Contract.Response;
 
 namespace StokTakip.Campaign.Abstraction.Service;
 
-public interface ICampaignService : IService
+public interface ICampaignService
 {
     public Task<CampaignResponse> GetCampaign(int campaignId, CancellationToken cancellationToken);
 

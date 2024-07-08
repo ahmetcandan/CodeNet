@@ -16,10 +16,7 @@ program.cs
 using CodeNet.Mapper.Module;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<MapperModule>();
-});
+builder.AddMapper();
 //...
 
 var app = builder.Build();

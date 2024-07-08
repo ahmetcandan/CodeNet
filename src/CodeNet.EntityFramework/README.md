@@ -11,7 +11,7 @@ dotnet add package CodeNet.EntityFramework
 ```
 
 ### Usage
-> appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
@@ -19,22 +19,21 @@ dotnet add package CodeNet.EntityFramework
   }
 }
 ```
-> program.cs
+program.cs
 ```csharp
+using CodeNet.EntityFramework.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
-    containerBuilder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();
-});
-builder.AddSqlServer<CustomerDbContext>("SqlServer");
+builder.AddDbContext<CustomerDbContext>("SqlServer");
+//or
+builder.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration, "SqlServer"));
 //...
 
 var app = builder.Build();
 //...
 app.Run();
 ```
-> DbContext
+DbContext
 ```csharp
 public partial class CustomerDbContext(DbContextOptions<CustomerDbContext> options) : DbContext(options)
 {
@@ -42,7 +41,7 @@ public partial class CustomerDbContext(DbContextOptions<CustomerDbContext> optio
     public virtual DbSet<Employee> Employees { get; set; }
 }
 ```
-> Repository
+Repository
 ```csharp
 public class CustomerRepository(CustomerDbContext context, IIdentityContext identityContext) : 
     TracingRepository<Model.Customer>(context, identityContext), ICustomerRepository
@@ -50,7 +49,7 @@ public class CustomerRepository(CustomerDbContext context, IIdentityContext iden
 }
 ```
 
-> Repository Usage
+Repository Usage
 ```csharp
 public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapperConfiguration Mapper) : BaseService, ICustomerService
 {

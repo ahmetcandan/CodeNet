@@ -17,7 +17,7 @@ namespace CodeNet.MakerChecker.Tests
         [Test]
         public void Maker_Checker_Approve_Tests()
         {
-            Mock<ICodeNetHttpContext> mockIdentityContext = new();
+            Mock<ICodeNetContext> mockIdentityContext = new();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns("admin");
             mockIdentityContext.Setup(c => c.Roles)
@@ -97,7 +97,7 @@ namespace CodeNet.MakerChecker.Tests
         public async Task Maker_Checker_Approve_Async_Tests()
         {
 
-            Mock<ICodeNetHttpContext> mockIdentityContext = new();
+            Mock<ICodeNetContext> mockIdentityContext = new();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns("admin");
             mockIdentityContext.Setup(c => c.Roles)
@@ -176,7 +176,7 @@ namespace CodeNet.MakerChecker.Tests
         [Test]
         public void Maker_Checker_Reject_Tests()
         {
-            Mock<ICodeNetHttpContext> mockIdentityContext = new();
+            Mock<ICodeNetContext> mockIdentityContext = new();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns("admin");
             mockIdentityContext.Setup(c => c.Roles)
@@ -242,7 +242,7 @@ namespace CodeNet.MakerChecker.Tests
         [Test]
         public async Task Maker_Checker_Reject_Async_Tests()
         {
-            Mock<ICodeNetHttpContext> mockIdentityContext = new();
+            Mock<ICodeNetContext> mockIdentityContext = new();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns("admin");
             mockIdentityContext.Setup(c => c.Roles)

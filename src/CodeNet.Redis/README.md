@@ -28,20 +28,14 @@ using CodeNet.Redis.Extensions;
 using CodeNet.Redis.Module;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    //for cache
-    containerBuilder.AddModule<RedisDistributedCacheModule>();
-
-    //for lock
-    containerBuilder.AddModule<RedisDistributedLockModule>();
-});
 builder
     .AddRedisDistributedCache("Redis")
     .AddRedisDistributedLock("Redis");
 //...
 
 var app = builder.Build();
+app.UseDistributedCache()
+    .UseDistributedLock();
 //...
 app.Run();
 ```
@@ -52,9 +46,9 @@ using RedLockNet;
 
 namespace ExampleApi.Handler;
 
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, TestResponse>
 {
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
     {
         using var redLock = await LockFactory.CreateLockAsync("LOCK_KEY", TimeSpan.FromSeconds(3));
         if (!redLock.IsAcquired)
@@ -71,10 +65,10 @@ using MediatR;
 
 namespace ExampleApi.Handler;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+public class TestRequestHandler() : IRequestHandler<TestRequest, TestResponse>
 {
     [Lock(ExpiryTime = 3)]
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
     {
         //Process...
     }
@@ -87,10 +81,10 @@ using Microsoft.Extensions.Caching.Distributed;
 
 namespace ExampleApi.Handler;
 
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, TestResponse>
 {
     private const string CACHE_KEY = "KEY";
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
     {
         var cacheJsonValue = await DistributedCache.GetStringAsync(CACHE_KEY, cancellationToken);
         if (string.IsNullOrEmpty(cacheJsonValue))
@@ -103,7 +97,7 @@ public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestH
             }, cancellationToken);
             return response;
         }
-        return JsonConvert.DeserializeObject<ResponseBase<TestResponse>>(cacheJsonValue);
+        return JsonConvert.DeserializeObject<TestResponse>(cacheJsonValue);
     }
 }
 ```
@@ -114,10 +108,10 @@ using MediatR;
 
 namespace ExampleApi.Handler;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+public class TestRequestHandler() : IRequestHandler<TestRequest, TestResponse>
 {
     [Cache(Time = 60)]
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
     {
         //Process...
     }

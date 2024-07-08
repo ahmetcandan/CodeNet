@@ -1,10 +1,9 @@
-﻿using CodeNet.Abstraction;
-using StokTakip.Product.Contract.Request;
+﻿using StokTakip.Product.Contract.Request;
 using StokTakip.Product.Contract.Response;
 
 namespace StokTakip.Product.Abstraction.Service;
 
-public interface IProductService : IService
+public interface IProductService
 {
     public Task<ProductResponse> GetProduct(int productId, CancellationToken cancellationToken);
 

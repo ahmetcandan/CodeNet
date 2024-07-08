@@ -21,6 +21,8 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.PostgreSQL.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddNpgsql("PostgreSQL");
 //...

@@ -7,12 +7,12 @@ namespace CodeNet.MakerChecker.Repositories;
 
 internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
 {
-    private readonly ICodeNetHttpContext _identityContext;
+    private readonly ICodeNetContext _identityContext;
     private readonly DbSet<MakerCheckerDefinition> _makerCheckerDefinitions;
     private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
     private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories;
 
-    public MakerCheckerFlowRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetHttpContext identityContext) : base(makerCheckerDbContext, identityContext)
+    public MakerCheckerFlowRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetContext identityContext) : base(makerCheckerDbContext, identityContext)
     {
         _identityContext = identityContext;
         _makerCheckerDefinitions = _dbContext.Set<MakerCheckerDefinition>();

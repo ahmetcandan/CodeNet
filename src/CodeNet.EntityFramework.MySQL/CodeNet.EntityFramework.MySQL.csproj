@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.2" />
+	  <PackageReference Include="MySql.EntityFrameworkCore" Version="8.0.5" />
 	</ItemGroup>
 
 	<ItemGroup>

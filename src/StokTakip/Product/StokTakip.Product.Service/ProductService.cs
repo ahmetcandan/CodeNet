@@ -1,5 +1,4 @@
-﻿using CodeNet.Abstraction;
-using CodeNet.ExceptionHandling;
+﻿using CodeNet.ExceptionHandling;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Contract.Request;
@@ -8,7 +7,7 @@ using StokTakip.Product.Service.Mapper;
 
 namespace StokTakip.Product.Service;
 
-public class ProductService(IProductRepository ProductRepository, IAutoMapperConfiguration Mapper) : BaseService, IProductService
+public class ProductService(IProductRepository ProductRepository, IAutoMapperConfiguration Mapper) : IProductService
 {
     public async Task<ProductResponse> CreateProduct(CreateProductRequest request, CancellationToken cancellationToken)
     {

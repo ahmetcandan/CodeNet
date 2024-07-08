@@ -1,11 +1,8 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Identity;
-using CodeNet.Core.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeNet.Identity.Model;
+namespace CodeNet.Identity.Settings;
 
-public class RegisterUserModel : IRequest<ResponseBase<IdentityResult>>
+public class RegisterUserModel
 {
     [Required(ErrorMessage = "User Name is required")]
     public string Username { get; set; }

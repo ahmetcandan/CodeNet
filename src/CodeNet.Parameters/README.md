@@ -22,10 +22,6 @@ dotnet add package CodeNet.Parameters
 program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<ParametersModule>();
-});
 builder.AddParameters(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
 //...
 

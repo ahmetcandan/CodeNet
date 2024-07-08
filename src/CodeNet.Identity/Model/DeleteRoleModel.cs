@@ -1,8 +1,5 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
+﻿namespace CodeNet.Identity.Settings;
 
-namespace CodeNet.Identity.Model;
-
-public class DeleteRoleModel : RoleModel, IRequest<ResponseBase>
+public class DeleteRoleModel : RoleModel
 {
 }

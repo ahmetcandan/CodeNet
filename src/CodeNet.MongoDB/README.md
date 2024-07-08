@@ -24,11 +24,6 @@ program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMongoDB("MongoDB");
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.AddModule<MongoDBModule>();
-    containerBuilder.RegisterType<SampleRepository>().As<ISampleRepository>().InstancePerLifetimeScope();
-});
 //...
 
 var app = builder.Build();

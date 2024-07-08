@@ -1,10 +1,8 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeNet.Identity.Model;
+namespace CodeNet.Identity.Settings;
 
-public class RoleClaimsModel : IRequest<ResponseBase>
+public class RoleClaimsModel
 {
     [Required(ErrorMessage = "Id is required")]
     public string Id { get; set; }

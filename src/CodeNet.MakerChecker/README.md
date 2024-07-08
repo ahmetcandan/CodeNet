@@ -22,10 +22,6 @@ dotnet add package CodeNet.MakerChecker
 program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<MakerCheckerModule>();
-});
 builder.AddMakerChecker(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
 //...
 

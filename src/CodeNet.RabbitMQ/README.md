@@ -36,12 +36,6 @@ using CodeNet.RabbitMQ.Module;
 using ExampleApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.AddModule<RabbitMQProducerModule<QueueModel>>();
-    containerBuilder.AddModule<RabbitMQConsumerModule<QueueModel>>();
-    containerBuilder.RegisterType<MessageConsumerHandler>().As<IRabbitMQConsumerHandler<QueueModel>>().InstancePerLifetimeScope();
-});
 builder
     .AddRabbitMQProducer("RabbitMQ")
     .AddRabbitMQConsumer("RabbitMQ");

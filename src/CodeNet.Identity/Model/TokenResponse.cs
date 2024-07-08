@@ -1,4 +1,4 @@
-﻿namespace CodeNet.Identity.Model;
+﻿namespace CodeNet.Identity.Settings;
 
 public class TokenResponse
 {

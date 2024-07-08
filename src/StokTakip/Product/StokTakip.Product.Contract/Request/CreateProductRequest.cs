@@ -1,11 +1,8 @@
-﻿using MediatR;
-using CodeNet.Abstraction.Model;
-using StokTakip.Product.Contract.Response;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Product.Contract.Request;
 
-public class CreateProductRequest : IRequest<ResponseBase<ProductResponse>>
+public class CreateProductRequest
 {
     [MaxLength(50)]
     public required string Code { get; set; }

@@ -15,12 +15,14 @@ appSettings.json
 ```json
 {
   "ConnectionStrings": {
-    "Sqlite": "Data Source=c:\mydb.db;Version=3;"
+    "Sqlite": "Data Source=mydb.db;Version=3;"
   }
 }
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.Sqlite.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSqlite("Sqlite");
 //...

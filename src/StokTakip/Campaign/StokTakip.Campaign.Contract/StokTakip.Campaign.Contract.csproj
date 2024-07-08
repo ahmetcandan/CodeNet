@@ -6,9 +6,4 @@
 		<Nullable>enable</Nullable>
 	</PropertyGroup>
 
-	<ItemGroup>
-	  <PackageReference Include="CodeNet.Abstraction" Version="1.0.4" />
-	  <PackageReference Include="MediatR" Version="12.3.0" />
-	</ItemGroup>
-
 </Project>

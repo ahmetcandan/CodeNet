@@ -1,94 +1,188 @@
-﻿using CodeNet.Core.Models;
-using CodeNet.Parameters.Handler.Request;
+﻿using CodeNet.Core;
+using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Models;
-using MediatR;
+using CodeNet.Parameters.Repositories;
 
 namespace CodeNet.Parameters.Manager;
 
-public class ParameterManager(IMediator mediator) : IParameterManager
+public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext identityContext) : IParameterManager
 {
+    private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
+    private readonly ParameterRepositoryResolver _parameterRepositoryResolver = new(dbContext, identityContext);
+    private readonly ParameterTracingRepository _parameterRepository = new(dbContext, identityContext);
+
     #region Parameter Group CRUD
-    public Task<ResponseBase<ParameterGroupWithParamsResult>> AddParameterGroupWithParamsAsync(AddParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupWithParamsResult> AddParameterGroupWithParamsAsync(AddParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new AddParameterGroupWithParamsRequest
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(model.ApprovalRequired);
+        var parameterGroup = new ParameterGroup
         {
-            AddParameters = model.AddParameters,
             Code = model.Code,
             ApprovalRequired = model.ApprovalRequired,
             Description = model.Description
-        }, cancellationToken);
+        };
+        var addGroupResponse = await _parameterGroupRepository.AddAsync(parameterGroup, cancellationToken);
+        var parameterResultList = new List<ParameterResult>();
+        foreach (var item in model.AddParameters)
+            parameterResultList.Add((await parameterRepository.AddAsync(new Parameter
+            {
+                Code = item.Code,
+                Value = item.Value,
+                GroupId = addGroupResponse.Id,
+                IsDefault = item.IsDefault,
+                Order = item.Order
+            }, cancellationToken)).ToParameterResult());
+
+        await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
+        return new ParameterGroupWithParamsResult
+        {
+            Code = addGroupResponse.Code,
+            ApprovalRequired = addGroupResponse.ApprovalRequired,
+            Description = addGroupResponse.Description,
+            Id = addGroupResponse.Id,
+            Parameters = parameterResultList
+        };
     }
 
-    public Task<ResponseBase<ParameterGroupResult>> AddParameterGroupAsync(AddParameterGroupModel model, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupResult> AddParameterGroupAsync(AddParameterGroupModel model, CancellationToken cancellationToken = default)
     {
-        return mediator.Send((AddParameterGroupRequest)model, cancellationToken);
+        var parameterGroup = new ParameterGroup
+        {
+            Code = model.Code,
+            ApprovalRequired = model.ApprovalRequired,
+            Description = model.Description
+        };
+        var addResponse = await _parameterGroupRepository.AddAsync(parameterGroup, cancellationToken);
+        await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
+        return addResponse.ToParameterGroupResult();
     }
 
-    public Task<ResponseBase<ParameterGroupResult>> GetParameterGroupAsync(int parameterGroupId, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupResult?> GetParameterGroupAsync(int parameterGroupId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterGroupRequest { ParameterGroupId = parameterGroupId }, cancellationToken);
+        var parameterGroup = await _parameterGroupRepository.GetAsync([parameterGroupId], cancellationToken);
+        return parameterGroup?.ToParameterGroupResult() ?? null;
     }
 
-    public Task<ResponseBase<ParameterGroupWithParamsResult>> GetParameterGroupWithParamsAsync(int parameterGroupId, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupResult?> GetParameterGroupAsync(string parameterCode, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterGroupWithParamsRequest { ParameterGroupId = parameterGroupId }, cancellationToken);
+        var parameterGroup = await _parameterGroupRepository.GetAsync([parameterCode], cancellationToken);
+        return parameterGroup?.ToParameterGroupResult() ?? null;
     }
 
-    public Task<ResponseBase<ParameterGroupWithParamsResult>> GetParameterGroupWithParamsAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
+    public Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(int parameterGroupId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterGroupWithParamsRequest { ParameterGroupCode = parameterGroupCode }, cancellationToken);
+        return _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupId, cancellationToken);
     }
 
-    public Task<ResponseBase<ParameterGroupResult>> GetParameterGroupAsync(string parameterCode, CancellationToken cancellationToken = default)
+    public Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterGroupRequest { ParameterGroupCode = parameterCode }, cancellationToken);
+        return _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupCode, cancellationToken);
     }
 
-    public Task<ResponseBase<List<ParameterGroupResult>>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
+    public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterGroupListRequest { Page = page, Count = count }, cancellationToken);
+        return (await _parameterGroupRepository.GetPagingListAsync(page, count, cancellationToken)).Select(c => new ParameterGroupResult
+        {
+            Code = c.Code,
+            ApprovalRequired = c.ApprovalRequired,
+            Description = c.Description,
+            Id = c.Id
+        }).ToList();
     }
 
-    public Task<ResponseBase<ParameterGroupResult>> UpdateParameterGroupAsync(UpdateParameterGroupModel model, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupResult> UpdateParameterGroupAsync(UpdateParameterGroupModel model, CancellationToken cancellationToken = default)
     {
-        return mediator.Send((UpdateParameterGroupRequest)model, cancellationToken);
+        var parameterGroup = await _parameterGroupRepository.GetAsync([model.Id], cancellationToken);
+        if (parameterGroup is not null)
+        {
+            parameterGroup.Description = model.Description;
+            parameterGroup.ApprovalRequired = model.ApprovalRequired;
+            parameterGroup.Code = model.Code;
+
+            var updateResponse = _parameterGroupRepository.Update(parameterGroup);
+            await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
+            return updateResponse.ToParameterGroupResult();
+        }
+
+        throw new ParameterException("PR001", $"Not found parameter group (Id: {model?.Id}).");
     }
 
-    public Task<ResponseBase<ParameterGroupResult>> DeleteParameterGroupAsync(int parameterGroupId, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupResult> DeleteParameterGroupAsync(int parameterGroupId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new DeleteParameterGroupRequest { ParameterGroupId = parameterGroupId }, cancellationToken);
+        var parameterGroup = await _parameterGroupRepository.GetAsync([parameterGroupId], cancellationToken);
+        if (parameterGroup is not null)
+            _parameterGroupRepository.Remove(parameterGroup);
+        else
+            throw new ParameterException("PR001", $"Not found parameter group (Id: {parameterGroupId}).");
+        await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
+
+        return parameterGroup.ToParameterGroupResult();
     }
     #endregion
 
     #region Parameter CRUD
-    public Task<ResponseBase<ParameterResult>> AddParameterAsync(AddParameterModel model, CancellationToken cancellationToken = default)
+    public async Task<ParameterResult> AddParameterAsync(AddParameterModel model, CancellationToken cancellationToken = default)
     {
-        return mediator.Send((AddParameterRequest)model, cancellationToken);
+        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(model.GroupId, cancellationToken);
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        var parameter = new Parameter
+        {
+            Code = model.Code,
+            GroupId = model.GroupId,
+            Value = model.Value,
+            IsDefault = model.IsDefault,
+            Order = model.Order
+        };
+
+        var addResponse = await parameterRepository.AddAsync(parameter, cancellationToken);
+        await parameterRepository.SaveChangesAsync(cancellationToken);
+        return addResponse.ToParameterResult();
     }
 
-    public Task<ResponseBase<ParameterResult>> GetParameterAsync(int parameterId, CancellationToken cancellationToken = default)
+    public async Task<ParameterResult?> GetParameterAsync(int parameterId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParameterRequest { ParameterId = parameterId }, cancellationToken);
+        var parameter = await _parameterRepository.GetAsync([parameterId], cancellationToken);
+        return parameter?.ToParameterResult();
     }
 
-    public Task<ResponseBase<List<ParameterListItemResult>>> GetParametersAsync(int groupId, CancellationToken cancellationToken = default)
+    public Task<List<ParameterListItemResult>> GetParametersAsync(int groupId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParametersRequest { ParameterGroupId = groupId }, cancellationToken);
+        return _parameterGroupRepository.GetParametersAsync(groupId, cancellationToken);
     }
 
-    public Task<ResponseBase<List<ParameterListItemResult>>> GetParametersAsync(string groupCode, CancellationToken cancellationToken = default)
+    public Task<List<ParameterListItemResult>> GetParametersAsync(string groupCode, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new GetParametersRequest { ParameterGroupCode = groupCode }, cancellationToken);
+        return _parameterGroupRepository.GetParametersAsync(groupCode, cancellationToken);
     }
 
-    public Task<ResponseBase<ParameterResult>> UpdateParameterAsync(UpdateParameterModel model, CancellationToken cancellationToken = default)
+    public async Task<ParameterResult> UpdateParameterAsync(UpdateParameterModel model, CancellationToken cancellationToken = default)
     {
-        return mediator.Send((UpdateParameterRequest)model, cancellationToken);
+        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(model.GroupId, cancellationToken);
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        var parameter = await parameterRepository.GetAsync([model.Id], cancellationToken);
+        if (parameter is not null)
+        {
+            parameter.Value = model.Value;
+            parameter.Code = model.Code;
+            parameter.IsDefault = model.IsDefault;
+            parameter.Order = model.Order;
+
+            var updateResponse = parameterRepository.Update(parameter);
+            await parameterRepository.SaveChangesAsync(cancellationToken);
+            return updateResponse.ToParameterResult();
+        }
+
+        throw new ParameterException("PR001", $"Not found parameter (Id: {model?.Id}).");
     }
 
-    public Task<ResponseBase<ParameterResult>> DeleteParameterAsync(int parameterId, CancellationToken cancellationToken = default)
+    public async Task<ParameterResult> DeleteParameterAsync(int parameterId, CancellationToken cancellationToken = default)
     {
-        return mediator.Send(new DeleteParameterRequest { ParameterId = parameterId }, cancellationToken);
+        var parameter = await _parameterRepository.GetAsync([parameterId], cancellationToken) ?? throw new ParameterException("PR002", $"Not found parameter (Id: {parameterId}).");
+        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(parameter.GroupId, cancellationToken);
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        parameterRepository.Remove(parameter);
+        await parameterRepository.SaveChangesAsync(cancellationToken);
+        return parameter.ToParameterResult();
     }
     #endregion
 }

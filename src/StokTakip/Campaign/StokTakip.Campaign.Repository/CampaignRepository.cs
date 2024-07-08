@@ -1,4 +1,4 @@
-﻿using CodeNet.EntityFramework;
+﻿using CodeNet.EntityFramework.Repositories;
 using StokTakip.Campaign.Abstraction.Repository;
 
 namespace StokTakip.Campaign.Repository;

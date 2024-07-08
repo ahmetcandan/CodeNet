@@ -1,6 +1,6 @@
 ﻿using System.Security.Claims;
 
-namespace CodeNet.Identity.Model;
+namespace CodeNet.Identity.Settings;
 
 public class EditClaimsModel
 {

@@ -1,9 +1,8 @@
-﻿using CodeNet.Core.Models;
-using CodeNet.Identity.Model;
+﻿using CodeNet.Identity.Settings;
 
 namespace CodeNet.Identity.Manager;
 
 public interface IIdentityTokenManager
 {
-    Task<ResponseBase<TokenResponse>> GenerateToken(LoginModel model);
+    Task<TokenResponse> GenerateToken(LoginModel model);
 }

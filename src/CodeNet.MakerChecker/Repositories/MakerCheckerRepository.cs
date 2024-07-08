@@ -9,7 +9,7 @@ namespace CodeNet.MakerChecker.Repositories;
 public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMakerCheckerEntity>, IMakerCheckerRepository<TMakerCheckerEntity>
     where TMakerCheckerEntity : class, IMakerCheckerEntity
 {
-    private readonly ICodeNetHttpContext _identityContext;
+    private readonly ICodeNetContext _identityContext;
     private readonly string _entityName = typeof(TMakerCheckerEntity).Name;
     private readonly DbSet<MakerCheckerDefinition> _makerCheckerDefinitions;
     private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
@@ -17,7 +17,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository;
     private readonly MakerCheckerDraftEntityRepository _makerCheckerDraftEntityRepository;
 
-    public MakerCheckerRepository(MakerCheckerDbContext dbContext, ICodeNetHttpContext identityContext) : base(dbContext, identityContext)
+    public MakerCheckerRepository(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
     {
         _identityContext = identityContext;
         _makerCheckerDefinitions = _dbContext.Set<MakerCheckerDefinition>();

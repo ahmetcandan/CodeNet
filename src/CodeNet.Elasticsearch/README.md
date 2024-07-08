@@ -23,13 +23,9 @@ appSettings.json
 ```
 program.cs
 ```csharp
-using CodeNet.Elasticsearch.Module;
+using CodeNet.Elasticsearch.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<ElasticsearchModule>();
-});
 builder.AddElasticsearch("Elasticsearch");
 //...
 

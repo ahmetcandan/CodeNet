@@ -10,8 +10,4 @@
 	  <Folder Include="Model\" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <ProjectReference Include="..\..\..\CodeNet.Core\CodeNet.Core.csproj" />
-	</ItemGroup>
-
 </Project>

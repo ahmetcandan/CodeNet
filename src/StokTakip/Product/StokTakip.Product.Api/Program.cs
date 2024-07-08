@@ -1,23 +1,22 @@
-using Autofac.Extensions.DependencyInjection;
 using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
 using CodeNet.Logging.Extensions;
 using CodeNet.Redis.Extensions;
-using StokTakip.Product.Container;
+using StokTakip.Product.Abstraction.Repository;
+using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Repository;
+using StokTakip.Product.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder => Bootstrapper.RegisterModules(containerBuilder));
-builder.AddNetCore("Application");
-builder.AddAuthentication("JWT");
+builder.AddCodeNet("Application");
+builder.AddAuthenticationWithAsymmetricKey("JWT");
 builder.AddRedisDistributedCache("Redis");
 builder.AddRedisDistributedLock("Redis");
-builder.AddSqlServer<ProductDbContext>("SqlServer");
+builder.AddDbContext<ProductDbContext>("SqlServer");
 builder.AddLogging();
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
-var container = app.Services.GetAutofacRoot();
-Bootstrapper.SetContainer(container);
-
-app.UseNetCore(builder.Configuration, "Application");
+app.UseCodeNet(builder.Configuration, "Application");
 app.Run();

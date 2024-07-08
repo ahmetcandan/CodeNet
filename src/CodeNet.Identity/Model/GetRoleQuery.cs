@@ -1,8 +1,5 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
+﻿namespace CodeNet.Identity.Settings;
 
-namespace CodeNet.Identity.Model;
-
-public class GetRoleQuery : IRequest<ResponseBase<IEnumerable<RoleViewModel>>>
+public class GetRoleQuery
 {
 }

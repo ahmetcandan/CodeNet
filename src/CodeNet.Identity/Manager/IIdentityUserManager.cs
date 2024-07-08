@@ -1,13 +1,13 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using CodeNet.Core.Models;
-using CodeNet.Identity.Model;
+using CodeNet.Identity.Settings;
 
 namespace CodeNet.Identity.Manager;
 public interface IIdentityUserManager
 {
-    Task<ResponseBase<IdentityResult>> CreateUser(RegisterUserModel model);
-    Task<ResponseBase> EditUserRoles(UpdateUserRolesModel model);
-    Task<ResponseBase> EditUserClaims(UpdateUserClaimsModel model);
-    Task<ResponseBase<UserModel>> GetUser(string username);
-    Task<ResponseBase> RemoveUser(RemoveUserModel model);
+    Task<IdentityResult> CreateUser(RegisterUserModel model);
+    Task<ResponseMessage> EditUserRoles(UpdateUserRolesModel model);
+    Task<ResponseMessage> EditUserClaims(UpdateUserClaimsModel model);
+    Task<UserModel> GetUser(string username);
+    Task<ResponseMessage> RemoveUser(RemoveUserModel model);
 }

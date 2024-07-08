@@ -4,6 +4,6 @@ using CodeNet.Parameters.Models;
 
 namespace CodeNet.Parameters.Repositories;
 
-internal class ParameterMakerCheckerRepository(ParametersDbContext dbContext, ICodeNetHttpContext identityContext) : MakerCheckerRepository<Parameter>(dbContext, identityContext), IParameterRepository
+internal class ParameterMakerCheckerRepository(ParametersDbContext dbContext, ICodeNetContext identityContext) : MakerCheckerRepository<Parameter>(dbContext, identityContext), IParameterRepository
 {
 }

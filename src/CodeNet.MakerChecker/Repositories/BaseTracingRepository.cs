@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-internal class BaseTracingRepository<TEntity>(DbContext dbContext, ICodeNetHttpContext identityContext) : TracingRepository<TEntity>(dbContext, identityContext)
+internal class BaseTracingRepository<TEntity>(DbContext dbContext, ICodeNetContext identityContext) : TracingRepository<TEntity>(dbContext, identityContext)
     where TEntity : class, ITracingEntity
 {
 }

@@ -13,6 +13,8 @@ dotnet add package CodeNet.EntityFramework.InMemory
 ### Usage
 program.cs
 ```csharp
+using CodeNet.EntityFramework.InMemory.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddInMemoryDB("DatabaseName");
 //...

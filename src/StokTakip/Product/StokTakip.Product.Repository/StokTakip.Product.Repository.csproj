@@ -7,10 +7,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.EntityFramework" Version="1.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\StokTakip.Product.Abstraction\StokTakip.Product.Abstraction.csproj" />
 	</ItemGroup>
 

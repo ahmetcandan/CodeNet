@@ -13,13 +13,9 @@ dotnet add package CodeNet.Logging
 ### Usage
 program.cs
 ```csharp
-using CodeNet.Logging.Module;
+using CodeNet.Logging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<LoggingModule>();
-});
 builder.AddLogging("Logging");
 //...
 

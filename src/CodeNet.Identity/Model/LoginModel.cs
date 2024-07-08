@@ -1,13 +1,12 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
+﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeNet.Identity.Model;
+namespace CodeNet.Identity.Settings;
 
-public class LoginModel : IRequest<ResponseBase<TokenResponse>>
+public class LoginModel
 {
-    //[Required(ErrorMessage = "User Name is required")]
+    [Required(ErrorMessage = "User Name is required")]
     public string Username { get; set; }
 
-    //[Required(ErrorMessage = "Password is required")]
+    [Required(ErrorMessage = "Password is required")]
     public string Password { get; set; }
 }

@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using CodeNet.Abstraction;
-using CodeNet.EntityFramework;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Model;
 using StokTakip.Product.Model.ViewModel;
+using CodeNet.EntityFramework.Repositories;
+using CodeNet.Core;
 
 namespace StokTakip.Product.Repository;
 
@@ -11,7 +11,7 @@ public class ProductRepository : TracingRepository<Model.Product>, IProductRepos
 {
     private readonly DbSet<Category> _categories;
 
-    public ProductRepository(ProductDbContext context, IIdentityContext identityContext) : base(context, identityContext)
+    public ProductRepository(ProductDbContext context, ICodeNetContext codeNetContext) : base(context, codeNetContext)
     {
         _categories = _dbContext.Set<Category>();
     }

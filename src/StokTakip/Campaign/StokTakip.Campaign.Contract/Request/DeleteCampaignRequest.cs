@@ -1,10 +1,6 @@
-﻿using MediatR;
-using CodeNet.Abstraction.Model;
-using StokTakip.Campaign.Contract.Response;
+﻿namespace StokTakip.Campaign.Contract.Request;
 
-namespace StokTakip.Campaign.Contract.Request;
-
-public class DeleteCampaignRequest : IRequest<ResponseBase<CampaignResponse>>
+public class DeleteCampaignRequest
 {
     public required int Id { get; set; }
 }

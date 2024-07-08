@@ -1,10 +1,6 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
-using StokTakip.Customer.Contract.Response;
+﻿namespace StokTakip.Customer.Contract.Request;
 
-namespace StokTakip.Customer.Contract.Request;
-
-public class DeleteCustomerRequest : IRequest<ResponseBase<CustomerResponse>>
+public class DeleteCustomerRequest
 {
     public required int Id { get; set; }
 }

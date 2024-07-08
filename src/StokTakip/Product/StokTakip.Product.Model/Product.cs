@@ -1,4 +1,4 @@
-﻿using CodeNet.Abstraction.Model;
+﻿using CodeNet.EntityFramework.Models;
 using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Product.Model;

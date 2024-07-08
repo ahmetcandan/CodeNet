@@ -1,6 +1,5 @@
-﻿using MediatR;
-using Microsoft.AspNetCore.Mvc;
-using CodeNet.Abstraction.Model;
+﻿using Microsoft.AspNetCore.Mvc;
+using StokTakip.Product.Abstraction.Service;
 using StokTakip.Product.Contract.Request;
 using StokTakip.Product.Contract.Response;
 
@@ -8,35 +7,33 @@ namespace StokTakip.Product.Api.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class ProductsController(IMediator mediator) : ControllerBase
+public class ProductsController(IProductService productService) : ControllerBase
 {
-    private readonly IMediator _mediator = mediator ?? throw new System.ArgumentNullException(nameof(mediator));
-
     [HttpGet("{productId}")]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    [ProducesResponseType(200, Type = typeof(ProductResponse))]
     public async Task<IActionResult> Get(int productId, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new GetProductRequest { Id = productId }, cancellationToken));
+        return Ok(await productService.GetProduct(productId, cancellationToken));
     }
 
     [HttpPost]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    [ProducesResponseType(200, Type = typeof(ProductResponse))]
     public async Task<IActionResult> Post(CreateProductRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(request, cancellationToken));
+        return Ok(await productService.CreateProduct(request, cancellationToken));
     }
 
     [HttpPut]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
+    [ProducesResponseType(200, Type = typeof(ProductResponse))]
     public async Task<IActionResult> Put(UpdateProductRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(request, cancellationToken));
+        return Ok(await productService.UpdateProduct(request, cancellationToken));
     }
 
     [HttpDelete]
-    [ProducesResponseType(200, Type = typeof(ResponseBase<ProductResponse>))]
-    public async Task<IActionResult> Delete(int productId, CancellationToken cancellationToken)
+    [ProducesResponseType(200, Type = typeof(ProductResponse))]
+    public async Task<IActionResult> Delete(DeleteProductRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await _mediator.Send(new DeleteProductRequest { Id = productId }, cancellationToken));
+        return Ok(await productService.DeleteProduct(request.Id, cancellationToken));
     }
 }

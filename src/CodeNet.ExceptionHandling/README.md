@@ -11,19 +11,34 @@ dotnet add package CodeNet.ExceptionHandling
 ```
 
 ### Usage
+appSettings.json
+```json
+{
+  "DefaultErrorMessage": {
+	"MessageCode": "EX0001",
+	"Message": "An unexpected error occurred!"
+  }
+}
+```
+
 program.cs
 ```csharp
-using CodeNet.ExceptionHandling.Module;
+using CodeNet.ExceptionHandling.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<ExceptionHandlingModule>();
-});
+builder.AddDefaultErrorMessage("DefaultErrorMessage")
 //...
 
 var app = builder.Build();
-app.UseErrorController();
 //...
+app.UseExceptionHandling(); //This should be used last.
 app.Run();
+```
+
+Example Error Message
+```json
+{
+  "MessageCode": "EX0001",
+  "Message": "An unexpected error occurred!"
+}
 ```

@@ -7,12 +7,9 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="CodeNet.Cache" Version="1.0.4" />
-	  <PackageReference Include="CodeNet.ExceptionHandling" Version="1.0.4" />
-	  <PackageReference Include="CodeNet.Mapper" Version="1.0.4" />
-	</ItemGroup>
-
-	<ItemGroup>
+		<ProjectReference Include="..\..\..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.Mapper\CodeNet.Mapper.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.Redis\CodeNet.Redis.csproj" />
 		<ProjectReference Include="..\StokTakip.Campaign.Abstraction\StokTakip.Campaign.Abstraction.csproj" />
 	</ItemGroup>
 

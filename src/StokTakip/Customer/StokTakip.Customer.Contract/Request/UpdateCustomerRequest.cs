@@ -1,11 +1,8 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
-using StokTakip.Customer.Contract.Response;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace StokTakip.Customer.Contract.Request;
 
-public class UpdateCustomerRequest : IRequest<ResponseBase<CustomerResponse>>
+public class UpdateCustomerRequest
 {
     public required int Id { get; set; }
 

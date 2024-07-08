@@ -13,11 +13,10 @@ dotnet add package CodeNet.HttpClient
 ### Usage
 program.cs
 ```csharp
+using CodeNet.HttpClient.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<HttpClientModule>();
-});
+builder.AddHttpClient();
 //...
 
 var app = builder.Build();

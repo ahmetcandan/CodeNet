@@ -4,7 +4,7 @@ using CodeNet.EntityFramework.Models;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, ICodeNetHttpContext identityContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity>
+public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, ICodeNetContext codeNetContext) : BaseRepository<TTracingEntity>(dbContext), ITracingRepository<TTracingEntity>
     where TTracingEntity : class, ITracingEntity
 {
     public override TTracingEntity Add(TTracingEntity entity)
@@ -62,12 +62,12 @@ public abstract class TracingRepository<TTracingEntity>(DbContext dbContext, ICo
     protected void SetCreatorInfo(TTracingEntity tEntity)
     {
         tEntity.CreatedDate = DateTime.Now;
-        tEntity.CreatedUser = identityContext?.UserName ?? string.Empty;
+        tEntity.CreatedUser = codeNetContext?.UserName ?? string.Empty;
     }
 
     protected void SetModifytorInfo(TTracingEntity tEntity)
     {
         tEntity.ModifiedDate = DateTime.Now;
-        tEntity.ModifiedUser = identityContext?.UserName;
+        tEntity.ModifiedUser = codeNetContext?.UserName;
     }
 }

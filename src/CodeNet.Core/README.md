@@ -31,13 +31,8 @@ program.cs
 using CodeNet.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<CodeNetModule>();
-    containerBuilder.RegisterModule<MediatRModule>();
-});
 builder.AddCodeNet("Application");
-builder.AddAuthentication("JWT");
+builder.AddAuthenticationWithAsymmetricKey("JWT");
 //...
 
 var app = builder.Build();

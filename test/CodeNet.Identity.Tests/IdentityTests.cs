@@ -1,7 +1,4 @@
-using Autofac;
 using CodeNet.Identity.Extensions;
-using CodeNet.Identity.Module;
-using CodeNet.Core.Module;
 using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.InMemory.Extensions;
 using Microsoft.AspNetCore.Builder;
@@ -35,24 +32,18 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.Host.UseCodeNetContainer(containerBuilder =>
-            {
-                containerBuilder.RegisterModule<CodeNetModule>();
-                containerBuilder.RegisterModule<IdentityModule>();
-            });
             builder.AddCodeNet("Application")
-                   .AddAuthentication("Identity")
-                   .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+                   .AddAuthenticationWithAsymmetricKey("Identity")
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
             var _app = builder.Build();
             var roleManager = _app.Services.GetRequiredService<IIdentityRoleManager>();
             foreach (var role in userRoles.Union(adminRoles))
             {
-                var result = await roleManager.CreateRole(new Model.CreateRoleModel
+                var result = await roleManager.CreateRole(new Settings.CreateRoleModel
                 {
                     Name = role
                 });
                 Assert.That(result, Is.Not.Null);
-                Assert.That(result.IsSuccessfull, Is.True);
             }
         }
 
@@ -61,17 +52,12 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.Host.UseCodeNetContainer(containerBuilder =>
-            {
-                containerBuilder.RegisterModule<CodeNetModule>();
-                containerBuilder.RegisterModule<IdentityModule>();
-            });
             builder.AddCodeNet("Application")
-                   .AddAuthentication("Identity")
-                   .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+                   .AddAuthenticationWithAsymmetricKey("Identity")
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
             var _app = builder.Build();
             var userManager = _app.Services.GetRequiredService<IIdentityUserManager>();
-            var adminResult = await userManager.CreateUser(new Model.RegisterUserModel
+            var adminResult = await userManager.CreateUser(new Settings.RegisterUserModel
             {
                 Email = adminEmail,
                 Password = adminPassword,
@@ -79,9 +65,8 @@ namespace CodeNet.Identity.Tests
                 Roles = adminRoles
             });
             Assert.That(adminResult, Is.Not.Null);
-            Assert.That(adminResult.IsSuccessfull, Is.True);
 
-            var userResult = await userManager.CreateUser(new Model.RegisterUserModel
+            var userResult = await userManager.CreateUser(new Settings.RegisterUserModel
             {
                 Email = userEmail,
                 Password = userPassword,
@@ -89,7 +74,6 @@ namespace CodeNet.Identity.Tests
                 Roles = userRoles
             });
             Assert.That(userResult, Is.Not.Null);
-            Assert.That(userResult.IsSuccessfull, Is.True);
         }
 
         [Test]
@@ -97,17 +81,12 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.Host.UseCodeNetContainer(containerBuilder =>
-            {
-                containerBuilder.RegisterModule<CodeNetModule>();
-                containerBuilder.RegisterModule<IdentityModule>();
-            });
             builder.AddCodeNet("Application")
-                   .AddAuthentication("Identity")
-                   .AddIdentity(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+                   .AddAuthenticationWithAsymmetricKey("Identity")
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
             var _app = builder.Build();
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
-            var tokenResult = await tokenManager.GenerateToken(new Model.LoginModel 
+            var tokenResult = await tokenManager.GenerateToken(new Settings.LoginModel 
             {
                 Username = admin,
                 Password = adminPassword,
@@ -115,10 +94,7 @@ namespace CodeNet.Identity.Tests
             Assert.Multiple(() =>
             {
                 Assert.That(tokenResult, Is.Not.Null);
-                Assert.That(tokenResult.IsSuccessfull, Is.True);
-                Assert.That(tokenResult.FromCache, Is.False);
-                Assert.That(tokenResult.Data, Is.Not.Null);
-                Assert.That(tokenResult.Data?.Token, Is.Not.Null);
+                Assert.That(tokenResult.Token, Is.Not.Null);
             });
         }
     }

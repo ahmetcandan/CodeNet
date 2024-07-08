@@ -21,6 +21,8 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.MySQL.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMySQL("MySQL");
 //...

@@ -1,10 +1,6 @@
-﻿using MediatR;
-using CodeNet.Core.Models;
-using StokTakip.Customer.Contract.Response;
+﻿namespace StokTakip.Customer.Contract.Request;
 
-namespace StokTakip.Customer.Contract.Request;
-
-public class GetCustomerRequest : IRequest<ResponseBase<CustomerResponse>>
+public class GetCustomerRequest
 {
     public required int Id { get; set; }
 }

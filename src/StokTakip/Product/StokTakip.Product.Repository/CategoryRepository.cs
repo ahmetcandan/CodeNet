@@ -1,9 +1,9 @@
-﻿using CodeNet.Abstraction;
-using CodeNet.EntityFramework;
+﻿using CodeNet.Core;
+using CodeNet.EntityFramework.Repositories;
 using StokTakip.Product.Abstraction.Repository;
 
 namespace StokTakip.Product.Repository;
 
-public class CategoryRepository(ProductDbContext context, IIdentityContext identityContext) : TracingRepository<Model.Category>(context, identityContext), ICategoryRepository
+public class CategoryRepository(ProductDbContext context, ICodeNetContext codeNetContext) : TracingRepository<Model.Category>(context, codeNetContext), ICategoryRepository
 {
 }
