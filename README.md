@@ -9,7 +9,7 @@ CodeNet.Core is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Core/) to install CodeNet.Core.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Core/) to install CodeNet.Core
 
 ```bash
 dotnet add package CodeNet.Core
@@ -36,13 +36,8 @@ program.cs
 using CodeNet.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<CodeNetModule>();
-    containerBuilder.RegisterModule<MediatRModule>();
-});
 builder.AddCodeNet("Application");
-builder.AddAuthentication("JWT");
+builder.AddAuthenticationWithAsymmetricKey("JWT");
 //...
 
 var app = builder.Build();
@@ -51,14 +46,13 @@ app.UseCodeNet(builder.Configuration, "Application");
 app.Run();
 ```
 
----
 ## CodeNet.Elasticsearch
 
 CodeNet.Elasticsearch is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Elasticsearch/) to install CodeNet.Elasticsearch.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Elasticsearch/) to install CodeNet.Elasticsearch
 
 ```bash
 dotnet add package CodeNet.Elasticsearch
@@ -77,13 +71,9 @@ appSettings.json
 ```
 program.cs
 ```csharp
-using CodeNet.Elasticsearch.Module;
+using CodeNet.Elasticsearch.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<ElasticsearchModule>();
-});
 builder.AddElasticsearch("Elasticsearch");
 //...
 
@@ -113,14 +103,13 @@ public class ElasticModel : IElasticsearchModel
 }
 ```
 
----
 ## CodeNet.EntityFramework
 
 CodeNet.EntityFramework is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework/) to install CodeNet.EntityFramework.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework/) to install CodeNet.EntityFramework
 
 ```bash
 dotnet add package CodeNet.EntityFramework
@@ -137,13 +126,12 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterType<CustomerRepository>().As<ICustomerRepository>().InstancePerLifetimeScope();
-    containerBuilder.RegisterType<CustomerService>().As<ICustomerService>().InstancePerLifetimeScope();
-});
-builder.AddSqlServer<CustomerDbContext>("SqlServer");
+builder.AddDbContext<CustomerDbContext>("SqlServer");
+//or
+builder.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration, "SqlServer"));
 //...
 
 var app = builder.Build();
@@ -206,14 +194,13 @@ public class CustomerService(ICustomerRepository CustomerRepository, IAutoMapper
 }
 ```
 
----
 ## CodeNet.EntityFramework.InMemory
 
 CodeNet.EntityFramework.InMemory is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.InMemory/) to install CodeNet.EntityFramework.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.InMemory/) to install CodeNet.EntityFramework.InMemory
 
 ```bash
 dotnet add package CodeNet.EntityFramework.InMemory
@@ -222,6 +209,8 @@ dotnet add package CodeNet.EntityFramework.InMemory
 ### Usage
 program.cs
 ```csharp
+using CodeNet.EntityFramework.InMemory.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddInMemoryDB("DatabaseName");
 //...
@@ -231,14 +220,13 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.EntityFramework.MySQL
 
 CodeNet.EntityFramework.MySQL is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.MySQL/) to install CodeNet.EntityFramework.MySQL.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.MySQL/) to install CodeNet.EntityFramework.MySQL
 
 ```bash
 dotnet add package CodeNet.EntityFramework.MySQL
@@ -255,6 +243,8 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.MySQL.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMySQL("MySQL");
 //...
@@ -264,14 +254,13 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.EntityFramework.Oracle
 
 CodeNet.EntityFramework.Oracle is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Oracle/) to install CodeNet.EntityFramework.Oracle.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Oracle/) to install CodeNet.EntityFramework.Oracle
 
 ```bash
 dotnet add package CodeNet.EntityFramework.Oracle
@@ -288,6 +277,8 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.Oracle.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddOracle("Oracle");
 //...
@@ -297,14 +288,13 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.EntityFramework.PostgreSQL
 
 CodeNet.EntityFramework.PostgreSQL is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.PostgreSQL/) to install CodeNet.EntityFramework.PostgreSQL.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.PostgreSQL/) to install CodeNet.EntityFramework.PostgreSQL
 
 ```bash
 dotnet add package CodeNet.EntityFramework.PostgreSQL
@@ -321,6 +311,8 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.PostgreSQL.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddNpgsql("PostgreSQL");
 //...
@@ -330,14 +322,13 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.EntityFramework.Sqlite
 
 CodeNet.EntityFramework.Sqlite is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Sqlite/) to install CodeNet.EntityFramework.Sqlite.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.EntityFramework.Sqlite/) to install CodeNet.EntityFramework.Sqlite
 
 ```bash
 dotnet add package CodeNet.EntityFramework.Sqlite
@@ -348,12 +339,14 @@ appSettings.json
 ```json
 {
   "ConnectionStrings": {
-    "Sqlite": "Data Source=c:\mydb.db;Version=3;"
+    "Sqlite": "Data Source=mydb.db;Version=3;"
   }
 }
 ```
 program.cs
 ```csharp
+using CodeNet.EntityFramework.Sqlite.Extensions;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.AddSqlite("Sqlite");
 //...
@@ -363,45 +356,252 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.ExceptionHandling
 
 CodeNet.ExceptionHandling is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.ExceptionHandling/) to install CodeNet.ExceptionHandling.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.ExceptionHandling/) to install CodeNet.ExceptionHandling
 
 ```bash
 dotnet add package CodeNet.ExceptionHandling
 ```
 
 ### Usage
+appSettings.json
+```json
+{
+  "DefaultErrorMessage": {
+	"MessageCode": "EX0001",
+	"Message": "An unexpected error occurred!"
+  }
+}
+```
+
 program.cs
 ```csharp
-using CodeNet.ExceptionHandling.Module;
+using CodeNet.ExceptionHandling.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<ExceptionHandlingModule>();
-});
+builder.AddDefaultErrorMessage("DefaultErrorMessage")
 //...
 
 var app = builder.Build();
-app.UseErrorController();
+//...
+app.UseExceptionHandling(); //This should be used last.
+app.Run();
+```
+
+Example Error Message
+```json
+{
+  "MessageCode": "EX0001",
+  "Message": "An unexpected error occurred!"
+}
+```
+
+## CodeNet.HealthCheck
+
+CodeNet.HealthCheck is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck/) to install CodeNet.HealthCheck
+
+```bash
+dotnet add package CodeNet.HealthCheck
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddCodeNetHealthCheck();
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
 //...
 app.Run();
 ```
 
----
+## CodeNet.HealthCheck.Elasticsearch
+
+CodeNet.HealthCheck.Elasticsearch is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck.Elasticsearch/) to install CodeNet.HealthCheck.Elasticsearch
+
+```bash
+dotnet add package CodeNet.HealthCheck.Elasticsearch
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.Elasticsearch.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddElasticsearchHealthCheck();
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
+//...
+app.Run();
+```
+
+## CodeNet.HealthCheck.EntityFramework
+
+CodeNet.HealthCheck.EntityFramework is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck.EntityFramework/) to install CodeNet.HealthCheck.EntityFramework
+
+```bash
+dotnet add package CodeNet.HealthCheck.EntityFramework
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.EntityFramework.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddEntityFrameworkHealthCheck();
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
+//...
+app.Run();
+```
+
+## CodeNet.HealthCheck.MongoDB
+
+CodeNet.HealthCheck.MongoDB is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck.MongoDB/) to install CodeNet.HealthCheck.MongoDB
+
+```bash
+dotnet add package CodeNet.HealthCheck.MongoDB
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.MongoDB.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddMongoDbHealthCheck();
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
+//...
+app.Run();
+```
+
+## CodeNet.HealthCheck.RabbitMQ
+
+CodeNet.HealthCheck.RabbitMQ is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck.RabbitMQ/) to install CodeNet.HealthCheck.RabbitMQ
+
+```bash
+dotnet add package CodeNet.HealthCheck.RabbitMQ
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.RabbitMQ.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddRabbitMqHealthCheck(builder, "RabbitMQ");
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
+//...
+app.Run();
+```
+
+## CodeNet.HealthCheck.Redis
+
+CodeNet.HealthCheck.Redis is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HealthCheck.Redis/) to install CodeNet.HealthCheck.Redis
+
+```bash
+dotnet add package CodeNet.HealthCheck.Redis
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HealthCheck.Redis.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddHealthChecks()
+    .AddRedisHealthCheck();
+//...
+
+var app = builder.Build();
+app.UseHealthChecks("/health");
+//...
+app.Run();
+```
+
+## CodeNet.HttpClient
+
+CodeNet.HttpClient is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.HttpClient/) to install CodeNet.HttpClient
+
+```bash
+dotnet add package CodeNet.HttpClient
+```
+
+### Usage
+program.cs
+```csharp
+using CodeNet.HttpClient.Extensions;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.AddHttpClient();
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
 ## CodeNet.Identity
 
 This is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Identity/) to install CodeNet.Identity.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Identity/) to install CodeNet.Identity
 
 ```bash
 dotnet add package CodeNet.Identity
@@ -430,39 +630,28 @@ appSettings.json
 ```
 program.cs
 ```csharp
-using Autofac;
-using CodeNet.Container.Module;
 using CodeNet.Core.Extensions;
-using CodeNet.Identity.Extensions;
-using CodeNet.Identity.Api.Handler;
-using CodeNet.Identity.Module;
 using CodeNet.EntityFramework.Extensions;
+using CodeNet.Identity.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<CodeNetModule>();
-    containerBuilder.RegisterModule<MediatRModule<GenerateTokenRequestHandler>>();
-    containerBuilder.RegisterModule<IdentityModule>();
-});
-
 builder.AddNetCore("Application")
-       .AddAuthentication("Identity")
-       .AddIdentity(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+       .AddAuthenticationWithAsymmetricKey("Identity")
+       .AddIdentityWithAsymmetricKey(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+       
 
-builder.Build()
-    .UseNetCore(builder.Configuration, "Application")
-    .Run();
+var app = builder.Build();
+//...
+app.Run();
 ```
 
----
 ## CodeNet.Logging
 
 CodeNet.Logging is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Logging/) to install CodeNet.Logging.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Logging/) to install CodeNet.Logging
 
 ```bash
 dotnet add package CodeNet.Logging
@@ -471,13 +660,9 @@ dotnet add package CodeNet.Logging
 ### Usage
 program.cs
 ```csharp
-using CodeNet.Logging.Module;
+using CodeNet.Logging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<LoggingModule>();
-});
 builder.AddLogging("Logging");
 //...
 
@@ -487,14 +672,60 @@ app.UseLogging();
 app.Run();
 ```
 
----
+## CodeNet.MakerChecker
+
+CodeNet.MakerChecker is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MakerChecker/) to install CodeNet.MakerChecker
+
+```bash
+dotnet add package CodeNet.MakerChecker
+```
+
+### Usage
+appSettings.json
+```json
+{
+  "ConnectionStrings": {
+    "SqlServer": "Data Source=localhost;Initial Catalog=TestDB;TrustServerCertificate=true"
+  }
+}
+```
+program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.AddMakerChecker(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
+Example Model
+```csharp
+public class TestTable : MakerCheckerEntity
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+}
+```
+Repository
+```csharp
+public class TestTableRepository(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : MakerCheckerRepository<TestTable>(dbContext, identityContext)
+{
+}
+```
+
 ## CodeNet.Mapper
 
 CodeNet.Mapper is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Mapper/) to install CodeNet.Mapper.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Mapper/) to install CodeNet.Mapper
 
 ```bash
 dotnet add package CodeNet.Mapper
@@ -506,10 +737,7 @@ program.cs
 using CodeNet.Mapper.Module;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.RegisterModule<MapperModule>();
-});
+builder.AddMapper();
 //...
 
 var app = builder.Build();
@@ -517,14 +745,13 @@ var app = builder.Build();
 app.Run();
 ```
 
----
 ## CodeNet.MongoDB
 
 CodeNet.MongoDB is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MongoDB/) to install CodeNet.MongoDB.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.MongoDB/) to install CodeNet.MongoDB
 
 ```bash
 dotnet add package CodeNet.MongoDB
@@ -544,11 +771,6 @@ program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
 builder.AddMongoDB("MongoDB");
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.AddModule<MongoDBModule>();
-    containerBuilder.RegisterType<SampleRepository>().As<ISampleRepository>().InstancePerLifetimeScope();
-});
 //...
 
 var app = builder.Build();
@@ -572,14 +794,45 @@ public class KeyValueModel : BaseMongoDBModel
 }
 ```
 
----
+## CodeNet.Parameters
+
+CodeNet.Parameters is a .Net library.
+
+### Installation
+
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Parameters/) to install CodeNet.Parameters
+
+```bash
+dotnet add package CodeNet.Parameters
+```
+
+### Usage
+appSettings.json
+```json
+{
+  "ConnectionStrings": {
+    "SqlServer": "Data Source=localhost;Initial Catalog=TestDB;TrustServerCertificate=true"
+  }
+}
+```
+program.cs
+```csharp
+var builder = WebApplication.CreateBuilder(args);
+builder.AddParameters(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+//...
+
+var app = builder.Build();
+//...
+app.Run();
+```
+
 ## CodeNet.RabbitMQ
 
 CodeNet.RabbitMQ is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.RabbitMQ/) to install CodeNet.RabbitMQ.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.RabbitMQ/) to install CodeNet.RabbitMQ
 
 ```bash
 dotnet add package CodeNet.RabbitMQ
@@ -611,12 +864,6 @@ using CodeNet.RabbitMQ.Module;
 using ExampleApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    containerBuilder.AddModule<RabbitMQProducerModule<QueueModel>>();
-    containerBuilder.AddModule<RabbitMQConsumerModule<QueueModel>>();
-    containerBuilder.RegisterType<MessageConsumerHandler>().As<IRabbitMQConsumerHandler<QueueModel>>().InstancePerLifetimeScope();
-});
 builder
     .AddRabbitMQProducer("RabbitMQ")
     .AddRabbitMQConsumer("RabbitMQ");
@@ -629,9 +876,9 @@ app.Run();
 ```
 #### Usage Producer
 ```csharp
-public class MessageProducerHandler(IRabbitMQProducerService<QueueModel> Producer) : IRequestHandler<MessageProducerRequest, ResponseBase>
+public class MessageProducer(IRabbitMQProducerService<QueueModel> Producer)
 {
-    public async Task<ResponseBase> Handle(MessageProducerRequest request, CancellationToken cancellationToken)
+    public async Task<ResponseBase> Send(MessageProducerRequest request, CancellationToken cancellationToken)
     {
         Producer.Publish(request.Data);
         return new ResponseBase("200", "Successfull");
@@ -649,14 +896,13 @@ public class MessageConsumerHandler : IRabbitMQConsumerHandler<KeyValueModel>
 }
 ```
 
----
 ## CodeNet.Redis
 
 CodeNet.Redis is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Redis/) to install CodeNet.Redis.
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Redis/) to install CodeNet.Redis
 
 ```bash
 dotnet add package CodeNet.Redis
@@ -680,99 +926,69 @@ using CodeNet.Redis.Extensions;
 using CodeNet.Redis.Module;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Host.UseNetCoreContainer(containerBuilder =>
-{
-    //for cache
-    containerBuilder.AddModule<RedisDistributedCacheModule>();
-
-    //for lock
-    containerBuilder.AddModule<RedisDistributedLockModule>();
-});
 builder
     .AddRedisDistributedCache("Redis")
     .AddRedisDistributedLock("Redis");
 //...
 
 var app = builder.Build();
+app.UseDistributedCache()
+    .UseDistributedLock();
 //...
 app.Run();
 ```
 #### Usage Lock
 ```csharp  
-using MediatR;
-using RedLockNet;
-
-namespace ExampleApi.Handler;
-
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
-{
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
-    {
-        using var redLock = await LockFactory.CreateLockAsync("LOCK_KEY", TimeSpan.FromSeconds(3));
-        if (!redLock.IsAcquired)
-            throw new SynchronizationLockException();
-
-        //Process...
-    }
-}
-```
-Or
-```csharp  
+using CodeNet.Core.Models;
 using CodeNet.Redis.Attributes;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using StokTakip.Customer.Abstraction.Service;
+using StokTakip.Customer.Contract.Request;
+using StokTakip.Customer.Contract.Response;
 
-namespace ExampleApi.Handler;
+namespace StokTakip.Customer.Api.Controllers;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+[ApiController]
+[Route("[controller]")]
+public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    [Lock(ExpiryTime = 3)]
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    [HttpGet("{customerId}")]
+    [Lock]
+    [ProducesResponseType(200, Type = typeof(CustomerResponse))]
+    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
-        //Process...
+        return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
+
+    //...
 }
 ```
 #### Usage Cache
 ```csharp  
-using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
-
-namespace ExampleApi.Handler;
-
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
-{
-    private const string CACHE_KEY = "KEY";
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
-    {
-        var cacheJsonValue = await DistributedCache.GetStringAsync(CACHE_KEY, cancellationToken);
-        if (string.IsNullOrEmpty(cacheJsonValue))
-        {
-            //Process...
-            var response = ...
-            await DistributedCache.SetStringAsync(CACHE_KEY, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
-            }, cancellationToken);
-            return response;
-        }
-        return JsonConvert.DeserializeObject<ResponseBase<TestResponse>>(cacheJsonValue);
-    }
-}
-```
-Or
-```csharp  
+using CodeNet.Core.Models;
 using CodeNet.Redis.Attributes;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using StokTakip.Customer.Abstraction.Service;
+using StokTakip.Customer.Contract.Request;
+using StokTakip.Customer.Contract.Response;
 
-namespace ExampleApi.Handler;
+namespace StokTakip.Customer.Api.Controllers;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, ResponseBase<TestResponse>>
+[ApiController]
+[Route("[controller]")]
+public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    [Cache(Time = 60)]
-    public async Task<ResponseBase<TestResponse>> Handle(TestRequest request, CancellationToken cancellationToken)
+    [HttpGet("{customerId}")]
+    [Cache(10)]
+    [ProducesResponseType(200, Type = typeof(CustomerResponse))]
+    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
-        //Process...
+        return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
+
+    //...
 }
 ```
 
