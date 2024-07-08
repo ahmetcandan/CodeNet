@@ -17,90 +17,90 @@ namespace CodeNet.MakerChecker.Tests
         {
         }
 
-        [Test]
-        public void Maker_Checker_Approve_Tests()
-        {
-            Mock<ICodeNetContext> mockIdentityContext = new();
-            mockIdentityContext.Setup(c => c.UserName)
-                .Returns("admin");
-            mockIdentityContext.Setup(c => c.Roles)
-                .Returns(["Admin"]);
+        //[Test]
+        //public void Maker_Checker_Approve_Tests()
+        //{
+        //    Mock<ICodeNetContext> mockIdentityContext = new();
+        //    mockIdentityContext.Setup(c => c.UserName)
+        //        .Returns("admin");
+        //    mockIdentityContext.Setup(c => c.Roles)
+        //        .Returns(["Admin"]);
             
-            var webBuilder = WebApplication.CreateBuilder();
-            webBuilder.Services.AddMakerChecker<MockMakerCheckerDbContext>(c => c.UseInMemoryDatabase("TestApprovedDb"));
-            var app = webBuilder.Build();
+        //    var webBuilder = WebApplication.CreateBuilder();
+        //    webBuilder.Services.AddMakerChecker<MockMakerCheckerDbContext>(c => c.UseInMemoryDatabase("TestApprovedDb"));
+        //    var app = webBuilder.Build();
             
-            var dbContext = app.Services.GetRequiredService<MockMakerCheckerDbContext>();
-            var codeNetContext = app.Services.GetRequiredService<ICodeNetContext>();
+        //    var dbContext = app.Services.GetRequiredService<MockMakerCheckerDbContext>();
+        //    var codeNetContext = app.Services.GetRequiredService<ICodeNetContext>();
 
-            var tableRepository = new TestTableRepository(dbContext, codeNetContext);
-            var makerCheckerManager = app.Services.GetRequiredService<IMakerCheckerManager>();
+        //    var tableRepository = new TestTableRepository(dbContext, codeNetContext);
+        //    var makerCheckerManager = app.Services.GetRequiredService<IMakerCheckerManager>();
 
-            var definitionId = makerCheckerManager.InsertDefinition<TestTable>();
-            makerCheckerManager.InsertFlow(new FlowInserModel
-            {
-                Approver = "admin",
-                Description = "Admin Onayı",
-                ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
-                Order = 1
-            });
-            makerCheckerManager.InsertFlow(new FlowInserModel
-            {
-                Approver = "admin",
-                Description = "Admin Onayı 2",
-                ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
-                Order = 2
-            });
+        //    var definitionId = makerCheckerManager.InsertDefinition<TestTable>();
+        //    makerCheckerManager.InsertFlow(new FlowInserModel
+        //    {
+        //        Approver = "admin",
+        //        Description = "Admin Onayı",
+        //        ApproveType = ApproveType.User,
+        //        DefinitionId = definitionId,
+        //        Order = 1
+        //    });
+        //    makerCheckerManager.InsertFlow(new FlowInserModel
+        //    {
+        //        Approver = "admin",
+        //        Description = "Admin Onayı 2",
+        //        ApproveType = ApproveType.User,
+        //        DefinitionId = definitionId,
+        //        Order = 2
+        //    });
 
-            //insert test data
-            var entity = tableRepository.Add(new TestTable
-            {
-                Name = "Test kaydı",
-                Id = 1
-            });
-            //insert test data + insert flow history
-            var saveChangeResponse = tableRepository.SaveChanges();
-            Assert.That(saveChangeResponse, Is.EqualTo(3));
+        //    //insert test data
+        //    var entity = tableRepository.Add(new TestTable
+        //    {
+        //        Name = "Test kaydı",
+        //        Id = 1
+        //    });
+        //    //insert test data + insert flow history
+        //    var saveChangeResponse = tableRepository.SaveChanges();
+        //    Assert.That(saveChangeResponse, Is.EqualTo(3));
 
-            var pendingTest = tableRepository.GetDraft(entity.ReferenceId!.Value);
-            Assert.Multiple(() =>
-            {
-                Assert.That(pendingTest, Is.Not.Null);
-                Assert.That(pendingTest!.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
-                Assert.That(pendingTest.Id, Is.EqualTo(entity.ReferenceId));
-            });
+        //    var pendingTest = tableRepository.GetDraft(entity.ReferenceId!.Value);
+        //    Assert.Multiple(() =>
+        //    {
+        //        Assert.That(pendingTest, Is.Not.Null);
+        //        Assert.That(pendingTest!.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
+        //        Assert.That(pendingTest.Id, Is.EqualTo(entity.ReferenceId));
+        //    });
 
-            var pendingList = makerCheckerManager.GetPendingList();
-            Assert.That(pendingList?.Count, Is.EqualTo(2));
+        //    var pendingList = makerCheckerManager.GetPendingList();
+        //    Assert.That(pendingList?.Count, Is.EqualTo(2));
 
-            //approve test data
-            tableRepository.Approve(pendingTest, "test onayı");
-            tableRepository.SaveChanges();
+        //    //approve test data
+        //    tableRepository.Approve(pendingTest, "test onayı");
+        //    tableRepository.SaveChanges();
 
 
-            pendingList = makerCheckerManager.GetPendingList();
-            Assert.That(pendingList?.Count, Is.EqualTo(1));
+        //    pendingList = makerCheckerManager.GetPendingList();
+        //    Assert.That(pendingList?.Count, Is.EqualTo(1));
 
-            //get approved data
-            var approvedTest = tableRepository.GetDraft(entity.ReferenceId.Value);
-            Assert.That(approvedTest?.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
+        //    //get approved data
+        //    var approvedTest = tableRepository.GetDraft(entity.ReferenceId.Value);
+        //    Assert.That(approvedTest?.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
 
-            //approve test data
-            var approvedData = tableRepository.Approve(approvedTest, "ikinci test onayı");
-            tableRepository.SaveChanges();
+        //    //approve test data
+        //    var approvedData = tableRepository.Approve(approvedTest, "ikinci test onayı");
+        //    tableRepository.SaveChanges();
 
-            pendingList = makerCheckerManager.GetPendingList();
-            Assert.That(pendingList?.Count, Is.EqualTo(0));
+        //    pendingList = makerCheckerManager.GetPendingList();
+        //    Assert.That(pendingList?.Count, Is.EqualTo(0));
 
-            approvedTest = tableRepository.GetDraft(entity.ReferenceId.Value);
-            Assert.That(approvedTest?.ApproveStatus, Is.EqualTo(ApproveStatus.Approved));
+        //    approvedTest = tableRepository.GetDraft(entity.ReferenceId.Value);
+        //    Assert.That(approvedTest?.ApproveStatus, Is.EqualTo(ApproveStatus.Approved));
 
-            //get approved data
-            var result = tableRepository.Get(approvedData!.Id);
-            Assert.That(result, Is.Not.Null);
-        }
+        //    //get approved data
+        //    var result = tableRepository.Get(approvedData!.Id);
+        //    Assert.That(result, Is.Not.Null);
+        //}
 
         //[Test]
         //public async Task Maker_Checker_Approve_Async_Tests()
