@@ -41,79 +41,55 @@ app.Run();
 ```
 #### Usage Lock
 ```csharp  
-using MediatR;
-using RedLockNet;
-
-namespace ExampleApi.Handler;
-
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, TestResponse>
-{
-    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
-    {
-        using var redLock = await LockFactory.CreateLockAsync("LOCK_KEY", TimeSpan.FromSeconds(3));
-        if (!redLock.IsAcquired)
-            throw new SynchronizationLockException();
-
-        //Process...
-    }
-}
-```
-Or
-```csharp  
+using CodeNet.Core.Models;
 using CodeNet.Redis.Attributes;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using StokTakip.Customer.Abstraction.Service;
+using StokTakip.Customer.Contract.Request;
+using StokTakip.Customer.Contract.Response;
 
-namespace ExampleApi.Handler;
+namespace StokTakip.Customer.Api.Controllers;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, TestResponse>
+[ApiController]
+[Route("[controller]")]
+public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    [Lock(ExpiryTime = 3)]
-    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
+    [HttpGet("{customerId}")]
+    [Lock]
+    [ProducesResponseType(200, Type = typeof(CustomerResponse))]
+    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
-        //Process...
+        return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
+
+    //...
 }
 ```
 #### Usage Cache
 ```csharp  
-using MediatR;
-using Microsoft.Extensions.Caching.Distributed;
-
-namespace ExampleApi.Handler;
-
-public class TestRequestHandler(IDistributedLockFactory LockFactory) : IRequestHandler<TestRequest, TestResponse>
-{
-    private const string CACHE_KEY = "KEY";
-    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
-    {
-        var cacheJsonValue = await DistributedCache.GetStringAsync(CACHE_KEY, cancellationToken);
-        if (string.IsNullOrEmpty(cacheJsonValue))
-        {
-            //Process...
-            var response = ...
-            await DistributedCache.SetStringAsync(CACHE_KEY, JsonConvert.SerializeObject(response), new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(60)
-            }, cancellationToken);
-            return response;
-        }
-        return JsonConvert.DeserializeObject<TestResponse>(cacheJsonValue);
-    }
-}
-```
-Or
-```csharp  
+using CodeNet.Core.Models;
 using CodeNet.Redis.Attributes;
-using MediatR;
+using Microsoft.AspNetCore.Mvc;
+using StokTakip.Customer.Abstraction.Service;
+using StokTakip.Customer.Contract.Request;
+using StokTakip.Customer.Contract.Response;
 
-namespace ExampleApi.Handler;
+namespace StokTakip.Customer.Api.Controllers;
 
-public class TestRequestHandler() : IRequestHandler<TestRequest, TestResponse>
+[ApiController]
+[Route("[controller]")]
+public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    [Cache(Time = 60)]
-    public async Task<TestResponse> Handle(TestRequest request, CancellationToken cancellationToken)
+    [HttpGet("{customerId}")]
+    [Cache(10)]
+    [ProducesResponseType(200, Type = typeof(CustomerResponse))]
+    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
-        //Process...
+        return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
+
+    //...
 }
 ```

@@ -48,9 +48,9 @@ app.Run();
 ```
 #### Usage Producer
 ```csharp
-public class MessageProducerHandler(IRabbitMQProducerService<QueueModel> Producer) : IRequestHandler<MessageProducerRequest, ResponseBase>
+public class MessageProducer(IRabbitMQProducerService<QueueModel> Producer)
 {
-    public async Task<ResponseBase> Handle(MessageProducerRequest request, CancellationToken cancellationToken)
+    public async Task<ResponseBase> Send(MessageProducerRequest request, CancellationToken cancellationToken)
     {
         Producer.Publish(request.Data);
         return new ResponseBase("200", "Successfull");

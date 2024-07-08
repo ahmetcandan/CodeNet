@@ -11,7 +11,7 @@ dotnet add package CodeNet.MakerChecker
 ```
 
 ### Usage
-> appSettings.json
+appSettings.json
 ```json
 {
   "ConnectionStrings": {
