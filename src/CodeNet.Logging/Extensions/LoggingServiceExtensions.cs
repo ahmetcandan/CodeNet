@@ -1,7 +1,6 @@
 ﻿using CodeNet.Logging.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.Logging.Extensions;
 
@@ -10,13 +9,11 @@ public static class LoggingServiceExtensions
     /// <summary>
     /// Add Logging
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddLogging(this IHostApplicationBuilder webBuilder)
+    public static IServiceCollection AddAppLogger(this IServiceCollection services)
     {
-        webBuilder.Services.AddScoped<IAppLogger, AppLogger>();
-        return webBuilder;
+        return services.AddScoped<IAppLogger, AppLogger>();
     }
 
     /// <summary>
@@ -26,6 +23,6 @@ public static class LoggingServiceExtensions
     /// <returns></returns>
     public static IApplicationBuilder UseLogging(this IApplicationBuilder app)
     {
-        return app.UseMiddleware<LoggingMiddleware?>();
+        return app.UseMiddleware<LoggingMiddleware>();
     }
 }

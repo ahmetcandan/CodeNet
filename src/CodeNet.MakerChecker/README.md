@@ -29,3 +29,18 @@ var app = builder.Build();
 //...
 app.Run();
 ```
+
+Example Model
+```csharp
+public class TestTable : MakerCheckerEntity
+{
+    public int Id { get; set; }
+    public required string Name { get; set; }
+}
+```
+Repository
+```csharp
+public class TestTableRepository(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : MakerCheckerRepository<TestTable>(dbContext, identityContext)
+{
+}
+```

@@ -1,8 +1,8 @@
 ﻿using CodeNet.RabbitMQ.Services;
 using CodeNet.RabbitMQ.Settings;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.RabbitMQ.Extensions;
 
@@ -11,49 +11,51 @@ public static class RabbitMqServiceExtensions
     /// <summary>
     /// Add RabbitMQ Consumer Settings
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddRabbitMQConsumer(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services, IConfigurationSection rabbitSection)
     {
-        return webBuilder.AddRabbitMQConsumer<RabbitMQConsumerSettings>(sectionName);
+        return services.AddRabbitMQConsumer<RabbitMQConsumerSettings>(rabbitSection);
     }
 
     /// <summary>
     /// Add RabbitMQ Consumer Settings
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <typeparam name="TRabbitMQSettings"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddRabbitMQConsumer<TRabbitMQSettings>(this IHostApplicationBuilder webBuilder, string sectionName) 
+    public static IServiceCollection AddRabbitMQConsumer<TRabbitMQSettings>(this IServiceCollection services, IConfigurationSection rabbitSection) 
         where TRabbitMQSettings : RabbitMQConsumerSettings
     {
-        webBuilder.Services.Configure<TRabbitMQSettings>(webBuilder.Configuration.GetSection(sectionName));
-        webBuilder.Services.AddScoped(typeof(IRabbitMQConsumerService<>), typeof(RabbitMQConsumerService<>));
-        return webBuilder;
+        services.Configure<TRabbitMQSettings>(rabbitSection);
+        return services.AddScoped(typeof(IRabbitMQConsumerService<>), typeof(RabbitMQConsumerService<>));
     }
 
     /// <summary>
     /// Add RabbitMQ Producer Settings
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddRabbitMQProducer(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, IConfigurationSection rabbitSection)
     {
-        return webBuilder.AddRabbitMQProducer<RabbitMQProducerSettings>(sectionName);
+        return services.AddRabbitMQProducer<RabbitMQProducerSettings>(rabbitSection);
     }
 
     /// <summary>
     /// Add RabbitMQ Producer Settings
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <typeparam name="TRabbitMQSettings"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddRabbitMQProducer<TRabbitMQSettings>(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddRabbitMQProducer<TRabbitMQSettings>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TRabbitMQSettings : RabbitMQProducerSettings
     {
-        webBuilder.Services.Configure<TRabbitMQSettings>(webBuilder.Configuration.GetSection(sectionName));
-        webBuilder.Services.AddScoped(typeof(IRabbitMQProducerService<>), typeof(RabbitMQProducerService<>));
-        return webBuilder;
+        services.Configure<TRabbitMQSettings>(rabbitSection);
+        return services.AddScoped(typeof(IRabbitMQProducerService<>), typeof(RabbitMQProducerService<>));
     }
 
     /// <summary>

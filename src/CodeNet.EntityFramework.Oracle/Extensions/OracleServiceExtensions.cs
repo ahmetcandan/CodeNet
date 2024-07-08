@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.EntityFramework.Oracle.Extensions;
 
@@ -11,50 +10,61 @@ public static class OracleServiceExtensions
     /// <summary>
     /// Add Oracle
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddOracle(this IHostApplicationBuilder webBuilder, string connectionName)
+    public static IServiceCollection AddOracle(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        return webBuilder.AddOracle<DbContext>(connectionName);
+        return services.AddOracle<DbContext>(configuration, connectionName);
     }
 
     /// <summary>
     /// Add Oracle
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName"></param>
-    /// <returns></returns>
-    public static IHostApplicationBuilder AddOracle<TDbContext>(this IHostApplicationBuilder webBuilder, string connectionName) 
-        where TDbContext : DbContext
-    {
-        return webBuilder.AddDbContext<TDbContext>(options => options.UseOracle(webBuilder.Configuration, connectionName));
-    }
-
-    /// <summary>
-    /// Use Oracle
-    /// </summary>
-    /// <param name="optionsBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseOracle(this DbContextOptionsBuilder optionsBuilder, IConfigurationManager configuration, string connectionName)
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddOracle<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
+        where TDbContext : DbContext
     {
-        return optionsBuilder.UseOracle(configuration.GetConnectionString(connectionName)!);
+        return services.AddDbContext<TDbContext>(options => options.UseOracle(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
     }
 
     /// <summary>
-    /// Use Oracle
+    /// Add Oracle
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddOracle(this IServiceCollection services, string connectionString)
+    {
+        return services.AddOracle<DbContext>(connectionString);
+    }
+
+    /// <summary>
+    /// Add Oracle
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="optionsBuilder"></param>
-    /// <param name="configuration"></param>
-    /// <param name="connectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseOracle<TDbContext>(this DbContextOptionsBuilder<TDbContext> optionsBuilder, IConfigurationManager configuration, string connectionName)
+    public static IServiceCollection AddOracle<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : DbContext
     {
-        return optionsBuilder.UseOracle(configuration.GetConnectionString(connectionName)!);
+        return services.AddDbContext<TDbContext>(options => options.UseOracle(connectionString));
+    }
+
+    /// <summary>
+    /// Use Oracle
+    /// </summary>
+    /// <param name="optionsBuilder"></param>
+    /// <param name="connectionString"></param>
+    /// <returns></returns>
+    public static DbContextOptionsBuilder UseOracle(this DbContextOptionsBuilder optionsBuilder, string connectionString)
+    {
+        return OracleDbContextOptionsExtensions.UseOracle(optionsBuilder, connectionString);
     }
 }

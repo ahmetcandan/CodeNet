@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using RedLockNet;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
@@ -35,38 +34,60 @@ public static class RedisServiceExtensions
     /// <summary>
     /// Add Redis Distributed Cache
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type RedisSettings</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddRedisDistributedCache(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfiguration configuration, string sectionName)
     {
-        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings?>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
-        webBuilder.Services.AddStackExchangeRedisCache(option =>
-         {
-             option.Configuration = $"{redisSettings.Hostname}:{redisSettings.Port}";
-             option.InstanceName = redisSettings.InstanceName;
-         });
-        webBuilder.Services.AddScoped(typeof(IDistributedCache<>), typeof(DistributedCache<>));
-        return webBuilder;
+        return services.AddRedisDistributedCache(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Redis Distributed Cache
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurationSection"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfigurationSection configurationSection)
+    {
+        var redisSettings = configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
+        services.AddStackExchangeRedisCache(option =>
+        {
+            option.Configuration = $"{redisSettings.Hostname}:{redisSettings.Port}";
+            option.InstanceName = redisSettings.InstanceName;
+        });
+        return services.AddScoped(typeof(IDistributedCache<>), typeof(DistributedCache<>));
     }
 
     /// <summary>
     /// Add Redis Distributed Lock
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    {
+        return services.AddRedisDistributedLock(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Redis Distributed Lock
+    /// </summary>
+    /// <param name="services"></param>
     /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type RedisSettings</param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddRedisDistributedLock(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, IConfigurationSection configurationSection)
     {
-        var redisSettings = webBuilder.Configuration.GetSection(sectionName).Get<RedisSettings?>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
+        var redisSettings = configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
         var ipAddresses = Dns.GetHostAddresses(redisSettings.Hostname);
         var endPoints = new List<RedLockEndPoint?>
         {
             new() { EndPoint = new IPEndPoint(ipAddresses[0], redisSettings.Port) }
         };
-        webBuilder.Services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
-        return webBuilder;
+        return services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
     }
 }

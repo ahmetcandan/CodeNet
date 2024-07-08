@@ -3,8 +3,8 @@ using CodeNet.EntityFramework.Extensions;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
 using CodeNet.Identity.Manager;
+using Microsoft.Extensions.Configuration;
 
 namespace CodeNet.Identity.Extensions;
 
@@ -14,69 +14,67 @@ public static class IdentityServiceExtensions
     /// Add Identity with SqlServer
     /// Asymmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type IdentityConfig</param>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddIdentityWithAsymmetricKey(this IHostApplicationBuilder webBuilder, string connectionName, string sectionName)
+    public static IServiceCollection AddIdentityWithAsymmetricKey(this IServiceCollection services, string connectionString, IConfigurationSection identitySection)
     {
-        return webBuilder.AddIdentityWithAsymmetricKey(builder => builder.UseSqlServer(webBuilder.Configuration, connectionName), sectionName);
+        return services.AddIdentityWithAsymmetricKey(builder => builder.UseSqlServer(connectionString), identitySection);
     }
 
     /// <summary>
     /// Add Identity with other Database
     /// Asymmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="AddOtherDB"></param>
-    /// <param name="connectionName"></param>
-    /// <param name="sectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddIdentityWithAsymmetricKey(this IHostApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction, string sectionName)
+    public static IServiceCollection AddIdentityWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
-        webBuilder.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
-        webBuilder.Services.Configure<IdentitySettingsWithAsymmetricKey>(webBuilder.Configuration.GetSection(sectionName));
-        webBuilder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
+        services.Configure<IdentitySettingsWithAsymmetricKey>(identitySection);
+        services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
             .AddDefaultTokenProviders();
 
-        webBuilder.Services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey>();
-        webBuilder.Services.AddScoped<IIdentityUserManager, IdentityUserManager>();
-        webBuilder.Services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
-        return webBuilder;
+        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey>();
+        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
+        return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
 
     /// <summary>
     /// Add Identity with SqlServer
     /// Symmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type IdentityConfig</param>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddIdentityWithSymmetricKey(this IHostApplicationBuilder webBuilder, string connectionName, string sectionName)
+    public static IServiceCollection AddIdentityWithSymmetricKey(this IServiceCollection services, string connectionString, IConfigurationSection identitySection)
     {
-        return webBuilder.AddIdentityWithSymmetricKey(builder => builder.UseSqlServer(webBuilder.Configuration, connectionName), sectionName);
+        return services.AddIdentityWithSymmetricKey(builder => builder.UseSqlServer(connectionString), identitySection);
     }
 
     /// <summary>
     /// Add Identity with other Database
     /// Symmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="AddOtherDB"></param>
-    /// <param name="connectionName"></param>
-    /// <param name="sectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddIdentityWithSymmetricKey(this IHostApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction, string sectionName)
+    public static IServiceCollection AddIdentityWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
-        webBuilder.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
-        webBuilder.Services.Configure<IdentitySettingsWithSymmetricKey>(webBuilder.Configuration.GetSection(sectionName));
-        webBuilder.Services.AddIdentity<IdentityUser, IdentityRole>()
+        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
+        services.Configure<IdentitySettingsWithSymmetricKey>(identitySection);
+        services.AddIdentity<IdentityUser, IdentityRole>()
             .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
             .AddDefaultTokenProviders();
 
-        webBuilder.Services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
-        webBuilder.Services.AddScoped<IIdentityUserManager, IdentityUserManager>();
-        webBuilder.Services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
-        return webBuilder;
+        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
+        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
+        return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
 }

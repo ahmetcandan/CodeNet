@@ -1,6 +1,4 @@
 ﻿using CodeNet.HealthCheck.MongoDB;
-using CodeNet.RabbitMQ.Settings;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
@@ -16,9 +14,9 @@ public static class HealthCheckRabbitMqServiceExtensions
     /// <param name="sectionName"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, WebApplicationBuilder webBuilder, string sectionName, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configurationSection, TimeSpan? timeSpan = null)
     {
-        webBuilder.Services.Configure<BaseRabbitMQSettings>(webBuilder.Configuration.GetSection(sectionName));
+        services.Configure<HealthCheckRabitMQSettings>(configurationSection);
         return builder.AddCheck<RabbitMqHealthCheck>("rabbit-mq", HealthStatus.Unhealthy, ["rabbit-mq", "queue"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }

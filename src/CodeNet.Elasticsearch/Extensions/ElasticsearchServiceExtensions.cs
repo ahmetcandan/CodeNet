@@ -1,6 +1,6 @@
 ﻿using CodeNet.Elasticsearch.Settings;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.Elasticsearch.Extensions;
 
@@ -9,29 +9,28 @@ public static class ElasticsearchServiceExtensions
     /// <summary>
     /// Add Elasticsearch Settings
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddElasticsearch(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddElasticsearch(this IServiceCollection services, IConfigurationSection configurationSection)
     {
-        webBuilder.AddElasticsearch<ElasticsearchSettings, ElasticsearchDbContext>(sectionName);
-        return webBuilder;
+        return services.AddElasticsearch<ElasticsearchSettings, ElasticsearchDbContext>(configurationSection);
     }
 
     /// <summary>
     /// Add Elasticsearch Settings
     /// </summary>
-    /// <typeparam name="TElasticsearchSettings">TElasticsearchSettings is ElasticsearchSettings</typeparam>
-    /// <typeparam name="TElasticsearchDbContext">TElasticsearchDbContext is ElasticsearchDbContext</typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ElasticsearchSettings</param>
+    /// <typeparam name="TElasticsearchSettings"></typeparam>
+    /// <typeparam name="TElasticsearchDbContext"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="configurationSection"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddElasticsearch<TElasticsearchSettings, TElasticsearchDbContext>(this IHostApplicationBuilder webBuilder, string sectionName) 
+    public static IServiceCollection AddElasticsearch<TElasticsearchSettings, TElasticsearchDbContext>(this IServiceCollection services, IConfigurationSection configurationSection) 
         where TElasticsearchSettings : ElasticsearchSettings
         where TElasticsearchDbContext : ElasticsearchDbContext
     {
-        webBuilder.Services.Configure<TElasticsearchSettings>(webBuilder.Configuration.GetSection(sectionName));
-        webBuilder.Services.AddScoped<TElasticsearchDbContext, TElasticsearchDbContext>();
-        return webBuilder;
+        services.Configure<TElasticsearchSettings>(configurationSection);
+        return services.AddScoped<TElasticsearchDbContext, TElasticsearchDbContext>();
     }
 }

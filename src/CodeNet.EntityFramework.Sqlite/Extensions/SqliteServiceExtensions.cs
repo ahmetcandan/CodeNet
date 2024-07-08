@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.EntityFramework.Sqlite.Extensions;
 
@@ -11,50 +10,62 @@ public static class SqliteServiceExtensions
     /// <summary>
     /// Add Sqlite
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddSqlite(this IHostApplicationBuilder webBuilder, string connectionName)
+    public static IServiceCollection AddSqlite(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        return webBuilder.AddSqlite<DbContext>(connectionName);
+        return services.AddSqlite<DbContext>(configuration, connectionName);
     }
 
     /// <summary>
     /// Add Sqlite
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName"></param>
-    /// <returns></returns>
-    public static IHostApplicationBuilder AddSqlite<TDbContext>(this IHostApplicationBuilder webBuilder, string connectionName) 
-        where TDbContext : DbContext
-    {
-        return webBuilder.AddDbContext<TDbContext>(options => options.UseSqlite(webBuilder.Configuration, connectionName));
-    }
-
-    /// <summary>
-    /// Use Sqlite
-    /// </summary>
-    /// <param name="optionsBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseSqlite(this DbContextOptionsBuilder optionsBuilder, IConfigurationManager configuration, string connectionName)
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddSqlite<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
+        where TDbContext : DbContext
     {
-        return optionsBuilder.UseSqlite(configuration.GetConnectionString(connectionName)!);
+        return services.AddDbContext<TDbContext>(options => options.UseSqlite(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
     }
 
     /// <summary>
-    /// Use Sqlite
+    /// Add Sqlite
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddSqlite(this IServiceCollection services, string connectionString)
+    {
+        return services.AddSqlite<DbContext>(connectionString);
+    }
+
+    /// <summary>
+    /// Add Sqlite
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddSqlite<TDbContext>(this IServiceCollection services, string connectionString)
+        where TDbContext : DbContext
+    {
+        return services.AddDbContext<TDbContext>(options => options.UseSqlite(connectionString));
+    }
+
+    /// <summary>
+    /// Use Sqlite
+    /// </summary>
     /// <param name="optionsBuilder"></param>
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseSqlite<TDbContext>(this DbContextOptionsBuilder<TDbContext> optionsBuilder, IConfigurationManager configuration, string connectionName)
-        where TDbContext : DbContext
+    public static DbContextOptionsBuilder UseSqlite(this DbContextOptionsBuilder optionsBuilder, string connectionString)
     {
-        return optionsBuilder.UseSqlite(configuration.GetConnectionString(connectionName)!);
+        return SqliteDbContextOptionsBuilderExtensions.UseSqlite(optionsBuilder, connectionString);
     }
 }

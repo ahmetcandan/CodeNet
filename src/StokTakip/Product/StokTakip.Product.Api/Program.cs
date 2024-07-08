@@ -8,15 +8,15 @@ using StokTakip.Product.Repository;
 using StokTakip.Product.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddCodeNet("Application");
-builder.AddAuthenticationWithAsymmetricKey("JWT");
-builder.AddRedisDistributedCache("Redis");
-builder.AddRedisDistributedLock("Redis");
-builder.AddDbContext<ProductDbContext>("SqlServer");
-builder.AddLogging();
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+    .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("JWT"))
+    .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
+    .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
+    .AddDbContext<ProductDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
+    .AddAppLogger();
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IProductService, ProductService>();
 
 var app = builder.Build();
-app.UseCodeNet(builder.Configuration, "Application");
+app.UseCodeNet(builder.Configuration.GetSection("Application"));
 app.Run();

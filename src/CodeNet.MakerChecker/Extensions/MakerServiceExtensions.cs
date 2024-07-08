@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using CodeNet.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Hosting;
+using CodeNet.Core.Extensions;
 
 namespace CodeNet.MakerChecker.Extensions;
 
@@ -10,50 +10,50 @@ public static class MakerServiceExtensions
     /// <summary>
     /// Add Maker Checker
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddMakerChecker(this IHostApplicationBuilder webBuilder, string connectionName)
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, string connectionString)
     {
-        return webBuilder.AddMakerChecker<MakerCheckerDbContext>(connectionName);
+        return services.AddMakerChecker<MakerCheckerDbContext>(connectionString);
     }
 
     /// <summary>
     /// Add Maker Checker
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName"></param>
+    /// <param name="services"></param>
+    /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddMakerChecker<TDbContext>(this IHostApplicationBuilder webBuilder, string connectionName)
+    public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : MakerCheckerDbContext
     {
-        return webBuilder.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(webBuilder.Configuration, connectionName));
+        return services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
     }
 
     /// <summary>
     /// Add Maker Checker
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddMakerChecker(this IHostApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction)
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
     {
-        return webBuilder.AddMakerChecker<MakerCheckerDbContext>(optionsAction);
+        return services.AddMakerChecker<MakerCheckerDbContext>(optionsAction);
     }
 
     /// <summary>
     /// Add Maker Checker
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddMakerChecker<TDbContext>(this IHostApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction)
+    public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
         where TDbContext : MakerCheckerDbContext
     {
-        webBuilder.AddDbContext<TDbContext>(optionsAction);
-        webBuilder.Services.AddScoped<IMakerCheckerManager, MakerCheckerManager>();
-        return webBuilder;
+        services.AddDbContext<TDbContext>(optionsAction);
+        services.AddScoped<IMakerCheckerManager, MakerCheckerManager>();
+        return services.AddCodeNetContext();
     }
 }

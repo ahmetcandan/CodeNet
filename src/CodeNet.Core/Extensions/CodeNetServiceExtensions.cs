@@ -19,12 +19,23 @@ public static class CodeNetServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <param name="configuration"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
+    /// <param name="sectionName"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplication UseCodeNet(this WebApplication app, IConfiguration configuration, string sectionName)
     {
-        var applicationSettings = configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
+        return app.UseCodeNet(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Use CodeNet
+    /// </summary>
+    /// <param name="app"></param>
+    /// <param name="configurationSection"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static WebApplication UseCodeNet(this WebApplication app, IConfigurationSection configurationSection)
+    {
+        var applicationSettings = configurationSection.Get<ApplicationSettings>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
 
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
@@ -41,12 +52,26 @@ public static class CodeNetServiceExtensions
 
     /// <summary>
     /// Add CodeNet Configuration
+    /// This method contains AddCodeNetContext.
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type ApplicationSettings</param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    {
+        return services.AddCodeNet(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add CodeNet Configuration
+    /// This method contains AddCodeNetContext.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurationSection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddCodeNet(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         Console.WriteLine(@"
    ___            _         _  _         _   
@@ -54,9 +79,10 @@ public static class CodeNetServiceExtensions
  | (__  / _ \ / _` | / -_) | .` | / -_) |  _|
   \___| \___/ \__,_| \___| |_|\_| \___|  \__|
                                              ");
-        var applicationSettings = webBuilder.Configuration.GetSection(sectionName).Get<ApplicationSettings>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
-        
-        webBuilder.Services.AddSwaggerGen(c =>
+
+        var applicationSettings = configurationSection.Get<ApplicationSettings>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
+
+        services.AddSwaggerGen(c =>
         {
             c.SwaggerDoc(applicationSettings.Version, new OpenApiInfo { Title = applicationSettings.Title, Version = applicationSettings.Version });
 
@@ -73,26 +99,46 @@ public static class CodeNetServiceExtensions
 
             c.OperationFilter<SecurityRequirementsOperationFilter>();
         });
-        webBuilder.Services.AddControllers();
-        webBuilder.Services.AddEndpointsApiExplorer();
-        webBuilder.Services.AddHttpContextAccessor();
-        webBuilder.Services.AddScoped<ICodeNetContext, CodeNetContext>();
+        services.AddControllers();
+        services.AddEndpointsApiExplorer();
+        services.AddHttpContextAccessor();
+        return services.AddCodeNetContext();
+    }
 
-        return webBuilder;
+    /// <summary>
+    /// Add CodeNetContext
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddCodeNetContext(this IServiceCollection services)
+    {
+        return services.AddScoped<ICodeNetContext, CodeNetContext>();
     }
 
     /// <summary>
     /// Add Authentication With Asymmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type AuthenticationSettingsWithAsymmetricKey</param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    {
+        return services.AddAuthenticationWithAsymmetricKey(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Authentication With Asymmetric Key
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="identitySection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddAuthenticationWithAsymmetricKey(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
     {
-        var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
+        var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
         var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
-        webBuilder.Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -114,20 +160,32 @@ public static class CodeNetServiceExtensions
             };
         });
 
-        return webBuilder;
+        return services;
     }
 
     /// <summary>
     /// Add Authentication With Symmetric Key
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="sectionName">appSettings.json must contain the sectionName main block. Json must be type AuthenticationSettingsWithSymmetricKey</param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    {
+        return services.AddAuthenticationWithSymmetricKey(configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Authentication With Symmetric Key
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="applicationSection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHostApplicationBuilder AddAuthenticationWithSymmetricKey(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
     {
-        var authenticationSettings = webBuilder.Configuration.GetSection(sectionName).Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException(sectionName, $"'{sectionName}' is null or empty in appSettings.json");
-        webBuilder.Services.AddAuthentication(options =>
+        var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -147,6 +205,6 @@ public static class CodeNetServiceExtensions
             };
         });
 
-        return webBuilder;
+        return services;
     }
 }

@@ -32,9 +32,9 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.AddCodeNet("Application")
-                   .AddAuthenticationWithAsymmetricKey("Identity")
-                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+            builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+                   .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("Identity"))
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var roleManager = _app.Services.GetRequiredService<IIdentityRoleManager>();
             foreach (var role in userRoles.Union(adminRoles))
@@ -52,9 +52,9 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.AddCodeNet("Application")
-                   .AddAuthenticationWithAsymmetricKey("Identity")
-                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+            builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+                   .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("Identity"))
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var userManager = _app.Services.GetRequiredService<IIdentityUserManager>();
             var adminResult = await userManager.CreateUser(new Settings.RegisterUserModel
@@ -81,9 +81,9 @@ namespace CodeNet.Identity.Tests
         {
             var builder = WebApplication.CreateBuilder();
             builder.Configuration.AddJsonFile("testSettings.json");
-            builder.AddCodeNet("Application")
-                   .AddAuthenticationWithAsymmetricKey("Identity")
-                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), "Identity");
+            builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+                   .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("Identity"))
+                   .AddIdentityWithAsymmetricKey(options => options.UseInMemoryDatabase("IdentityTestDb"), builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
             var tokenResult = await tokenManager.GenerateToken(new Settings.LoginModel 

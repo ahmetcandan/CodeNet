@@ -18,42 +18,45 @@ using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Service;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Service.Mapper;
+using CodeNet.RabbitMQ.Extensions;
+using StokTakip.Customer.Contract.Model;
+using CodeNet.RabbitMQ.Services;
+using StokTakip.Customer.Service.Handler;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddCodeNet("Application");
-builder.AddAuthenticationWithAsymmetricKey("JWT");
-builder.AddRedisDistributedCache("Redis");
-//builder.AddRedisDistributedLock("Redis");
-builder.AddLogging();
-//builder.AddRabbitMQConsumer("RabbitMQ");
-//builder.AddRabbitMQProducer("RabbitMQ");
-//builder.AddMongoDB("MongoDB");
-//builder.AddElasticsearch("Elasticsearch");
-builder.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration, "SqlServer"));
-builder.AddInMemoryDB("asd");
-builder.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), "Redis");
-builder.Services.AddHealthChecks()
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+    .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("JWT"))
+    .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
+    .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
+    .AddAppLogger()
+    .AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"))
+    .AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
+    .AddMongoDB(builder.Configuration.GetSection("MongoDB"))
+    .AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
+    .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
+    .AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
+    .AddHealthChecks()
     .AddCodeNetHealthCheck()
     .AddEntityFrameworkHealthCheck<CustomerDbContext>()
     .AddRedisHealthCheck()
     .AddMongoDbHealthCheck()
-    .AddRabbitMqHealthCheck(builder, "RabbitMQ")
+    .AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
     .AddElasticsearchHealthCheck();
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-//builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
+builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-//builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();
+builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();
 
 
 var app = builder.Build();
-app.UseCodeNet(builder.Configuration, "Application");
-//app.UseRabbitMQConsumer<MongoModel>();
-app.UseDistributedCache();
-app.UseDistributedLock();
-app.UseLogging();
-app.UseExceptionHandling();
-app.UseHealthChecks("/health");
+app.UseCodeNet(builder.Configuration.GetSection("Application"))
+    .UseRabbitMQConsumer<MongoModel>()
+    .UseDistributedCache()
+    .UseDistributedLock()
+    .UseLogging()
+    .UseHealthChecks("/health")
+    .UseExceptionHandling();
 app.Run();

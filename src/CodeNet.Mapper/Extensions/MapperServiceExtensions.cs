@@ -1,5 +1,4 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using AutoMapper;
 
 namespace CodeNet.MakerChecker.Extensions;
@@ -9,11 +8,10 @@ public static class MapperServiceExtensions
     /// <summary>
     /// Add Mapper
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddMapper(this IHostApplicationBuilder webBuilder)
+    public static IServiceCollection AddMapper(this IServiceCollection services)
     {
-        webBuilder.Services.AddScoped<IMapper, Mapper>();
-        return webBuilder;
+        return services.AddScoped<IMapper, Mapper>();
     }
 }

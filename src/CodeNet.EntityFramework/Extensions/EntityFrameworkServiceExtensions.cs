@@ -1,59 +1,73 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.EntityFramework.Extensions;
 
 public static class EntityFrameworkServiceExtensions
 {
     /// <summary>
-    /// Add Sql Server
+    /// Add SqlServer
     /// </summary>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddDbContext(this IHostApplicationBuilder webBuilder, string connectionName)
+    public static IServiceCollection AddDbContext(this IServiceCollection services, IConfiguration configuration, string connectionName)
     {
-        return webBuilder.AddDbContext<DbContext>(connectionName);
-    }
-
-    /// <summary>    
-    /// Add Sql Server
-    /// </summary>
-    /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
-    /// <returns></returns>
-    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder webBuilder, string connectionName) 
-        where TDbContext : DbContext
-    {
-        return webBuilder.AddDbContext<TDbContext>(options => options.UseSqlServer(webBuilder.Configuration, connectionName));
+        return services.AddDbContext<DbContext>(configuration, connectionName);
     }
 
     /// <summary>
-    /// Add DbContext Other Database
+    /// Add SqlServer
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
-    /// <param name="webBuilder"></param>
-    /// <param name="optionsAction"></param>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddDbContext<TDbContext>(this IHostApplicationBuilder webBuilder, Action<DbContextOptionsBuilder> optionsAction)
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
         where TDbContext : DbContext
     {
-        webBuilder.Services.AddDbContext<TDbContext>(optionsAction);
-        return webBuilder;
+        return services.AddDbContext<TDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
+    }
+
+    /// <summary>
+    /// Add SqlServer
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddDbContext(this IServiceCollection services, string connectionString)
+    {
+        return services.AddDbContext<DbContext>(connectionString);
+    }
+
+    /// <summary>
+    /// Add SqlServer
+    /// </summary>
+    /// <typeparam name="TDbContext"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="configuration"></param>
+    /// <param name="connectionName"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, string connectionString)
+        where TDbContext : DbContext
+    {
+        return services.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
     }
 
     /// <summary>
     /// Use Sql Server
     /// </summary>
     /// <param name="optionsBuilder"></param>
-    /// <param name="configuration"></param>
-    /// <param name="connectionName"></param>
+    /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, IConfiguration configuration, string connectionName)
+    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, string connectionString)
     {
-        return optionsBuilder.UseSqlServer(configuration.GetConnectionString(connectionName));
+        return optionsBuilder.UseSqlServer(connectionString);
     }
 }

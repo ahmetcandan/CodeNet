@@ -1,7 +1,7 @@
 ﻿using CodeNet.ExceptionHandling.Settings;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 
 namespace CodeNet.ExceptionHandling.Extensions;
 
@@ -10,13 +10,16 @@ public static class ExceptionServiceExtensions
     /// <summary>
     /// Add Default Error Message
     /// </summary>
-    /// <param name="webBuilder"></param>
+    /// <param name="services"></param>
     /// <param name="sectionName">ErrorResponseMessage</param>
     /// <returns></returns>
-    public static IHostApplicationBuilder AddDefaultErrorMessage(this IHostApplicationBuilder webBuilder, string sectionName)
+    public static IServiceCollection AddDefaultErrorMessage(this IServiceCollection services, IConfiguration configuration, string sectionName)
     {
-        webBuilder.Services.Configure<ErrorResponseMessage>(webBuilder.Configuration.GetSection(sectionName));
-        return webBuilder;
+        return services.AddDefaultErrorMessage(configuration.GetSection(sectionName));
+    }
+    public static IServiceCollection AddDefaultErrorMessage(this IServiceCollection services, IConfigurationSection configurationSection)
+    {
+        return services.Configure<ErrorResponseMessage>(configurationSection);
     }
 
     /// <summary>
@@ -26,6 +29,6 @@ public static class ExceptionServiceExtensions
     /// <returns></returns>
     public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app)
     {
-        return app.UseMiddleware<ExceptionHandlerMiddleware?>();
+        return app.UseMiddleware<ExceptionHandlerMiddleware>();
     }
 }
