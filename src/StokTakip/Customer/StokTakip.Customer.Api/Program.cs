@@ -22,11 +22,12 @@ using CodeNet.RabbitMQ.Extensions;
 using StokTakip.Customer.Contract.Model;
 using CodeNet.RabbitMQ.Services;
 using StokTakip.Customer.Service.Handler;
+using CodeNet.Core.Enums;
 
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
-    .AddAuthenticationWithAsymmetricKey(builder.Configuration.GetSection("JWT"))
+    .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"))
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
@@ -35,6 +36,7 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddMongoDB(builder.Configuration.GetSection("MongoDB"))
     .AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
+    .AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
     .AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
     .AddHealthChecks()
     .AddCodeNetHealthCheck()

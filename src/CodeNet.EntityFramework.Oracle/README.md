@@ -24,7 +24,7 @@ program.cs
 using CodeNet.EntityFramework.Oracle.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddOracle("Oracle");
+builder.AddOracle(builder.Configuration.GetConnectionString("Oracle"));
 //...
 
 var app = builder.Build();

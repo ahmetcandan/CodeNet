@@ -62,11 +62,12 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
 
     private IQueryable<ParameterGroupParameter> GetParameterGroupParameter()
     {
-        return from pg in _entities
-               join p in _parameters on pg.Id equals p.GroupId
-               where pg.IsActive && !pg.IsDeleted
-                   && p.IsActive && !p.IsDeleted
-               select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg };
+        return (from pg in _entities
+                join p in _parameters on pg.Id equals p.GroupId
+                where pg.IsActive && !pg.IsDeleted
+                    && p.IsActive && !p.IsDeleted
+                select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg })
+                .AsNoTracking();
     }
 
     private IQueryable<ParameterListItemResult> GetParameterQuery()
@@ -83,7 +84,7 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                     Value = p.Value,
                     GroupCode = g.Code,
                     ApprovalRequired = g.ApprovalRequired
-                });
+                }).AsNoTracking();
     }
 
     public List<ParameterListItemResult> GetParameters(int groupId)

@@ -17,7 +17,7 @@ using CodeNet.HealthCheck.RabbitMQ.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddHealthChecks()
-    .AddRabbitMqHealthCheck(builder, "RabbitMQ");
+    .AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
 //...
 
 var app = builder.Build();

@@ -5,6 +5,7 @@ using CodeNet.Redis.Extensions;
 using CodeNet.Parameters.Manager;
 using CodeNet.MakerChecker.Extensions;
 using Microsoft.Extensions.Configuration;
+using CodeNet.Parameters.Settings;
 
 namespace CodeNet.Parameters.Extensions;
 
@@ -12,28 +13,30 @@ public static class ParametersServiceExtensions
 {
     /// <summary>
     /// Add Parameters
+    /// Use SqlServer
     /// </summary>
     /// <param name="services"></param>
     /// <param name="connectionName"></param>
     /// <param name="redisSectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddParameters(this IServiceCollection services, string connectionString, IConfigurationSection redisSection)
+    public static IServiceCollection AddParameters(this IServiceCollection services, string connectionString, IConfigurationSection redisSection, IConfigurationSection? parameterSection = null)
     {
-        return services.AddParameters<ParametersDbContext>(connectionString, redisSection);
+        return services.AddParameters<ParametersDbContext>(connectionString, redisSection, parameterSection);
     }
 
     /// <summary>
     /// Add Parameters
+    /// Use SqlServer
     /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="connectionName"></param>
     /// <param name="redisSectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddParameters<TDbContext>(this IServiceCollection services, string connectionString, IConfigurationSection redisSection)
+    public static IServiceCollection AddParameters<TDbContext>(this IServiceCollection services, string connectionString, IConfigurationSection redisSection, IConfigurationSection? parameterSection = null)
         where TDbContext : ParametersDbContext
     {
-        return services.AddParameters<TDbContext>(builder => builder.UseSqlServer(connectionString), redisSection);
+        return services.AddParameters<TDbContext>(builder => builder.UseSqlServer(connectionString), redisSection, parameterSection);
     }
 
     /// <summary>
@@ -43,9 +46,9 @@ public static class ParametersServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="redisSectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddParameters(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection redisSection)
+    public static IServiceCollection AddParameters(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection redisSection, IConfigurationSection? parameterSection = null)
     {
-        return services.AddParameters<ParametersDbContext>(optionsAction, redisSection);
+        return services.AddParameters<ParametersDbContext>(optionsAction, redisSection, parameterSection);
     }
 
     /// <summary>
@@ -56,9 +59,13 @@ public static class ParametersServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="redisSectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddParameters<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection redisSection)
+    public static IServiceCollection AddParameters<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection redisSection, IConfigurationSection? parameterSection = null)
         where TDbContext : ParametersDbContext
     {
+        if (parameterSection is not null)
+            services.Configure<ParameterSettings>(parameterSection);
+        else
+            services.Configure<ParameterSettings>(c => { });
         services.AddScoped<IParameterManager, ParameterManager>();
         services.AddRedisDistributedCache(redisSection);
         return services.AddMakerChecker<TDbContext>(optionsAction);

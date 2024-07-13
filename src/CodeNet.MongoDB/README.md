@@ -23,7 +23,7 @@ appSettings.json
 program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMongoDB("MongoDB");
+builder.AddMongoDB(builder.Configuration.GetSection("MongoDB"));
 //...
 
 var app = builder.Build();

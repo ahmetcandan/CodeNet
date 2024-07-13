@@ -2,14 +2,18 @@
 using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.Repositories;
+using CodeNet.Parameters.Settings;
+using CodeNet.Redis;
+using Microsoft.Extensions.Options;
 
 namespace CodeNet.Parameters.Manager;
 
-public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext identityContext) : IParameterManager
+public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext identityContext, IOptions<ParameterSettings> options, IDistributedCache<ParameterGroupWithParamsResult> distributedCache) : IParameterManager
 {
     private readonly ParameterGroupRepository _parameterGroupRepository = new(dbContext, identityContext);
     private readonly ParameterRepositoryResolver _parameterRepositoryResolver = new(dbContext, identityContext);
     private readonly ParameterTracingRepository _parameterRepository = new(dbContext, identityContext);
+    private readonly ParameterSettings _parameterSettings = options.Value;
 
     #region Parameter Group CRUD
     public async Task<ParameterGroupWithParamsResult> AddParameterGroupWithParamsAsync(AddParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
@@ -34,7 +38,8 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
             }, cancellationToken)).ToParameterResult());
 
         await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
-        return new ParameterGroupWithParamsResult
+
+        var result = new ParameterGroupWithParamsResult
         {
             Code = addGroupResponse.Code,
             ApprovalRequired = addGroupResponse.ApprovalRequired,
@@ -42,6 +47,14 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
             Id = addGroupResponse.Id,
             Parameters = parameterResultList
         };
+
+        if (_parameterSettings.UseRedis)
+        {
+            await distributedCache.SetValueAsync(result, $"{_parameterSettings.RedisPrefix}_Id:{result.Id}", _parameterSettings.Time, cancellationToken);
+            await distributedCache.SetValueAsync(result, $"{_parameterSettings.RedisPrefix}_Code:{result.Code}", _parameterSettings.Time, cancellationToken);
+        }
+
+        return result;
     }
 
     public async Task<ParameterGroupResult> AddParameterGroupAsync(AddParameterGroupModel model, CancellationToken cancellationToken = default)
@@ -69,14 +82,28 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
         return parameterGroup?.ToParameterGroupResult() ?? null;
     }
 
-    public Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(int parameterGroupId, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(int parameterGroupId, CancellationToken cancellationToken = default)
     {
-        return _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupId, cancellationToken);
+        if (_parameterSettings.UseRedis)
+        {
+            var cacheValue = await distributedCache.GetValueAsync($"{_parameterSettings.RedisPrefix}_Id:{parameterGroupId}", cancellationToken);
+            if (cacheValue is not null)
+                return cacheValue;
+        }
+
+        return await _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupId, cancellationToken);
     }
 
-    public Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParamsAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
     {
-        return _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupCode, cancellationToken);
+        if (_parameterSettings.UseRedis)
+        {
+            var cacheValue = await distributedCache.GetValueAsync($"{_parameterSettings.RedisPrefix}_Code:{parameterGroupCode}", cancellationToken);
+            if (cacheValue is not null)
+                return cacheValue;
+        }
+
+        return await _parameterGroupRepository.GetParameterGroupWithParams(parameterGroupCode, cancellationToken);
     }
 
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)

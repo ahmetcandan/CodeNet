@@ -16,7 +16,7 @@ program.cs
 using CodeNet.Logging.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddLogging("Logging");
+builder.AddLogging(builder.Configuration.GetSection("Logging"));
 //...
 
 var app = builder.Build();

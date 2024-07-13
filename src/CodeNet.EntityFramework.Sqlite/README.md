@@ -24,7 +24,7 @@ program.cs
 using CodeNet.EntityFramework.Sqlite.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddSqlite("Sqlite");
+builder.AddSqlite(builder.Configuration.GetConnectionString("Sqlite"));
 //...
 
 var app = builder.Build();

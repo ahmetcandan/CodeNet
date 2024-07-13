@@ -26,7 +26,7 @@ program.cs
 using CodeNet.ExceptionHandling.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddDefaultErrorMessage("DefaultErrorMessage")
+builder.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"));
 //...
 
 var app = builder.Build();

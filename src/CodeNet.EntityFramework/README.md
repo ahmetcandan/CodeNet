@@ -24,9 +24,9 @@ program.cs
 using CodeNet.EntityFramework.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddDbContext<CustomerDbContext>("SqlServer");
+builder.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!);
 //or
-builder.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration, "SqlServer"));
+builder.AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!));
 //...
 
 var app = builder.Build();

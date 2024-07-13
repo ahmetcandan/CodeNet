@@ -1,10 +1,11 @@
 ﻿using CodeNet.Core;
 using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.Parameters.Manager;
-using CodeNet.MakerChecker.Tests.Mock.Models;
-using CodeNet.Parameters;
 using Microsoft.EntityFrameworkCore;
 using Moq;
+using Microsoft.Extensions.DependencyInjection;
+using CodeNet.Parameters.Extensions;
+using Microsoft.Extensions.Configuration;
 
 namespace CodeNet.MakerChecker.Tests
 {
@@ -23,9 +24,15 @@ namespace CodeNet.MakerChecker.Tests
                 .Returns("admin");
             mockCodeNetContext.Setup(c => c.Roles)
                 .Returns(["Admin"]);
-            var options = new DbContextOptionsBuilder<ParametersDbContext>().UseInMemoryDatabase("TestParametersDb").Options;
-            var dbContext = new MockParametersDbContext(options);
-            var parameterManager = new ParameterManager(dbContext, mockCodeNetContext.Object);
+
+            IServiceCollection services = new ServiceCollection();
+            var configurationManager = new ConfigurationManager();
+            configurationManager.AddJsonFile("testSettings.json");
+            services.AddParameters(options => options.UseInMemoryDatabase("TestParameterDb"), configurationManager.GetSection("Redis"), configurationManager.GetSection("Parameters"));
+            services.AddScoped(c => mockCodeNetContext.Object);
+
+            var serviceProvider = services.BuildServiceProvider();
+            var parameterManager = serviceProvider.GetRequiredService<IParameterManager>();
             var parameterGroup = await parameterManager.AddParameterGroupAsync(new Parameters.Models.AddParameterGroupModel
             {
                 Code = "TG",

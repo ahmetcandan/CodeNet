@@ -41,6 +41,7 @@ internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
                   && flow.IsActive && !flow.IsDeleted
                   && history.IsActive && !history.IsDeleted
                   && history.ApproveStatus == ApproveStatus.Pending
-                select new MakerCheckerPending { ReferenceId = history.ReferenceId, History = history, EntityName = definition.EntityName, Flow = flow });
+                select new MakerCheckerPending { ReferenceId = history.ReferenceId, History = history, EntityName = definition.EntityName, Flow = flow })
+                .AsNoTracking();
     }
 }

@@ -111,7 +111,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     private TMakerCheckerEntity MakerCheckerStart(TMakerCheckerEntity entity, EntryState entryState)
     {
         var flows = GetMakerCheckerFlowListQueryable().ToList();
-        if (flows.Count == 0)
+        if (flows.Count is 0)
             throw new MakerCheckerException("MC008", "MakerCheckerFlow not found");
 
         var draft = MakerCheckerRepository<TMakerCheckerEntity>.NewDraftEntity(entity, entryState, flows[0].Order);
@@ -225,7 +225,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
                     && flow.IsActive && !flow.IsDeleted
                     && history.IsActive && !history.IsDeleted
                 orderby flow.Order ascending
-                select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName });
+                select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName })
+                .AsNoTracking();
     }
 
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
@@ -236,7 +237,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
                     && definition.IsActive && !definition.IsDeleted
                     && flow.IsActive && !flow.IsDeleted
                 orderby flow.Order
-                select flow);
+                select flow)
+                .AsNoTracking();
     }
 
     private static MakerCheckerHistory NewHistory(MakerCheckerFlow flow, Guid referenceId) => new()

@@ -29,8 +29,8 @@ using CodeNet.Redis.Module;
 
 var builder = WebApplication.CreateBuilder(args);
 builder
-    .AddRedisDistributedCache("Redis")
-    .AddRedisDistributedLock("Redis");
+    .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
+    .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"));
 //...
 
 var app = builder.Build();

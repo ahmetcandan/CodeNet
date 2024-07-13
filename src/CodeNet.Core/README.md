@@ -28,11 +28,12 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.Core.Enums;
 using CodeNet.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddCodeNet("Application");
-builder.AddAuthenticationWithAsymmetricKey("JWT");
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+                .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"))
 //...
 
 var app = builder.Build();

@@ -33,14 +33,15 @@ appSettings.json
 ```
 program.cs
 ```csharp
+using CodeNet.Core.Enums;
 using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
 using CodeNet.Identity.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddNetCore("Application")
-       .AddAuthenticationWithAsymmetricKey("Identity")
-       .AddIdentityWithAsymmetricKey(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
+       .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"))
+       .AddAuthorization(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!), SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
        
 
 var app = builder.Build();

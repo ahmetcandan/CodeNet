@@ -24,7 +24,7 @@ program.cs
 using CodeNet.EntityFramework.MySQL.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMySQL("MySQL");
+builder.AddMySQL(builder.Configuration.GetConnectionString("MySQL"));
 //...
 
 var app = builder.Build();

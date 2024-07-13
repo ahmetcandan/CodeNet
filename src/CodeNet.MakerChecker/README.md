@@ -22,7 +22,7 @@ appSettings.json
 program.cs
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.AddMakerChecker(options => options.UseSqlServer(builder.Configuration, "SqlServer"), "Identity");
+builder.AddMakerChecker(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")), "Identity");
 //...
 
 var app = builder.Build();

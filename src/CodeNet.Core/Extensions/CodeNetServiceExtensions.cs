@@ -1,4 +1,5 @@
-﻿using CodeNet.Core.Security;
+﻿using CodeNet.Core.Enums;
+using CodeNet.Core.Security;
 using CodeNet.Core.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
@@ -116,15 +117,38 @@ public static class CodeNetServiceExtensions
     }
 
     /// <summary>
-    /// Add Authentication With Asymmetric Key
+    /// Add Authentication
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
     /// </summary>
     /// <param name="services"></param>
+    /// <param name="securityKeyType"></param>
     /// <param name="configuration"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    public static IServiceCollection AddAuthentication(this IServiceCollection services, SecurityKeyType securityKeyType, IConfiguration configuration, string sectionName)
     {
-        return services.AddAuthenticationWithAsymmetricKey(configuration.GetSection(sectionName));
+        return services.AddAuthentication(securityKeyType, configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Authentication
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="securityKeyType"></param>
+    /// <param name="identitySection"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static IServiceCollection AddAuthentication(this IServiceCollection services, SecurityKeyType securityKeyType, IConfigurationSection identitySection)
+    {
+        return securityKeyType switch
+        {
+            SecurityKeyType.AsymmetricKey => services.AddAuthenticationWithAsymmetricKey(identitySection),
+            SecurityKeyType.SymmetricKey => services.AddAuthenticationWithSymmetricKey(identitySection),
+            _ => throw new NotImplementedException(),
+        };
     }
 
     /// <summary>
@@ -134,7 +158,7 @@ public static class CodeNetServiceExtensions
     /// <param name="identitySection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
+    internal static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
     {
         var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
         var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
@@ -167,22 +191,10 @@ public static class CodeNetServiceExtensions
     /// Add Authentication With Symmetric Key
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="configuration"></param>
-    /// <param name="sectionName"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfiguration configuration, string sectionName)
-    {
-        return services.AddAuthenticationWithSymmetricKey(configuration.GetSection(sectionName));
-    }
-
-    /// <summary>
-    /// Add Authentication With Symmetric Key
-    /// </summary>
-    /// <param name="services"></param>
     /// <param name="applicationSection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
+    internal static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
     {
         var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
         services.AddAuthentication(options =>

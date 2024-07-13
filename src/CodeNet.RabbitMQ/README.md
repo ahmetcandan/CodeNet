@@ -37,8 +37,8 @@ using ExampleApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder
-    .AddRabbitMQProducer("RabbitMQ")
-    .AddRabbitMQConsumer("RabbitMQ");
+    .AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
+    .AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"));
 //...
 
 var app = builder.Build();

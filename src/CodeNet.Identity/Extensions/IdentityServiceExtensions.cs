@@ -5,22 +5,47 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using CodeNet.Identity.Manager;
 using Microsoft.Extensions.Configuration;
+using CodeNet.Core.Enums;
 
 namespace CodeNet.Identity.Extensions;
 
 public static class IdentityServiceExtensions
 {
     /// <summary>
-    /// Add Identity with SqlServer
-    /// Asymmetric Key
+    /// Add Authorization
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be IdentitySettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be IdentitySettingsWithSymmetricKey.
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="connectionString"></param>
-    /// <param name="identitySection"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="securityKeyType"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddIdentityWithAsymmetricKey(this IServiceCollection services, string connectionString, IConfigurationSection identitySection)
+    public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfiguration configuration, string sectionName)
     {
-        return services.AddIdentityWithAsymmetricKey(builder => builder.UseSqlServer(connectionString), identitySection);
+        return services.AddAuthorization(optionsAction, securityKeyType, configuration.GetSection(sectionName));
+    }
+
+    /// <summary>
+    /// Add Authorization
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be IdentitySettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be IdentitySettingsWithSymmetricKey.
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="securityKeyType"></param>
+    /// <param name="authorizationSection"></param>
+    /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
+    public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfigurationSection authorizationSection)
+    {
+        return securityKeyType switch
+        {
+            SecurityKeyType.AsymmetricKey => services.AddAuthorizationWithAsymmetricKey(optionsAction, authorizationSection),
+            SecurityKeyType.SymmetricKey => services.AddAuthorizationWithSymmetricKey(optionsAction, authorizationSection),
+            _ => throw new NotImplementedException(),
+        };
     }
 
     /// <summary>
@@ -31,7 +56,7 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddIdentityWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static IServiceCollection AddAuthorizationWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
         services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
         services.Configure<IdentitySettingsWithAsymmetricKey>(identitySection);
@@ -45,19 +70,6 @@ public static class IdentityServiceExtensions
     }
 
     /// <summary>
-    /// Add Identity with SqlServer
-    /// Symmetric Key
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="connectionString"></param>
-    /// <param name="identitySection"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddIdentityWithSymmetricKey(this IServiceCollection services, string connectionString, IConfigurationSection identitySection)
-    {
-        return services.AddIdentityWithSymmetricKey(builder => builder.UseSqlServer(connectionString), identitySection);
-    }
-
-    /// <summary>
     /// Add Identity with other Database
     /// Symmetric Key
     /// </summary>
@@ -65,7 +77,7 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddIdentityWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static IServiceCollection AddAuthorizationWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
         services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
         services.Configure<IdentitySettingsWithSymmetricKey>(identitySection);

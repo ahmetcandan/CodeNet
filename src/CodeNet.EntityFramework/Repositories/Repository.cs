@@ -51,7 +51,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     public virtual TEntity Update(TEntity entity)
     {
         _entities.Attach(entity);
-        _dbContext.Entry(entity).State = EntityState.Modified;
+        _dbContext.Entry(entity).State = EntityState.Detached;
         return entity;
     }
 
@@ -59,7 +59,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     {
         _entities.AttachRange(entities);
         foreach (var entity in entities)
-            _dbContext.Entry(entity).State = EntityState.Modified;
+            _dbContext.Entry(entity).State = EntityState.Detached;
         return entities;
     }
 

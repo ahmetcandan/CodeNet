@@ -26,7 +26,7 @@ program.cs
 using CodeNet.Elasticsearch.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddElasticsearch("Elasticsearch");
+builder.AddElasticsearch(Configuration.GetSection("Elasticsearch"));
 //...
 
 var app = builder.Build();

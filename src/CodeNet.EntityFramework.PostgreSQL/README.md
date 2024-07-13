@@ -24,7 +24,7 @@ program.cs
 using CodeNet.EntityFramework.PostgreSQL.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.AddNpgsql("PostgreSQL");
+builder.AddNpgsql(builder.Configuration.GetConnectionString("PostgreSQL"));
 //...
 
 var app = builder.Build();
