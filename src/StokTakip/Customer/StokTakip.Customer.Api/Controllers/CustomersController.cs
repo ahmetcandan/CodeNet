@@ -14,7 +14,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     [HttpGet("{customerId}")]
     [Cache(10)]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
-    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
         return Ok(await customerService.GetCustomer(customerId, cancellationToken));
@@ -22,7 +22,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
 
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
-    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         return Ok(await customerService.CreateCustomer(request, cancellationToken));
@@ -30,7 +30,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
 
     [HttpPut]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
-    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
         return Ok(await customerService.UpdateCustomer(request, cancellationToken));
@@ -38,7 +38,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
 
     [HttpDelete]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
-    [ProducesDefaultResponseType(typeof(ResponseMessage))]
+    [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> Delete(DeleteCustomerRequest request, CancellationToken cancellationToken)
     {
         return Ok(await customerService.DeleteCustomer(request.Id, cancellationToken));

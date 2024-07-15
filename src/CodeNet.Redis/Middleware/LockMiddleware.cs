@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Redis;
 
-public class LockMiddleware(RequestDelegate next) : BaseMiddleware
+internal sealed class LockMiddleware(RequestDelegate next) : BaseMiddleware
 {
     public async Task Invoke(HttpContext context)
     {

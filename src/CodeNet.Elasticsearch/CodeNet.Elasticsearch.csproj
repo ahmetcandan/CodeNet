@@ -13,7 +13,7 @@
 		<Description>CodeNet Elasticsearch package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.6</Version>
+		<Version>1.0.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.14.4" />
+		<PackageReference Include="Elastic.Clients.Elasticsearch" Version="8.14.6" />
 		<PackageReference Include="Microsoft.Extensions.Options" Version="8.0.2" />
 	</ItemGroup>
 

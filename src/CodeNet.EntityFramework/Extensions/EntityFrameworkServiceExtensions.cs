@@ -81,6 +81,6 @@ public static class EntityFrameworkServiceExtensions
     /// <returns></returns>
     public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, string connectionString)
     {
-        return optionsBuilder.UseSqlServer(connectionString);
+        return SqlServerDbContextOptionsExtensions.UseSqlServer(optionsBuilder, connectionString);
     }
 }

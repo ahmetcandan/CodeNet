@@ -10,5 +10,5 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
        .AddAuthorization(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!), SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
 
 builder.Build()
-    .UseCodeNet(builder.Configuration, "Application")
+    .UseCodeNet()
     .Run();

@@ -9,7 +9,7 @@ using CodeNet.Core;
 
 namespace CodeNet.Redis;
 
-public class CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache) : BaseMiddleware
+internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache) : BaseMiddleware
 {
     public async Task Invoke(HttpContext context)
     {
@@ -42,10 +42,11 @@ public class CacheMiddleware(RequestDelegate next, IDistributedCache distributed
         if (string.IsNullOrEmpty(cacheValue))
         {
             var response = await ReadResponseAsync(context, next, context.RequestAborted);
-            await distributedCache.SetStringAsync(key, response, new DistributedCacheEntryOptions
-            {
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time)
-            }, context.RequestAborted);
+            if (context.Response.StatusCode is StatusCodes.Status200OK)
+                await distributedCache.SetStringAsync(key, response, new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(cacheAttribute.Time)
+                }, context.RequestAborted);
             return;
         }
 

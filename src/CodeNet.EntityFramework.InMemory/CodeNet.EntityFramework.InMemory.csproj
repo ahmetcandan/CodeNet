@@ -13,7 +13,7 @@
 		<Description>CodeNet Entity Framework In Memory package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.6</Version>
+		<Version>1.0.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -35,7 +35,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.6" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="8.0.7" />
 	</ItemGroup>
 
 	<ItemGroup>

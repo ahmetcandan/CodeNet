@@ -31,34 +31,37 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
-    .AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"))
-    .AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
-    .AddMongoDB(builder.Configuration.GetSection("MongoDB"))
-    .AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
+    //.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
+    //.AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"))
+    //.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
+    //.AddMongoDB(builder.Configuration.GetSection("MongoDB"))
+    //.AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
-    .AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
-    .AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
+    //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
+    //.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
     .AddHealthChecks()
     .AddCodeNetHealthCheck()
     .AddEntityFrameworkHealthCheck<CustomerDbContext>()
     .AddRedisHealthCheck()
-    .AddMongoDbHealthCheck()
-    .AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
-    .AddElasticsearchHealthCheck();
+    //.AddMongoDbHealthCheck()
+    //.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
+    //.AddElasticsearchHealthCheck()
+    ;
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
+//builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();
+//builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();
 
 
 var app = builder.Build();
-app.UseCodeNet(builder.Configuration.GetSection("Application"))
-    .UseRabbitMQConsumer<MongoModel>()
+app.UseCodeNet()
+    //.UseRabbitMQConsumer<MongoModel>()
     .UseDistributedCache()
     .UseDistributedLock()
     .UseLogging()
     .UseHealthChecks("/health")
-    .UseExceptionHandling();
+    .UseExceptionHandling()
+    ;
 app.Run();

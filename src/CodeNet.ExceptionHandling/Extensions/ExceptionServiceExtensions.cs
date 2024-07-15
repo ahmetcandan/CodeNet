@@ -1,5 +1,5 @@
-﻿using CodeNet.ExceptionHandling.Settings;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -17,9 +17,17 @@ public static class ExceptionServiceExtensions
     {
         return services.AddDefaultErrorMessage(configuration.GetSection(sectionName));
     }
+
+    /// <summary>
+    /// Json is ProblemDetails
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurationSection">ProblemDetails</param>
+    /// <returns></returns>
     public static IServiceCollection AddDefaultErrorMessage(this IServiceCollection services, IConfigurationSection configurationSection)
     {
-        return services.Configure<ErrorResponseMessage>(configurationSection);
+        services.AddProblemDetails();
+        return services.Configure<ProblemDetails>(configurationSection);
     }
 
     /// <summary>

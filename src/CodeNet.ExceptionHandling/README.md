@@ -38,7 +38,8 @@ app.Run();
 Example Error Message
 ```json
 {
-  "MessageCode": "EX0001",
-  "Message": "An unexpected error occurred!"
+	"Detail": "Default message details",
+	"Title": "Default message title",
+	"Status": 500
 }
 ```

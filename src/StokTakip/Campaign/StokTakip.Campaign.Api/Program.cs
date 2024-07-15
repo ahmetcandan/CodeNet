@@ -21,5 +21,5 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
 
 var app = builder.Build();
 app.UseLogging();
-app.UseCodeNet(builder.Configuration.GetSection("Application"));
+app.UseCodeNet();
 app.Run();

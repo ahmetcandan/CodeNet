@@ -13,7 +13,7 @@
 		<Description>CodeNet Entity Framework PostgreSQL package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.0.6</Version>
+		<Version>1.0.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -28,7 +28,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Oracle.EntityFrameworkCore" Version="8.23.40" />
+	  <PackageReference Include="Oracle.EntityFrameworkCore" Version="8.23.50" />
 	</ItemGroup>
 
 	<ItemGroup>
