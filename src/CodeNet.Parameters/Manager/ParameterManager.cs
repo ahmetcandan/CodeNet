@@ -128,6 +128,7 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
 
             var updateResponse = _parameterGroupRepository.Update(parameterGroup);
             await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
+            await RemoveCacheAsync(parameterGroup, cancellationToken);
             return updateResponse.ToParameterGroupResult();
         }
 
@@ -143,6 +144,7 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
             throw new ParameterException("PR001", $"Not found parameter group (Id: {parameterGroupId}).");
         await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
 
+        await RemoveCacheAsync(parameterGroup, cancellationToken);
         return parameterGroup.ToParameterGroupResult();
     }
     #endregion
@@ -150,8 +152,8 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
     #region Parameter CRUD
     public async Task<ParameterResult> AddParameterAsync(AddParameterModel model, CancellationToken cancellationToken = default)
     {
-        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(model.GroupId, cancellationToken);
-        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        var parameterGroup = await _parameterGroupRepository.GetParameterGroupAsync(model.GroupId, cancellationToken) ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {model.GroupId}).");
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(parameterGroup.ApprovalRequired);
         var parameter = new Parameter
         {
             Code = model.Code,
@@ -163,6 +165,8 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
 
         var addResponse = await parameterRepository.AddAsync(parameter, cancellationToken);
         await parameterRepository.SaveChangesAsync(cancellationToken);
+        await RemoveCacheAsync(parameterGroup, cancellationToken);
+
         return addResponse.ToParameterResult();
     }
 
@@ -184,8 +188,8 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
 
     public async Task<ParameterResult> UpdateParameterAsync(UpdateParameterModel model, CancellationToken cancellationToken = default)
     {
-        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(model.GroupId, cancellationToken);
-        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        var parameterGroup = await _parameterGroupRepository.GetParameterGroupAsync(model.GroupId, cancellationToken) ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {model.GroupId}).");
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(parameterGroup.ApprovalRequired);
         var parameter = await parameterRepository.GetAsync([model.Id], cancellationToken);
         if (parameter is not null)
         {
@@ -196,20 +200,31 @@ public class ParameterManager(ParametersDbContext dbContext, ICodeNetContext ide
 
             var updateResponse = parameterRepository.Update(parameter);
             await parameterRepository.SaveChangesAsync(cancellationToken);
+            await RemoveCacheAsync(parameterGroup, cancellationToken);
             return updateResponse.ToParameterResult();
         }
 
-        throw new ParameterException("PR001", $"Not found parameter (Id: {model?.Id}).");
+        throw new ParameterException("PR002", $"Not found parameter (Id: {model?.Id}).");
     }
 
     public async Task<ParameterResult> DeleteParameterAsync(int parameterId, CancellationToken cancellationToken = default)
     {
         var parameter = await _parameterRepository.GetAsync([parameterId], cancellationToken) ?? throw new ParameterException("PR002", $"Not found parameter (Id: {parameterId}).");
-        var approvalRequired = await _parameterGroupRepository.GetApprovalRequiredAsync(parameter.GroupId, cancellationToken);
-        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(approvalRequired);
+        var parameterGroup = await _parameterGroupRepository.GetParameterGroupAsync(parameter.GroupId, cancellationToken) ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {parameter.GroupId}).");
+        var parameterRepository = _parameterRepositoryResolver.GetParameterRepository(parameterGroup.ApprovalRequired);
         parameterRepository.Remove(parameter);
         await parameterRepository.SaveChangesAsync(cancellationToken);
+        await RemoveCacheAsync(parameterGroup, cancellationToken);
         return parameter.ToParameterResult();
+    }
+
+    private async Task RemoveCacheAsync(ParameterGroup parameterGroup, CancellationToken cancellationToken)
+    {
+        if (!_parameterSettings.UseRedis)
+            return;
+
+        await distributedCache.RemoveAsync($"{_parameterSettings.RedisPrefix}_Id:{parameterGroup.Id}", cancellationToken);
+        await distributedCache.RemoveAsync($"{_parameterSettings.RedisPrefix}_Code:{parameterGroup.Code}", cancellationToken);
     }
     #endregion
 }

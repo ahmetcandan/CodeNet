@@ -12,4 +12,9 @@ public interface IDistributedCache<TModel>
     Task SetValueAsync(TModel model, string key, int time, CancellationToken cancellationToken);
     Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions);
     Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken);
+    void SetValue(TModel model, string key, int time);
+    void SetValue(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions);
+    void Remove(string key);
+    Task RemoveAsync(string key);
+    Task RemoveAsync(string key, CancellationToken cancellationToken);
 }

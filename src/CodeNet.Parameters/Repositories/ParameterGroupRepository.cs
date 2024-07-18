@@ -16,6 +16,11 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
         _parameters = _dbContext.Set<Parameter>();
     }
 
+    public ValueTask<ParameterGroup?> GetParameterGroupAsync(int groupId, CancellationToken cancellationToken = default)
+    {
+        return _entities.FindAsync([groupId], cancellationToken);
+    }
+
     public async Task<bool> GetApprovalRequiredAsync(int groupId, CancellationToken cancellationToken = default)
     {
         return (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {groupId}).");

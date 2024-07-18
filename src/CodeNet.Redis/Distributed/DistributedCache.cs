@@ -93,4 +93,56 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     {
         await distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions, cancellationToken);
     }
+
+    /// <summary>
+    /// Set Value
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="key"></param>
+    /// <param name="time"></param>
+    public void SetValue(TModel model, string key, int time)
+    {
+        SetValue(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) });
+    }
+
+    /// <summary>
+    /// Set Value
+    /// </summary>
+    /// <param name="model"></param>
+    /// <param name="key"></param>
+    /// <param name="distributedCacheEntryOptions"></param>
+    public void SetValue(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions)
+    {
+        distributedCache.SetString(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions);
+    }
+
+    /// <summary>
+    /// Remove by Key
+    /// </summary>
+    /// <param name="key"></param>
+    public void Remove(string key)
+    {
+        distributedCache.Remove(key);
+    }
+
+    /// <summary>
+    /// Remove by Key
+    /// </summary>
+    /// <param name="key"></param>
+    /// <returns></returns>
+    public Task RemoveAsync(string key)
+    {
+        return RemoveAsync(key, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Remove by Key
+    /// </summary>
+    /// <param name="key"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public Task RemoveAsync(string key, CancellationToken cancellationToken)
+    {
+        return distributedCache.RemoveAsync(key, cancellationToken);
+    }
 }
