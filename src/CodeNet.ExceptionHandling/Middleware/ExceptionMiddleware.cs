@@ -21,7 +21,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
             var appLogger = context.RequestServices.GetRequiredService<IAppLogger>();
             appLogger.ExceptionLog(ex, methodInfo);
 
-            context.Response.ContentType = "application/json";
+            context.Response.ContentType = System.Net.Mime.MediaTypeNames.Application.Json;
             string? errorCode = null, errorMessage = null, title = null;
             bool defaultMessage = false;
             switch (ex)

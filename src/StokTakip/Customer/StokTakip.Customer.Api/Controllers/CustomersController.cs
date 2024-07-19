@@ -52,12 +52,17 @@ public class TestController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Post(TestModel request, CancellationToken cancellationToken)
     {
-        return Ok(request.ToString());
+        return Ok(request);
     }
 }
 
 public class TestModel
 {
-    public string Isim { get; set; }
-    //public DateTime Tarih { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public DateTime Date { get; set; }
+
+    public override string ToString()
+    {
+        return $"{{Name: {Name}, Date: {Date}}}";
+    }
 }

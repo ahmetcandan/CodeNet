@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.Logging.Extensions;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,7 @@ public static class ExceptionServiceExtensions
     public static IServiceCollection AddDefaultErrorMessage(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         services.AddProblemDetails();
+        services.AddAppLogger();
         return services.Configure<ProblemDetails>(configurationSection);
     }
 

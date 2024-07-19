@@ -6,6 +6,7 @@ using CodeNet.Parameters.Manager;
 using CodeNet.MakerChecker.Extensions;
 using Microsoft.Extensions.Configuration;
 using CodeNet.Parameters.Settings;
+using CodeNet.Core.Extensions;
 
 namespace CodeNet.Parameters.Extensions;
 
@@ -66,8 +67,10 @@ public static class ParametersServiceExtensions
             services.Configure<ParameterSettings>(parameterSection);
         else
             services.Configure<ParameterSettings>(c => { });
+
         services.AddScoped<IParameterManager, ParameterManager>();
         services.AddRedisDistributedCache(redisSection);
+        services.AddCodeNetContext();
         return services.AddMakerChecker<TDbContext>(optionsAction);
     }
 }

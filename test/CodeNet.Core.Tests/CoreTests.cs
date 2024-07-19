@@ -28,7 +28,7 @@ namespace CodeNet.Core.Tests
 
             var jDoc = JsonDocument.Parse(json);
             var jObj = JObject.Parse(json);
-            var x = new StringContent(xSeriliaze, Encoding.UTF8, "application/json");
+            var x = new StringContent(xSeriliaze, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
             var str = x.ReadAsStringAsync().Result;
             Assert.Pass();
         }

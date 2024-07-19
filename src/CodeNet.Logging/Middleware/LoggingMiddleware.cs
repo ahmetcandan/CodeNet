@@ -1,6 +1,8 @@
 ﻿using CodeNet.Core;
+using CodeNet.Core.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Net.Http.Headers;
 using System.Diagnostics;
 
 namespace CodeNet.Logging.Middleware;
@@ -26,10 +28,12 @@ public class LoggingMiddleware(RequestDelegate next) : BaseMiddleware
         await next(context);
 
         timer.Stop();
+        var fromCache = context.Response.Headers[HeaderNames.CacheControl].ToString();
         appLogger.ExitLog(new
         {
             context.Response.ContentType,
-            context.Response.StatusCode
+            context.Response.StatusCode,
+            CacheControl = string.IsNullOrEmpty(fromCache) ? Constant.NoCache : fromCache
         }, methodInfo!, timer.ElapsedMilliseconds);
     }
 }

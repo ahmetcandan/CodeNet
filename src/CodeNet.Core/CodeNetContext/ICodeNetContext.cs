@@ -1,11 +1,12 @@
 ﻿using CodeNet.Core.Enums;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
 namespace CodeNet.Core;
 
 public interface ICodeNetContext
 {
-    Guid CorrelationId { get; }
+    string CorrelationId { get; }
     string UserName { get; }
     string Email { get; }
     string UserId { get; }
@@ -15,4 +16,5 @@ public interface ICodeNetContext
     bool SetResponseHeader(string key, string value);
     StringValues GetResponseHeader(string key);
     StringValues GetRequestHeader(string key);
+    IHeaderDictionary? RequestHeaders { get; }
 }

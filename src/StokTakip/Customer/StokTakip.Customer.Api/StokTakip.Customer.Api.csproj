@@ -21,6 +21,7 @@
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.RabbitMQ\CodeNet.HealthCheck.RabbitMQ.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.Redis\CodeNet.HealthCheck.Redis.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck\CodeNet.HealthCheck.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.HttpClient\CodeNet.HttpClient.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Container\StokTakip.Customer.Container.csproj" />
 	</ItemGroup>
 

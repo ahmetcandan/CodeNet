@@ -1,4 +1,5 @@
-﻿using HealthChecks.UI.Client;
+﻿using CodeNet.Core.Extensions;
+using HealthChecks.UI.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.AspNetCore.Routing;
@@ -12,12 +13,13 @@ public static class HealthCheckServiceExtensions
     /// <summary>
     /// Add CodeNet Health Check
     /// </summary>
-    /// <param name="builder"></param>
+    /// <param name="services"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddCodeNetHealthCheck(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddCodeNetHealthCheck(this IServiceCollection services, TimeSpan? timeSpan = null)
     {
-        return builder.AddCheck<CodeNetHealthCheck>("codenet", HealthStatus.Unhealthy, ["codenet", "identity-context"], timeSpan ?? TimeSpan.FromSeconds(5));
+        services.AddCodeNetContext();
+        return services.AddHealthChecks().AddCheck<CodeNetHealthCheck>("codenet", HealthStatus.Unhealthy, ["codenet", "identity-context"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 
     /// <summary>

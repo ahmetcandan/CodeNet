@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CodeNet.Core.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -70,6 +71,7 @@ public static class EntityFrameworkServiceExtensions
     public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
         where TDbContext : DbContext
     {
+        services.AddCodeNetContext();
         return EntityFrameworkServiceCollectionExtensions.AddDbContext<TDbContext>(services, optionsAction: optionsAction);
     }
 

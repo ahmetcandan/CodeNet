@@ -9,21 +9,23 @@ namespace CodeNet.Core;
 
 internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeNetContext
 {
-    private Guid? _correlationId;
-    public Guid CorrelationId
+    private string? _correlationId;
+    public string CorrelationId
     {
         get
         {
-            if (_correlationId.HasValue)
-                return _correlationId.Value;
+            if (!string.IsNullOrEmpty(_correlationId))
+                return _correlationId;
 
             var headerCorrelationId = httpContextAccessor?.HttpContext?.Request?.Headers?[Constant.CorrelationId].ToString();
-            _correlationId = !string.IsNullOrEmpty(headerCorrelationId) && Guid.TryParse(headerCorrelationId, out var correlationId) ? correlationId : Guid.NewGuid();
+            _correlationId = string.IsNullOrEmpty(headerCorrelationId)
+                ? Guid.NewGuid().ToString("N")
+                : headerCorrelationId;
 
             if (httpContextAccessor?.HttpContext is not null)
-                httpContextAccessor.HttpContext.Response.Headers[Constant.CorrelationId] = _correlationId.Value.ToString();
+                httpContextAccessor.HttpContext.Response.Headers[Constant.CorrelationId] = _correlationId;
 
-            return _correlationId.Value;
+            return _correlationId;
         }
     }
 
@@ -86,5 +88,13 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
     public StringValues GetRequestHeader(string key)
     {
         return httpContextAccessor.HttpContext?.Request.Headers[key] ?? new();
+    }
+
+    public IHeaderDictionary? RequestHeaders
+    {
+        get
+        {
+            return httpContextAccessor?.HttpContext?.Request.Headers;
+        }
     }
 }

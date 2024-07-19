@@ -23,6 +23,7 @@ using StokTakip.Customer.Contract.Model;
 using CodeNet.RabbitMQ.Services;
 using StokTakip.Customer.Service.Handler;
 using CodeNet.Core.Enums;
+using CodeNet.HttpClient.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -39,13 +40,13 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
     //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
     //.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
-    //.AddHealthChecks()
-    //.AddCodeNetHealthCheck()
-    //.AddEntityFrameworkHealthCheck<CustomerDbContext>()
-    //.AddRedisHealthCheck()
-    //.AddMongoDbHealthCheck()
-    //.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
-    //.AddElasticsearchHealthCheck()
+    .AddHttpRequest()
+    .AddCodeNetHealthCheck()
+        .AddEntityFrameworkHealthCheck<CustomerDbContext>()
+        .AddRedisHealthCheck()
+        .AddMongoDbHealthCheck()
+        .AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
+        .AddElasticsearchHealthCheck()
     ;
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

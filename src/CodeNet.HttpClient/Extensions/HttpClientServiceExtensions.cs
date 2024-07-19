@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CodeNet.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.HttpClient.Extensions;
 
@@ -8,13 +9,14 @@ namespace CodeNet.HttpClient.Extensions;
 public static class HttpClientServiceExtensions
 {
     /// <summary>
-    /// Add HttpClient
+    /// Add HttpRequest
     /// </summary>
     /// <param name="webBuilder"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddHttpClient(this IServiceCollection services)
+    public static IServiceCollection AddHttpRequest(this IServiceCollection services)
     {
+        services.AddCodeNetContext();
         return services.AddScoped<IHttpRequest, HttpRequest>();
     }
 }

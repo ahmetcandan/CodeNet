@@ -1,6 +1,8 @@
-﻿using CodeNet.HttpClient.Options;
+﻿using CodeNet.Core;
+using CodeNet.Core.Settings;
+using CodeNet.HttpClient.Options;
 using CodeNet.Logging;
-using Microsoft.AspNetCore.Http;
+using Microsoft.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Reflection;
@@ -9,7 +11,7 @@ using Http = System.Net.Http;
 
 namespace CodeNet.HttpClient;
 
-internal class HttpRequest(IHttpContextAccessor HttpContextAccessor, IAppLogger AppLogger) : IHttpRequest
+internal class HttpRequest(ICodeNetContext codeNetContext, IAppLogger appLogger) : IHttpRequest
 {
     public async Task<TResponse?> GetAsync<TResponse>(string url, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
     {
@@ -37,15 +39,27 @@ internal class HttpRequest(IHttpContextAccessor HttpContextAccessor, IAppLogger 
         {
             var methodInfo = typeof(HttpRequest).GetMethod("SendAsync");
             var requestJson = content is not null ? JsonConvert.SerializeObject(content) : string.Empty;
-            AppLogger.EntryLog(new { Url = $"[{httpMethod.Method}]{url}", Request = requestJson }, methodInfo!);
+            appLogger.EntryLog(new { Url = $"[{httpMethod.Method}]{url}", Request = requestJson }, methodInfo!);
             var timer = new Stopwatch();
             timer.Start();
 
             var httpClient = new Http.HttpClient();
             var httpRequest = new HttpRequestMessage(httpMethod, url);
-            if (httpClientOptions?.UseCurrentHeaders is true && HttpContextAccessor.HttpContext is not null)
-                foreach (var item in HttpContextAccessor.HttpContext.Request.Headers)
-                    httpRequest.Headers.Add(item.Key, [.. item.Value]);
+
+            if (httpClientOptions?.UseCurrentHeaders is null or true)
+            {
+                if (codeNetContext?.RequestHeaders?.ContainsKey(HeaderNames.Authorization) is true)
+                    httpRequest.Headers.Add(HeaderNames.Authorization, [.. codeNetContext.RequestHeaders[HeaderNames.Authorization]]);
+
+                if (codeNetContext?.RequestHeaders?.ContainsKey(Constant.CorrelationId) is true)
+                    httpRequest.Headers.Add(Constant.CorrelationId, [.. codeNetContext.RequestHeaders[Constant.CorrelationId]]);
+
+                if (codeNetContext?.RequestHeaders?.ContainsKey(HeaderNames.UserAgent) is true)
+                    httpRequest.Headers.Add(HeaderNames.UserAgent, [.. codeNetContext.RequestHeaders[HeaderNames.UserAgent]]);
+
+                if (codeNetContext?.RequestHeaders?.ContainsKey(HeaderNames.AcceptLanguage) is true)
+                    httpRequest.Headers.Add(HeaderNames.AcceptLanguage, [.. codeNetContext.RequestHeaders[HeaderNames.AcceptLanguage]]);
+            }
 
             if (headers is not null)
                 foreach (var item in headers)
@@ -54,26 +68,26 @@ internal class HttpRequest(IHttpContextAccessor HttpContextAccessor, IAppLogger 
                         httpRequest.Headers.Remove(item.Key);
                     httpRequest.Headers.Add(item.Key, item.Value);
                 }
-
+            
             if (content is not null)
-                httpRequest.Content = new StringContent(requestJson, Encoding.UTF8, "application/json");
+                httpRequest.Content = new StringContent(requestJson, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
 
             var httpResponse = await httpClient.SendAsync(httpRequest, cancellationToken);
 
-            if (httpClientOptions?.ExceptionHandling is false)
+            if (httpClientOptions?.ExceptionHandling is null or false)
                 httpResponse.EnsureSuccessStatusCode();
 
             var responseJson = await httpResponse.Content.ReadAsStringAsync(cancellationToken);
             var response = JsonConvert.DeserializeObject<TResponse>(responseJson);
             timer.Stop();
-            AppLogger.ExitLog(new { Url = $"[{httpMethod.Method}]{url}", Response = responseJson }, methodInfo!, timer.ElapsedMilliseconds);
+            appLogger.ExitLog(new { Url = $"[{httpMethod.Method}]{url}", Response = responseJson }, methodInfo!, timer.ElapsedMilliseconds);
             return response;
         }
         catch (Exception ex)
         {
-            AppLogger.ExceptionLog(ex, MethodBase.GetCurrentMethod()!);
+            appLogger.ExceptionLog(ex, MethodBase.GetCurrentMethod()!);
 
-            if (httpClientOptions?.ExceptionHandling is false)
+            if (httpClientOptions?.ExceptionHandling is null or false)
                 throw;
 
             return default;

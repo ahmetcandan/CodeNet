@@ -1,12 +1,11 @@
 ﻿using CodeNet.Redis.Attributes;
-using CodeNet.Redis.Settings;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Net.Http.Headers;
 using CodeNet.Core.Extensions;
 using System.Reflection;
 using CodeNet.Core;
-using System.Text;
+using CodeNet.Core.Settings;
 
 namespace CodeNet.Redis;
 
@@ -51,7 +50,7 @@ internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache di
                 }
                 else
                 {
-                    context.Response.ContentType = "application/json";
+                    context.Response.ContentType = System.Net.Mime.MediaTypeNames.Application.Json;
                     context.Response.Headers.SetResponseHeader(HeaderNames.CacheControl, Constant.FromCache);
                     await context.Response.WriteAsync(cacheValue, context.RequestAborted);
                 }

@@ -9,8 +9,7 @@ internal class CodeNetHealthCheck(ICodeNetContext identityContext) : IHealthChec
     {
         try
         {
-            var requestId = identityContext.CorrelationId;
-            if (requestId != Guid.Empty)
+            if (string.IsNullOrEmpty(identityContext.CorrelationId))
                 return Task.FromResult(HealthCheckResult.Healthy("This is CodeNet, standing as always. Have a good work ;) "));
 
             return Task.FromResult(HealthCheckResult.Unhealthy("Sorry, CodeNet is down :("));
