@@ -1,11 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using CodeNet.Core;
+using CodeNet.Logging;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
 namespace CodeNet.ExceptionHandling;
 
-internal sealed class ExceptionHandlerMiddleware(RequestDelegate next)
+internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMiddleware
 {
     public async Task Invoke(HttpContext context)
     {
@@ -15,6 +17,10 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next)
         }
         catch (Exception ex)
         {
+            var methodInfo = GetMethodInfo(context);
+            var appLogger = context.RequestServices.GetRequiredService<IAppLogger>();
+            appLogger.ExceptionLog(ex, methodInfo);
+
             context.Response.ContentType = "application/json";
             string? errorCode = null, errorMessage = null, title = null;
             bool defaultMessage = false;
@@ -57,6 +63,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next)
                 Status = context.Response.StatusCode,
                 Instance = context.Request.Path
             }, context.RequestAborted);
+            return;
         }
     }
 }

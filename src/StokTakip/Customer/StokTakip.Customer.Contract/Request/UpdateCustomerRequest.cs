@@ -4,8 +4,6 @@ namespace StokTakip.Customer.Contract.Request;
 
 public class UpdateCustomerRequest
 {
-    public required int Id { get; set; }
-
     [MaxLength(100)]
     public required string Name { get; set; }
 

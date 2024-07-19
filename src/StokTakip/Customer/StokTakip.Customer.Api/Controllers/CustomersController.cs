@@ -1,5 +1,4 @@
-﻿using CodeNet.Core.Models;
-using CodeNet.Redis.Attributes;
+﻿using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
@@ -23,17 +22,18 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
+
     public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         return Ok(await customerService.CreateCustomer(request, cancellationToken));
     }
 
-    [HttpPut]
+    [HttpPut("{customerId}")]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
-    public async Task<IActionResult> Put(UpdateCustomerRequest request, CancellationToken cancellationToken)
+    public async Task<IActionResult> Put(int customerId, UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        return Ok(await customerService.UpdateCustomer(request, cancellationToken));
+        return Ok(await customerService.UpdateCustomer(customerId, request, cancellationToken));
     }
 
     [HttpDelete]
@@ -43,4 +43,21 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     {
         return Ok(await customerService.DeleteCustomer(request.Id, cancellationToken));
     }
+}
+
+[ApiController]
+[Route("[controller]")]
+public class TestController : ControllerBase
+{
+    [HttpPost]
+    public async Task<IActionResult> Post(TestModel request, CancellationToken cancellationToken)
+    {
+        return Ok(request.ToString());
+    }
+}
+
+public class TestModel
+{
+    public string Isim { get; set; }
+    //public DateTime Tarih { get; set; }
 }

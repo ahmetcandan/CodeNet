@@ -31,9 +31,9 @@ public class CustomerService(ICustomerRepository customerRepository, IAutoMapper
         return mapper.MapObject<Model.Customer, CustomerResponse>(result);
     }
 
-    public async Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken)
+    public async Task<CustomerResponse> UpdateCustomer(int customerId, UpdateCustomerRequest request, CancellationToken cancellationToken)
     {
-        var result = await customerRepository.GetAsync([request.Id], cancellationToken) ?? throw new UserLevelException("CUS001", $"Customer not found, Id: {request?.Id}");
+        var result = await customerRepository.GetAsync([customerId], cancellationToken) ?? throw new UserLevelException("CUS001", $"Customer not found, Id: {customerId}");
         result.Code = request.Code;
         result.Description = request.Description;
         result.Name = request.Name;

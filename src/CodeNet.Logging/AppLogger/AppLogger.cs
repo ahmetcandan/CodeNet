@@ -8,7 +8,7 @@ using System.Reflection;
 
 namespace CodeNet.Logging;
 
-public class AppLogger(ICodeNetContext codeNetContext) : IAppLogger
+public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger) : IAppLogger
 {
     public void EntryLog(object request, MethodBase? methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
@@ -52,23 +52,23 @@ public class AppLogger(ICodeNetContext codeNetContext) : IAppLogger
             CorrelationId = codeNetContext.CorrelationId,
             ElapsedDuration = elapsedDuration
         }) ?? "";
-        //switch (logTime)
-        //{
-        //    case LogTime.Entry:
-        //        logger.Log(LogLevel.Information, eventId, message);
-        //        break;
-        //    case LogTime.Exit:
-        //        logger.Log(LogLevel.Information, eventId, message);
-        //        break;
-        //    case LogTime.Trace:
-        //        logger.Log(LogLevel.Trace, eventId, message);
-        //        break;
-        //    case LogTime.Error:
-        //        logger.Log(LogLevel.Error, eventId, exception, message);
-        //        break;
-        //    default:
-        //        logger.Log(LogLevel.None, eventId, message);
-        //        break;
-        //}
+        switch (logTime)
+        {
+            case LogTime.Entry:
+                logger.Log(LogLevel.Information, eventId, message);
+                break;
+            case LogTime.Exit:
+                logger.Log(LogLevel.Information, eventId, message);
+                break;
+            case LogTime.Trace:
+                logger.Log(LogLevel.Trace, eventId, message);
+                break;
+            case LogTime.Error:
+                logger.Log(LogLevel.Error, eventId, exception, message);
+                break;
+            default:
+                logger.Log(LogLevel.None, eventId, message);
+                break;
+        }
     }
 }

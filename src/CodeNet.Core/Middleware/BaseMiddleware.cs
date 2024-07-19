@@ -28,16 +28,16 @@ public abstract class BaseMiddleware
         return memoryStream.ToArray();
     }
 
-    protected static async Task<string> ReadResponseAsync(HttpContext context, RequestDelegate next, CancellationToken cancellationToken)
+    protected static async Task<string> ReadResponseAsync(HttpContext context, RequestDelegate next)
     {
         using var swapStream = new MemoryStream();
         var originalResponseBody = context.Response.Body;
         context.Response.Body = swapStream;
         await next(context);
         swapStream.Seek(0, SeekOrigin.Begin);
-        string responseBody = await (new StreamReader(swapStream)).ReadToEndAsync(cancellationToken);
+        string responseBody = await (new StreamReader(swapStream)).ReadToEndAsync(context.RequestAborted);
         swapStream.Seek(0, SeekOrigin.Begin);
-        await swapStream.CopyToAsync(originalResponseBody, cancellationToken);
+        await swapStream.CopyToAsync(originalResponseBody, context.RequestAborted);
         context.Response.Body = originalResponseBody;
         return responseBody;
     }

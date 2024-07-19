@@ -9,7 +9,7 @@ public interface ICustomerService
 
     Task<CustomerResponse> CreateCustomer(CreateCustomerRequest request, CancellationToken cancellationToken);
 
-    Task<CustomerResponse> UpdateCustomer(UpdateCustomerRequest request, CancellationToken cancellationToken);
+    Task<CustomerResponse> UpdateCustomer(int customerId, UpdateCustomerRequest request, CancellationToken cancellationToken);
 
     Task<CustomerResponse> DeleteCustomer(int customerId, CancellationToken cancellationToken);
 }

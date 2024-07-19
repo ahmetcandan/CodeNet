@@ -12,15 +12,24 @@ public class LoggingMiddleware(RequestDelegate next) : BaseMiddleware
         var methodInfo = GetMethodInfo(context);
         var appLogger = context.RequestServices.GetRequiredService<IAppLogger>();
 
-        var request = await GetRequest(context);
-        appLogger.EntryLog(request, methodInfo!);
+        appLogger.EntryLog(new
+        {
+            context.Request.Method,
+            context.Request.Path,
+            context.Request.Scheme,
+            context.Request.RouteValues
+        }, methodInfo!);
 
         var timer = new Stopwatch();
         timer.Start();
 
-        var response = await ReadResponseAsync(context, next, context.RequestAborted);
+        await next(context);
 
         timer.Stop();
-        appLogger.ExitLog(response, methodInfo!, timer.ElapsedMilliseconds);
+        appLogger.ExitLog(new
+        {
+            context.Response.ContentType,
+            context.Response.StatusCode
+        }, methodInfo!, timer.ElapsedMilliseconds);
     }
 }

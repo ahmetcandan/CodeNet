@@ -39,10 +39,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
     //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
     //.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
-    .AddHealthChecks()
-    .AddCodeNetHealthCheck()
-    .AddEntityFrameworkHealthCheck<CustomerDbContext>()
-    .AddRedisHealthCheck()
+    //.AddHealthChecks()
+    //.AddCodeNetHealthCheck()
+    //.AddEntityFrameworkHealthCheck<CustomerDbContext>()
+    //.AddRedisHealthCheck()
     //.AddMongoDbHealthCheck()
     //.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
     //.AddElasticsearchHealthCheck()
@@ -58,10 +58,10 @@ builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
 var app = builder.Build();
 app.UseCodeNet()
     //.UseRabbitMQConsumer<MongoModel>()
+    .UseLogging()
     .UseDistributedCache()
     .UseDistributedLock()
-    .UseLogging()
-    .UseHealthChecks("/health")
     .UseExceptionHandling()
     ;
+//app.UseCodeNetHealthChecks("/health");
 app.Run();
