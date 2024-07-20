@@ -216,16 +216,16 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
 
     private IQueryable<MakerCheckerFlowHistory> GetMakerCheckerFlowHistoryListQueryable(Guid referenceId)
     {
-        return (from definition in _makerCheckerDefinitions
-                join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
-                join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
-                where definition.EntityName == _entityName
-                    && history.ReferenceId == referenceId
-                    && definition.IsActive && !definition.IsDeleted
-                    && flow.IsActive && !flow.IsDeleted
-                    && history.IsActive && !history.IsDeleted
-                orderby flow.Order ascending
-                select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName });
+        return from definition in _makerCheckerDefinitions
+               join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
+               join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
+               where definition.EntityName == _entityName
+                   && history.ReferenceId == referenceId
+                   && definition.IsActive && !definition.IsDeleted
+                   && flow.IsActive && !flow.IsDeleted
+                   && history.IsActive && !history.IsDeleted
+               orderby flow.Order ascending
+               select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName };
     }
 
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()

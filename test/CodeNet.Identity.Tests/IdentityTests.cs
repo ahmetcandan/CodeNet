@@ -1,26 +1,26 @@
-using CodeNet.Identity.Extensions;
+using CodeNet.Core.Enums;
 using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.InMemory.Extensions;
+using CodeNet.Identity.Extensions;
+using CodeNet.Identity.Manager;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Identity.Manager;
-using CodeNet.Core.Enums;
 
 namespace CodeNet.Identity.Tests
 {
     [TestFixture]
     public class IdentityTests
     {
-        string admin = "admin";
-        string adminEmail = "admin@test.net";
-        string adminPassword = "@dMin-123!";
-        string[] adminRoles = ["admin"];
-        string user = "user";
-        string userEmail = "user@test.net";
-        string userPassword = "Us€r-123!";
-        string[] userRoles = ["user"];
+        private readonly string admin = "admin";
+        private readonly string adminEmail = "admin@test.net";
+        private readonly string adminPassword = "@dMin-123!";
+        private readonly string[] adminRoles = ["admin"];
+        private readonly string user = "user";
+        private readonly string userEmail = "user@test.net";
+        private readonly string userPassword = "Us€r-123!";
+        private readonly string[] userRoles = ["user"];
 
         [SetUp]
         public void Setup()
@@ -87,7 +87,7 @@ namespace CodeNet.Identity.Tests
                    .AddAuthorization(options => options.UseInMemoryDatabase("IdentityTestDb"), SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
-            var tokenResult = await tokenManager.GenerateToken(new Settings.LoginModel 
+            var tokenResult = await tokenManager.GenerateToken(new Settings.LoginModel
             {
                 Username = admin,
                 Password = adminPassword,

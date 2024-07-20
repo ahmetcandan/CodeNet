@@ -1,11 +1,11 @@
 ﻿using CodeNet.Core;
 using CodeNet.EntityFramework.InMemory.Extensions;
+using CodeNet.Parameters.Extensions;
 using CodeNet.Parameters.Manager;
 using Microsoft.EntityFrameworkCore;
-using Moq;
-using Microsoft.Extensions.DependencyInjection;
-using CodeNet.Parameters.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Moq;
 
 namespace CodeNet.Parameters.Tests
 {

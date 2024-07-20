@@ -6,37 +6,31 @@ namespace CodeNet.MakerChecker.Models;
 
 public class MakerCheckerDraftEntity : TracingEntity
 {
-    private Guid _id;
-    private ApproveStatus _approveStatus;
-    private EntryState _entryState;
-    private byte _order;
-    private byte[] _entityData;
+    public Guid Id { get; private set; }
+    public ApproveStatus ApproveStatus { get; private set; }
+    public EntryState EntryState { get; private set; }
+    public byte[] EntityData { get; private set; }
 
-    public Guid Id { get { return _id; } private set { _id = value; } }
-    public ApproveStatus ApproveStatus { get { return _approveStatus; } private set { _approveStatus = value; } }
-    public EntryState EntryState { get { return _entryState; } private set { _entryState = value; } }
-    public byte[] EntityData { get { return _entityData; } private set { _entityData = value; } }
-
-    public byte Order { get { return _order; } private set { _order = value; } }
+    public byte Order { get; private set; }
 
     public void SetNewReferenceId()
     {
-        _id = Guid.NewGuid();
+        Id = Guid.NewGuid();
     }
 
     public void SetApproveStatus(ApproveStatus approveStatus)
     {
-        _approveStatus = approveStatus;
+        ApproveStatus = approveStatus;
     }
 
     public void SetEntryState(EntryState entryState)
     {
-        _entryState = entryState;
+        EntryState = entryState;
     }
 
     public void SetOrder(byte order)
     {
-        _order = order;
+        Order = order;
     }
 
     public virtual void SetEntity<TMakerCheckerEntity>(TMakerCheckerEntity entity)
@@ -44,12 +38,12 @@ public class MakerCheckerDraftEntity : TracingEntity
     {
         ArgumentNullException.ThrowIfNull(entity);
 
-        _entityData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity));
+        EntityData = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(entity));
     }
 
     public virtual TMakerCheckerEntity? GetEntity<TMakerCheckerEntity>()
         where TMakerCheckerEntity : class, IMakerCheckerEntity
     {
-        return JsonConvert.DeserializeObject<TMakerCheckerEntity>(Encoding.UTF8.GetString(_entityData));
+        return JsonConvert.DeserializeObject<TMakerCheckerEntity>(Encoding.UTF8.GetString(EntityData));
     }
 }

@@ -35,7 +35,7 @@ public abstract class BaseMiddleware
         context.Response.Body = swapStream;
         await next(context);
         swapStream.Seek(0, SeekOrigin.Begin);
-        string responseBody = await (new StreamReader(swapStream)).ReadToEndAsync(context.RequestAborted);
+        string responseBody = await new StreamReader(swapStream).ReadToEndAsync(context.RequestAborted);
         swapStream.Seek(0, SeekOrigin.Begin);
         await swapStream.CopyToAsync(originalResponseBody, context.RequestAborted);
         context.Response.Body = originalResponseBody;
@@ -44,17 +44,15 @@ public abstract class BaseMiddleware
 
     protected static async Task<string> GetRequestKey(HttpContext context, MethodInfo methodInfo)
     {
-        if (context.Request.ContentType is null)
-            return Hashing.MD5((context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty) + string.Join("", context.Request.RouteValues.Select(c => c.Value)));
-        else
-            return Hashing.MD5(await StreamToByteArray(context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty, context.RequestAborted));
+        return context.Request.ContentType is null
+            ? Hashing.MD5((context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty) + string.Join("", context.Request.RouteValues.Select(c => c.Value)))
+            : Hashing.MD5(await StreamToByteArray(context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty, context.RequestAborted));
     }
 
     protected static async Task<string> GetRequest(HttpContext context)
     {
-        if (context.Request.ContentType is null)
-            return string.Join("", context.Request.RouteValues.Select(c => c.Value));
-        else
-            return Encoding.UTF8.GetString(await StreamToByteArray(context.Request.Body, context.RequestAborted));
+        return context.Request.ContentType is null
+            ? string.Join("", context.Request.RouteValues.Select(c => c.Value))
+            : Encoding.UTF8.GetString(await StreamToByteArray(context.Request.Body, context.RequestAborted));
     }
 }

@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.Options;
-using MongoDB.Driver;
-using CodeNet.MongoDB.Settings;
+﻿using CodeNet.MongoDB.Settings;
+using Microsoft.Extensions.Options;
 using MongoDB.Bson;
+using MongoDB.Driver;
 
 namespace CodeNet.MongoDB;
 

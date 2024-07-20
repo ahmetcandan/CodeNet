@@ -24,10 +24,7 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
 
     protected virtual string GetObjectToString(object obj)
     {
-        if (obj.GetType() == typeof(string))
-            return obj?.ToString() ?? string.Empty;
-
-        return JsonConvert.SerializeObject(obj);
+        return obj.GetType() == typeof(string) ? obj?.ToString() ?? string.Empty : JsonConvert.SerializeObject(obj);
     }
 
     private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration, exception: exception);

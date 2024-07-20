@@ -1,7 +1,7 @@
-using CodeNet.Core.Extensions;
-using CodeNet.Identity.Extensions;
-using CodeNet.EntityFramework.Extensions;
 using CodeNet.Core.Enums;
+using CodeNet.Core.Extensions;
+using CodeNet.EntityFramework.Extensions;
+using CodeNet.Identity.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -74,10 +74,8 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
 
     public bool SetResponseHeader(string key, string value)
     {
-        if (httpContextAccessor.HttpContext is not null)
-            return httpContextAccessor.HttpContext.Response.Headers.SetResponseHeader(key, value);
-
-        return false;
+        return httpContextAccessor.HttpContext is not null
+&& httpContextAccessor.HttpContext.Response.Headers.SetResponseHeader(key, value);
     }
 
     public StringValues GetResponseHeader(string key)

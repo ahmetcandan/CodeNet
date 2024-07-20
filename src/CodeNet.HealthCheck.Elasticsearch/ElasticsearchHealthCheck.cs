@@ -10,10 +10,9 @@ internal class ElasticsearchHealthCheck<TDbContext>(TDbContext dbContext) : IHea
     {
         try
         {
-            if (await dbContext.CanConnectionAsync(cancellationToken))
-                return HealthCheckResult.Healthy($"This is Elasticsearch, standing as always. Have a good work ;) ");
-
-            return HealthCheckResult.Unhealthy($"Sorry, Elasticsearch is down :(");
+            return await dbContext.CanConnectionAsync(cancellationToken)
+                ? HealthCheckResult.Healthy($"This is Elasticsearch, standing as always. Have a good work ;) ")
+                : HealthCheckResult.Unhealthy($"Sorry, Elasticsearch is down :(");
         }
         catch
         {

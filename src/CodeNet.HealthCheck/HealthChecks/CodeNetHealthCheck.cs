@@ -9,10 +9,9 @@ internal class CodeNetHealthCheck(ICodeNetContext identityContext) : IHealthChec
     {
         try
         {
-            if (string.IsNullOrEmpty(identityContext.CorrelationId))
-                return Task.FromResult(HealthCheckResult.Healthy("This is CodeNet, standing as always. Have a good work ;) "));
-
-            return Task.FromResult(HealthCheckResult.Unhealthy("Sorry, CodeNet is down :("));
+            return string.IsNullOrEmpty(identityContext.CorrelationId)
+                ? Task.FromResult(HealthCheckResult.Healthy("This is CodeNet, standing as always. Have a good work ;) "))
+                : Task.FromResult(HealthCheckResult.Unhealthy("Sorry, CodeNet is down :("));
         }
         catch
         {

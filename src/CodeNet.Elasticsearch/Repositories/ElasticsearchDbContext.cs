@@ -1,7 +1,7 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using CodeNet.Elasticsearch.Settings;
+using Elastic.Clients.Elasticsearch;
 using Elastic.Transport;
 using Microsoft.Extensions.Options;
-using CodeNet.Elasticsearch.Settings;
 
 namespace CodeNet.Elasticsearch;
 

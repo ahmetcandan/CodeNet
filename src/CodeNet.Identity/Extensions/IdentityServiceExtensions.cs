@@ -1,11 +1,11 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CodeNet.Core.Enums;
 using CodeNet.EntityFramework.Extensions;
+using CodeNet.Identity.Manager;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using CodeNet.Identity.Manager;
 using Microsoft.Extensions.Configuration;
-using CodeNet.Core.Enums;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Identity.Extensions;
 

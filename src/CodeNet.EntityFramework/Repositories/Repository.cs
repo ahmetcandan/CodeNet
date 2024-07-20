@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity> 
+public abstract class Repository<TEntity> : IRepository<TEntity>
     where TEntity : class, IEntity
 {
     protected readonly DbContext _dbContext;
@@ -75,10 +75,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 
     public virtual List<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count)
     {
-        if (page < 1 || count < 1)
-            throw new ArgumentException("Page or count cannot be less than 1");
-
-        return [.. _entities.Where(predicate).Skip((page - 1) * count).Take(count)];
+        return page < 1 || count < 1
+            ? throw new ArgumentException("Page or count cannot be less than 1")
+            : ([.. _entities.Where(predicate).Skip((page - 1) * count).Take(count)]);
     }
 
     public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count)
@@ -96,12 +95,11 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         return GetPagingListAsync(c => true, page, count, cancellationToken);
     }
 
-    public async virtual Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken)
+    public virtual async Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken)
     {
-        if (page < 1 || count < 1)
-            throw new ArgumentException("Page or count cannot be less than 1");
-
-        return await _entities.Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
+        return page < 1 || count < 1
+            ? throw new ArgumentException("Page or count cannot be less than 1")
+            : await _entities.Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
     }
 
     public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -133,7 +131,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     {
         return await _entities.FindAsync(keyValues, cancellationToken);
     }
-    
+
     public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
     {
         return GetAsync(predicate, CancellationToken.None);

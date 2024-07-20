@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CodeNet.Core;
+using CodeNet.EntityFramework.Repositories;
+using Microsoft.EntityFrameworkCore;
 using StokTakip.Product.Abstraction.Repository;
 using StokTakip.Product.Model;
 using StokTakip.Product.Model.ViewModel;
-using CodeNet.EntityFramework.Repositories;
-using CodeNet.Core;
 
 namespace StokTakip.Product.Repository;
 

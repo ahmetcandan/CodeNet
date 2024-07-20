@@ -1,7 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
-using CodeNet.Core.Extensions;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.MakerChecker.Extensions;
 

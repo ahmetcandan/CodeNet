@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using CodeNet.Core.Extensions;
 using CodeNet.Parameters.Manager;
-using Microsoft.Extensions.Configuration;
-using CodeNet.Parameters.Settings;
-using CodeNet.Core.Extensions;
 using CodeNet.Parameters.MongoDB.Manager;
+using CodeNet.Parameters.Settings;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Parameters.MongoDB.Extensions;
 

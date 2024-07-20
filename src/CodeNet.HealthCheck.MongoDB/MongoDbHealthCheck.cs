@@ -10,10 +10,9 @@ internal class MongoDbHealthCheck<TDbContext>(TDbContext dbContext) : IHealthChe
     {
         try
         {
-            if (await dbContext.CanConnectAsync(cancellationToken))
-                return HealthCheckResult.Healthy($"This is MongoDB, standing as always. Have a good work ;) ");
-
-            return HealthCheckResult.Unhealthy($"Sorry, MongoDB is down :(");
+            return await dbContext.CanConnectAsync(cancellationToken)
+                ? HealthCheckResult.Healthy($"This is MongoDB, standing as always. Have a good work ;) ")
+                : HealthCheckResult.Unhealthy($"Sorry, MongoDB is down :(");
         }
         catch
         {

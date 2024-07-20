@@ -1,5 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using CodeNet.EntityFramework.Tests.Mock.Model;
+﻿using CodeNet.EntityFramework.Tests.Mock.Model;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.EntityFramework.Tests.Mock
 {

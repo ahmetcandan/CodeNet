@@ -4,7 +4,6 @@ using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Manager;
 using CodeNet.Parameters.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 
 namespace CodeNet.Parameters.Repositories;
 
@@ -43,17 +42,16 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 c.ParameterGroup.Description
             }).FirstOrDefault();
 
-        if (result is not null)
-            return new ParameterGroupWithParamsResult
+        return result is not null
+            ? new ParameterGroupWithParamsResult
             {
                 Code = result.Key.Code,
                 ApprovalRequired = result.Key.ApprovalRequired,
                 Description = result.Key.Description,
                 Id = result.Key.Id,
                 Parameters = result.Select(c => c.Parameter.ToParameterResult()).ToList()
-            };
-
-        return null;
+            }
+            : null;
     }
 
     public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParams(string groupCode, CancellationToken cancellationToken)
@@ -67,17 +65,16 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 c.ParameterGroup.Description
             }).FirstOrDefault();
 
-        if (result is not null)
-            return new ParameterGroupWithParamsResult
+        return result is not null
+            ? new ParameterGroupWithParamsResult
             {
                 Code = result.Key.Code,
                 ApprovalRequired = result.Key.ApprovalRequired,
                 Description = result.Key.Description,
                 Id = result.Key.Id,
                 Parameters = result.Select(c => c.Parameter.ToParameterResult()).ToList()
-            };
-
-        return null;
+            }
+            : null;
     }
 
     private IQueryable<ParameterGroupParameter> GetParameterGroupParameter()

@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using CodeNet.Core;
 using CodeNet.EntityFramework.Tests.Mock;
 using CodeNet.EntityFramework.Tests.Mock.Model;
-using CodeNet.Core;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.EntityFramework.Tests
 {
@@ -160,7 +160,7 @@ namespace CodeNet.EntityFramework.Tests
             var data1 = new TestTable
             {
                 Name = "Ahmet"
-            }; 
+            };
             var data2 = new TestTable
             {
                 Name = "İrem"

@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using CodeNet.Core.Models;
+﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
 using CodeNet.Identity.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.Data;
 
 namespace CodeNet.Identity.Manager;

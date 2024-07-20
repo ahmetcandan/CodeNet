@@ -1,6 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
-using CodeNet.Core;
+﻿using CodeNet.Core;
 using CodeNet.EntityFramework.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.EntityFramework.Repositories;
 

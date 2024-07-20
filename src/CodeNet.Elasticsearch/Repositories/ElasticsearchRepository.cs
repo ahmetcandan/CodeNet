@@ -1,6 +1,6 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using CodeNet.Elasticsearch.Attributes;
 using CodeNet.Elasticsearch.Models;
-using CodeNet.Elasticsearch.Attributes;
+using Elastic.Clients.Elasticsearch;
 
 namespace CodeNet.Elasticsearch.Repositories;
 

@@ -1,6 +1,4 @@
-﻿using System.Net;
-
-namespace CodeNet.ExceptionHandling;
+﻿namespace CodeNet.ExceptionHandling;
 
 public class CodeNetException : Exception
 {

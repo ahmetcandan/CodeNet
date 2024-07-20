@@ -1,8 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CodeNet.Core.Models;
-using CodeNet.Identity.Settings;
+﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Manager;
+using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CodeNet.Identity.Api.Controllers;
 

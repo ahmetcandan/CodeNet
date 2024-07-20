@@ -1,11 +1,11 @@
-﻿using CodeNet.Redis.Attributes;
+﻿using CodeNet.Core;
+using CodeNet.Core.Extensions;
+using CodeNet.Core.Settings;
+using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Net.Http.Headers;
-using CodeNet.Core.Extensions;
 using System.Reflection;
-using CodeNet.Core;
-using CodeNet.Core.Settings;
 
 namespace CodeNet.Redis;
 

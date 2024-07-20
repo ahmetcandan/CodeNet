@@ -1,7 +1,7 @@
-﻿using Microsoft.AspNetCore.Identity;
-using CodeNet.Core.Models;
+﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
 using CodeNet.Identity.Settings;
+using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 

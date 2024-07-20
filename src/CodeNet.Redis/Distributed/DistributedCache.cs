@@ -25,9 +25,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     public async Task<TModel?> GetValueAsync(string key, CancellationToken cancellationToken)
     {
         var json = await distributedCache.GetStringAsync(key, cancellationToken);
-        if (string.IsNullOrEmpty(json))
-            return default;
-        return JsonConvert.DeserializeObject<TModel>(json);
+        return string.IsNullOrEmpty(json) ? default : JsonConvert.DeserializeObject<TModel>(json);
     }
 
     /// <summary>
@@ -38,9 +36,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     public TModel? GetValue(string key)
     {
         var json = distributedCache.GetString(key);
-        if (string.IsNullOrEmpty(json))
-            return default;
-        return JsonConvert.DeserializeObject<TModel>(json);
+        return string.IsNullOrEmpty(json) ? default : JsonConvert.DeserializeObject<TModel>(json);
     }
 
     /// <summary>

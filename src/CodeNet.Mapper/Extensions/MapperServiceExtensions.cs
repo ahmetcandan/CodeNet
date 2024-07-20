@@ -1,5 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using AutoMapper;
+﻿using AutoMapper;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.MakerChecker.Extensions;
 

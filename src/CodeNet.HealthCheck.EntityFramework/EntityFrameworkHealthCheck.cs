@@ -11,10 +11,9 @@ internal class EntityFrameworkHealthCheck<TDbContext>(TDbContext dbContext) : IH
         try
         {
             var providerName = dbContext.Database.ProviderName?.Split('.')[^1];
-            if (await dbContext.Database.CanConnectAsync(cancellationToken))
-                return HealthCheckResult.Healthy($"This is {providerName}, standing as always. Have a good work ;) ");
-
-            return HealthCheckResult.Unhealthy($"Sorry, {providerName} is down :(");
+            return await dbContext.Database.CanConnectAsync(cancellationToken)
+                ? HealthCheckResult.Healthy($"This is {providerName}, standing as always. Have a good work ;) ")
+                : HealthCheckResult.Unhealthy($"Sorry, {providerName} is down :(");
         }
         catch
         {
