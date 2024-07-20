@@ -15,7 +15,6 @@ internal static class Helper
     {
         Id = parameter.Id,
         Code = parameter.Code,
-        GroupId = parameter.GroupId,
         Value = parameter.Value,
         IsDefault = parameter.IsDefault,
         Order = parameter.Order

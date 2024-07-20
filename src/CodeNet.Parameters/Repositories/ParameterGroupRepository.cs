@@ -33,7 +33,14 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
 
     public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParams(int groupId, CancellationToken cancellationToken)
     {
-        var result = (await GetParameterGroupParameter().Where(c => c.ParameterGroup.Id == groupId).GroupBy(c => c.ParameterGroup).ToListAsync(cancellationToken)).FirstOrDefault();
+        var result = (await GetParameterGroupParameter().Where(c => c.ParameterGroup.Id == groupId).ToListAsync(cancellationToken))
+            .GroupBy(c => new
+            {
+                c.ParameterGroup.Id,
+                c.ParameterGroup.Code,
+                c.ParameterGroup.ApprovalRequired,
+                c.ParameterGroup.Description
+            }).FirstOrDefault();
 
         if (result is not null)
             return new ParameterGroupWithParamsResult
@@ -73,42 +80,5 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                     && p.IsActive && !p.IsDeleted
                 select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg })
                 .AsNoTracking();
-    }
-
-    private IQueryable<ParameterListItemResult> GetParameterQuery()
-    {
-        return (from g in _entities
-                join p in _parameters on g.Id equals p.GroupId
-                where g.IsActive && !g.IsDeleted
-                   && p.IsActive && !p.IsDeleted
-                select new ParameterListItemResult
-                {
-                    Code = p.Code,
-                    GroupId = g.Id,
-                    Id = p.Id,
-                    Value = p.Value,
-                    GroupCode = g.Code,
-                    ApprovalRequired = g.ApprovalRequired
-                }).AsNoTracking();
-    }
-
-    public List<ParameterListItemResult> GetParameters(int groupId)
-    {
-        return [.. GetParameterQuery().Where(c => c.GroupId == groupId)];
-    }
-
-    public List<ParameterListItemResult> GetParameters(string groupCode)
-    {
-        return [.. GetParameterQuery().Where(c => c.GroupCode == groupCode)];
-    }
-
-    public Task<List<ParameterListItemResult>> GetParametersAsync(int groupId, CancellationToken cancellationToken = default)
-    {
-        return GetParameterQuery().Where(c => c.GroupId == groupId).ToListAsync(cancellationToken);
-    }
-
-    public Task<List<ParameterListItemResult>> GetParametersAsync(string groupCode, CancellationToken cancellationToken = default)
-    {
-        return GetParameterQuery().Where(c => c.GroupCode == groupCode).ToListAsync(cancellationToken);
     }
 }

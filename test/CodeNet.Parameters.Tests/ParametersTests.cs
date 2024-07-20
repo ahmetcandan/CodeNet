@@ -17,7 +17,7 @@ namespace CodeNet.MakerChecker.Tests
         }
 
         [Test]
-        public async Task Maker_Checker_Approve_Tests()
+        public async Task Parameter_Tests()
         {
             Mock<ICodeNetContext> mockCodeNetContext = new();
             mockCodeNetContext.Setup(c => c.UserName)
@@ -33,35 +33,84 @@ namespace CodeNet.MakerChecker.Tests
 
             var serviceProvider = services.BuildServiceProvider();
             var parameterManager = serviceProvider.GetRequiredService<IParameterManager>();
-            var parameterGroup = await parameterManager.AddParameterGroupAsync(new Parameters.Models.AddParameterGroupModel
+            var p1 = new Parameters.Models.ParameterModel
+            {
+                Code = "TG1",
+                Value = "TG1_Value",
+                Order = 1,
+                IsDefault = true
+            };
+            var p2 = new Parameters.Models.ParameterModel
+            {
+                Code = "TG2",
+                Value = "TG2_Value",
+                Order = 2
+            };
+            var p3 = new Parameters.Models.ParameterModel
+            {
+                Code = "TG3",
+                Value = "TG3_Value",
+                Order = 3
+            };
+            var request = new Parameters.Models.ParameterGroupWithParamsModel
             {
                 Code = "TG",
                 ApprovalRequired = false,
-                Description = "Test Group"
-            });
-            Assert.That(parameterGroup, Is.Not.Null);
-            var p1 = await parameterManager.AddParameterAsync(new Parameters.Models.AddParameterModel
-            {
-                Code = parameterGroup.Code + "1",
-                Value = "TG1_Value",
-                GroupId = parameterGroup.Id
-            });
-            Assert.That(p1, Is.Not.Null);
-            var p2 = await parameterManager.AddParameterAsync(new Parameters.Models.AddParameterModel
-            {
-                Code = parameterGroup.Code + "2",
-                Value = "TG2_Value",
-                GroupId = parameterGroup.Id
-            });
-            Assert.That(p2, Is.Not.Null);
+                Description = "Test Group",
+                Parameters = [p1, p2]
+            };
+            var addResponse = await parameterManager.AddParameterAsync(request);
 
-            var parameterList = await parameterManager.GetParametersAsync(parameterGroup.Id);
             Assert.Multiple(() =>
             {
-                Assert.That(parameterList, Is.Not.Null);
-                Assert.That(parameterList, Has.Count.EqualTo(2));
-                Assert.That(true);
+                Assert.That(addResponse, Is.Not.Null);
+                Assert.That(addResponse.Parameters, Is.Not.Null);
+                Assert.That(addResponse.Parameters.ToList(), Has.Count.EqualTo(2));
             });
+
+            var getResponse = await parameterManager.GetParameterAsync(addResponse.Id);
+
+            var r1 = getResponse?.Parameters.FirstOrDefault(c => c.Code == p1.Code);
+            var r2 = getResponse?.Parameters.FirstOrDefault(c => c.Code == p2.Code);
+            if (r1 is not null)
+                p1.Id = r1.Id;
+            if (r2 is not null)
+                p2.Id = r2.Id;
+
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(getResponse, Is.Not.Null);
+                Assert.That(getResponse?.Parameters, Is.Not.Null);
+                Assert.That(getResponse?.Parameters.ToList(), Has.Count.EqualTo(2));
+            });
+
+            request.Parameters.Add(p3);
+            request.Parameters.Remove(p2);
+            var updateResponse = await parameterManager.UpdateParameterAsync(addResponse.Id, request);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(updateResponse, Is.Not.Null);
+                Assert.That(updateResponse?.Parameters, Is.Not.Null);
+                Assert.That(updateResponse?.Parameters.ToList(), Has.Count.EqualTo(2));
+                Assert.That(updateResponse?.Parameters.Any(c => c.Code == p1.Code), Is.True);
+                Assert.That(updateResponse?.Parameters.Any(c => c.Code == p3.Code), Is.True);
+                Assert.That(updateResponse?.Parameters.Any(c => c.Code == p2.Code), Is.False);
+            });
+
+            var getResponse2 = await parameterManager.GetParameterAsync(addResponse.Id);
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(getResponse2, Is.Not.Null);
+                Assert.That(getResponse2?.Parameters, Is.Not.Null);
+                Assert.That(getResponse2?.Parameters.ToList(), Has.Count.EqualTo(2));
+                Assert.That(getResponse2?.Parameters.Any(c => c.Code == p1.Code), Is.True);
+                Assert.That(getResponse2?.Parameters.Any(c => c.Code == p3.Code), Is.True);
+                Assert.That(getResponse2?.Parameters.Any(c => c.Code == p2.Code), Is.False);
+            });
+
         }
     }
 }

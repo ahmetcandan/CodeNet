@@ -51,7 +51,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     public virtual TEntity Update(TEntity entity)
     {
         _entities.Attach(entity);
-        _dbContext.Entry(entity).State = EntityState.Detached;
+        _dbContext.Entry(entity).State = EntityState.Modified;
         return entity;
     }
 

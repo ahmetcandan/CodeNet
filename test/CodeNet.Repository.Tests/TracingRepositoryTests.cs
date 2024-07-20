@@ -22,7 +22,8 @@ namespace CodeNet.EntityFramework.Tests
             var mockIdentityContext = new Mock<ICodeNetContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
-            var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
+            var testTracingRepository = new TestTracingRepository(context, mockIdentityContext.Object);
+            var testRepository = new TestRepository(context);
             var data1 = new TestTable
             {
                 Name = "Ahmet"
@@ -31,8 +32,8 @@ namespace CodeNet.EntityFramework.Tests
 
             #region Insert
             var now = DateTime.Now;
-            var insertedData = testRepository.Add(data1);
-            testRepository.SaveChanges();
+            var insertedData = testTracingRepository.Add(data1);
+            testTracingRepository.SaveChanges();
 
             Assert2.AreEqualByJson(insertedData, data1);
             Assert.Multiple(() =>
@@ -47,15 +48,15 @@ namespace CodeNet.EntityFramework.Tests
             #endregion
 
             #region Get
-            var foundData = testRepository.Get(insertedData.Id);
+            var foundData = testTracingRepository.Get(insertedData.Id);
             Assert.That(foundData, Is.Not.Null);
             Assert2.AreEqualByJson(foundData, insertedData);
             #endregion
 
             #region Modify
             now = DateTime.Now;
-            var updatedData = testRepository.Update(foundData);
-            _ = testRepository.SaveChanges();
+            var updatedData = testTracingRepository.Update(foundData);
+            _ = testTracingRepository.SaveChanges();
             Assert2.AreEqualByJson(updatedData, foundData);
             Assert.Multiple(() =>
             {
@@ -66,13 +67,15 @@ namespace CodeNet.EntityFramework.Tests
 
             #region Delete
             now = DateTime.Now;
-            var deletedData = testRepository.Remove(updatedData);
-            _ = testRepository.SaveChanges();
+            var deletedData = testTracingRepository.Remove(updatedData);
+            _ = testTracingRepository.SaveChanges();
+            var deleteResponse = testRepository.Get(deletedData.Id);
             Assert2.AreEqualByJson(deletedData, updatedData);
             Assert.Multiple(() =>
             {
+                Assert.That(deleteResponse, Is.Not.Null);
                 Assert.That(deletedData.ModifiedDate, Is.EqualTo(now).Within(TimeSpan.FromSeconds(1)));
-                Assert.That(insertedData.IsDeleted, Is.True);
+                Assert.That(deleteResponse?.IsDeleted, Is.True);
             });
             #endregion
         }
@@ -88,7 +91,7 @@ namespace CodeNet.EntityFramework.Tests
             var mockIdentityContext = new Mock<ICodeNetContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
-            var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
+            var testRepository = new TestTracingRepository(context, mockIdentityContext.Object);
             var data1 = new TestTable
             {
                 Name = "Ahmet"
@@ -153,7 +156,7 @@ namespace CodeNet.EntityFramework.Tests
             var mockIdentityContext = new Mock<ICodeNetContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
-            var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
+            var testRepository = new TestTracingRepository(context, mockIdentityContext.Object);
             var data1 = new TestTable
             {
                 Name = "Ahmet"
@@ -205,7 +208,7 @@ namespace CodeNet.EntityFramework.Tests
             var mockIdentityContext = new Mock<ICodeNetContext>();
             mockIdentityContext.Setup(c => c.UserName)
                 .Returns(username);
-            var testRepository = new TestTableRepository(context, mockIdentityContext.Object);
+            var testRepository = new TestTracingRepository(context, mockIdentityContext.Object);
             var data1 = new TestTable
             {
                 Name = "Ahmet"

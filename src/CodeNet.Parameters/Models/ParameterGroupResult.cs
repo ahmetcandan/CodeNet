@@ -1,5 +1,5 @@
 ﻿namespace CodeNet.Parameters.Models;
 
-public class ParameterGroupResult : UpdateParameterGroupModel
+public class ParameterGroupResult : ParameterGroupModel
 {
 }

@@ -1,5 +1,5 @@
 ﻿namespace CodeNet.Parameters.Models;
 
-public class ParameterResult : UpdateParameterModel
+public class ParameterResult : ParameterModel
 {
 }

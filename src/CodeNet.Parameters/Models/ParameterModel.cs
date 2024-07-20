@@ -1,8 +1,8 @@
 ﻿namespace CodeNet.Parameters.Models;
 
-public class AddParameterModel
+public class ParameterModel
 {
-    public int GroupId { get; set; }
+    public int Id { get; set; }
     public required string Code { get; set; }
     public required string Value { get; set; }
     public bool IsDefault { get; set; }

@@ -5,10 +5,12 @@ using CodeNet.Core;
 
 namespace CodeNet.EntityFramework.Tests.Mock
 {
-    public class TestTableRepository : TracingRepository<TestTable>
+    public class TestTracingRepository(DbContext dbContext, ICodeNetContext codeNetContext) : TracingRepository<TestTable>(dbContext, codeNetContext)
     {
-        public TestTableRepository(DbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
-        {
-        }
+    }
+
+    public class TestRepository(DbContext dbContext) : Repository<TestTable>(dbContext)
+    {
+
     }
 }

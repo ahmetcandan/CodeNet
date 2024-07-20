@@ -2,5 +2,5 @@
 
 public class ParameterGroupWithParamsResult : ParameterGroupResult
 {
-    public required List<ParameterResult> Parameters { get; set; }
+    public required IEnumerable<ParameterResult> Parameters { get; set; }
 }
