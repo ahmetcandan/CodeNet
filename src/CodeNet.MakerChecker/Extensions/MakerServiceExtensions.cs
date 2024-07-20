@@ -53,7 +53,7 @@ public static class MakerServiceExtensions
         where TDbContext : MakerCheckerDbContext
     {
         services.AddDbContext<TDbContext>(optionsAction);
-        services.AddScoped<IMakerCheckerManager, MakerCheckerManager>();
+        services.AddScoped<IMakerCheckerManager, MakerCheckerManager<TDbContext>>();
         return services.AddCodeNetContext();
     }
 }

@@ -5,7 +5,8 @@ using CodeNet.MakerChecker.Repositories;
 
 namespace CodeNet.MakerChecker;
 
-internal class MakerCheckerManager(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : IMakerCheckerManager
+internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetContext identityContext) : IMakerCheckerManager
+    where TDbContext : MakerCheckerDbContext
 {
     private readonly MakerCheckerDefinitionRepository _makerCheckerDefinitionRepository = new(dbContext, identityContext);
     private readonly MakerCheckerFlowRepository _makerCheckerFlowRepository = new(dbContext, identityContext);

@@ -225,8 +225,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
                     && flow.IsActive && !flow.IsDeleted
                     && history.IsActive && !history.IsDeleted
                 orderby flow.Order ascending
-                select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName })
-                .AsNoTracking();
+                select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName });
     }
 
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
