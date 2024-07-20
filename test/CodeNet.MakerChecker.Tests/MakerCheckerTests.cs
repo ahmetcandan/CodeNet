@@ -3,7 +3,6 @@ using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.MakerChecker.Extensions;
 using CodeNet.MakerChecker.Models;
 using CodeNet.MakerChecker.Tests.Mock.Models;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
