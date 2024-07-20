@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using CodeNet.MongoDB.Settings;
-using CodeNet.MongoDB.Models;
 using MongoDB.Bson;
 
 namespace CodeNet.MongoDB;
@@ -19,7 +18,7 @@ public class MongoDBContext
         _database = client.GetDatabase(databaseName);
     }
 
-    public IMongoCollection<TModel> Set<TModel>() where TModel : class, IBaseMongoDBModel
+    public IMongoCollection<TModel> Set<TModel>() where TModel : class
     {
         string collectionName = (typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute)
                 ? typeof(TModel).Name

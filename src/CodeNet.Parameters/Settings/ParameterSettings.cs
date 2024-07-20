@@ -29,18 +29,4 @@ public class ParameterSettings
         }
         set { _time = value; }
     }
-
-    private bool? _useRedis;
-
-    /// <summary>
-    /// Should Redis be used?
-    /// </summary>
-    public bool UseRedis
-    {
-        get
-        {
-            return _useRedis ?? true;
-        }
-        set { _useRedis = value; }
-    }
 }

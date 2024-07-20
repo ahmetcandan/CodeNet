@@ -1,12 +1,12 @@
-﻿using CodeNet.MongoDB.Models;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace CodeNet.MongoDB.Repositories;
 
-public interface IMongoDBAsyncRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
+public interface IMongoDBAsyncRepository<TModel> where TModel : class
 {
     public Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter);
     public Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken);
+    Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, int page, int count, CancellationToken cancellationToken);
 
     public Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter);
 

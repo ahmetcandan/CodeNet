@@ -28,7 +28,7 @@ namespace CodeNet.MakerChecker.Tests
             IServiceCollection services = new ServiceCollection();
             var configurationManager = new ConfigurationManager();
             configurationManager.AddJsonFile("testSettings.json");
-            services.AddParameters(options => options.UseInMemoryDatabase("TestParameterDb"), configurationManager.GetSection("Redis"), configurationManager.GetSection("Parameters"));
+            services.AddParameters(options => options.UseInMemoryDatabase("TestParameterDb"));
             services.AddScoped(c => mockCodeNetContext.Object);
 
             var serviceProvider = services.BuildServiceProvider();
@@ -68,7 +68,7 @@ namespace CodeNet.MakerChecker.Tests
                 Assert.That(addResponse.Parameters.ToList(), Has.Count.EqualTo(2));
             });
 
-            var getResponse = await parameterManager.GetParameterAsync(addResponse.Id);
+            var getResponse = await parameterManager.GetParameterAsync(addResponse.Code);
 
             var r1 = getResponse?.Parameters.FirstOrDefault(c => c.Code == p1.Code);
             var r2 = getResponse?.Parameters.FirstOrDefault(c => c.Code == p2.Code);
@@ -87,7 +87,7 @@ namespace CodeNet.MakerChecker.Tests
 
             request.Parameters.Add(p3);
             request.Parameters.Remove(p2);
-            var updateResponse = await parameterManager.UpdateParameterAsync(addResponse.Id, request);
+            var updateResponse = await parameterManager.UpdateParameterAsync(request);
 
             Assert.Multiple(() =>
             {
@@ -99,7 +99,7 @@ namespace CodeNet.MakerChecker.Tests
                 Assert.That(updateResponse?.Parameters.Any(c => c.Code == p2.Code), Is.False);
             });
 
-            var getResponse2 = await parameterManager.GetParameterAsync(addResponse.Id);
+            var getResponse2 = await parameterManager.GetParameterAsync(addResponse.Code);
 
             Assert.Multiple(() =>
             {

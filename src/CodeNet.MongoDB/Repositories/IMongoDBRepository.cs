@@ -1,7 +1,5 @@
-﻿using CodeNet.MongoDB.Models;
+﻿namespace CodeNet.MongoDB.Repositories;
 
-namespace CodeNet.MongoDB.Repositories;
-
-public interface IMongoDBRepository<TModel> : IMongoDBSyncRepository<TModel>, IMongoDBAsyncRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
+public interface IMongoDBRepository<TModel> : IMongoDBSyncRepository<TModel>, IMongoDBAsyncRepository<TModel> where TModel : class
 {
 }

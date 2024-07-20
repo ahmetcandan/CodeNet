@@ -13,4 +13,10 @@ public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity>
     TBaseEntity? Get(Expression<Func<TBaseEntity, bool>> predicate, bool isActive);
     Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive);
     Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, CancellationToken cancellationToken);
+    List<TBaseEntity> GetPagingList(bool isActive, int page, int count);
+    List<TBaseEntity> GetPagingList(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count);
+    Task<List<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count);
+    Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count);
+    Task<List<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count, CancellationToken cancellationToken);
+    Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count, CancellationToken cancellationToken);
 }

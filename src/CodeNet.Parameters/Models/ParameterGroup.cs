@@ -4,8 +4,8 @@ namespace CodeNet.Parameters.Models;
 
 public class ParameterGroup : TracingEntity, ISoftDelete
 {
-    public int Id { get; set; }
-    public required string Code { get; set; }
+    public virtual int Id { get; set; }
+    public virtual string Code { get; set; } = string.Empty;
     public string? Description { get; set; }
     public bool ApprovalRequired { get; set; }
 }

@@ -107,4 +107,64 @@ public abstract class BaseRepository<TBaseEntity>(DbContext dbContext) : Reposit
 
         return Expression.Lambda<Func<TBaseEntity, bool>>(body, parameter);
     }
+
+    public override List<TBaseEntity> GetPagingList(int page, int count)
+    {
+        return GetPagingList(true, page, count);
+    }
+
+    public virtual List<TBaseEntity> GetPagingList(bool isActive, int page, int count)
+    {
+        return base.GetPagingList(c => c.IsActive == isActive, page, count);
+    }
+
+    public override List<TBaseEntity> GetPagingList(Expression<Func<TBaseEntity, bool>> predicate, int page, int count)
+    {
+        return GetPagingList(predicate, true, page, count);
+    }
+
+    public virtual List<TBaseEntity> GetPagingList(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count)
+    {
+        return base.GetPagingList(AddCondition(predicate, c => c.IsActive == isActive), page, count);
+    }
+
+    public override Task<List<TBaseEntity>> GetPagingListAsync(int page, int count)
+    {
+        return GetPagingListAsync(true, page, count);
+    }
+
+    public virtual Task<List<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count)
+    {
+        return GetPagingListAsync(isActive, page, count, CancellationToken.None);
+    }
+
+    public override Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, int page, int count)
+    {
+        return GetPagingListAsync(predicate, page, count, CancellationToken.None);
+    }
+
+    public virtual Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count)
+    {
+        return GetPagingListAsync(predicate, isActive, page, count, CancellationToken.None);
+    }
+
+    public override Task<List<TBaseEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken)
+    {
+        return GetPagingListAsync(true, page, count, cancellationToken);
+    }
+
+    public virtual Task<List<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count, CancellationToken cancellationToken)
+    {
+        return base.GetPagingListAsync(c => c.IsActive == isActive, page, count, cancellationToken);
+    }
+
+    public override Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken)
+    {
+        return GetPagingListAsync(predicate, true, page, count, cancellationToken);
+    }
+
+    public virtual Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count, CancellationToken cancellationToken)
+    {
+        return base.GetPagingListAsync(AddCondition(predicate, c => c.IsActive == isActive), page, count, cancellationToken);
+    }
 }

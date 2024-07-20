@@ -65,15 +65,20 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
 
     public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
     {
-        return _entities.Where(predicate).ToList();
+        return [.. _entities.Where(predicate)];
     }
 
     public virtual List<TEntity> GetPagingList(int page, int count)
     {
+        return GetPagingList(c => true, page, count);
+    }
+
+    public virtual List<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count)
+    {
         if (page < 1 || count < 1)
             throw new ArgumentException("Page or count cannot be less than 1");
 
-        return [.. _entities.Skip((page - 1) * count).Take(count)];
+        return [.. _entities.Where(predicate).Skip((page - 1) * count).Take(count)];
     }
 
     public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count)
@@ -81,7 +86,17 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         return GetPagingListAsync(page, count, CancellationToken.None);
     }
 
-    public async virtual Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken)
+    public virtual Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count)
+    {
+        return GetPagingListAsync(predicate, page, count, CancellationToken.None);
+    }
+
+    public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken)
+    {
+        return GetPagingListAsync(c => true, page, count, cancellationToken);
+    }
+
+    public async virtual Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken)
     {
         if (page < 1 || count < 1)
             throw new ArgumentException("Page or count cannot be less than 1");

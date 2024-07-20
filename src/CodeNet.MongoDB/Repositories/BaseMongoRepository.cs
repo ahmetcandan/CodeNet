@@ -1,5 +1,4 @@
-﻿using CodeNet.MongoDB.Models;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using System.Linq.Expressions;
 
 namespace CodeNet.MongoDB.Repositories;
@@ -12,7 +11,7 @@ namespace CodeNet.MongoDB.Repositories;
 /// MongoDB Repository
 /// </remarks>
 /// <param name="options"></param>
-public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
+public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRepository<TModel> where TModel : class
 {
     private readonly IMongoCollection<TModel> _mongoCollection = dbContext.Set<TModel>();
 
@@ -104,7 +103,24 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <returns></returns>
     public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
     {
-        return (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToList();
+        return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToListAsync(cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Get Paging List
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="page"></param>
+    /// <param name="count"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, int page, int count, CancellationToken cancellationToken)
+    {
+        return await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
+        {
+            Skip = page * count,
+            BatchSize = count
+        }, cancellationToken)).ToListAsync(cancellationToken);
     }
 
     /// <summary>
@@ -125,7 +141,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <returns></returns>
     public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
     {
-        return (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefault();
+        return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }
 
     /// <summary>

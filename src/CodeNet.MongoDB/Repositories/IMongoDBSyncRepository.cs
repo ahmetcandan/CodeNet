@@ -1,9 +1,8 @@
-﻿using CodeNet.MongoDB.Models;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace CodeNet.MongoDB.Repositories;
 
-public interface IMongoDBSyncRepository<TModel> where TModel : class, IBaseMongoDBModel, new()
+public interface IMongoDBSyncRepository<TModel> where TModel : class
 {
     public List<TModel> GetList(Expression<Func<TModel, bool>> filter);
 
