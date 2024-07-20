@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using CodeNet.Parameters.Extensions;
 using Microsoft.Extensions.Configuration;
 
-namespace CodeNet.MakerChecker.Tests
+namespace CodeNet.Parameters.Tests
 {
     public class ParametersTests
     {
@@ -87,6 +87,7 @@ namespace CodeNet.MakerChecker.Tests
 
             request.Parameters.Add(p3);
             request.Parameters.Remove(p2);
+            request.Id = addResponse.Id;
             var updateResponse = await parameterManager.UpdateParameterAsync(request);
 
             Assert.Multiple(() =>

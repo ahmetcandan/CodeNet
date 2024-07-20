@@ -4,6 +4,7 @@ using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Manager;
 using CodeNet.Parameters.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.RegularExpressions;
 
 namespace CodeNet.Parameters.Repositories;
 
@@ -57,7 +58,14 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
 
     public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParams(string groupCode, CancellationToken cancellationToken)
     {
-        var result = (await GetParameterGroupParameter().Where(c => c.ParameterGroup.Code == groupCode).GroupBy(c => c.ParameterGroup).ToListAsync(cancellationToken)).FirstOrDefault();
+        var result = (await GetParameterGroupParameter().Where(c => c.ParameterGroup.Code == groupCode).ToListAsync(cancellationToken))
+            .GroupBy(c => new
+            {
+                c.ParameterGroup.Id,
+                c.ParameterGroup.Code,
+                c.ParameterGroup.ApprovalRequired,
+                c.ParameterGroup.Description
+            }).FirstOrDefault();
 
         if (result is not null)
             return new ParameterGroupWithParamsResult
