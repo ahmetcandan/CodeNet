@@ -8,13 +8,11 @@ namespace CodeNet.MongoDB;
 public class MongoDBContext
 {
     protected readonly IMongoDatabase _database;
-    private readonly MongoDBSettings _settings;
 
-    public MongoDBContext(IOptions<MongoDBSettings> options)
+    public MongoDBContext(IOptions<MongoDbOptions> options)
     {
-        _settings = options.Value;
-        var client = new MongoClient(_settings.ConnectionString);
-        var databaseName = string.IsNullOrEmpty(_settings.DatabaseName) ? MongoUrl.Create(_settings.ConnectionString).DatabaseName : _settings.DatabaseName;
+        var client = new MongoClient(options.Value.ConnectionString);
+        var databaseName = string.IsNullOrEmpty(options.Value.DatabaseName) ? MongoUrl.Create(options.Value.ConnectionString).DatabaseName : options.Value.DatabaseName;
         _database = client.GetDatabase(databaseName);
     }
 

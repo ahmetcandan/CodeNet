@@ -1,5 +1,6 @@
 ﻿using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Mvc;
+using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
@@ -47,12 +48,26 @@ public class CustomersController(ICustomerService customerService) : ControllerB
 
 [ApiController]
 [Route("[controller]")]
-public class TestController : ControllerBase
+public class MongoController(IKeyValueRepository keyValueRepository, IAKeyValueRepository aKeyValueRepository, IBKeyValueRepository bKeyValueRepository) : ControllerBase
 {
-    [HttpPost]
-    public async Task<IActionResult> Post(TestModel request, CancellationToken cancellationToken)
+    [HttpGet("A")]
+    public async Task<IActionResult> GetA(Guid id, CancellationToken cancellationToken)
     {
-        return Ok(request);
+        var x = await aKeyValueRepository.GetByIdAsync(c => c._id == id, cancellationToken);
+        return Ok(x);
+    }
+
+    [HttpGet("B")]
+    public async Task<IActionResult> GetB(Guid id, CancellationToken cancellationToken)
+    {
+        var x = await bKeyValueRepository.GetByIdAsync(c => c._id == id, cancellationToken);
+        return Ok(x);
+    }
+    [HttpGet]
+    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    {
+        var x = await keyValueRepository.GetByIdAsync(c => c._id == id, cancellationToken);
+        return Ok(x);
     }
 }
 

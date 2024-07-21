@@ -35,7 +35,9 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     //.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
     //.AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"))
     //.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
-    //.AddMongoDB(builder.Configuration.GetSection("MongoDB"))
+    .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
+    .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
+    .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
     //.AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
     //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
@@ -50,7 +52,9 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     ;
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
-//builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
+builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
+builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
+builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
 //builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();

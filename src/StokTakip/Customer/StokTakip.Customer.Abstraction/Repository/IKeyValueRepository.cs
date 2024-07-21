@@ -6,3 +6,11 @@ namespace StokTakip.Customer.Abstraction.Repository;
 public interface IKeyValueRepository : IMongoDBRepository<MongoModel>
 {
 }
+
+public interface IAKeyValueRepository : IMongoDBRepository<MongoModel>
+{
+}
+
+public interface IBKeyValueRepository : IMongoDBRepository<MongoModel>
+{
+}

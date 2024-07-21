@@ -8,3 +8,11 @@ namespace StokTakip.Customer.Repository;
 public class KeyValueMongoRepository(MongoDBContext dbContext) : BaseMongoRepository<MongoModel>(dbContext), IKeyValueRepository
 {
 }
+
+public class AKeyValueMongoRepository(AMongoDbContext dbContext) : BaseMongoRepository<MongoModel>(dbContext), IAKeyValueRepository
+{
+}
+
+public class BKeyValueMongoRepository(BMongoDbContext dbContext) : BaseMongoRepository<MongoModel>(dbContext), IBKeyValueRepository
+{
+}
