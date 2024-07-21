@@ -27,11 +27,9 @@ public static class MongoDBServiceCollectionExtensions
     public static IServiceCollection AddMongoDB<TMongoDbContext>(this IServiceCollection services, IConfigurationSection mongoSection)
         where TMongoDbContext : MongoDBContext
     {
-        if (typeof(TMongoDbContext).Equals(typeof(MongoDBContext)))
-            services.Configure<MongoDbOptions>(mongoSection);
-        else
-            services.Configure<MongoDbOptions<TMongoDbContext>>(mongoSection);
-
+        _ = typeof(TMongoDbContext).Equals(typeof(MongoDBContext))
+            ? services.Configure<MongoDbOptions>(mongoSection)
+            : services.Configure<MongoDbOptions<TMongoDbContext>>(mongoSection);
         return services.AddScoped<TMongoDbContext, TMongoDbContext>();
     }
 }

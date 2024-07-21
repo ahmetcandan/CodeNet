@@ -13,7 +13,7 @@ namespace CodeNet.Parameters.MongoDB.Manager;
 
 internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNetContext codeNetContext, IOptions<ParameterSettings> options, IServiceProvider serviceProvider) : IParameterManager
 {
-    private readonly IMongoDBRepository<ParameterDto> _repository = new BaseMongoRepository<ParameterDto>(dbContext);
+    private readonly BaseMongoRepository<ParameterDto> _repository = new(dbContext);
     private readonly ParameterSettings? _parameterSettings = options?.Value;
     private readonly IDistributedCache<ParameterGroupWithParamsResult>? _distributedCache = serviceProvider.GetService<IDistributedCache<ParameterGroupWithParamsResult>>();
 

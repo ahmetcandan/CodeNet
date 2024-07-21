@@ -15,22 +15,23 @@ public static class ElasticsearchServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddElasticsearch(this IServiceCollection services, IConfigurationSection configurationSection)
     {
-        return services.AddElasticsearch<ElasticsearchSettings, ElasticsearchDbContext>(configurationSection);
+        return services.AddElasticsearch<ElasticsearchDbContext>(configurationSection);
     }
 
     /// <summary>
     /// Add Elasticsearch Settings
     /// </summary>
-    /// <typeparam name="TElasticsearchSettings"></typeparam>
     /// <typeparam name="TElasticsearchDbContext"></typeparam>
     /// <param name="services"></param>
     /// <param name="configurationSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddElasticsearch<TElasticsearchSettings, TElasticsearchDbContext>(this IServiceCollection services, IConfigurationSection configurationSection) 
-        where TElasticsearchSettings : ElasticsearchSettings
+    public static IServiceCollection AddElasticsearch<TElasticsearchDbContext>(this IServiceCollection services, IConfigurationSection configurationSection)
         where TElasticsearchDbContext : ElasticsearchDbContext
     {
-        services.Configure<TElasticsearchSettings>(configurationSection);
+        _ = typeof(TElasticsearchDbContext).Equals(typeof(ElasticsearchDbContext))
+            ? services.Configure<ElasticsearchOptions>(configurationSection)
+            : services.Configure<ElasticsearchOptions<TElasticsearchDbContext>>(configurationSection);
+
         return services.AddScoped<TElasticsearchDbContext, TElasticsearchDbContext>();
     }
 }

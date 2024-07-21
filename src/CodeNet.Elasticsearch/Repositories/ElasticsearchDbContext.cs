@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace CodeNet.Elasticsearch;
 
-public class ElasticsearchDbContext(IOptions<ElasticsearchSettings> config)
+public class ElasticsearchDbContext(IOptions<ElasticsearchOptions> config)
 {
     public ElasticsearchClient Set()
     {
