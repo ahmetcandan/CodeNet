@@ -4,7 +4,7 @@ using RabbitMQ.Client;
 
 namespace CodeNet.RabbitMQ.Services
 {
-    public abstract class BaseRabbitMQService(IOptions<BaseRabbitMQSettings> Config)
+    public abstract class BaseRabbitMQService(IOptions<BaseRabbitMQOptions> Config)
     {
         protected ConnectionFactory CreateFactory()
         {

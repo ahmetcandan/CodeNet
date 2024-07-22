@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.RabbitMQ.Settings;
 
-public abstract class BaseRabbitMQSettings
+public abstract class BaseRabbitMQOptions
 {
     public required string HostName { get; set; }
     public required string Username { get; set; }

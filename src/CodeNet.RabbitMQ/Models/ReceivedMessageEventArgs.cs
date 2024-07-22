@@ -1,9 +1,11 @@
-﻿namespace CodeNet.RabbitMQ.Models;
+﻿using Newtonsoft.Json;
+using System.Text;
 
-public class ReceivedMessageEventArgs<TModel> : EventArgs
-    where TModel : class, new()
+namespace CodeNet.RabbitMQ.Models;
+
+public class ReceivedMessageEventArgs : EventArgs
 {
-    public required TModel Data { get; set; }
+    public required ReadOnlyMemory<byte> Data { get; set; }
     public string? MessageId { get; set; }
     public IDictionary<string, object>? Headers { get; set; }
     public string? Exchange { get; set; }
@@ -11,4 +13,14 @@ public class ReceivedMessageEventArgs<TModel> : EventArgs
     public string? ConsumerTag { get; set; }
     public ulong DeliveryTag { get; set; }
     public bool Redelivered { get; set; }
+
+    public TModel? GetDataToModel<TModel>()
+    {
+        return JsonConvert.DeserializeObject<TModel>(GetDataToString());
+    }
+
+    public string GetDataToString()
+    {
+        return Encoding.UTF8.GetString(Data.ToArray());
+    }
 }

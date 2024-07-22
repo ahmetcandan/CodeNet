@@ -9,101 +9,104 @@ namespace CodeNet.RabbitMQ.Extensions;
 public static class RabbitMqServiceExtensions
 {
     /// <summary>
-    /// Add RabbitMQ Consumer Settings
+    /// Add RabbitMQ Consumer
     /// </summary>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services, IConfigurationSection rabbitSection)
     {
-        return services.AddRabbitMQConsumer<RabbitMQConsumerSettings>(rabbitSection);
+        return services.AddRabbitMQConsumer<RabbitMQConsumerService>(rabbitSection);
     }
 
     /// <summary>
-    /// Add RabbitMQ Consumer Settings
+    /// Add RabbitMQ Consumer
     /// </summary>
-    /// <typeparam name="TRabbitMQSettings"></typeparam>
+    /// <typeparam name="TConsumerService"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQConsumer<TRabbitMQSettings>(this IServiceCollection services, IConfigurationSection rabbitSection) 
-        where TRabbitMQSettings : RabbitMQConsumerSettings
+    public static IServiceCollection AddRabbitMQConsumer<TConsumerService>(this IServiceCollection services, IConfigurationSection rabbitSection)
+        where TConsumerService : RabbitMQConsumerService
     {
-        services.Configure<TRabbitMQSettings>(rabbitSection);
-        return services.AddScoped(typeof(IRabbitMQConsumerService<>), typeof(RabbitMQConsumerService<>));
+        _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
+            ? services.Configure<RabbitMQConsumerOptions>(rabbitSection)
+            : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(rabbitSection);
+        return services.AddScoped<TConsumerService, TConsumerService>();
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer Settings
+    /// Add RabbitMQ Producer
     /// </summary>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, IConfigurationSection rabbitSection)
     {
-        return services.AddRabbitMQProducer<RabbitMQProducerSettings>(rabbitSection);
+        return services.AddRabbitMQProducer<RabbitMQProducerService>(rabbitSection);
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer Settings
+    /// Add RabbitMQ Producer
     /// </summary>
-    /// <typeparam name="TRabbitMQSettings"></typeparam>
+    /// <typeparam name="TProducerService"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQProducer<TRabbitMQSettings>(this IServiceCollection services, IConfigurationSection rabbitSection)
-        where TRabbitMQSettings : RabbitMQProducerSettings
+    public static IServiceCollection AddRabbitMQProducer<TProducerService>(this IServiceCollection services, IConfigurationSection rabbitSection)
+        where TProducerService : RabbitMQProducerService
     {
-        services.Configure<TRabbitMQSettings>(rabbitSection);
-        return services.AddScoped(typeof(IRabbitMQProducerService<>), typeof(RabbitMQProducerService<>));
+        _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
+            ? services.Configure<RabbitMQProducerOptions>(rabbitSection)
+            : services.Configure<RabbitMQProducerOptions<TProducerService>>(rabbitSection);
+        return services.AddScoped<TProducerService, TProducerService>();
     }
 
     /// <summary>
     /// Use RabbitMQ Consumer
+    /// IRabbitMQConsumerHandler<RabbitMQConsumerService> must be registered.
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseRabbitMQConsumer<TData>(this WebApplication app)
-        where TData : class, new()
+    public static WebApplication UseRabbitMQConsumer(this WebApplication app)
     {
-        var listener = app.Services.GetRequiredService<IRabbitMQConsumerService<TData>>();
-        DependHandler(app, listener);
-        return app;
+        return app.UseRabbitMQConsumer<RabbitMQConsumerService>();
     }
 
     /// <summary>
     /// Use RabbitMQ Consumer
+    /// IRabbitMQConsumerHandler<TConsumerService> must be registered.
     /// </summary>
-    /// <typeparam name="TRabbitMQConsumerService"></typeparam>
-    /// <typeparam name="TData"></typeparam>
+    /// <typeparam name="TConsumerService"></typeparam>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseRabbitMQConsumer<TRabbitMQConsumerService, TData>(this WebApplication app)
-        where TData : class, new()
-        where TRabbitMQConsumerService : IRabbitMQConsumerService<TData>
+    public static WebApplication UseRabbitMQConsumer<TConsumerService>(this WebApplication app)
+        where TConsumerService : RabbitMQConsumerService
     {
-        var listener = app.Services.GetRequiredService<TRabbitMQConsumerService>();
-        DependHandler(app, listener);
+        var serviceScope = app.Services.CreateScope();
+        var consumerService = serviceScope.ServiceProvider.GetRequiredService<TConsumerService>();
+        if (DependHandler(serviceScope, consumerService))
+            app.Lifetime.ApplicationStarted.Register(consumerService.StartListening);
+
         return app;
     }
 
     /// <summary>
     /// Depend Handler
     /// </summary>
-    /// <typeparam name="TData"></typeparam>
+    /// <typeparam name="TConsumerService"></typeparam>
     /// <param name="app"></param>
     /// <param name="listener"></param>
-    private static void DependHandler<TData>(WebApplication app, IRabbitMQConsumerService<TData> listener)
-        where TData : class, new()
+    private static bool DependHandler<TConsumerService>(IServiceScope serviceScope, TConsumerService listener)
+        where TConsumerService : RabbitMQConsumerService
     {
-        var messageHandlerServices = app.Services.GetServices<IRabbitMQConsumerHandler<TData>>();
-        if (messageHandlerServices?.Any() == true)
+        var messageHandlerService = serviceScope.ServiceProvider.GetService<IRabbitMQConsumerHandler<TConsumerService>>();
+        if (messageHandlerService is not null)
         {
-            foreach (var messageHandler in messageHandlerServices)
-                listener.ReceivedMessage += messageHandler.Handler;
-
-            app.Lifetime.ApplicationStarted.Register(listener.StartListening);
+            listener.ReceivedMessage += messageHandlerService.Handler;
+            return true;
         }
+
+        return false;
     }
 }

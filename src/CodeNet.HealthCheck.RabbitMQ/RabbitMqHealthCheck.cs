@@ -5,7 +5,7 @@ using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.MongoDB;
 
-internal class RabbitMqHealthCheck(IOptions<BaseRabbitMQSettings> config) : IHealthCheck
+internal class RabbitMqHealthCheck(IOptions<BaseRabbitMQOptions> config) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {

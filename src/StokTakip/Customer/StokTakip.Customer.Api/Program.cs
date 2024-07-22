@@ -21,9 +21,10 @@ using StokTakip.Customer.Service.Mapper;
 using CodeNet.RabbitMQ.Extensions;
 using StokTakip.Customer.Contract.Model;
 using CodeNet.RabbitMQ.Services;
-using StokTakip.Customer.Service.Handler;
 using CodeNet.Core.Enums;
 using CodeNet.HttpClient.Extensions;
+using StokTakip.Customer.Model;
+using StokTakip.Customer.Service.QueueService;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -33,8 +34,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
     //.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
-    //.AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"))
-    //.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
+    .AddRabbitMQConsumer<ConsumerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    .AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    .AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    .AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
     .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
@@ -57,16 +60,16 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-//builder.Services.AddScoped<IRabbitMQConsumerHandler<MongoModel>, MessageConsumerHandler>();
-
+builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
+builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
 
 var app = builder.Build();
-app.UseCodeNet()
-    //.UseRabbitMQConsumer<MongoModel>()
-    .UseLogging()
-    .UseDistributedCache()
-    .UseDistributedLock()
-    .UseExceptionHandling()
-    ;
-//app.UseCodeNetHealthChecks("/health");
+app.UseCodeNet();
+app.UseLogging();
+app.UseDistributedCache();
+app.UseDistributedLock();
+app.UseExceptionHandling();
+app.UseCodeNetHealthChecks("/health");
+app.UseRabbitMQConsumer<ConsumerServiceA>();
+app.UseRabbitMQConsumer<ConsumerServiceB>();
 app.Run();

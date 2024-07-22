@@ -1,18 +1,14 @@
 ﻿using CodeNet.RabbitMQ.Models;
 using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using System.Text;
 
 
 namespace CodeNet.RabbitMQ.Services;
 
-public class RabbitMQConsumerService<TData>(IOptions<RabbitMQConsumerSettings> Config)
-        : BaseRabbitMQService(Config ?? throw new NullReferenceException("Config is null")),
-          IRabbitMQConsumerService<TData>
-    where TData : class, new()
+public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
+        : BaseRabbitMQService(options ?? throw new NullReferenceException("Config is null"))
 {
     private EventingBasicConsumer? _consumer;
     private IConnection? _connection;
@@ -23,32 +19,25 @@ public class RabbitMQConsumerService<TData>(IOptions<RabbitMQConsumerSettings> C
         var factory = CreateFactory();
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
-        _channel.QueueDeclare(queue: Config.Value.Queue,
-                             durable: Config.Value.Durable,
-                             exclusive: Config.Value.Exclusive,
-                             autoDelete: Config.Value.AutoDelete,
+        _channel.QueueDeclare(queue: options.Value.Queue,
+                             durable: options.Value.Durable,
+                             exclusive: options.Value.Exclusive,
+                             autoDelete: options.Value.AutoDelete,
                              arguments: null);
         _consumer = new EventingBasicConsumer(_channel);
         _consumer.Received += SentMessage;
-        _channel.BasicConsume(queue: Config.Value.Queue,
-                                 autoAck: Config.Value.AutoAck,
+        _channel.BasicConsume(queue: options.Value.Queue,
+                                 autoAck: options.Value.AutoAck,
                                  consumer: _consumer);
     }
 
-    public event MessageReceived<TData>? ReceivedMessage;
+    public event MessageReceived? ReceivedMessage;
 
     private void SentMessage(object? model, BasicDeliverEventArgs args)
     {
-        var byteArr = args.Body.ToArray();
-        var json = Encoding.UTF8.GetString(byteArr);
-        if (string.IsNullOrEmpty(json))
-            throw new NullReferenceException("Message body is null");
-
-        var data = JsonConvert.DeserializeObject<TData>(json) ?? throw new NullReferenceException("Message data is null");
-
-        ReceivedMessage?.Invoke(new ReceivedMessageEventArgs<TData>
+        ReceivedMessage?.Invoke(new ReceivedMessageEventArgs
         {
-            Data = data,
+            Data = args.Body,
             MessageId = args.BasicProperties?.MessageId,
             Headers = args.BasicProperties?.Headers,
             ConsumerTag = args.ConsumerTag,

@@ -2,8 +2,8 @@
 
 namespace CodeNet.RabbitMQ.Services;
 
-public interface IRabbitMQConsumerHandler<TData>
-    where TData : class, new()
+public interface IRabbitMQConsumerHandler<TConsumerService>
+    where TConsumerService : RabbitMQConsumerService
 {
-    void Handler(ReceivedMessageEventArgs<TData> args);
+    void Handler(ReceivedMessageEventArgs args);
 }

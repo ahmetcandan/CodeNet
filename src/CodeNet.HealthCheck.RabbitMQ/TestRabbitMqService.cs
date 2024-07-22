@@ -4,7 +4,7 @@ using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.RabbitMQ;
 
-internal class TestRabbitMqService(IOptions<BaseRabbitMQSettings> Config) : BaseRabbitMQService(Config)
+internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> Config) : BaseRabbitMQService(Config)
 {
     public bool CanConnection()
     {

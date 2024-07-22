@@ -4,6 +4,9 @@ using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
+using StokTakip.Customer.Model;
+using StokTakip.Customer.Service.QueueService;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StokTakip.Customer.Api.Controllers;
 
@@ -68,6 +71,23 @@ public class MongoController(IKeyValueRepository keyValueRepository, IAKeyValueR
     {
         var x = await keyValueRepository.GetByIdAsync(c => c._id == id, cancellationToken);
         return Ok(x);
+    }
+}
+
+[ApiController]
+[Route("[controller]")]
+public class QueueController(ProducerServiceA producerServiceA, ProducerServiceB producerServiceB) : ControllerBase
+{
+    [HttpPost("A")]
+    public async Task<IActionResult> SendA(QueueData data, CancellationToken cancellationToken)
+    {
+        return Ok(producerServiceA.Publish(data));
+    }
+
+    [HttpPost("B")]
+    public async Task<IActionResult> SendB(QueueData data, CancellationToken cancellationToken)
+    {
+        return Ok(producerServiceB.Publish(data));
     }
 }
 
