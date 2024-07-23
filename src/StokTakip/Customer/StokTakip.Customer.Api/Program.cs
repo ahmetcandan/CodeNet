@@ -25,6 +25,9 @@ using CodeNet.Core.Enums;
 using CodeNet.HttpClient.Extensions;
 using StokTakip.Customer.Model;
 using StokTakip.Customer.Service.QueueService;
+using CodeNet.BackgroundJob.Manager;
+using CodeNet.BackgroundJob.Extensions;
+using Quartz;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -34,10 +37,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
     //.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
-    .AddRabbitMQConsumer<ConsumerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
-    .AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
-    .AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
-    .AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    //.AddRabbitMQConsumer<ConsumerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    //.AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
     .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
@@ -60,8 +63,10 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
-builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
+builder.Services.AddBackgroundService<TestService>(c => c.TestWriteAsync(), "*/10 * * * * ? *");
+builder.Services.AddBackgroundService<TestService>(c => c.TestWrite(), "*/10 * * * * ? *");
+//builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
+//builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
 
 var app = builder.Build();
 app.UseCodeNet();
@@ -70,6 +75,8 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-app.UseRabbitMQConsumer<ConsumerServiceA>();
-app.UseRabbitMQConsumer<ConsumerServiceB>();
+app.UseBackgroundService<TestService>();
+app.UseBackgroundService<TestService>();
+//app.UseRabbitMQConsumer<ConsumerServiceA>();
+//app.UseRabbitMQConsumer<ConsumerServiceB>();
 app.Run();

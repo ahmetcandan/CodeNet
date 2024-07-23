@@ -32,6 +32,6 @@ public static class ElasticsearchServiceExtensions
             ? services.Configure<ElasticsearchOptions>(configurationSection)
             : services.Configure<ElasticsearchOptions<TElasticsearchDbContext>>(configurationSection);
 
-        return services.AddScoped<TElasticsearchDbContext, TElasticsearchDbContext>();
+        return services.AddScoped<TElasticsearchDbContext>();
     }
 }

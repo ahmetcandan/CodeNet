@@ -32,7 +32,7 @@ public static class RabbitMqServiceExtensions
         _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
             ? services.Configure<RabbitMQConsumerOptions>(rabbitSection)
             : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(rabbitSection);
-        return services.AddScoped<TConsumerService, TConsumerService>();
+        return services.AddScoped<TConsumerService>();
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class RabbitMqServiceExtensions
         _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
             ? services.Configure<RabbitMQProducerOptions>(rabbitSection)
             : services.Configure<RabbitMQProducerOptions<TProducerService>>(rabbitSection);
-        return services.AddScoped<TProducerService, TProducerService>();
+        return services.AddScoped<TProducerService>();
     }
 
     /// <summary>
@@ -80,11 +80,12 @@ public static class RabbitMqServiceExtensions
     /// <typeparam name="TConsumerService"></typeparam>
     /// <param name="app"></param>
     /// <returns></returns>
+    /// <exception cref="NotImplementedException"></exception>
     public static WebApplication UseRabbitMQConsumer<TConsumerService>(this WebApplication app)
         where TConsumerService : RabbitMQConsumerService
     {
         var serviceScope = app.Services.CreateScope();
-        var consumerService = serviceScope.ServiceProvider.GetRequiredService<TConsumerService>();
+        var consumerService = serviceScope.ServiceProvider.GetService<TConsumerService>() ?? throw new NotImplementedException($"'{nameof(TConsumerService)}' not implemented service.");
         if (DependHandler(serviceScope, consumerService))
             app.Lifetime.ApplicationStarted.Register(consumerService.StartListening);
 
@@ -96,14 +97,14 @@ public static class RabbitMqServiceExtensions
     /// </summary>
     /// <typeparam name="TConsumerService"></typeparam>
     /// <param name="app"></param>
-    /// <param name="listener"></param>
-    private static bool DependHandler<TConsumerService>(IServiceScope serviceScope, TConsumerService listener)
+    /// <param name="consumerService"></param>
+    private static bool DependHandler<TConsumerService>(IServiceScope serviceScope, TConsumerService consumerService)
         where TConsumerService : RabbitMQConsumerService
     {
         var messageHandlerService = serviceScope.ServiceProvider.GetService<IRabbitMQConsumerHandler<TConsumerService>>();
         if (messageHandlerService is not null)
         {
-            listener.ReceivedMessage += messageHandlerService.Handler;
+            consumerService.ReceivedMessage += messageHandlerService.Handler;
             return true;
         }
 

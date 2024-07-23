@@ -30,6 +30,6 @@ public static class MongoDBServiceCollectionExtensions
         _ = typeof(TMongoDbContext).Equals(typeof(MongoDBContext))
             ? services.Configure<MongoDbOptions>(mongoSection)
             : services.Configure<MongoDbOptions<TMongoDbContext>>(mongoSection);
-        return services.AddScoped<TMongoDbContext, TMongoDbContext>();
+        return services.AddScoped<TMongoDbContext>();
     }
 }
