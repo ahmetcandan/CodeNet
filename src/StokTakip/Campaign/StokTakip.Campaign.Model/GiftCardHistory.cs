@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Model;
 
-public partial class GiftCardHistory : IEntity
+public partial class GiftCardHistory
 {
     public int GiftCardId { get; set; }
     public int SalesOrderId { get; set; }

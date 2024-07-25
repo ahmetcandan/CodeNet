@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Model;
 
-public class CampaignRequirement : IEntity
+public class CampaignRequirement
 {
     public int Id { get; set; }
     public int CampaignId { get; set; }

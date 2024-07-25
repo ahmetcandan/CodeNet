@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 namespace CodeNet.EntityFramework.Repositories;
 
 public interface IRepository<TEntity> 
-    where TEntity : class, IEntity
+    where TEntity : class
 {
     TEntity? Get(params object[] keyValues);
     TEntity? Get(Expression<Func<TEntity, bool>> predicate);
@@ -17,11 +17,17 @@ public interface IRepository<TEntity>
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 
     List<TEntity> GetPagingList(int page, int count);
+    List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count);
     List<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count);
+    List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count);
     Task<List<TEntity>> GetPagingListAsync(int page, int count);
+    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count);
     Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count);
+    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count);
     Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken);
+    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken);
     Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken);
+    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken);
 
     TEntity Add(TEntity entity);
     IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities);

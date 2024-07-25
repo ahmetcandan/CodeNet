@@ -4,8 +4,8 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public abstract class Repository<TEntity> : IRepository<TEntity>
-    where TEntity : class, IEntity
+public class Repository<TEntity> : IRepository<TEntity>
+    where TEntity : class
 {
     protected readonly DbContext _dbContext;
     protected readonly DbSet<TEntity> _entities;
@@ -16,6 +16,7 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         _entities = _dbContext.Set<TEntity>();
     }
 
+    #region Add
     public virtual TEntity Add(TEntity entity)
     {
         return _entities.Add(entity).Entity;
@@ -47,7 +48,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         await _entities.AddRangeAsync(entities, cancellationToken);
         return entities;
     }
+    #endregion
 
+    #region Update
     public virtual TEntity Update(TEntity entity)
     {
         _entities.Attach(entity);
@@ -62,15 +65,17 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
             _dbContext.Entry(entity).State = EntityState.Detached;
         return entities;
     }
+    #endregion
 
-    public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
-    {
-        return [.. _entities.Where(predicate)];
-    }
-
+    #region Paging List
     public virtual List<TEntity> GetPagingList(int page, int count)
     {
         return GetPagingList(c => true, page, count);
+    }
+
+    public virtual List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count)
+    {
+        return GetPagingList(c => true, orderBy, page, count);
     }
 
     public virtual List<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count)
@@ -80,9 +85,21 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
             : ([.. _entities.Where(predicate).Skip((page - 1) * count).Take(count)]);
     }
 
+    public virtual List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count)
+    {
+        return page < 1 || count < 1
+            ? throw new ArgumentException("Page or count cannot be less than 1")
+            : ([.. _entities.Where(predicate).OrderBy(orderBy).Skip((page - 1) * count).Take(count)]);
+    }
+
     public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count)
     {
         return GetPagingListAsync(page, count, CancellationToken.None);
+    }
+
+    public virtual Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count)
+    {
+        return GetPagingListAsync(orderBy, page, count, CancellationToken.None);
     }
 
     public virtual Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count)
@@ -90,16 +107,40 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         return GetPagingListAsync(predicate, page, count, CancellationToken.None);
     }
 
+    public virtual Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count)
+    {
+        return GetPagingListAsync(predicate, orderBy, page, count, CancellationToken.None);
+    }
+
     public virtual Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken)
     {
         return GetPagingListAsync(c => true, page, count, cancellationToken);
+    }
+
+    public virtual Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken)
+    {
+        return GetPagingListAsync(c => true, orderBy, page, count, cancellationToken);
     }
 
     public virtual async Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken)
     {
         return page < 1 || count < 1
             ? throw new ArgumentException("Page or count cannot be less than 1")
-            : await _entities.Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
+            : await _entities.Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
+    }
+
+    public virtual async Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken)
+    {
+        return page < 1 || count < 1
+            ? throw new ArgumentException("Page or count cannot be less than 1")
+            : await _entities.Where(predicate).OrderBy(orderBy).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
+    }
+    #endregion
+
+    #region Find
+    public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
+    {
+        return [.. _entities.Where(predicate)];
     }
 
     public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
@@ -111,7 +152,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     {
         return await _entities.Where(predicate).ToListAsync(cancellationToken);
     }
+    #endregion
 
+    #region Get
     public virtual TEntity? Get(params object[] keyValues)
     {
         return _entities.Find(keyValues);
@@ -141,7 +184,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     {
         return _entities.FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
     }
+    #endregion
 
+    #region Remove
     public virtual TEntity Remove(TEntity entity)
     {
         return _entities.Remove(entity).Entity;
@@ -152,7 +197,9 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
         _entities.RemoveRange(entities);
         return entities;
     }
+    #endregion
 
+    #region SaveChanges
     public virtual int SaveChanges()
     {
         return _dbContext.SaveChanges();
@@ -167,4 +214,5 @@ public abstract class Repository<TEntity> : IRepository<TEntity>
     {
         return await _dbContext.SaveChangesAsync(cancellationToken);
     }
+    #endregion
 }

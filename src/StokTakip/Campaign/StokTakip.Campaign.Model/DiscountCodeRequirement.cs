@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Model;
 
-public partial class DiscountCodeRequirement : IEntity
+public partial class DiscountCodeRequirement
 {
     public int Id { get; set; }
     public int DiscountCodeId { get; set; }

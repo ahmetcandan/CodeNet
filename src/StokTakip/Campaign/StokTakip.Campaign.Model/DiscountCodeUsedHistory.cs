@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Model;
 
-public partial class DiscountCodeUsedHistory : IEntity
+public partial class DiscountCodeUsedHistory
 {
     public int DiscountCodeId { get; set; }
     public int SalesOrderId { get; set; }

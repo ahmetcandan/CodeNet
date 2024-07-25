@@ -2,7 +2,7 @@
 
 namespace StokTakip.Campaign.Model;
 
-public partial class CampaignUsedHistory : IEntity
+public partial class CampaignUsedHistory
 {
     public int CampaignId { get; set; }
     public int SalesOrderId { get; set; }
