@@ -14,7 +14,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\..\..\CodeNet.BackgroundJob\CodeNet.BackgroundJob.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.EntityFramework.InMemory\CodeNet.EntityFramework.InMemory.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.Elasticsearch\CodeNet.HealthCheck.Elasticsearch.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.EntityFramework\CodeNet.HealthCheck.EntityFramework.csproj" />

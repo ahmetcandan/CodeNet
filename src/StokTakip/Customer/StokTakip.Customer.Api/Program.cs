@@ -63,8 +63,9 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-builder.Services.AddBackgroundService<TestService>(c => c.TestWriteAsync(), "*/10 * * * * ? *");
-builder.Services.AddBackgroundService<TestService>(c => c.TestWrite(), "*/10 * * * * ? *");
+builder.Services.AddBackgroundService<TestService1>("*/17 * * * * ? *")
+    .AddBackgroundService<TestService2>("*/13 * * * * ? *")
+    .AddBackgroundJobRedis(builder.Configuration.GetSection("Redis"));
 //builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
 //builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
 
@@ -75,8 +76,8 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-app.UseBackgroundService<TestService>();
-app.UseBackgroundService<TestService>();
+//app.UseBackgroundService<TestService>();
+app.UseBackgroundService();
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
 app.Run();

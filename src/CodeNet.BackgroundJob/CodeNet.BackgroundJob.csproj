@@ -41,6 +41,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
 		<ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
+		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
 	</ItemGroup>
 
 </Project>

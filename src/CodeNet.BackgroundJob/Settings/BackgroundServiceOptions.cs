@@ -2,6 +2,6 @@
 
 public class BackgroundServiceOptions<TJob>
 {
-    public string CronExpression { get; set; }
-    public Func<TJob, Task> Func { get; set; }
+    public string CronExpression { get; internal set; }
+    public TimeSpan ExperyTime { get; internal set; }
 }
