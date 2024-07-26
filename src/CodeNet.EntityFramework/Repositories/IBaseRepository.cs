@@ -19,4 +19,6 @@ public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity>
     Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count);
     Task<List<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count, CancellationToken cancellationToken);
     Task<List<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count, CancellationToken cancellationToken);
+
+    IQueryable<TBaseEntity> GetQueryable(Expression<Func<TBaseEntity, bool>> predicate, bool isActive);
 }

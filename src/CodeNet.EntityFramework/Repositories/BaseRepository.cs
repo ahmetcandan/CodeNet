@@ -195,6 +195,18 @@ public class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBase
     }
     #endregion
 
+    #region Queryable
+    public override IQueryable<TBaseEntity> GetQueryable(Expression<Func<TBaseEntity, bool>> predicate)
+    {
+        return GetQueryable(predicate, true);
+    }
+
+    public virtual IQueryable<TBaseEntity> GetQueryable(Expression<Func<TBaseEntity, bool>> predicate, bool isActive)
+    {
+        return base.GetQueryable(AddCondition(predicate, c => c.IsActive == isActive && !c.IsDeleted));
+    }
+    #endregion
+
     protected static Expression<Func<TBaseEntity, bool>> AddCondition(Expression<Func<TBaseEntity, bool>> originalPredicate, Expression<Func<TBaseEntity, bool>> additionalCondition)
     {
         var parameter = Expression.Parameter(typeof(TBaseEntity));

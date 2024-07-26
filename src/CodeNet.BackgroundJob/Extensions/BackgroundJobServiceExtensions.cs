@@ -85,11 +85,14 @@ public static class BackgroundJobServiceExtensions
             return await serviceRepository.GetPagingListAsync(page, count, cancellationToken);
         });
 
-        app.MapGet($"{path}/getServiceDetails", async (int jobId, int page, int count, CancellationToken cancellationToken) =>
+        app.MapGet($"{path}/getServiceDetails", async (int jobId, DetailStatus? status, int page, int count, CancellationToken cancellationToken) =>
         {
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var jobWorkingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
-            return await jobWorkingDetailRepository.GetPagingListAsync(c => c.JobId == jobId, c => c.StartDate, page, count, cancellationToken);
+            return await jobWorkingDetailRepository.GetQueryable(c => c.JobId == jobId && (status == null || c.Status == status))
+                .OrderByDescending(c => c.StartDate)
+                .Skip((page - 1) * count).Take(count)
+                .ToListAsync(cancellationToken);
         });
 
         #endregion

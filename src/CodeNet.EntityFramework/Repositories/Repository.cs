@@ -1,6 +1,8 @@
 ﻿using CodeNet.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using System.Linq.Expressions;
+using System.Threading;
 
 namespace CodeNet.EntityFramework.Repositories;
 
@@ -136,6 +138,11 @@ public class Repository<TEntity> : IRepository<TEntity>
             : await _entities.Where(predicate).OrderBy(orderBy).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
     }
     #endregion
+
+    public virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate)
+    {
+        return _entities.Where(predicate);
+    }
 
     #region Find
     public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)

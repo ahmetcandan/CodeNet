@@ -29,6 +29,10 @@ public interface IRepository<TEntity>
     Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken);
     Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken);
 
+    #region Queryable
+    IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate);
+    #endregion
+
     TEntity Add(TEntity entity);
     IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities);
     Task<TEntity> AddAsync(TEntity entity);
