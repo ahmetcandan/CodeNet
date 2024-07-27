@@ -2,15 +2,14 @@
 using CodeNet.BackgroundJob.Models;
 using CodeNet.BackgroundJob.Settings;
 using CodeNet.EntityFramework.Extensions;
-using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.EntityFramework.Repositories;
+using CodeNet.Logging.Extensions;
 using CodeNet.Redis.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
-using System.Threading;
 
 namespace CodeNet.BackgroundJob.Extensions;
 
@@ -50,6 +49,7 @@ public static class BackgroundJobServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddBackgroundServiceDbContext(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
     {
+        services.AddAppLogger();
         return services.AddDbContext<BackgroundJobDbContext>(optionsAction);
     }
 
