@@ -1,4 +1,5 @@
-﻿using CodeNet.Logging.Middleware;
+﻿using CodeNet.Core.Extensions;
+using CodeNet.Logging.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class LoggingServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddAppLogger(this IServiceCollection services)
     {
+        services.AddCodeNetContext();
         return services.AddScoped<IAppLogger, AppLogger>();
     }
 
