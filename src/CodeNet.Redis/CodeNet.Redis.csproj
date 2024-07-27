@@ -42,7 +42,6 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
-	  <ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
 	</ItemGroup>
 
 </Project>
