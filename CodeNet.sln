@@ -126,7 +126,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Parameters.Tests", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Parameters.MongoDB", "src\CodeNet.Parameters.MongoDB\CodeNet.Parameters.MongoDB.csproj", "{405B6AB5-3D57-49FB-8414-FB75AFBB90E7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.BackgroundJob", "src\CodeNet.BackgroundJob\CodeNet.BackgroundJob.csproj", "{C8A84D75-D341-4821-AF5C-8B364FE251C2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.BackgroundJob", "src\CodeNet.BackgroundJob\CodeNet.BackgroundJob.csproj", "{C8A84D75-D341-4821-AF5C-8B364FE251C2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.SignalR", "src\CodeNet.SignalR\CodeNet.SignalR.csproj", "{D4C8FC75-D463-4BEC-B525-BAE28466132F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.StackExchange.Redis", "src\CodeNet.StackExchange.Redis\CodeNet.StackExchange.Redis.csproj", "{4A900609-A0FA-4A29-8FFD-40681BC4B81A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -350,6 +354,14 @@ Global
 		{C8A84D75-D341-4821-AF5C-8B364FE251C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8A84D75-D341-4821-AF5C-8B364FE251C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8A84D75-D341-4821-AF5C-8B364FE251C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4C8FC75-D463-4BEC-B525-BAE28466132F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4C8FC75-D463-4BEC-B525-BAE28466132F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4C8FC75-D463-4BEC-B525-BAE28466132F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4C8FC75-D463-4BEC-B525-BAE28466132F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4A900609-A0FA-4A29-8FFD-40681BC4B81A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4A900609-A0FA-4A29-8FFD-40681BC4B81A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4A900609-A0FA-4A29-8FFD-40681BC4B81A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4A900609-A0FA-4A29-8FFD-40681BC4B81A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -413,6 +425,8 @@ Global
 		{E15552DA-CA4B-4FDD-BCB1-9755CEF7DB53} = {15230BF4-2524-43B5-9759-89F96C6C3A19}
 		{405B6AB5-3D57-49FB-8414-FB75AFBB90E7} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{C8A84D75-D341-4821-AF5C-8B364FE251C2} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{D4C8FC75-D463-4BEC-B525-BAE28466132F} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{4A900609-A0FA-4A29-8FFD-40681BC4B81A} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}
