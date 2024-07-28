@@ -8,6 +8,7 @@ using Quartz;
 using RedLockNet;
 using System.Diagnostics;
 using System.Reflection;
+using System.Threading;
 
 namespace CodeNet.BackgroundJob.Manager;
 
@@ -15,47 +16,29 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     where TJob : IScheduleJob
 {
     private bool _exit = false;
+    private JobStatus _jobStatus = JobStatus.Pending;
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
+        _exit = false;
         var cron = new CronExpression(options.Value.CronExpression);
         var methodInfo = MethodBase.GetCurrentMethod();
-        int jobId;
         using var serviceScope = serviceProvider.CreateAsyncScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
-        var serviceRepository = new Repository<Job>(dbContext);
-        var currentJob = await serviceRepository.GetAsync(c => c.ServiceName == typeof(TJob).ToString(), cancellationToken);
-        if (currentJob is null)
-        {
-            var jobEntity = await serviceRepository.AddAsync(new Job
-            {
-                CronExpression = options.Value.CronExpression,
-                ExpryTime = options.Value.ExpryTime,
-                ServiceName = typeof(TJob).ToString(),
-                Status = JobStatus.Running
-            }, cancellationToken);
-            await dbContext.SaveChangesAsync(cancellationToken);
-            jobId = jobEntity.Id;
-        }
-        else
-        {
-            currentJob.Status = JobStatus.Running;
-            currentJob.ExpryTime = options.Value.ExpryTime;
-            currentJob.CronExpression = options.Value.CronExpression;
-            serviceRepository.Update(currentJob);
-            await dbContext.SaveChangesAsync(cancellationToken);
-            jobId = currentJob.Id;
-        }
+        int jobId = await AddOrUpdateService(dbContext, cancellationToken);
 
         var distributedLock = serviceScope.ServiceProvider.GetService<IDistributedLockFactory>();
         var appLogger = serviceScope.ServiceProvider.GetService<IAppLogger>();
         var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
         if (tJob is null)
+        {
+            _jobStatus = JobStatus.Stopped;
             return;
+        }
 
+        var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
         while (!cancellationToken.IsCancellationRequested && !_exit)
         {
-            var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
             var now = DateTimeOffset.Now;
             var nextTime = cron.GetNextValidTimeAfter(now);
             var timeSpan = nextTime - now ?? new TimeSpan(0);
@@ -70,7 +53,37 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             }
 
             if (result is { Status: DetailStatus.Fail or DetailStatus.Stopped })
+            {
+                _jobStatus = JobStatus.Stopped;
                 break;
+            }
+        }
+    }
+
+    private async Task<int> AddOrUpdateService(BackgroundJobDbContext dbContext, CancellationToken cancellationToken)
+    {
+        var serviceRepository = new Repository<Job>(dbContext);
+        var currentJob = await serviceRepository.GetAsync(c => c.ServiceName == typeof(TJob).ToString(), cancellationToken);
+        if (currentJob is null)
+        {
+            var jobEntity = await serviceRepository.AddAsync(new Job
+            {
+                CronExpression = options.Value.CronExpression,
+                ExpryTime = options.Value.ExpryTime,
+                ServiceName = typeof(TJob).ToString(),
+                Status = JobStatus.Running
+            }, cancellationToken);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return jobEntity.Id;
+        }
+        else
+        {
+            currentJob.Status = JobStatus.Running;
+            currentJob.ExpryTime = options.Value.ExpryTime;
+            currentJob.CronExpression = options.Value.CronExpression;
+            serviceRepository.Update(currentJob);
+            await dbContext.SaveChangesAsync(cancellationToken);
+            return currentJob.Id;
         }
     }
 
@@ -87,17 +100,21 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             }
 
             if (_exit)
+            {
+                _jobStatus = JobStatus.Stopped;
                 return new JobWorkingDetail
                 {
                     Message = "Not working. This Job has been stopped.",
                     Status = DetailStatus.Stopped
                 };
+            }
 
             appLogger?.EntryLog($"'{typeof(TJob)}' starting scheduled task.", methodInfo);
             var timer = new Stopwatch();
             timer.Start();
             startDate = DateTimeOffset.Now;
             await tJob.Execute(cancellationToken);
+            _jobStatus = JobStatus.Running;
             timer.Stop();
             appLogger?.ExitLog($"'{typeof(TJob)}' scheduled mission is over.", methodInfo, timer.ElapsedMilliseconds);
             return new JobWorkingDetail
@@ -111,6 +128,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         catch (Exception ex)
         {
             appLogger?.ExceptionLog(ex, methodInfo);
+            _jobStatus = JobStatus.Stopped;
             return new JobWorkingDetail
             {
                 Message = $"Thrown exception while Job was working. Exeption: {ex.Message}",
@@ -135,5 +153,11 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         var appLogger = serviceScope.ServiceProvider.GetService<IAppLogger>();
         appLogger?.TraceLog($"'{nameof(TJob)}' stoped scheduled task.", MethodBase.GetCurrentMethod());
         _exit = true;
+        _jobStatus = JobStatus.Stopped;
+    }
+
+    public JobStatus GetStatus()
+    {
+        return _jobStatus;
     }
 }
