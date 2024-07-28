@@ -95,6 +95,15 @@ public static class BackgroundJobServiceExtensions
                 .ToListAsync(cancellationToken);
         });
 
+        app.MapDelete($"{path}/deleteDetails", async (int[] detailIds, CancellationToken cancellationToken) =>
+        {
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var jobWorkingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
+            var list = await jobWorkingDetailRepository.FindAsync(c => detailIds.Any(i => c.Id == i), cancellationToken);
+            jobWorkingDetailRepository.RemoveRange(list);
+            return await dbContext.SaveChangesAsync(cancellationToken);
+        });
+
         #endregion
 
         var tJobs = serviceScope.ServiceProvider.GetServices<IScheduleJob>();
@@ -103,10 +112,7 @@ public static class BackgroundJobServiceExtensions
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
             var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
-            app.Lifetime.ApplicationStarted.Register(async () =>
-            {
-                await backgroundService.StartAsync(CancellationToken.None);
-            });
+            app.Lifetime.ApplicationStarted.Register(async () => await backgroundService.StartAsync(CancellationToken.None));
         }
         return app;
     }
