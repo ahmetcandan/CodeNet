@@ -39,6 +39,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder
     .AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"))
     .AddRabbitMQConsumer(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddScoped<IRabbitMQConsumerHandler<RabbitMQConsumerService>, MessageConsumerHandler>();
 //...
 
 var app = builder.Build();

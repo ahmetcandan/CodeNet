@@ -31,6 +31,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder
     .AddStackExcahangeProducer(builder.Configuration.GetSection("StackExchangeRedis"))
     .AddStackExcahangeConsumer(builder.Configuration.GetSection("StackExchangeRedis"));
+builder.Services.AddScoped<IStackExchangeConsumerHandler<StackExchangeConsumerService>, MessageConsumerHandler>();
 //...
 
 var app = builder.Build();
