@@ -7,7 +7,7 @@ public class TestService1 : IScheduleJob
     public async Task Execute(CancellationToken cancellationToken)
     {
         Console.WriteLine("<<<<<<<<<< TEST 1 WRITE ASYNC >>>>>>>>>>");
-        await Task.Delay(TimeSpan.FromSeconds(3));
+        await Task.Delay(TimeSpan.FromMilliseconds(100));
     }
 }
 

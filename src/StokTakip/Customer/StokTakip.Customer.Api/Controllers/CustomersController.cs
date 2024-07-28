@@ -76,7 +76,7 @@ public class MongoController(IKeyValueRepository keyValueRepository, IAKeyValueR
 
 [ApiController]
 [Route("[controller]")]
-public class QueueController(ProducerServiceA producerServiceA, ProducerServiceB producerServiceB) : ControllerBase
+public class RabbitMQController(ProducerServiceA producerServiceA, ProducerServiceB producerServiceB) : ControllerBase
 {
     [HttpPost("A")]
     public async Task<IActionResult> SendA(QueueData data, CancellationToken cancellationToken)
@@ -88,6 +88,23 @@ public class QueueController(ProducerServiceA producerServiceA, ProducerServiceB
     public async Task<IActionResult> SendB(QueueData data, CancellationToken cancellationToken)
     {
         return Ok(producerServiceB.Publish(data));
+    }
+}
+
+[ApiController]
+[Route("[controller]")]
+public class StackExchangeController(RedisProducerServiceA producerServiceA, RedisProducerServiceB producerServiceB) : ControllerBase
+{
+    [HttpPost("A")]
+    public async Task<IActionResult> SendA(QueueData data, CancellationToken cancellationToken)
+    {
+        return Ok(await producerServiceA.PublishAsync(data));
+    }
+
+    [HttpPost("B")]
+    public async Task<IActionResult> SendB(QueueData data, CancellationToken cancellationToken)
+    {
+        return Ok(await producerServiceB.PublishAsync(data));
     }
 }
 

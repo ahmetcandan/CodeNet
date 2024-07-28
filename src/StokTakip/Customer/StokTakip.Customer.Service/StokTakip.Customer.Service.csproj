@@ -13,6 +13,7 @@
 		<ProjectReference Include="..\..\..\CodeNet.Parameters\CodeNet.Parameters.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.Redis\CodeNet.Redis.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.StackExchange.Redis\CodeNet.StackExchange.Redis.csproj" />
 		<ProjectReference Include="..\StokTakip.Customer.Abstraction\StokTakip.Customer.Abstraction.csproj" />
 	</ItemGroup>
 

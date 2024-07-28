@@ -28,6 +28,8 @@ using StokTakip.Customer.Service.QueueService;
 using CodeNet.BackgroundJob.Manager;
 using CodeNet.BackgroundJob.Extensions;
 using Quartz;
+using CodeNet.StackExchange.Redis.Extensions;
+using CodeNet.StackExchange.Redis.Services;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -41,6 +43,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
     //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
+    .AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
+    .AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
     .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
@@ -63,12 +69,14 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-builder.Services.AddBackgroundServiceDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!))
-    .AddBackgroundJob<TestService1>("*/10 * * * * ? *")
+//builder.Services.AddBackgroundServiceDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!))
+//    .AddBackgroundJob<TestService1>("*/3 * * * * ? *", TimeSpan.FromSeconds(1))
     //.AddBackgroundService<TestService2>("*/31 * * * * ? *")
-    .AddBackgroundJobRedis(builder.Configuration.GetSection("Redis"));
-//builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
-//builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
+    //.AddBackgroundJobRedis(builder.Configuration.GetSection("Redis"));
+builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
+builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
+builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceA>, RedisMessageHandlerA>();
+builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceB>, RedisMessageHandlerB>();
 var app = builder.Build();
 app.UseCodeNet();
 app.UseLogging();
@@ -76,8 +84,9 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-//app.UseBackgroundService<TestService>();
-app.UseBackgroundService("/job");
+//app.UseBackgroundService("/job");
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
+app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
+app.UseStackExcahangeConsumer<RedisConsumerServiceB>();
 app.Run();
