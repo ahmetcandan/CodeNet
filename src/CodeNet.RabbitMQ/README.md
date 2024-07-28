@@ -42,13 +42,13 @@ builder
 //...
 
 var app = builder.Build();
-app.UseRabbitMQConsumer<QueueModel>();
+app.UseRabbitMQConsumer<RabbitMQConsumerService>();
 //...
 app.Run();
 ```
 #### Usage Producer
 ```csharp
-public class MessageProducer(IRabbitMQProducerService<QueueModel> Producer)
+public class MessageProducer(RabbitMQProducerService Producer)
 {
     public async Task<ResponseBase> Send(MessageProducerRequest request, CancellationToken cancellationToken)
     {
@@ -59,7 +59,7 @@ public class MessageProducer(IRabbitMQProducerService<QueueModel> Producer)
 ```
 #### Usage Consumer
 ```csharp
-public class MessageConsumerHandler : IRabbitMQConsumerHandler<KeyValueModel>
+public class MessageConsumerHandler : IRabbitMQConsumerHandler<RabbitMQConsumerService>
 {
     public void Handler(ReceivedMessageEventArgs<KeyValueModel> args)
     {

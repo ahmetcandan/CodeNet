@@ -32,7 +32,7 @@ public static class RabbitMqServiceExtensions
         _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
             ? services.Configure<RabbitMQConsumerOptions>(rabbitSection)
             : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(rabbitSection);
-        return services.AddScoped<TConsumerService>();
+        return services.AddSingleton<TConsumerService>();
     }
 
     /// <summary>
