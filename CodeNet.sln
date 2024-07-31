@@ -128,9 +128,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Parameters.MongoDB"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.BackgroundJob", "src\CodeNet.BackgroundJob\CodeNet.BackgroundJob.csproj", "{C8A84D75-D341-4821-AF5C-8B364FE251C2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.SignalR", "src\CodeNet.SignalR\CodeNet.SignalR.csproj", "{D4C8FC75-D463-4BEC-B525-BAE28466132F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.SignalR", "src\CodeNet.SignalR\CodeNet.SignalR.csproj", "{D4C8FC75-D463-4BEC-B525-BAE28466132F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.StackExchange.Redis", "src\CodeNet.StackExchange.Redis\CodeNet.StackExchange.Redis.csproj", "{4A900609-A0FA-4A29-8FFD-40681BC4B81A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.StackExchange.Redis", "src\CodeNet.StackExchange.Redis\CodeNet.StackExchange.Redis.csproj", "{4A900609-A0FA-4A29-8FFD-40681BC4B81A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

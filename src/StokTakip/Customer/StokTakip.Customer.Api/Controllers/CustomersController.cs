@@ -1,4 +1,5 @@
 ﻿using CodeNet.Redis.Attributes;
+using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;

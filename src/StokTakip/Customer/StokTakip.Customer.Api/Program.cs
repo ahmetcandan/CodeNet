@@ -30,6 +30,7 @@ using CodeNet.BackgroundJob.Extensions;
 using Quartz;
 using CodeNet.StackExchange.Redis.Extensions;
 using CodeNet.StackExchange.Redis.Services;
+using CodeNet.Parameters.MongoDB.Extensions;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -38,7 +39,7 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
-    //.AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
+    .AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
     //.AddRabbitMQConsumer<ConsumerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
@@ -55,13 +56,17 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
     //.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
     .AddHttpRequest()
-    .AddCodeNetHealthCheck()
-        .AddEntityFrameworkHealthCheck<CustomerDbContext>()
-        .AddRedisHealthCheck()
-        .AddMongoDbHealthCheck()
-        .AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"))
-        .AddElasticsearchHealthCheck()
-    ;
+    .AddParameters(options => options.AddMongoDb(builder.Configuration.GetSection("BMongoDB"))
+                                .AddRedis(builder.Configuration.GetSection("Redis")))
+    .AddHealthChecks(options =>
+    {
+        options.AddCodeNetHealthCheck();
+        options.AddEntityFrameworkHealthCheck<CustomerDbContext>();
+        options.AddRedisHealthCheck();
+        options.AddMongoDbHealthCheck();
+        options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
+        options.AddElasticsearchHealthCheck();
+    });
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
@@ -69,14 +74,15 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-//builder.Services.AddBackgroundServiceDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!))
-//    .AddBackgroundJob<TestService1>("*/3 * * * * ? *", TimeSpan.FromSeconds(1))
-    //.AddBackgroundService<TestService2>("*/31 * * * * ? *")
-    //.AddBackgroundJobRedis(builder.Configuration.GetSection("Redis"));
+builder.Services.AddBackgroundJob(options => 
+    options.AddRedis(builder.Configuration.GetSection("Redis"))
+        .AddJob<TestService1>("*/3 * * * * ? *", TimeSpan.FromSeconds(1))
+        .AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!)));
 builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
 builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
 builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceA>, RedisMessageHandlerA>();
 builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceB>, RedisMessageHandlerB>();
+
 var app = builder.Build();
 app.UseCodeNet();
 app.UseLogging();
@@ -84,7 +90,7 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-//app.UseBackgroundService("/job");
+app.UseBackgroundService("/job");
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
 app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
