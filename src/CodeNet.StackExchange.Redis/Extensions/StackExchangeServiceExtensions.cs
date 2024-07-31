@@ -11,27 +11,33 @@ public static class StackExchangeServiceExtensions
     /// <summary>
     /// Add StackExchange Consumer
     /// </summary>
+    /// <typeparam name="TConsumerHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeConsumer(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+    public static IServiceCollection AddStackExcahangeConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+        where TConsumerHandler : class, IStackExchangeConsumerHandler<StackExchangeConsumerService>
     {
-        return services.AddStackExcahangeConsumer<StackExchangeConsumerService>(stackExcahangeSection);
+        return services.AddStackExcahangeConsumer<StackExchangeConsumerService, TConsumerHandler>(stackExcahangeSection);
     }
 
     /// <summary>
     /// Add StackExchange Consumer
     /// </summary>
     /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TConsumerHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeConsumer<TConsumerService>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+    public static IServiceCollection AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
         where TConsumerService : StackExchangeConsumerService
+        where TConsumerHandler : class, IStackExchangeConsumerHandler<TConsumerService>
     {
         _ = typeof(TConsumerService).Equals(typeof(StackExchangeConsumerService))
             ? services.Configure<StackExchangeConsumerOptions>(stackExcahangeSection)
             : services.Configure<StackExchangeConsumerOptions<TConsumerService>>(stackExcahangeSection);
+
+        services.AddScoped<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
     }
 

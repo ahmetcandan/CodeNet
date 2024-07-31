@@ -40,12 +40,12 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
     .AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
-    //.AddRabbitMQConsumer<ConsumerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    //.AddRabbitMQConsumer<ConsumerServiceA, MessageHandlerA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
-    //.AddRabbitMQConsumer<ConsumerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    //.AddRabbitMQConsumer<ConsumerServiceB, MessageHandlerB>(builder.Configuration.GetSection("RabbitMQB"))
     //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
-    .AddStackExcahangeConsumer<RedisConsumerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
-    .AddStackExcahangeConsumer<RedisConsumerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
     .AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
     .AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
@@ -53,11 +53,13 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
     //.AddElasticsearch(builder.Configuration.GetSection("Elasticsearch"))
     .AddDbContext<CustomerDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))
-    //.AddSqlServer<CustomerDbContext>(builder.Configuration.GetConnectionString("SqlServer")!)
-    //.AddParameters(c => c.UseInMemoryDatabase("ParameterDB"), builder.Configuration.GetSection("Redis"))
     .AddHttpRequest()
-    .AddParameters(options => options.AddMongoDb(builder.Configuration.GetSection("BMongoDB"))
-                                .AddRedis(builder.Configuration.GetSection("Redis")))
+    .AddParameters(options =>
+    {
+        options.AddMongoDb(builder.Configuration.GetSection("BMongoDB"));
+        //options.AddDbContext(c => c.UseSqlServer(""));
+        options.AddRedis(builder.Configuration.GetSection("Redis"));
+    })
     .AddHealthChecks(options =>
     {
         options.AddCodeNetHealthCheck();
@@ -66,6 +68,12 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
         options.AddMongoDbHealthCheck();
         options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
         options.AddElasticsearchHealthCheck();
+    })
+    .AddBackgroundJob(options =>
+    {
+        options.AddRedis(builder.Configuration.GetSection("Redis"));
+        options.AddJob<TestService1>("*/3 * * * * ? *", TimeSpan.FromSeconds(1));
+        options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
     });
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
@@ -74,14 +82,6 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
-builder.Services.AddBackgroundJob(options => 
-    options.AddRedis(builder.Configuration.GetSection("Redis"))
-        .AddJob<TestService1>("*/3 * * * * ? *", TimeSpan.FromSeconds(1))
-        .AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!)));
-builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceA>, MessageHandlerA>();
-builder.Services.AddScoped<IRabbitMQConsumerHandler<ConsumerServiceB>, MessageHandlerB>();
-builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceA>, RedisMessageHandlerA>();
-builder.Services.AddScoped<IStackExchangeConsumerHandler<RedisConsumerServiceB>, RedisMessageHandlerB>();
 
 var app = builder.Build();
 app.UseCodeNet();

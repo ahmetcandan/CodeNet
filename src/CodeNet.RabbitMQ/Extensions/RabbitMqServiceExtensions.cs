@@ -11,27 +11,33 @@ public static class RabbitMqServiceExtensions
     /// <summary>
     /// Add RabbitMQ Consumer
     /// </summary>
+    /// <typeparam name="TConsumerHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQConsumer(this IServiceCollection services, IConfigurationSection rabbitSection)
+    public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
     {
-        return services.AddRabbitMQConsumer<RabbitMQConsumerService>(rabbitSection);
+        return services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>(rabbitSection);
     }
 
     /// <summary>
     /// Add RabbitMQ Consumer
     /// </summary>
     /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TConsumerHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQConsumer<TConsumerService>(this IServiceCollection services, IConfigurationSection rabbitSection)
+    public static IServiceCollection AddRabbitMQConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TConsumerService : RabbitMQConsumerService
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
     {
         _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
             ? services.Configure<RabbitMQConsumerOptions>(rabbitSection)
             : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(rabbitSection);
+
+        services.AddScoped<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
     }
 
