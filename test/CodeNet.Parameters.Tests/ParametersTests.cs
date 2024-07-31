@@ -28,31 +28,31 @@ namespace CodeNet.Parameters.Tests
             IServiceCollection services = new ServiceCollection();
             var configurationManager = new ConfigurationManager();
             configurationManager.AddJsonFile("testSettings.json");
-            services.AddParameters(options => options.UseInMemoryDatabase("TestParameterDb"));
+            services.AddParameters(options => options.AddDbContext(c => c.UseInMemoryDatabase("TestParameterDb")));
             services.AddScoped(c => mockCodeNetContext.Object);
 
             var serviceProvider = services.BuildServiceProvider();
             var parameterManager = serviceProvider.GetRequiredService<IParameterManager>();
-            var p1 = new Parameters.Models.ParameterModel
+            var p1 = new Models.ParameterModel
             {
                 Code = "TG1",
                 Value = "TG1_Value",
                 Order = 1,
                 IsDefault = true
             };
-            var p2 = new Parameters.Models.ParameterModel
+            var p2 = new Models.ParameterModel
             {
                 Code = "TG2",
                 Value = "TG2_Value",
                 Order = 2
             };
-            var p3 = new Parameters.Models.ParameterModel
+            var p3 = new Models.ParameterModel
             {
                 Code = "TG3",
                 Value = "TG3_Value",
                 Order = 3
             };
-            var request = new Parameters.Models.ParameterGroupWithParamsModel
+            var request = new Models.ParameterGroupWithParamsModel
             {
                 Code = "TG",
                 ApprovalRequired = false,
