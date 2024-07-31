@@ -44,4 +44,8 @@
 		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
 	</ItemGroup>
 
+	<ItemGroup>
+	  <Folder Include="Page\" />
+	</ItemGroup>
+
 </Project>
