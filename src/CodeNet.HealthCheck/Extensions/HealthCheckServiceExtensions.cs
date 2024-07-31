@@ -17,10 +17,11 @@ public static class HealthCheckServiceExtensions
     /// <param name="action"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IServiceCollection AddHealthChecks(this IServiceCollection services, Action<IHealthChecksBuilder> action, TimeSpan? timeSpan = null)
+    public static IServiceCollection AddHealthChecks(this IServiceCollection services, Action<IHealthChecksBuilder> action)
     {
         services.AddCodeNetContext();
-        HealthCheckServiceCollectionExtensions.AddHealthChecks(services);
+        var healthCheckBuilder = HealthCheckServiceCollectionExtensions.AddHealthChecks(services);
+        action(healthCheckBuilder);
         return services;
     }
 
