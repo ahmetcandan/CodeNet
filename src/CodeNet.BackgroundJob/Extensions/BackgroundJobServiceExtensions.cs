@@ -1,14 +1,7 @@
 ﻿using CodeNet.BackgroundJob.Manager;
-using CodeNet.BackgroundJob.Models;
-using CodeNet.BackgroundJob.Settings;
-using CodeNet.EntityFramework.Extensions;
 using CodeNet.Logging.Extensions;
-using CodeNet.Redis.Extensions;
 using Microsoft.AspNetCore.Builder;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
 
 namespace CodeNet.BackgroundJob.Extensions;
 
