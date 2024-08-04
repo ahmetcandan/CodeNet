@@ -14,7 +14,7 @@ internal static class ApiServices
         {
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
-            return await serviceRepository.GetPagingListAsync(page, count, cancellationToken);
+            return await serviceRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken);
         });
     }
 
