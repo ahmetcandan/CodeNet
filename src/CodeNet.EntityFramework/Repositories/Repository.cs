@@ -177,22 +177,6 @@ public class Repository<TEntity> : IRepository<TEntity>
             TotalCount = totalCount
         };
     }
-
-    public virtual async Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken)
-    {
-        int totalCount = await _entities.CountAsync(predicate, cancellationToken);
-        List<TEntity> list = page < 1 || count < 1
-            ? throw new ArgumentException("Page or count cannot be less than 1")
-            : await _entities.Where(predicate).OrderBy(orderBy).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
-
-        return new PagingList<TEntity>
-        {
-            List = list,
-            PageCount = count,
-            PageNumber = page,
-            TotalCount = totalCount
-        };
-    }
     #endregion
 
     public virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate)
