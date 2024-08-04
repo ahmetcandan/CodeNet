@@ -19,7 +19,6 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _exit = false;
-        var cron = Cronos.CronExpression.Parse(options.Value.CronExpression);
         int jobId = await AddOrUpdateService(cancellationToken);
 
         var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
@@ -35,7 +34,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
             var now = DateTime.Now;
-            var nextTime = cron.GetNextOccurrence(now, TimeZoneInfo.Local);
+            var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
             var timeSpan = nextTime - now ?? new TimeSpan(0);
             await Task.Delay(timeSpan, cancellationToken);
             var result = await DoWorkAsync(tJob, jobId, cancellationToken);
