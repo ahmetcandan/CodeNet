@@ -1,7 +1,17 @@
-﻿namespace CodeNet.BackgroundJob.Settings;
+﻿using CodeNet.BackgroundJob.Manager;
+using Cronos;
 
-internal class JobOptions<TJob>
+namespace CodeNet.BackgroundJob.Settings;
+
+public class JobOptions<TJob> : JobOptions
+    where TJob : class, IScheduleJob
 {
-    public string CronExpression { get; internal set; }
-    public TimeSpan ExpryTime { get; internal set; }
+}
+
+public class JobOptions
+{
+    public string CronExpression { get; set; }
+    internal CronExpression Cron { get; set; }
+    public TimeSpan? ExpryTime { get; set; }
+    public TimeSpan? Timeout { get; set; }
 }

@@ -4,7 +4,6 @@ using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using Quartz;
 using RedLockNet;
 using System.Diagnostics;
 using System.Reflection;
@@ -12,7 +11,7 @@ using System.Reflection;
 namespace CodeNet.BackgroundJob.Manager;
 
 internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options, IServiceProvider serviceProvider) : ICodeNetBackgroundService<TJob>
-    where TJob : IScheduleJob
+    where TJob : class, IScheduleJob
 {
     private bool _exit = false;
     private JobStatus _jobStatus = JobStatus.Pending;
@@ -20,7 +19,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _exit = false;
-        var cron = new CronExpression(options.Value.CronExpression);
+        var cron = Cronos.CronExpression.Parse(options.Value.CronExpression);
         int jobId = await AddOrUpdateService(cancellationToken);
 
         var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
@@ -35,8 +34,8 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             using var serviceScope = serviceProvider.CreateAsyncScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
-            var now = DateTimeOffset.Now;
-            var nextTime = cron.GetNextValidTimeAfter(now);
+            var now = DateTime.Now;
+            var nextTime = cron.GetNextOccurrence(now, TimeZoneInfo.Local);
             var timeSpan = nextTime - now ?? new TimeSpan(0);
             await Task.Delay(timeSpan, cancellationToken);
             var result = await DoWorkAsync(tJob, jobId, cancellationToken);
@@ -93,7 +92,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             var distributedLock = serviceScope.ServiceProvider.GetService<IDistributedLockFactory>();
             if (distributedLock is not null)
             {
-                using var redLock = await distributedLock.CreateLockAsync($"CNBJ_{typeof(TJob)}", options.Value.ExpryTime);
+                using var redLock = await distributedLock.CreateLockAsync($"CNBJ_{typeof(TJob)}", options.Value.ExpryTime ?? TimeSpan.FromSeconds(10));
                 if (!redLock.IsAcquired)
                     return null;
             }

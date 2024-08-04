@@ -2,7 +2,6 @@
 using CodeNet.EntityFramework.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.BackgroundJob.Manager;
@@ -25,10 +24,7 @@ internal static class ApiServices
         {
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var jobWorkingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
-            return await jobWorkingDetailRepository.GetQueryable(c => c.JobId == jobId && (status == null || c.Status == status))
-                .OrderByDescending(c => c.StartDate)
-                .Skip((page - 1) * count).Take(count)
-                .ToListAsync(cancellationToken);
+            return await jobWorkingDetailRepository.GetPagingListAsync(c => c.JobId == jobId && (status == null || c.Status == status), c => c.StartDate, false, page, count);
         });
     }
 

@@ -2,10 +2,10 @@
 using CodeNet.BackgroundJob.Models;
 using CodeNet.BackgroundJob.Settings;
 using CodeNet.Redis.Extensions;
+using Cronos;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quartz;
 
 namespace CodeNet.BackgroundJob.Extensions;
 
@@ -30,17 +30,21 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// <param name="lockExperyTime"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentException"></exception>
-    public BackgroundJobOptionsBuilder AddJob<TJob>(string cronExpression, TimeSpan? lockExperyTime = null)
+    public BackgroundJobOptionsBuilder AddJob<TJob>(JobOptions options)
         where TJob : class, IScheduleJob
     {
-        if (!CronExpression.IsValidExpression(cronExpression))
-            throw new ArgumentException($"CronExpression is not valid: '{cronExpression}'");
+        var valid = CronExpression.TryParse(options.CronExpression, out CronExpression cron);
+        if (!valid)
+            throw new ArgumentException($"CronExpression is not valid: '{options.CronExpression}'");
 
         services.Configure<JobOptions<TJob>>(c =>
         {
-            c.CronExpression = cronExpression;
-            c.ExpryTime = lockExperyTime ?? TimeSpan.FromSeconds(10);
+            c.CronExpression = options.CronExpression;
+            c.Cron = cron;
+            c.ExpryTime = options.ExpryTime;
+            c.Timeout = options.Timeout;
         });
+
         services.AddSingleton<IScheduleJob, TJob>();
         services.AddSingleton<ICodeNetBackgroundService<TJob>, CodeNetBackgroundService<TJob>>();
         return this;
