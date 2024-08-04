@@ -33,7 +33,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             using var serviceScope = serviceProvider.CreateAsyncScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
             var timeSpan = nextTime - now ?? new TimeSpan(0);
             await Task.Delay(timeSpan, cancellationToken);
