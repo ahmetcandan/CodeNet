@@ -16,18 +16,18 @@ public interface IRepository<TEntity>
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate);
     Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken);
 
-    List<TEntity> GetPagingList(int page, int count);
-    List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count);
-    List<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count);
-    List<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count);
-    Task<List<TEntity>> GetPagingListAsync(int page, int count);
-    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count);
-    Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count);
-    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count);
-    Task<List<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken);
-    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken);
-    Task<List<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken);
-    Task<List<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBy, int page, int count, CancellationToken cancellationToken);
+    PagingList<TEntity> GetPagingList(int page, int count);
+    PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count);
+    PagingList<TEntity> GetPagingList(Expression<Func<TEntity, bool>> predicate, int page, int count);
+    PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count);
+    Task<PagingList<TEntity>> GetPagingListAsync(int page, int count);
+    Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count);
+    Task<PagingList<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count);
+    Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count);
+    Task<PagingList<TEntity>> GetPagingListAsync(int page, int count, CancellationToken cancellationToken);
+    Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken);
+    Task<PagingList<TEntity>> GetPagingListAsync(Expression<Func<TEntity, bool>> predicate, int page, int count, CancellationToken cancellationToken);
+    Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken);
 
     #region Queryable
     IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate);
