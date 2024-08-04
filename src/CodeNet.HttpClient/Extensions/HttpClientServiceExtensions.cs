@@ -16,7 +16,6 @@ public static class HttpClientServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddHttpRequest(this IServiceCollection services)
     {
-        services.AddCodeNetContext();
         return services.AddScoped<IHttpRequest, HttpRequest>();
     }
 }
