@@ -14,17 +14,11 @@ public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity>
     Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive);
     Task<TBaseEntity?> GetAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, CancellationToken cancellationToken);
 
-    PagingList<TBaseEntity> GetPagingList(bool isActive, int page, int count);
     PagingList<TBaseEntity> GetPagingList<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count);
-    PagingList<TBaseEntity> GetPagingList(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count);
     PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count);
-    Task<PagingList<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count);
     Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count);
-    Task<PagingList<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count);
     Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count);
-    Task<PagingList<TBaseEntity>> GetPagingListAsync(bool isActive, int page, int count, CancellationToken cancellationToken);
     Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken);
-    Task<PagingList<TBaseEntity>> GetPagingListAsync(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, int page, int count, CancellationToken cancellationToken);
     Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken);
 
     IQueryable<TBaseEntity> GetQueryable(Expression<Func<TBaseEntity, bool>> predicate, bool isActive);
