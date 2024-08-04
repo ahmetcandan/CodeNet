@@ -172,7 +172,7 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
 
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        return (await _parameterGroupRepository.GetPagingListAsync(page, count, cancellationToken)).Select(c => new ParameterGroupResult
+        return (await _parameterGroupRepository.GetPagingListAsync(page, count, cancellationToken)).List.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
             ApprovalRequired = c.ApprovalRequired,
