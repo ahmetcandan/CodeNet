@@ -1,4 +1,6 @@
 ﻿using CodeNet.BackgroundJob.Manager;
+using CodeNet.BackgroundJob.Models;
+using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -28,11 +30,12 @@ public static class BackgroundJobServiceExtensions
         app.UseEndPoint(serviceScope.ServiceProvider, path);
 
         var tJobs = serviceScope.ServiceProvider.GetServices<IScheduleJob>();
-        foreach (var tJob in tJobs)
+        SetPrivateJobs(serviceScope.ServiceProvider);
+
+        foreach (var tJobType in tJobs.Select(c => c.GetType()).Distinct())
         {
-            var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'BackgroundJobOptionsBuilder.AddScheduleJob<{tJobType.Name}>(JobOptions options)' not implemented background service.");
             app.Lifetime.ApplicationStarted.Register(async () => await backgroundService.StartAsync(CancellationToken.None));
         }
         return app;
@@ -48,5 +51,18 @@ public static class BackgroundJobServiceExtensions
         app.JobExecute(serviceProvider, path);
 
         return app;
+    }
+
+    private static void SetPrivateJobs(IServiceProvider serviceProvider)
+    {
+        var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+        var serviceRepository = new Repository<Job>(dbContext);
+        var jobEntities = serviceRepository.Find(c => c.IsActive);
+        foreach (var jobEntity in jobEntities)
+        {
+            jobEntity.IsActive = false;
+            serviceRepository.Update(jobEntity);
+        }
+        dbContext.SaveChanges();
     }
 }

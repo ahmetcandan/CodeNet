@@ -6,6 +6,8 @@ namespace CodeNet.BackgroundJob.Settings;
 public class JobOptions<TJob> : JobOptions
     where TJob : class, IScheduleJob
 {
+    public string ServiceType { get; set; }
+    public string Title { get; set; }
 }
 
 public class JobOptions

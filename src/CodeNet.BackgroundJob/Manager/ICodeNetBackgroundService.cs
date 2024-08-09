@@ -13,4 +13,5 @@ public interface ICodeNetBackgroundService
     Task StopAsync(CancellationToken cancellationToken = default);
     Task<JobWorkingDetail?> DoWorkAsync(IScheduleJob tJob, int jobId, CancellationToken cancellationToken = default);
     JobStatus GetStatus();
+    int GetJobId();
 }

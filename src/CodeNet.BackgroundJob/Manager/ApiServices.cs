@@ -14,7 +14,7 @@ internal static class ApiServices
         {
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
-            return await serviceRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken);
+            return await serviceRepository.GetPagingListAsync(c => c.IsActive, c => c.Id, true, page, count, cancellationToken);
         });
     }
 
@@ -47,7 +47,7 @@ internal static class ApiServices
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceName) ?? throw new Exception($"{jobEntity.ServiceName} IScheduleJob is not found!");
+            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
@@ -58,18 +58,18 @@ internal static class ApiServices
             {
                 case JobStatus.Stopped:
                     if (currentStatus == JobStatus.Stopped)
-                        return $"The {jobEntity.ServiceName} service is already stopped.";
+                        return $"The {jobEntity.ServiceType} service is already stopped.";
 
                     await backgroundService.StopAsync(cancellationToken);
-                    return $"{jobEntity.ServiceName} service has been stopped.";
+                    return $"{jobEntity.ServiceType} service has been stopped.";
                 case JobStatus.Running:
                     if (currentStatus == JobStatus.Stopped)
                     {
                         app.Lifetime.ApplicationStarted.Register(async () => await backgroundService.StartAsync(CancellationToken.None));
-                        return $"{jobEntity.ServiceName} service has been started.";
+                        return $"{jobEntity.ServiceType} service has been started.";
                     }
 
-                    return $"The {jobEntity.ServiceName} service is already running.";
+                    return $"The {jobEntity.ServiceType} service is already running.";
 
                 default:
                     throw new NotImplementedException();
@@ -84,7 +84,7 @@ internal static class ApiServices
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceName) ?? throw new Exception($"{jobEntity.ServiceName} IScheduleJob is not found!");
+            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
@@ -106,7 +106,7 @@ internal static class ApiServices
             var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceName) ?? throw new Exception($"{jobEntity.ServiceName} IScheduleJob is not found!");
+            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);

@@ -15,11 +15,12 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
 {
     private bool _exit = false;
     private JobStatus _jobStatus = JobStatus.Pending;
+    private int _jobId;
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _exit = false;
-        int jobId = await AddOrUpdateService(cancellationToken);
+        await AddOrUpdateService(cancellationToken);
 
         var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
         if (tJob is null)
@@ -37,7 +38,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
             var timeSpan = nextTime - now ?? new TimeSpan(0);
             await Task.Delay(timeSpan, cancellationToken);
-            var result = await DoWorkAsync(tJob, jobId, cancellationToken);
+            var result = await DoWorkAsync(tJob, _jobId, cancellationToken);
 
             if (result is { Status: DetailStatus.Fail or DetailStatus.Stopped })
             {
@@ -49,32 +50,37 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         }
     }
 
-    private async Task<int> AddOrUpdateService(CancellationToken cancellationToken)
+    private async Task AddOrUpdateService(CancellationToken cancellationToken)
     {
         using var serviceScope = serviceProvider.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
         var serviceRepository = new Repository<Job>(dbContext);
-        var currentJob = await serviceRepository.GetAsync(c => c.ServiceName == typeof(TJob).ToString(), cancellationToken);
+        var currentJob = await serviceRepository.GetAsync(c => c.ServiceType == options.Value.ServiceType, cancellationToken);
         if (currentJob is null)
         {
             var jobEntity = await serviceRepository.AddAsync(new Job
             {
                 CronExpression = options.Value.CronExpression,
                 ExpryTime = options.Value.ExpryTime,
-                ServiceName = typeof(TJob).ToString(),
-                Status = JobStatus.Running
+                ServiceType = options.Value.ServiceType,
+                Title = options.Value.ServiceType,
+                Status = JobStatus.Running,
+                IsActive = true
             }, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
-            return jobEntity.Id;
+            _jobId = jobEntity.Id;
         }
         else
         {
             currentJob.Status = JobStatus.Running;
             currentJob.ExpryTime = options.Value.ExpryTime;
             currentJob.CronExpression = options.Value.CronExpression;
+            currentJob.ServiceType = options.Value.ServiceType;
+            currentJob.Title = options.Value.Title;
+            currentJob.IsActive = true;
             serviceRepository.Update(currentJob);
             await dbContext.SaveChangesAsync(cancellationToken);
-            return currentJob.Id;
+            _jobId = currentJob.Id;
         }
     }
 
@@ -153,7 +159,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         using var serviceScope = serviceProvider.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
         var serviceRepository = new Repository<Job>(dbContext);
-        var service = await serviceRepository.GetAsync(c => c.ServiceName == typeof(TJob).ToString(), cancellationToken);
+        var service = await serviceRepository.GetAsync(c => c.ServiceType == typeof(TJob).ToString(), cancellationToken);
         if (service is not null)
         {
             service.Status = JobStatus.Stopped;
@@ -169,5 +175,10 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     public JobStatus GetStatus()
     {
         return _jobStatus;
+    }
+
+    public int GetJobId()
+    {
+        return _jobId;
     }
 }
