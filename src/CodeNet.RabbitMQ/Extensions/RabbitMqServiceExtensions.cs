@@ -37,7 +37,7 @@ public static class RabbitMqServiceExtensions
             ? services.Configure<RabbitMQConsumerOptions>(rabbitSection)
             : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(rabbitSection);
 
-        services.AddScoped<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
+        services.AddSingleton<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
     }
 
