@@ -1,0 +1,89 @@
+﻿@page "/jobs"
+@using BlazorAppStoloneApp.Models
+@using Microsoft.AspNetCore.SignalR.Client
+
+@inject HttpClient Http
+@inject HubConnection HubConnection
+@inject IDialogService DialogService
+
+<PageTitle>Jobs</PageTitle>
+
+<MudTable Hover="true" Breakpoint="Breakpoint.Sm" Loading="@_loading" LoadingProgressColor="Color.Info" ServerData="ServerReload">
+    <ToolBarContent>
+        <MudText Typo="Typo.h6">Schecule Jobs</MudText>
+    </ToolBarContent>
+    <HeaderContent>
+        <MudTh>Job Id</MudTh>
+        <MudTh>Service</MudTh>
+        <MudTh>Cron Expression</MudTh>
+        <MudTh>Expry Time</MudTh>
+        <MudTh>Status</MudTh>
+    </HeaderContent>
+    <RowTemplate>
+        <MudTd DataLabel="Job Id">@context.Id</MudTd>
+        <MudTd DataLabel="Service">@context.Title</MudTd>
+        <MudTd DataLabel="Cron Expression">@context.CronExpression</MudTd>
+        <MudTd DataLabel="Expry Time">@context.ExpryTime</MudTd>
+        <MudTd DataLabel="Status">
+            @if (context.Status == JobStatus.Running)
+            {
+                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
+            }
+            else
+            {
+                <MudIconButton OnClick="async () => await ExecuteJob(context.Id)" Icon="material-symbols-outlined/refresh" aria-label="refresh" />
+            }
+        </MudTd>
+    </RowTemplate>
+    <NoRecordsContent>
+        <MudText>No matching records found</MudText>
+    </NoRecordsContent>
+    <LoadingContent>
+        <MudText>Loading...</MudText>
+    </LoadingContent>
+    <PagerContent>
+        <MudTablePager />
+    </PagerContent>
+</MudTable>
+
+@code {
+    PagingResponse<JobModel>? model;
+    private bool _loading = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        HubConnection.On<JobStatusChangeArgs>("ChangeStatus_ScheculeJob", ReceivedMessage);
+        if (HubConnection.State != HubConnectionState.Connected)
+            await HubConnection.StartAsync();
+    }
+
+    private async Task<TableData<JobModel>> ServerReload(TableState state, CancellationToken token)
+    {
+        _loading = true;
+        model = await Http.GetFromJsonAsync<PagingResponse<JobModel>>($"https://localhost:5011/job/getServices?page={(state.Page + 1)}&count={state.PageSize}", token);
+        _loading = false;
+        if (model is not null)
+            foreach (var row in model.List)
+                row.PropertyChanged += (sender, e) => InvokeAsync(StateHasChanged);
+
+        return new TableData<JobModel>() { TotalItems = model?.TotalCount ?? 0, Items = model?.List ?? [] };
+    }
+
+    void ReceivedMessage(JobStatusChangeArgs args)
+    {
+        var item = model?.List.FirstOrDefault(c => c.Id == args.JobId);
+        Console.WriteLine($"JobId: {args.JobId}, Status: {args.Status}, Item: is {(item is null ? "null" : "not null")}");
+        if (item is not null)
+            item.Status = args.Status;
+    }
+
+    async Task ExecuteJob(int jobId)
+    {
+        bool? result = await DialogService.ShowMessageBox(
+            "Job Execute",
+            "Should the task be run?",
+            yesText: "Yes!", cancelText: "Cancel");
+        if (result == true)
+            await Http.PostAsJsonAsync<JobWorkingDetailModel>($"https://localhost:5011/job/jobExecute?jobId={jobId}", null);
+    }
+}

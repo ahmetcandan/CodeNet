@@ -7,6 +7,7 @@ using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Model;
 using StokTakip.Customer.Service.QueueService;
+using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StokTakip.Customer.Api.Controllers;
@@ -21,6 +22,7 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
+        var st = new StackTrace();
         return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
 

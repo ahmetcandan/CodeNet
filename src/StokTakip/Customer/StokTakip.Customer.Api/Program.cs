@@ -30,6 +30,7 @@ using CodeNet.BackgroundJob.Extensions;
 using CodeNet.StackExchange.Redis.Extensions;
 using CodeNet.StackExchange.Redis.Services;
 using CodeNet.Parameters.MongoDB.Extensions;
+using CodeNet.BackgroundJob.Settings;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -70,7 +71,8 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddBackgroundJob(options =>
     {
         options.AddRedis(builder.Configuration.GetSection("Redis"));
-        options.AddJob<TestService1>(new CodeNet.BackgroundJob.Settings.JobOptions { CronExpression = "*/3 */5 * * *", ExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService1>(new() { CronExpression = "*/17 * * * *", ExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService2>(new() { CronExpression = "*/19 * * * *", ExpryTime = TimeSpan.FromSeconds(1) });
         options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
     });
 
@@ -80,6 +82,7 @@ builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
+
 
 var app = builder.Build();
 app.UseCodeNet();
