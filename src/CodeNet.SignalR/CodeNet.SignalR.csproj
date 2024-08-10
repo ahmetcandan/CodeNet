@@ -14,4 +14,8 @@
     <ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Hub\" />
+  </ItemGroup>
+
 </Project>

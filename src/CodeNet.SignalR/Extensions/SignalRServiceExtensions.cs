@@ -1,19 +1,26 @@
 ﻿using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.Connections;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.SignalR.Extensions;
 
 public static class SignalRServiceExtensions
 {
-    public static HubEndpointConventionBuilder UseSignalR<THub>(this WebApplication app, string pattern)
-        where THub : Hub
+    public static IServiceCollection AddSignalRNotification(this IServiceCollection services)
     {
-        return app.MapHub<THub>(pattern);
+        services.AddSignalR();
+        return services;
     }
-    public static HubEndpointConventionBuilder UseSignalR<THub>(this WebApplication app, string pattern, Action<HttpConnectionDispatcherOptions> configureOptions)
+
+    public static WebApplication UseSignalR<THub>(this WebApplication app, string pattern)
         where THub : Hub
     {
-        return app.MapHub<THub>(pattern, configureOptions);
+        app.UseCors();
+        app.UseRouting();
+        app.UseEndpoints(endpoints =>
+        {
+            endpoints.MapHub<THub>(pattern);
+        });
+        return app;
     }
 }
