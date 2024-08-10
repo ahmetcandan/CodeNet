@@ -26,6 +26,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         if (tJob is null)
         {
             _jobStatus = JobStatus.Stopped;
+            MessageInvoke();
             return;
         }
 
@@ -43,10 +44,12 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             if (result is { Status: DetailStatus.Fail or DetailStatus.Stopped })
             {
                 _jobStatus = JobStatus.Stopped;
+                MessageInvoke();
                 break;
             }
 
             _jobStatus = JobStatus.Pending;
+            MessageInvoke();
         }
     }
 
@@ -64,7 +67,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 ExpryTime = options.Value.ExpryTime,
                 ServiceType = options.Value.ServiceType,
                 Title = options.Value.ServiceType,
-                Status = JobStatus.Running,
+                Status = JobStatus.Pending,
                 IsActive = true
             }, cancellationToken);
             await dbContext.SaveChangesAsync(cancellationToken);
@@ -72,7 +75,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         }
         else
         {
-            currentJob.Status = JobStatus.Running;
+            currentJob.Status = JobStatus.Pending;
             currentJob.ExpryTime = options.Value.ExpryTime;
             currentJob.CronExpression = options.Value.CronExpression;
             currentJob.ServiceType = options.Value.ServiceType;
@@ -111,6 +114,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     Status = DetailStatus.Stopped,
                     JobId = jobId
                 }, cancellationToken);
+                MessageInvoke(result);
                 await workingDetailRepository.SaveChangesAsync(cancellationToken);
                 return result;
             }
@@ -122,6 +126,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 startDate = DateTimeOffset.Now;
                 var currentStatus = _jobStatus;
                 _jobStatus = JobStatus.Running;
+                MessageInvoke();
                 await tJob.Execute(cancellationToken);
                 _jobStatus = currentStatus;
                 timer.Stop();
@@ -134,6 +139,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     ElapsedTime = TimeSpan.FromMicroseconds(timer.ElapsedMilliseconds),
                     JobId = jobId
                 }, cancellationToken);
+                MessageInvoke(result);
                 await workingDetailRepository.SaveChangesAsync(cancellationToken);
                 return result;
             }
@@ -149,6 +155,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 StartDate = startDate,
                 JobId = jobId
             }, cancellationToken);
+            MessageInvoke(result);
             await workingDetailRepository.SaveChangesAsync(cancellationToken);
             return result;
         }
@@ -170,6 +177,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         appLogger?.TraceLog($"'{nameof(TJob)}' stoped scheduled task.", MethodBase.GetCurrentMethod());
         _exit = true;
         _jobStatus = JobStatus.Stopped;
+        MessageInvoke();
     }
 
     public JobStatus GetStatus()
@@ -180,5 +188,18 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     public int GetJobId()
     {
         return _jobId;
+    }
+
+    public event StatusChanged? StatusChanged;
+
+    private void MessageInvoke(JobWorkingDetail? detail = null)
+    {
+        StatusChanged?.Invoke(new ReceivedMessageEventArgs
+        {
+            Detail = detail,
+            ServiceName = options.Value.Title,
+            Status = _jobStatus,
+            JobId = _jobId
+        });
     }
 }

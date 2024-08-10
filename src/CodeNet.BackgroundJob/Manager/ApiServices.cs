@@ -12,7 +12,8 @@ internal static class ApiServices
     {
         app.MapGet($"{path}/getServices", async (int page, int count, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             return await serviceRepository.GetPagingListAsync(c => c.IsActive, c => c.Id, true, page, count, cancellationToken);
         });
@@ -22,7 +23,8 @@ internal static class ApiServices
     {
         app.MapGet($"{path}/getServiceDetails", async (int jobId, DetailStatus? status, int page, int count, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var jobWorkingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
             return await jobWorkingDetailRepository.GetPagingListAsync(c => c.JobId == jobId && (status == null || c.Status == status), c => c.StartDate, false, page, count);
         });
@@ -32,7 +34,8 @@ internal static class ApiServices
     {
         app.MapDelete($"{path}/deleteDetails", async ([FromBody] int[] detailIds, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var jobWorkingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
             var list = await jobWorkingDetailRepository.FindAsync(c => detailIds.Any(i => c.Id == i), cancellationToken);
             jobWorkingDetailRepository.RemoveRange(list);
@@ -44,14 +47,15 @@ internal static class ApiServices
     {
         app.MapPut($"{path}/changeStatus", async (int jobId, [FromBody] JobStatus status, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             var currentStatus = backgroundService.GetStatus();
             switch (status)
@@ -81,14 +85,15 @@ internal static class ApiServices
     {
         app.MapGet($"{path}/getJobStatus", async (int jobId, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             var currentStatus = backgroundService.GetStatus();
             return new
@@ -103,14 +108,15 @@ internal static class ApiServices
     {
         app.MapPost($"{path}/jobExecute", async (int jobId, CancellationToken cancellationToken) =>
         {
-            var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
+            var serviceScope = serviceProvider.CreateScope();
+            var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
             var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             return await backgroundService.DoWorkAsync(tJob, jobId, cancellationToken);
         });

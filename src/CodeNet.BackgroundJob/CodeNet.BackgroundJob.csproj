@@ -42,6 +42,7 @@
 		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
 		<ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
 		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
+		<ProjectReference Include="..\CodeNet.SignalR\CodeNet.SignalR.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>

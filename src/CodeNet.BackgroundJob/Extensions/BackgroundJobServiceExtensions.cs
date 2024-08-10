@@ -2,7 +2,9 @@
 using CodeNet.BackgroundJob.Models;
 using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging.Extensions;
+using CodeNet.SignalR.Extensions;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.BackgroundJob.Extensions;
@@ -14,6 +16,7 @@ public static class BackgroundJobServiceExtensions
         var builder = new BackgroundJobOptionsBuilder(services);
         services.AddAppLogger();
         action(builder);
+        services.AddSignalRNotification();
         return services;
     }
 
@@ -28,14 +31,21 @@ public static class BackgroundJobServiceExtensions
     {
         var serviceScope = app.Services.CreateScope();
         app.UseEndPoint(serviceScope.ServiceProvider, path);
+        app.UseSignalR<StatusChangeHub>("/jobEvents");
 
         var tJobs = serviceScope.ServiceProvider.GetServices<IScheduleJob>();
         SetPrivateJobs(serviceScope.ServiceProvider);
+        var notificationHub = serviceScope.ServiceProvider.GetService<IHubContext<StatusChangeHub>>();
 
         foreach (var tJobType in tJobs.Select(c => c.GetType()).Distinct())
         {
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
             var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'BackgroundJobOptionsBuilder.AddScheduleJob<{tJobType.Name}>(JobOptions options)' not implemented background service.");
+            if (notificationHub is not null)
+                backgroundService.StatusChanged += async (ReceivedMessageEventArgs e) =>
+                {
+                    await notificationHub.Clients?.All?.SendAsync("ChangeStatus_ScheculeJob", e, CancellationToken.None);
+                };
             app.Lifetime.ApplicationStarted.Register(async () => await backgroundService.StartAsync(CancellationToken.None));
         }
         return app;
