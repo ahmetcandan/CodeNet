@@ -37,7 +37,7 @@ public static class StackExchangeServiceExtensions
             ? services.Configure<StackExchangeConsumerOptions>(stackExcahangeSection)
             : services.Configure<StackExchangeConsumerOptions<TConsumerService>>(stackExcahangeSection);
 
-        services.AddScoped<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
+        services.AddSingleton<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
     }
 
