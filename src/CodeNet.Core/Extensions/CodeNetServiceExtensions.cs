@@ -16,6 +16,8 @@ namespace CodeNet.Core.Extensions;
 
 public static class CodeNetServiceExtensions
 {
+    private const string _devCorsPolicyName = "AllowDevOrigin";
+
     /// <summary>
     /// Use CodeNet
     /// </summary>
@@ -39,6 +41,7 @@ public static class CodeNetServiceExtensions
         app.UseAuthentication();
         app.UseAuthorization();
         app.MapControllers();
+        app.UseCors(_devCorsPolicyName);
         return app;
     }
 
@@ -93,6 +96,16 @@ public static class CodeNetServiceExtensions
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddHttpContextAccessor();
+        services.AddCors(options =>
+        {
+            options.AddPolicy(_devCorsPolicyName,
+                builder =>
+                {
+                    builder.WithOrigins("*")
+                           .AllowAnyHeader()
+                           .AllowAnyMethod();
+                });
+        });
         return services.AddCodeNetContext();
     }
 
