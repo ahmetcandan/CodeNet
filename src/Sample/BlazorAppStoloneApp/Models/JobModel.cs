@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace BlazorAppStoloneApp.Models;
+namespace CodeNetUI_Example.Models;
 
 public class JobModel : INotifyPropertyChanged
 {

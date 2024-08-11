@@ -1,4 +1,4 @@
-using BlazorAppStoloneApp;
+using CodeNetUI_Example;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;

@@ -45,8 +45,4 @@
 		<ProjectReference Include="..\CodeNet.SignalR\CodeNet.SignalR.csproj" />
 	</ItemGroup>
 
-	<ItemGroup>
-	  <Folder Include="Page\" />
-	</ItemGroup>
-
 </Project>

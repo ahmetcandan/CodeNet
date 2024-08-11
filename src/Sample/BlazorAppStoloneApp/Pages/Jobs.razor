@@ -1,10 +1,11 @@
 ﻿@page "/jobs"
-@using BlazorAppStoloneApp.Models
+@using CodeNetUI_Example.Models
+@using CodeNetUI_Example.Services
 @using Microsoft.AspNetCore.SignalR.Client
 
-@inject HttpClient Http
 @inject HubConnection HubConnection
 @inject IDialogService DialogService
+@inject BackgroundService BackgroundService
 
 <PageTitle>Jobs</PageTitle>
 
@@ -13,26 +14,27 @@
         <MudText Typo="Typo.h6">Schecule Jobs</MudText>
     </ToolBarContent>
     <HeaderContent>
+        <MudTh></MudTh>
         <MudTh>Job Id</MudTh>
         <MudTh>Service</MudTh>
         <MudTh>Cron Expression</MudTh>
         <MudTh>Expry Time</MudTh>
         <MudTh>Status</MudTh>
+        <MudTh></MudTh>
     </HeaderContent>
     <RowTemplate>
+        <MudTd DataLabel="">
+            <MudIconButton OnClick="async () => await JobDetails(context.Id)" Icon="material-symbols-outlined/Checklist" aria-label="Checklist" />
+        </MudTd>
         <MudTd DataLabel="Job Id">@context.Id</MudTd>
         <MudTd DataLabel="Service">@context.Title</MudTd>
         <MudTd DataLabel="Cron Expression">@context.CronExpression</MudTd>
         <MudTd DataLabel="Expry Time">@context.ExpryTime</MudTd>
         <MudTd DataLabel="Status">
-            @if (context.Status == JobStatus.Running)
-            {
-                <MudProgressCircular Color="Color.Primary" Size="Size.Small" Indeterminate="true" />
-            }
-            else
-            {
-                <MudIconButton OnClick="async () => await ExecuteJob(context.Id)" Icon="material-symbols-outlined/refresh" aria-label="refresh" />
-            }
+            <MudProgressLinear Color="Color.Primary" Indeterminate="context.Status == JobStatus.Running" Class="my-7" />
+        </MudTd>
+        <MudTd>
+            <MudIconButton Disabled="context.Status == JobStatus.Running" OnClick="async () => await ExecuteJob(context.Id)" Icon="material-symbols-outlined/refresh" aria-label="refresh" />
         </MudTd>
     </RowTemplate>
     <NoRecordsContent>
@@ -46,9 +48,12 @@
     </PagerContent>
 </MudTable>
 
+<MudButton OnClick="OpenLogin">Login</MudButton>
+
 @code {
     PagingResponse<JobModel>? model;
     private bool _loading = false;
+    private bool _runJobVisible = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -57,10 +62,10 @@
             await HubConnection.StartAsync();
     }
 
-    private async Task<TableData<JobModel>> ServerReload(TableState state, CancellationToken token)
+    private async Task<TableData<JobModel>> ServerReload(TableState state, CancellationToken cancellationToken)
     {
         _loading = true;
-        model = await Http.GetFromJsonAsync<PagingResponse<JobModel>>($"https://localhost:5011/job/getServices?page={(state.Page + 1)}&count={state.PageSize}", token);
+        model = await BackgroundService.GetJobs(state.Page + 1, state.PageSize, cancellationToken);
         _loading = false;
         if (model is not null)
             foreach (var row in model.List)
@@ -72,7 +77,6 @@
     void ReceivedMessage(JobStatusChangeArgs args)
     {
         var item = model?.List.FirstOrDefault(c => c.Id == args.JobId);
-        Console.WriteLine($"JobId: {args.JobId}, Status: {args.Status}, Item: is {(item is null ? "null" : "not null")}");
         if (item is not null)
             item.Status = args.Status;
     }
@@ -84,6 +88,28 @@
             "Should the task be run?",
             yesText: "Yes!", cancelText: "Cancel");
         if (result == true)
-            await Http.PostAsJsonAsync<JobWorkingDetailModel>($"https://localhost:5011/job/jobExecute?jobId={jobId}", null);
+            await BackgroundService.ExecuteJob(jobId);
+    }
+
+    async Task OpenLogin()
+    {
+        await DialogService.ShowAsync<Login>("Login", new DialogOptions
+            {
+                FullWidth = true,
+                MaxWidth = MaxWidth.Small,
+                BackdropClick = false
+            });
+    }
+
+    async Task JobDetails(int jobId)
+    {
+        await DialogService.ShowAsync<JobDetails>("Job Details", new DialogParameters<JobDetails>
+            {
+                { x => x.JobId, jobId }
+            }, new DialogOptions
+            {
+                FullWidth = true,
+                MaxWidth = MaxWidth.ExtraLarge
+            });
     }
 }
