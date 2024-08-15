@@ -8,9 +8,9 @@ namespace CodeNet.BackgroundJob.Manager;
 
 internal static class ApiServices
 {
-    public static void GetServices(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder GetServices(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapGet($"{path}/getServices", async (int page, int count, CancellationToken cancellationToken) =>
+        return app.MapGet($"{path}/getServices", async (int page, int count, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
@@ -19,9 +19,9 @@ internal static class ApiServices
         });
     }
 
-    public static void GetServiceDetails(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder GetServiceDetails(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapGet($"{path}/getServiceDetails", async (int jobId, DetailStatus? status, int page, int count, CancellationToken cancellationToken) =>
+        return app.MapGet($"{path}/getServiceDetails", async (int jobId, DetailStatus? status, int page, int count, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
@@ -30,9 +30,9 @@ internal static class ApiServices
         });
     }
 
-    public static void DeleteDetails(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder DeleteDetails(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapDelete($"{path}/deleteDetails", async ([FromBody] int[] detailIds, CancellationToken cancellationToken) =>
+        return app.MapDelete($"{path}/deleteDetails", async ([FromBody] int[] detailIds, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
@@ -43,9 +43,9 @@ internal static class ApiServices
         });
     }
 
-    public static void ChangeServiceStatus(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder ChangeServiceStatus(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapPut($"{path}/changeStatus", async (int jobId, [FromBody] JobStatus status, CancellationToken cancellationToken) =>
+        return app.MapPut($"{path}/changeStatus", async (int jobId, [FromBody] JobStatus status, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
@@ -81,9 +81,9 @@ internal static class ApiServices
         });
     }
 
-    public static void GetJobStatus(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder GetJobStatus(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapGet($"{path}/getJobStatus", async (int jobId, CancellationToken cancellationToken) =>
+        return app.MapGet($"{path}/getJobStatus", async (int jobId, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
@@ -104,9 +104,9 @@ internal static class ApiServices
         });
     }
 
-    public static void JobExecute(this WebApplication app, IServiceProvider serviceProvider, string path)
+    public static RouteHandlerBuilder JobExecute(this WebApplication app, IServiceProvider serviceProvider, string path)
     {
-        app.MapPost($"{path}/jobExecute", async (int jobId, CancellationToken cancellationToken) =>
+        return app.MapPost($"{path}/jobExecute", async (int jobId, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();

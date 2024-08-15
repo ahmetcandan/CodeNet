@@ -1,6 +1,8 @@
 ﻿using CodeNet.BackgroundJob.Manager;
 using CodeNet.BackgroundJob.Models;
 using CodeNet.BackgroundJob.Settings;
+using CodeNet.Core.Enums;
+using CodeNet.Core.Extensions;
 using CodeNet.Redis.Extensions;
 using Cronos;
 using Microsoft.EntityFrameworkCore;
@@ -26,9 +28,10 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// Add Schedule Job
     /// </summary>
     /// <typeparam name="TJob"></typeparam>
+    /// <param name="cronExpression"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(JobOptions options)
+    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string cronExpression, JobOptions options)
         where TJob : class, IScheduleJob
     {
         return AddScheduleJob<TJob>(typeof(TJob).ToString(), options);
@@ -38,30 +41,75 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// Add Schedule Job
     /// </summary>
     /// <typeparam name="TJob"></typeparam>
-    /// <param name="cronExpression"></param>
-    /// <param name="lockExperyTime"></param>
+    /// <param name="periodTime"></param>
+    /// <param name="options"></param>
     /// <returns></returns>
-    /// <exception cref="ArgumentException"></exception>
-    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string serviceName, JobOptions options)
+    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(TimeSpan periodTime, JobOptions options)
         where TJob : class, IScheduleJob
     {
-        var valid = CronExpression.TryParse(options.CronExpression, out CronExpression cron);
+        return AddScheduleJob<TJob>(typeof(TJob).ToString(), options);
+    }
+
+    /// <summary>
+    /// Add Schedule Job
+    /// </summary>
+    /// <typeparam name="TJob"></typeparam>
+    /// <param name="serviceName"></param>
+    /// <param name="cronExpression"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentException"></exception>
+    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string serviceName, string cronExpression, JobOptions options)
+        where TJob : class, IScheduleJob
+    {
+        var valid = CronExpression.TryParse(cronExpression, out CronExpression cron);
         if (!valid)
-            throw new ArgumentException($"CronExpression is not valid: '{options.CronExpression}'");
+            throw new ArgumentException($"CronExpression is not valid: '{cronExpression}'");
 
         services.Configure<JobOptions<TJob>>(c =>
         {
-            c.CronExpression = options.CronExpression;
             c.Cron = cron;
+            c.PeriodTime = null;
             c.ExpryTime = options.ExpryTime;
             c.Timeout = options.Timeout;
             c.ServiceType = typeof(TJob).ToString();
             c.Title = serviceName;
         });
 
+        AddServices<TJob>(services);
+        return this;
+    }
+
+    /// <summary>
+    /// Add Schedule Job
+    /// </summary>
+    /// <typeparam name="TJob"></typeparam>
+    /// <param name="serviceName"></param>
+    /// <param name="periodTime"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string serviceName, TimeSpan periodTime, JobOptions options)
+        where TJob : class, IScheduleJob
+    {
+        services.Configure<JobOptions<TJob>>(c =>
+        {
+            c.Cron = null;
+            c.PeriodTime = periodTime;
+            c.ExpryTime = options.ExpryTime;
+            c.Timeout = options.Timeout;
+            c.ServiceType = typeof(TJob).ToString();
+            c.Title = serviceName;
+        });
+
+        AddServices<TJob>(services);
+        return this;
+    }
+
+    private static void AddServices<TJob>(IServiceCollection services)
+        where TJob : class, IScheduleJob
+    {
         services.AddSingleton<IScheduleJob, TJob>();
         services.AddSingleton<ICodeNetBackgroundService<TJob>, CodeNetBackgroundService<TJob>>();
-        return this;
     }
 
     /// <summary>
@@ -72,6 +120,47 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     public BackgroundJobOptionsBuilder AddDbContext(Action<DbContextOptionsBuilder> optionsAction)
     {
         services.AddDbContext<BackgroundJobDbContext>(optionsAction);
+        return this;
+    }
+
+    /// <summary>
+    /// Add JWT Authentication
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
+    /// </summary>
+    /// <param name="securityKeyType"></param>
+    /// <param name="identitySection"></param>
+    /// <returns></returns>
+    public BackgroundJobOptionsBuilder AddJwtAuth(SecurityKeyType securityKeyType, IConfigurationSection identitySection, string users = "", string roles = "")
+    {
+        services.Configure<JobAuthOptions>(c =>
+        {
+            c.AuthenticationType = AuthenticationType.JwtAuth;
+            c.JwtAuthOptions = new JobJwtAuthOptions
+            {
+                Roles = roles,
+                Users = users
+            };
+        });
+        services.AddAuthentication(securityKeyType, identitySection);
+        return this;
+    }
+
+    /// <summary>
+    /// Add Basic Authentication
+    /// </summary>
+    /// <param name="userPass"></param>Username & Password
+    /// <returns></returns>
+    public BackgroundJobOptionsBuilder AddBasicAuth(Dictionary<string, string> userPass)
+    {
+        services.Configure<JobAuthOptions>(c =>
+        {
+            c.AuthenticationType = AuthenticationType.BasicAuth;
+            c.BasicAuthOptions = new JobBasicAuthOptions
+            {
+                UserPass = userPass
+            };
+        });
         return this;
     }
 }

@@ -36,8 +36,20 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var workingDetailRepository = new Repository<JobWorkingDetail>(dbContext);
             var now = DateTime.UtcNow;
-            var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
-            var timeSpan = nextTime - now ?? new TimeSpan(0);
+            TimeSpan timeSpan;
+            if (options.Value.Cron is not null)
+            {
+                var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
+                timeSpan = nextTime - now ?? new TimeSpan(0);
+            }
+            else if (options.Value.PeriodTime is not null)
+            {
+                timeSpan = options.Value.PeriodTime.Value;
+            }
+            else
+            {
+                throw new Exception("Cron or PeridTime is null");
+            }
             await Task.Delay(timeSpan, cancellationToken);
             var result = await DoWorkAsync(tJob, _jobId, cancellationToken);
 
@@ -63,7 +75,8 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         {
             var jobEntity = await serviceRepository.AddAsync(new Job
             {
-                CronExpression = options.Value.CronExpression,
+                PeriodTime = options.Value.PeriodTime,
+                CronExpression = options.Value.Cron?.ToString(),
                 ExpryTime = options.Value.ExpryTime,
                 ServiceType = options.Value.ServiceType,
                 Title = options.Value.ServiceType,
@@ -77,7 +90,8 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         {
             currentJob.Status = JobStatus.Pending;
             currentJob.ExpryTime = options.Value.ExpryTime;
-            currentJob.CronExpression = options.Value.CronExpression;
+            currentJob.PeriodTime = options.Value.PeriodTime;
+            currentJob.CronExpression = options.Value.Cron?.ToString();
             currentJob.ServiceType = options.Value.ServiceType;
             currentJob.Title = options.Value.Title;
             currentJob.IsActive = true;
