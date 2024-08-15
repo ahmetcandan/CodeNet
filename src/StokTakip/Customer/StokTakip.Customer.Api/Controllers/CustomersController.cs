@@ -1,4 +1,5 @@
 ﻿using CodeNet.Redis.Attributes;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Customer.Abstraction.Repository;
@@ -16,6 +17,7 @@ namespace StokTakip.Customer.Api.Controllers;
 [Route("[controller]")]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
+    [Authorize]
     [HttpGet("{customerId}")]
     [Cache(10)]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]

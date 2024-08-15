@@ -18,6 +18,7 @@
         <MudTh>Job Id</MudTh>
         <MudTh>Service</MudTh>
         <MudTh>Cron Expression</MudTh>
+        <MudTh>Period Time</MudTh>
         <MudTh>Expry Time</MudTh>
         <MudTh>Status</MudTh>
         <MudTh></MudTh>
@@ -29,6 +30,7 @@
         <MudTd DataLabel="Job Id">@context.Id</MudTd>
         <MudTd DataLabel="Service">@context.Title</MudTd>
         <MudTd DataLabel="Cron Expression">@context.CronExpression</MudTd>
+        <MudTd DataLabel="Period Time">@context.PeriodTime</MudTd>
         <MudTd DataLabel="Expry Time">@context.ExpryTime</MudTd>
         <MudTd DataLabel="Status">
             <MudProgressLinear Color="Color.Primary" Indeterminate="context.Status == JobStatus.Running" Class="my-7" />
@@ -67,7 +69,7 @@
         _loading = true;
         model = await BackgroundService.GetJobs(state.Page + 1, state.PageSize, cancellationToken);
         _loading = false;
-        if (model is not null)
+        if (model?.List is not null)
             foreach (var row in model.List)
                 row.PropertyChanged += (sender, e) => InvokeAsync(StateHasChanged);
 

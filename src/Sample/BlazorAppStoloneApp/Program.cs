@@ -1,4 +1,6 @@
 using CodeNetUI_Example;
+using CodeNetUI_Example.Configurations;
+using CodeNetUI_Example.Services;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using Microsoft.AspNetCore.SignalR.Client;
@@ -10,8 +12,12 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 
 builder.Services.AddScoped(sp => new HttpClient { });
+builder.Services.AddScoped<ApiClientService>();
+builder.Services.AddScoped<BackgroundService>();
+builder.Services.AddScoped<LoginService>();
+builder.Services.AddScoped<LocalStorageManager>();
 builder.Services.AddSingleton(sp => new HubConnectionBuilder()
-    .WithUrl($"https://localhost:5011/jobEvents")
+    .WithUrl($"{AppSettings.BackgroundJobBaseUrl}/jobEvents")
     .Build());
 
 await builder.Build().RunAsync();

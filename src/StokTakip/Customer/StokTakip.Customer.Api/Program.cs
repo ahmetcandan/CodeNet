@@ -71,9 +71,11 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     .AddBackgroundJob(options =>
     {
         options.AddRedis(builder.Configuration.GetSection("Redis"));
-        options.AddScheduleJob<TestService1>(new() { CronExpression = "*/17 * * * *", ExpryTime = TimeSpan.FromSeconds(1) });
-        options.AddScheduleJob<TestService2>(new() { CronExpression = "*/19 * * * *", ExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(120), new() { ExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService2>("TestService2", TimeSpan.FromSeconds(130), new() { ExpryTime = TimeSpan.FromSeconds(1) });
         options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
+        options.AddJwtAuth(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
+        //options.AddBasicAuth(new Dictionary<string, string>(1) { { "admin", "admin123!" } });
     });
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();

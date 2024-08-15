@@ -1,32 +1,27 @@
 ﻿using CodeNetUI_Example.Configurations;
 using CodeNetUI_Example.Models;
-using System.Net.Http.Json;
-using System.Text;
 
 namespace CodeNetUI_Example.Services;
 
-public class BackgroundService(HttpClient http)
+public class BackgroundService(ApiClientService apiClientService)
 {
     public Task<PagingResponse<JobModel>?> GetJobs(int page, int count, CancellationToken cancellationToken = default)
     {
-        return http.GetFromJsonAsync<PagingResponse<JobModel>>($"{AppSettings.BackgroundJobBaseUrl}/getServices?page={page}&count={count}", cancellationToken);
+        return apiClientService.SendService<PagingResponse<JobModel>>(HttpMethod.Get, $"{AppSettings.BackgroundJobBaseUrl}/getServices?page={page}&count={count}", null, cancellationToken);
     }
 
-    public Task<HttpResponseMessage> ExecuteJob(int jobId)
+    public Task<JobWorkingDetailModel?> ExecuteJob(int jobId)
     {
-        return http.PostAsJsonAsync<JobWorkingDetailModel>($"{AppSettings.BackgroundJobBaseUrl}/jobExecute?jobId={jobId}", null);
+        return apiClientService.SendService<JobWorkingDetailModel>(HttpMethod.Post, $"{AppSettings.BackgroundJobBaseUrl}/jobExecute?jobId={jobId}", null, cancellationToken: CancellationToken.None);
     }
 
     public Task<PagingResponse<JobWorkingDetailModel>?> GetJobDetails(int jobId, int page, int count, CancellationToken cancellationToken = default)
     {
-        return http.GetFromJsonAsync<PagingResponse<JobWorkingDetailModel>>($"{AppSettings.BackgroundJobBaseUrl}/getServiceDetails?jobId={jobId}&page={page}&count={count}", cancellationToken);
+        return apiClientService.SendService<PagingResponse<JobWorkingDetailModel>>(HttpMethod.Get, $"{AppSettings.BackgroundJobBaseUrl}/getServiceDetails?jobId={jobId}&page={page}&count={count}", null, cancellationToken);
     }
 
-    public Task<HttpResponseMessage> DeleteDetails(int[] detailIds)
+    public Task<HttpResponseMessage?> DeleteDetails(int[] detailIds)
     {
-        return http.SendAsync(new HttpRequestMessage(HttpMethod.Delete, $"{AppSettings.BackgroundJobBaseUrl}/deleteDetails")
-        {
-            Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(detailIds), Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json)
-        });
+        return apiClientService.SendService(HttpMethod.Delete, $"{AppSettings.BackgroundJobBaseUrl}/deleteDetails", detailIds, CancellationToken.None);
     }
 }
