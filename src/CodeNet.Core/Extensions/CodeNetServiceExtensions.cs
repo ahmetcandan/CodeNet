@@ -161,34 +161,31 @@ public static class CodeNetServiceExtensions
     /// <param name="identitySection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    internal static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
+    private static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
     {
         var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
         var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
-        if (!services.Any(c => c.ServiceType == typeof(JwtBearerHandler)))
+        services.AddAuthentication(options =>
         {
-            services.AddAuthentication(options =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = new TokenValidationParameters()
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuerSigningKey = true,
-                    IssuerSigningKey = new RsaSecurityKey(rsa),
-                    ValidIssuer = authenticationSettings.ValidIssuer,
-                    ValidateIssuer = true,
-                    ValidAudience = authenticationSettings.ValidAudience,
-                    ValidateAudience = true,
-                    ClockSkew = TimeSpan.Zero
-                };
-            });
-        }
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new RsaSecurityKey(rsa),
+                ValidIssuer = authenticationSettings.ValidIssuer,
+                ValidateIssuer = true,
+                ValidAudience = authenticationSettings.ValidAudience,
+                ValidateAudience = true,
+                ClockSkew = TimeSpan.Zero
+            };
+        });
 
         return services;
     }
@@ -200,31 +197,28 @@ public static class CodeNetServiceExtensions
     /// <param name="applicationSection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    internal static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
+    private static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
     {
         var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
-        if (!services.Any(c => c.ServiceType == typeof(JwtBearerHandler)))
+        services.AddAuthentication(options =>
         {
-            services.AddAuthentication(options =>
+            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+        })
+        .AddJwtBearer(options =>
+        {
+            options.SaveToken = true;
+            options.RequireHttpsMetadata = false;
+            options.TokenValidationParameters = new TokenValidationParameters()
             {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-            .AddJwtBearer(options =>
-            {
-                options.SaveToken = true;
-                options.RequireHttpsMetadata = false;
-                options.TokenValidationParameters = new TokenValidationParameters()
-                {
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    ValidAudience = authenticationSettings.ValidAudience,
-                    ValidIssuer = authenticationSettings.ValidIssuer,
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey))
-                };
-            });
-        }
+                ValidateIssuer = true,
+                ValidateAudience = true,
+                ValidAudience = authenticationSettings.ValidAudience,
+                ValidIssuer = authenticationSettings.ValidIssuer,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey))
+            };
+        });
 
         return services;
     }

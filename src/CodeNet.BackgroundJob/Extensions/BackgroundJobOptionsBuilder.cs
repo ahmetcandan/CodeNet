@@ -28,32 +28,6 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// Add Schedule Job
     /// </summary>
     /// <typeparam name="TJob"></typeparam>
-    /// <param name="cronExpression"></param>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string cronExpression, JobOptions options)
-        where TJob : class, IScheduleJob
-    {
-        return AddScheduleJob<TJob>(typeof(TJob).ToString(), options);
-    }
-
-    /// <summary>
-    /// Add Schedule Job
-    /// </summary>
-    /// <typeparam name="TJob"></typeparam>
-    /// <param name="periodTime"></param>
-    /// <param name="options"></param>
-    /// <returns></returns>
-    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(TimeSpan periodTime, JobOptions options)
-        where TJob : class, IScheduleJob
-    {
-        return AddScheduleJob<TJob>(typeof(TJob).ToString(), options);
-    }
-
-    /// <summary>
-    /// Add Schedule Job
-    /// </summary>
-    /// <typeparam name="TJob"></typeparam>
     /// <param name="serviceName"></param>
     /// <param name="cronExpression"></param>
     /// <param name="options"></param>
@@ -133,6 +107,21 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// <returns></returns>
     public BackgroundJobOptionsBuilder AddJwtAuth(SecurityKeyType securityKeyType, IConfigurationSection identitySection, string users = "", string roles = "")
     {
+        AddCurrentAuth(users, roles);
+        services.AddAuthentication(securityKeyType, identitySection);
+        return this;
+    }
+
+    /// <summary>
+    /// Add Current Authentication
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
+    /// </summary>
+    /// <param name="securityKeyType"></param>
+    /// <param name="identitySection"></param>
+    /// <returns></returns>
+    public BackgroundJobOptionsBuilder AddCurrentAuth(string users = "", string roles = "")
+    {
         services.Configure<JobAuthOptions>(c =>
         {
             c.AuthenticationType = AuthenticationType.JwtAuth;
@@ -142,7 +131,6 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
                 Users = users
             };
         });
-        services.AddAuthentication(securityKeyType, identitySection);
         return this;
     }
 

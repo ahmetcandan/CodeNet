@@ -47,7 +47,7 @@ public static class BackgroundJobServiceExtensions
             if (notificationHub is not null)
                 backgroundService.StatusChanged += async (ReceivedMessageEventArgs e) =>
                 {
-                    await notificationHub.Clients?.All?.SendAsync("ChangeStatus_ScheculeJob", e, CancellationToken.None);
+                    await notificationHub.Clients.All.SendAsync("ChangeStatus_ScheculeJob", e, CancellationToken.None);
                 };
             app.Lifetime.ApplicationStarted.Register(async () => await backgroundService.StartAsync(CancellationToken.None));
         }
@@ -74,8 +74,17 @@ public static class BackgroundJobServiceExtensions
                 app.UseMiddleware<BasicAuthMiddleware>();
                 break;
             case AuthenticationType.JwtAuth:
+                var users = authOptions.Value?.JwtAuthOptions?.Users.Split(',') ?? [];
+                var roles = authOptions.Value?.JwtAuthOptions?.Roles.Split(',') ?? [];
                 foreach (var routeHandlerBuilder in routeHandlerBuilders)
-                    routeHandlerBuilder.RequireAuthorization();
+                    routeHandlerBuilder.RequireAuthorization(policy =>
+                    {
+                        if (users.Length > 0)
+                            policy.RequireAssertion(context => users.Contains(context.User?.Identity?.Name));
+
+                        if (roles.Length > 0)
+                            policy.RequireRole(roles);
+                    });
                 break;
             default:
                 break;

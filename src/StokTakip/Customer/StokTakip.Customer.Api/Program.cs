@@ -44,10 +44,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB, MessageHandlerB>(builder.Configuration.GetSection("RabbitMQB"))
     //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
-    //.AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
-    //.AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
-    //.AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
-    //.AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
+    .AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
+    .AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
+    .AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
     .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
@@ -74,9 +74,9 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
         options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(120), new() { ExpryTime = TimeSpan.FromSeconds(1) });
         options.AddScheduleJob<TestService2>("TestService2", TimeSpan.FromSeconds(130), new() { ExpryTime = TimeSpan.FromSeconds(1) });
         options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
-        options.AddJwtAuth(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
-        //options.AddBasicAuth(new Dictionary<string, string>(1) { { "admin", "admin123!" } });
-    });
+        options.AddCurrentAuth();
+    })
+    ;
 
 builder.Services.AddScoped<ICustomerRepository, CustomerRepository>();
 builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
@@ -93,9 +93,9 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-app.UseBackgroundService("/job");
+//app.UseBackgroundService("/job");
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
-//app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
-//app.UseStackExcahangeConsumer<RedisConsumerServiceB>();
+app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
+app.UseStackExcahangeConsumer<RedisConsumerServiceB>();
 app.Run();
