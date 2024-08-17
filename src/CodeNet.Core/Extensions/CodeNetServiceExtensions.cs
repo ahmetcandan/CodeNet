@@ -17,6 +17,12 @@ namespace CodeNet.Core.Extensions;
 public static class CodeNetServiceExtensions
 {
     private const string _devCorsPolicyName = "AllowDevOrigin";
+    private const string _codeNet = @"
+   ___            _         _  _         _   
+  / __|  ___   __| |  ___  | \| |  ___  | |_ 
+ | (__  / _ \ / _` | / -_) | .` | / -_) |  _|
+  \___| \___/ \__,_| \___| |_|\_| \___|  \__|
+                                             ";
 
     /// <summary>
     /// Use CodeNet
@@ -53,9 +59,9 @@ public static class CodeNetServiceExtensions
     /// <param name="configuration"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName)
+    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName, Action<CodeNetOptionsBuilder> action = null)
     {
-        return services.AddCodeNet(configuration.GetSection(sectionName));
+        return services.AddCodeNet(configuration.GetSection(sectionName), action);
     }
 
     /// <summary>
@@ -66,14 +72,9 @@ public static class CodeNetServiceExtensions
     /// <param name="configurationSection"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfigurationSection configurationSection)
+    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfigurationSection configurationSection, Action<CodeNetOptionsBuilder> action = null)
     {
-        Console.WriteLine(@"
-   ___            _         _  _         _   
-  / __|  ___   __| |  ___  | \| |  ___  | |_ 
- | (__  / _ \ / _` | / -_) | .` | / -_) |  _|
-  \___| \___/ \__,_| \___| |_|\_| \___|  \__|
-                                             ");
+        Console.WriteLine(_codeNet);
 
         services.Configure<ApplicationSettings>(configurationSection);
         var applicationSettings = configurationSection.Get<ApplicationSettings>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
@@ -96,130 +97,26 @@ public static class CodeNetServiceExtensions
         services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddHttpContextAccessor();
-        services.AddCors(options =>
+
+        if (action is not null)
+        {
+            var builder = new CodeNetOptionsBuilder(services);
+            builder.AddCodeNetContext();
+            action(builder);
+        }
+        else
+            new CodeNetOptionsBuilder(services).AddCodeNetContext();
+
+        return services.AddCors(options =>
         {
             options.AddPolicy(_devCorsPolicyName,
                 builder =>
                 {
-                    builder.WithOrigins("*", "https://localhost:7236")
+                    builder.WithOrigins("https://localhost:7236")
+                           .SetIsOriginAllowed(origin => new Uri(origin).Host == "localhost")
                            .AllowAnyHeader()
                            .AllowAnyMethod();
                 });
         });
-        return services.AddCodeNetContext();
-    }
-
-    /// <summary>
-    /// Add CodeNetContext
-    /// </summary>
-    /// <param name="services"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddCodeNetContext(this IServiceCollection services)
-    {
-        return services.AddScoped<ICodeNetContext, CodeNetContext>();
-    }
-
-    /// <summary>
-    /// Add Authentication
-    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
-    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="securityKeyType"></param>
-    /// <param name="configuration"></param>
-    /// <param name="sectionName"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddAuthentication(this IServiceCollection services, SecurityKeyType securityKeyType, IConfiguration configuration, string sectionName)
-    {
-        return services.AddAuthentication(securityKeyType, configuration.GetSection(sectionName));
-    }
-
-    /// <summary>
-    /// Add Authentication
-    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
-    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be AuthenticationSettingsWithSymmetricKey.
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="securityKeyType"></param>
-    /// <param name="identitySection"></param>
-    /// <returns></returns>
-    /// <exception cref="NotImplementedException"></exception>
-    public static IServiceCollection AddAuthentication(this IServiceCollection services, SecurityKeyType securityKeyType, IConfigurationSection identitySection)
-    {
-        return securityKeyType switch
-        {
-            SecurityKeyType.AsymmetricKey => services.AddAuthenticationWithAsymmetricKey(identitySection),
-            SecurityKeyType.SymmetricKey => services.AddAuthenticationWithSymmetricKey(identitySection),
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    /// <summary>
-    /// Add Authentication With Asymmetric Key
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="identitySection"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private static IServiceCollection AddAuthenticationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
-    {
-        var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
-        var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new RsaSecurityKey(rsa),
-                ValidIssuer = authenticationSettings.ValidIssuer,
-                ValidateIssuer = true,
-                ValidAudience = authenticationSettings.ValidAudience,
-                ValidateAudience = true,
-                ClockSkew = TimeSpan.Zero
-            };
-        });
-
-        return services;
-    }
-
-    /// <summary>
-    /// Add Authentication With Symmetric Key
-    /// </summary>
-    /// <param name="services"></param>
-    /// <param name="applicationSection"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private static IServiceCollection AddAuthenticationWithSymmetricKey(this IServiceCollection services, IConfigurationSection applicationSection)
-    {
-        var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = authenticationSettings.ValidAudience,
-                ValidIssuer = authenticationSettings.ValidIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey))
-            };
-        });
-
-        return services;
     }
 }

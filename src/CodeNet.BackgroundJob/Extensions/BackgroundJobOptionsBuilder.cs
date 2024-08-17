@@ -108,7 +108,7 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     public BackgroundJobOptionsBuilder AddJwtAuth(SecurityKeyType securityKeyType, IConfigurationSection identitySection, string users = "", string roles = "")
     {
         AddCurrentAuth(users, roles);
-        services.AddAuthentication(securityKeyType, identitySection);
+        new CodeNetOptionsBuilder(services).AddAuthentication(securityKeyType, identitySection);
         return this;
     }
 

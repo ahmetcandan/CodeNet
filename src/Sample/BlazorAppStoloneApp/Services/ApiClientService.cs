@@ -2,6 +2,7 @@
 using System.Text;
 using CodeNetUI_Example.Pages;
 using System.Text.Json;
+using Microsoft.AspNetCore.Components.WebAssembly.Http;
 
 namespace CodeNetUI_Example.Services;
 
@@ -43,6 +44,7 @@ public class ApiClientService(HttpClient http, LocalStorageManager localStorageM
         try
         {
             HttpRequestMessage request = new(method, url);
+            request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
             var token = await localStorageManager.GetAsync("authToken");
             if (!string.IsNullOrEmpty(token))
                 request.Headers.Add("Authorization", $"Bearer {token}");

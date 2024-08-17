@@ -24,7 +24,6 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
     {
-        var st = new StackTrace();
         return Ok(await customerService.GetCustomer(customerId, cancellationToken));
     }
 
@@ -84,13 +83,13 @@ public class MongoController(IKeyValueRepository keyValueRepository, IAKeyValueR
 public class RabbitMQController(ProducerServiceA producerServiceA, ProducerServiceB producerServiceB) : ControllerBase
 {
     [HttpPost("A")]
-    public async Task<IActionResult> SendA(QueueData data, CancellationToken cancellationToken)
+    public IActionResult SendA(QueueData data)
     {
         return Ok(producerServiceA.Publish(data));
     }
 
     [HttpPost("B")]
-    public async Task<IActionResult> SendB(QueueData data, CancellationToken cancellationToken)
+    public IActionResult SendB(QueueData data)
     {
         return Ok(producerServiceB.Publish(data));
     }
@@ -101,13 +100,13 @@ public class RabbitMQController(ProducerServiceA producerServiceA, ProducerServi
 public class StackExchangeController(RedisProducerServiceA producerServiceA, RedisProducerServiceB producerServiceB) : ControllerBase
 {
     [HttpPost("A")]
-    public async Task<IActionResult> SendA(QueueData data, CancellationToken cancellationToken)
+    public async Task<IActionResult> SendA(QueueData data)
     {
         return Ok(await producerServiceA.PublishAsync(data));
     }
 
     [HttpPost("B")]
-    public async Task<IActionResult> SendB(QueueData data, CancellationToken cancellationToken)
+    public async Task<IActionResult> SendB(QueueData data)
     {
         return Ok(await producerServiceB.PublishAsync(data));
     }

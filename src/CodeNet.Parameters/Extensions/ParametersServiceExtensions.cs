@@ -34,6 +34,7 @@ public static class ParametersServiceExtensions
         if (!services.Any(c => c.ServiceType.Equals(typeof(IParameterManager))))
             services.AddScoped<IParameterManager, ParameterManager>();
 
-        return services.AddCodeNetContext();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
+        return services;
     }
 }

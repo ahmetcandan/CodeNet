@@ -71,7 +71,7 @@ public static class EntityFrameworkServiceExtensions
     public static IServiceCollection AddDbContext<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
         where TDbContext : DbContext
     {
-        services.AddCodeNetContext();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
         return EntityFrameworkServiceCollectionExtensions.AddDbContext<TDbContext>(services, optionsAction: optionsAction);
     }
 

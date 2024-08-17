@@ -34,8 +34,10 @@ using CodeNet.BackgroundJob.Settings;
 
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
-    .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"))
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), options => 
+        {
+            options.AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
+        })
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
@@ -93,7 +95,7 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks("/health");
-//app.UseBackgroundService("/job");
+app.UseBackgroundService("/job");
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
 app.UseStackExcahangeConsumer<RedisConsumerServiceA>();

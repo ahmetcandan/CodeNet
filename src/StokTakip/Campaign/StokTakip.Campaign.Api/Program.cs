@@ -10,8 +10,10 @@ using StokTakip.Campaign.Repository;
 using StokTakip.Campaign.Service;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
-    .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"))
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), options => 
+        {
+            options.AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
+        })
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddDbContext<CampaignDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServer")!))

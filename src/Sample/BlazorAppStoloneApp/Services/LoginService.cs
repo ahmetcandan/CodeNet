@@ -6,8 +6,11 @@ namespace CodeNetUI_Example.Services;
 
 public class LoginService(ApiClientService apiClientService, LocalStorageManager localStorageManager, ISnackbar snackbar)
 {
+    private const string _authToken = "authToken";
+
     public async Task<TokenModel?> GenerateToken(string username, string password, CancellationToken cancellationToken = default)
     {
+        await localStorageManager.RemoveAsync(_authToken);
         var result = await apiClientService.SendService<TokenModel>(HttpMethod.Post, $"{AppSettings.LoginBaseUrl}/Token", new {
             Username = username,
             Password = password
@@ -15,7 +18,7 @@ public class LoginService(ApiClientService apiClientService, LocalStorageManager
         if (result is not null)
         {
             snackbar.Add("Login successfull", Severity.Info);
-            await localStorageManager.SetAsync("authToken", result.Token);
+            await localStorageManager.SetAsync(_authToken, result.Token);
             return result;
         }
 
@@ -24,7 +27,7 @@ public class LoginService(ApiClientService apiClientService, LocalStorageManager
 
     public async Task Logout()
     {
-        await localStorageManager.RemoveAsync("authToken");
+        await localStorageManager.RemoveAsync(_authToken);
         snackbar.Add("Logout!", Severity.Info);
     }
 }

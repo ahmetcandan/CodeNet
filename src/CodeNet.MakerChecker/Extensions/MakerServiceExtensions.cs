@@ -54,6 +54,7 @@ public static class MakerServiceExtensions
     {
         services.AddDbContext<TDbContext>(optionsAction);
         services.AddScoped<IMakerCheckerManager, MakerCheckerManager<TDbContext>>();
-        return services.AddCodeNetContext();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
+        return services;
     }
 }

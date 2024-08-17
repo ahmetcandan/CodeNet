@@ -19,7 +19,7 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddHealthChecks(this IServiceCollection services, Action<IHealthChecksBuilder> action)
     {
-        services.AddCodeNetContext();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
         var healthCheckBuilder = HealthCheckServiceCollectionExtensions.AddHealthChecks(services);
         action(healthCheckBuilder);
         return services;

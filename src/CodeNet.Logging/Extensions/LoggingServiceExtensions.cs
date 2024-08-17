@@ -14,7 +14,7 @@ public static class LoggingServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddAppLogger(this IServiceCollection services)
     {
-        services.AddCodeNetContext();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
         return services.AddScoped<IAppLogger, AppLogger>();
     }
 
