@@ -31,7 +31,7 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
 
     public string? UserName => httpContextAccessor.HttpContext?.User.Identity?.Name;
 
-    public string? Email => httpContextAccessor?.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
+    public string? Email => httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Email)?.Value;
 
     public string? UserId => httpContextAccessor.HttpContext?.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier)?.Value;
 
