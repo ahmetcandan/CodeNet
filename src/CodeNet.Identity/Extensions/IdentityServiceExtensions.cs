@@ -2,6 +2,7 @@
 using CodeNet.EntityFramework.Extensions;
 using CodeNet.Identity.Manager;
 using CodeNet.Identity.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -88,5 +89,16 @@ public static class IdentityServiceExtensions
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
         services.AddScoped<IIdentityUserManager, IdentityUserManager>();
         return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
+    }
+
+    /// <summary>
+    /// Use Authorization
+    /// </summary>
+    /// <param name="app"></param>
+    /// <returns></returns>
+    public static WebApplication UseAuthorization(this WebApplication app)
+    {
+        AuthorizationAppBuilderExtensions.UseAuthorization(app);
+        return app;
     }
 }

@@ -11,5 +11,4 @@ public class StackExchangeConsumerOptions
 public class StackExchangeConsumerOptions<TConsumerService> : StackExchangeConsumerOptions
     where TConsumerService : StackExchangeConsumerService
 {
-
 }

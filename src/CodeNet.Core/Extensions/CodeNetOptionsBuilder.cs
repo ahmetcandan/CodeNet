@@ -12,8 +12,6 @@ namespace CodeNet.Core.Extensions;
 
 public class CodeNetOptionsBuilder(IServiceCollection services)
 {
-    internal IServiceCollection Services { get { return services; } }
-
     /// <summary>
     /// Add Authentication
     /// If SecurityKeyType is AsymmetricKey, IdentitySection should be AuthenticationSettingsWithAsymmetricKey.
@@ -57,7 +55,7 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
     {
         var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
         var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
-        Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -91,7 +89,7 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
     private CodeNetOptionsBuilder AddAuthenticationWithSymmetricKey(IConfigurationSection applicationSection)
     {
         var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
-        Services.AddAuthentication(options =>
+        services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -120,8 +118,8 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
     /// <returns></returns>
     public CodeNetOptionsBuilder AddCodeNetContext()
     {
-        if (!Services.Any(c => c.ServiceType.Equals(typeof(ICodeNetContext))))
-            Services.AddScoped<ICodeNetContext, CodeNetContext>();
+        if (!services.Any(c => c.ServiceType.Equals(typeof(ICodeNetContext))))
+            services.AddScoped<ICodeNetContext, CodeNetContext>();
 
         return this;
     }

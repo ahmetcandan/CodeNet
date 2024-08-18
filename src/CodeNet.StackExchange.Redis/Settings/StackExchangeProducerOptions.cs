@@ -11,5 +11,4 @@ public class StackExchangeProducerOptions : StackExchangeConsumerOptions
 public class StackExchangeProducerOptions<TProducerService> : StackExchangeProducerOptions
     where TProducerService : StackExchangeProducerService
 {
-
 }

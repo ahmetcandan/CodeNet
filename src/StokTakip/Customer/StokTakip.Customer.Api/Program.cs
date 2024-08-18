@@ -35,9 +35,9 @@ using CodeNet.BackgroundJob.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), options => 
-        {
-            options.AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
-        })
+    {
+        options.AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
+    })
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
@@ -89,7 +89,10 @@ builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
 
 
 var app = builder.Build();
-app.UseCodeNet();
+app.UseCodeNet(options =>
+{
+    options.UseAuthentication();
+});
 app.UseLogging();
 app.UseDistributedCache();
 app.UseDistributedLock();

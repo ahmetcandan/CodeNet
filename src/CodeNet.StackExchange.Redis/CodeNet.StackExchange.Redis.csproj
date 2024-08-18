@@ -9,15 +9,15 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageIcon>ico.png</PackageIcon>
-		<Title>CodeNet RabbitMQ</Title>
-		<Description>CodeNet RabbitMQ package.</Description>
+		<Title>CodeNet StackExchange Redis</Title>
+		<Description>CodeNet StackExchange Redis package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
 		<Version>1.0.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
-		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;RabbitMQ;Rabbit;Consumer;Producer;Queue</PackageTags>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;StackExchange;StackExchangeRedis;Consumer;Producer;Queue</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
