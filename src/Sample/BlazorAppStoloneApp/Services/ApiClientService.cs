@@ -56,7 +56,6 @@ public class ApiClientService(HttpClient http, LocalStorageManager localStorageM
             }
 
             var response = await http.SendAsync(request, cancellationToken);
-            response.EnsureSuccessStatusCode();
             if (response is null)
             {
                 snackbar.Add("Not response!", Severity.Warning);

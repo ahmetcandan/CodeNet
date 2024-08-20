@@ -9,4 +9,10 @@ public class CodeNetApplicationBuilder(WebApplication app)
         app.UseAuthentication();
         return this;
     }
+
+    public CodeNetApplicationBuilder UseAuthorization()
+    {
+        app.UseAuthorization();
+        return this;
+    }
 }

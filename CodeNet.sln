@@ -138,6 +138,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{ACDAC2
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNetUI_Example", "src\Sample\BlazorAppStoloneApp\CodeNetUI_Example.csproj", "{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA}"
 EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7841020-FF7C-4A75-87A4-D42E0C7C801E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -372,6 +374,10 @@ Global
 		{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7841020-FF7C-4A75-87A4-D42E0C7C801E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7841020-FF7C-4A75-87A4-D42E0C7C801E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7841020-FF7C-4A75-87A4-D42E0C7C801E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7841020-FF7C-4A75-87A4-D42E0C7C801E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

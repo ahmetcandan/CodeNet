@@ -90,15 +90,4 @@ public static class IdentityServiceExtensions
         services.AddScoped<IIdentityUserManager, IdentityUserManager>();
         return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
-
-    /// <summary>
-    /// Use Authorization
-    /// </summary>
-    /// <param name="app"></param>
-    /// <returns></returns>
-    public static WebApplication UseAuthorization(this WebApplication app)
-    {
-        AuthorizationAppBuilderExtensions.UseAuthorization(app);
-        return app;
-    }
 }

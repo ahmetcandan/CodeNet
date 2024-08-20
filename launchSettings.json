@@ -1,0 +1,12 @@
+{
+  "profiles": {
+    "Docker Compose": {
+      "commandName": "DockerCompose",
+      "commandVersion": "1.0",
+      "serviceActions": {
+        "codenet.identity.api": "StartDebugging",
+        "stoktakip.customer.api": "StartDebugging"
+      }
+    }
+  }
+}

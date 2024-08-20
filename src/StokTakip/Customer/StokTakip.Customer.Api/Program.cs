@@ -41,7 +41,6 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     .AddRedisDistributedCache(builder.Configuration.GetSection("Redis"))
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
-    .AddDefaultErrorMessage(builder.Configuration.GetSection("DefaultErrorMessage"))
     //.AddRabbitMQConsumer<ConsumerServiceA, MessageHandlerA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB, MessageHandlerB>(builder.Configuration.GetSection("RabbitMQB"))
@@ -92,6 +91,7 @@ var app = builder.Build();
 app.UseCodeNet(options =>
 {
     options.UseAuthentication();
+    options.UseAuthorization();
 });
 app.UseLogging();
 app.UseDistributedCache();

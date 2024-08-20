@@ -78,6 +78,16 @@ public static class CodeNetServiceExtensions
     }
 
     /// <summary>
+    /// Add CodeNetContext
+    /// </summary>
+    /// <param name="services"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddCodeNetContext(this IServiceCollection services)
+    {
+        return services.AddScoped<ICodeNetContext, CodeNetContext>();
+    }
+
+    /// <summary>
     /// Use CodeNet
     /// </summary>
     /// <param name="app"></param>
@@ -97,10 +107,10 @@ public static class CodeNetServiceExtensions
         app.UseSwaggerUI(options => options.SwaggerEndpoint($"/swagger/{applicationSettings.Value.Version}/swagger.json", $"{applicationSettings.Value.Title} {applicationSettings.Value.Version}"));
         app.UseHttpsRedirection();
         
-        if (action is not null)
-            action(new CodeNetApplicationBuilder(app));
 
         app.UseRouting();
+        if (action is not null)
+            action(new CodeNetApplicationBuilder(app));
         app.MapControllers();
 
         return app;
