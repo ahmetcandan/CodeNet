@@ -42,6 +42,39 @@ public static class RabbitMqServiceExtensions
     }
 
     /// <summary>
+    /// Add RabbitMQ Consumer
+    /// </summary>
+    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="rabbitSection"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions config)
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
+    {
+        return services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>((RabbitMQConsumerOptions<RabbitMQConsumerService>)config);
+    }
+
+    /// <summary>
+    /// Add RabbitMQ Consumer
+    /// </summary>
+    /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRabbitMQConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions<TConsumerService> config)
+        where TConsumerService : RabbitMQConsumerService
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
+    {
+        _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
+            ? services.Configure<RabbitMQConsumerOptions>(c => c = config)
+            : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(c => c = config);
+
+        services.AddSingleton<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
+        return services.AddSingleton<TConsumerService>();
+    }
+
+    /// <summary>
     /// Add RabbitMQ Producer
     /// </summary>
     /// <param name="services"></param>
@@ -65,6 +98,33 @@ public static class RabbitMqServiceExtensions
         _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
             ? services.Configure<RabbitMQProducerOptions>(rabbitSection)
             : services.Configure<RabbitMQProducerOptions<TProducerService>>(rabbitSection);
+        return services.AddScoped<TProducerService>();
+    }
+
+    /// <summary>
+    /// Add RabbitMQ Producer
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, RabbitMQProducerOptions config)
+    {
+        return services.AddRabbitMQProducer((RabbitMQProducerOptions<RabbitMQProducerService>)config);
+    }
+
+    /// <summary>
+    /// Add RabbitMQ Producer
+    /// </summary>
+    /// <typeparam name="TProducerService"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRabbitMQProducer<TProducerService>(this IServiceCollection services, RabbitMQProducerOptions<TProducerService> config)
+    where TProducerService : RabbitMQProducerService
+    {
+        _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
+            ? services.Configure<RabbitMQProducerOptions>(c => c = config)
+            : services.Configure<RabbitMQProducerOptions<TProducerService>>(c => c = config);
         return services.AddScoped<TProducerService>();
     }
 

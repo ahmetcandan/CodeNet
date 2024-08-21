@@ -4,14 +4,13 @@ using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.RabbitMQ;
 
-internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> Config) : BaseRabbitMQService(Config)
+internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> Config)
 {
     public bool CanConnection()
     {
 		try
 		{
-			var factory = CreateFactory();
-            using var connection = factory.CreateConnection();
+            using var connection = Config.Value.ConnectionFactory.CreateConnection();
             return true;
 		}
 		catch
