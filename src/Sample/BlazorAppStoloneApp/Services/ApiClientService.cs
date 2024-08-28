@@ -1,12 +1,12 @@
 ﻿using MudBlazor;
-using System.Text;
 using CodeNetUI_Example.Pages;
 using System.Text.Json;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using System.Net.Http.Json;
 
 namespace CodeNetUI_Example.Services;
 
-public class ApiClientService(HttpClient http, LocalStorageManager localStorageManager, IDialogService dialogService, ISnackbar snackbar)
+public class ApiClientService(HttpClient httpClient, LocalStorageManager localStorageManager, IDialogService dialogService, ISnackbar snackbar)
 {
     private static JsonSerializerOptions JsonOptions
     {
@@ -19,9 +19,19 @@ public class ApiClientService(HttpClient http, LocalStorageManager localStorageM
         }
     }
 
-    public async Task<T?> SendService<T>(HttpMethod method, string url, object? context, CancellationToken cancellationToken = default)
+    public async Task<T?> SendAsync<T>(HttpMethod method, string url, object? context, CancellationToken cancellationToken = default)
     {
-        var httpResponse = await SendService(method, url, context, cancellationToken);
+        HttpResponseMessage? httpResponse = null;
+        if (method == HttpMethod.Get)
+            httpResponse = await GetAsync(url, cancellationToken);
+        else if (method == HttpMethod.Post)
+            httpResponse = await PostAsync(url, context, cancellationToken);
+        else if (method == HttpMethod.Put)
+            httpResponse = await PutAsync(url, context, cancellationToken);
+        else if (method == HttpMethod.Delete)
+            httpResponse = await DeleteAsync(url, cancellationToken);
+        else if (method == HttpMethod.Patch)
+            httpResponse = await PatchAsync(url, JsonContent.Create(context, options: JsonOptions), cancellationToken);
 
         try
         {
@@ -39,22 +49,23 @@ public class ApiClientService(HttpClient http, LocalStorageManager localStorageM
         }
     }
 
-    public async Task<HttpResponseMessage?> SendService(HttpMethod method, string url, object? context, CancellationToken cancellationToken = default)
+    public async Task<HttpResponseMessage?> SendAsync(HttpMethod method, string url, object? context, CancellationToken cancellationToken = default)
     {
         try
         {
+            using HttpClient httpClient = new();
             HttpRequestMessage request = new(method, url);
             var token = await localStorageManager.GetAsync("authToken");
             if (!string.IsNullOrEmpty(token))
                 request.Headers.Add("Authorization", $"Bearer {token}");
 
+            request.SetBrowserRequestMode(BrowserRequestMode.NoCors);
             if (context is not null)
             {
-                var requestJson = JsonSerializer.Serialize(context, JsonOptions);
-                request.Content = new StringContent(requestJson, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
+                request.Content = JsonContent.Create(context, options: JsonOptions);
             }
 
-            var response = await http.SendAsync(request, cancellationToken);
+            var response = await httpClient.SendAsync(request, cancellationToken);
             if (response is null)
             {
                 snackbar.Add("Not response!", Severity.Warning);
@@ -83,10 +94,229 @@ public class ApiClientService(HttpClient http, LocalStorageManager localStorageM
                 return response;
             }
         }
-        catch (HttpRequestException ex)
+        catch (Exception ex)
         {
             snackbar.Add(ex.Message, Severity.Error);
             return null;
+        }
+    }
+
+    public async Task<HttpResponseMessage?> PostAsync(string url, object? context, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var token = await localStorageManager.GetAsync("authToken");
+            if (!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+            var response = await httpClient.PostAsJsonAsync(url, context, cancellationToken);
+            if (response is null)
+            {
+                snackbar.Add("Not response!", Severity.Warning);
+                return null;
+            }
+            else
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    snackbar.Add("Unauthorized!", Severity.Error);
+                    await dialogService.ShowAsync<Login>("Login", new DialogOptions
+                    {
+                        FullWidth = true,
+                        MaxWidth = MaxWidth.Small,
+                        BackdropClick = false
+                    });
+                    return null;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+                    snackbar.Add(responseText, Severity.Error);
+                    return null;
+                }
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add(ex.Message, Severity.Error);
+            return null;
+        }
+    }
+
+    public async Task<HttpResponseMessage?> GetAsync(string url, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var token = await localStorageManager.GetAsync("authToken");
+            if (!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+
+            var response = await httpClient.GetAsync(url, cancellationToken);
+            if (response is null)
+            {
+                snackbar.Add("Not response!", Severity.Warning);
+                return null;
+            }
+            else
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    snackbar.Add("Unauthorized!", Severity.Error);
+                    await dialogService.ShowAsync<Login>("Login", new DialogOptions
+                    {
+                        FullWidth = true,
+                        MaxWidth = MaxWidth.Small,
+                        BackdropClick = false
+                    });
+                    return null;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+                    snackbar.Add(responseText, Severity.Error);
+                    return null;
+                }
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add(ex.Message, Severity.Error);
+            return null;
+        }
+    }
+
+    public async Task<HttpResponseMessage?> DeleteAsync(string url, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var token = await localStorageManager.GetAsync("authToken");
+            if (!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+
+            var response = await httpClient.DeleteAsync(url, cancellationToken);
+            if (response is null)
+            {
+                snackbar.Add("Not response!", Severity.Warning);
+                return null;
+            }
+            else
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    snackbar.Add("Unauthorized!", Severity.Error);
+                    await dialogService.ShowAsync<Login>("Login", new DialogOptions
+                    {
+                        FullWidth = true,
+                        MaxWidth = MaxWidth.Small,
+                        BackdropClick = false
+                    });
+                    return null;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+                    snackbar.Add(responseText, Severity.Error);
+                    return null;
+                }
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add(ex.Message, Severity.Error);
+            return null;
+        }
+    }
+
+    public async Task<HttpResponseMessage?> PutAsync(string url, object? context, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var token = await localStorageManager.GetAsync("authToken");
+            if (!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+
+            var response = await httpClient.PutAsJsonAsync(url, context, cancellationToken);
+            if (response is null)
+            {
+                snackbar.Add("Not response!", Severity.Warning);
+                return null;
+            }
+            else
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    snackbar.Add("Unauthorized!", Severity.Error);
+                    await dialogService.ShowAsync<Login>("Login", new DialogOptions
+                    {
+                        FullWidth = true,
+                        MaxWidth = MaxWidth.Small,
+                        BackdropClick = false
+                    });
+                    return null;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+                    snackbar.Add(responseText, Severity.Error);
+                    return null;
+                }
+
+                return response;
+            }
+        }
+        catch (Exception ex)
+        {
+            snackbar.Add(ex.Message, Severity.Error);
+            return null;
+        }
+    }
+
+    public async Task<HttpResponseMessage?> PatchAsync(string url, HttpContent? context, CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var token = await localStorageManager.GetAsync("authToken");
+            if (!string.IsNullOrEmpty(token))
+                httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", token);
+
+
+            var response = await httpClient.PatchAsync(url, context, cancellationToken);
+            if (response is null)
+            {
+                snackbar.Add("Not response!", Severity.Warning);
+                return null;
+            }
+            else
+            {
+                if (response.StatusCode == System.Net.HttpStatusCode.Unauthorized)
+                {
+                    snackbar.Add("Unauthorized!", Severity.Error);
+                    await dialogService.ShowAsync<Login>("Login", new DialogOptions
+                    {
+                        FullWidth = true,
+                        MaxWidth = MaxWidth.Small,
+                        BackdropClick = false
+                    });
+                    return null;
+                }
+                else if (!response.IsSuccessStatusCode)
+                {
+                    var responseText = await response.Content.ReadAsStringAsync(cancellationToken);
+                    snackbar.Add(responseText, Severity.Error);
+                    return null;
+                }
+
+                return response;
+            }
         }
         catch (Exception ex)
         {

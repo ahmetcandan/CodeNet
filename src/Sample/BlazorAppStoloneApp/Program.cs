@@ -11,7 +11,7 @@ builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddMudServices();
 
-builder.Services.AddScoped(sp => new HttpClient { });
+builder.Services.AddScoped(c => new HttpClient());
 builder.Services.AddScoped<ApiClientService>();
 builder.Services.AddScoped<BackgroundService>();
 builder.Services.AddScoped<LoginService>();
@@ -20,4 +20,5 @@ builder.Services.AddSingleton(sp => new HubConnectionBuilder()
     .WithUrl($"{AppSettings.BackgroundJobBaseUrl}/jobEvents")
     .Build());
 
-await builder.Build().RunAsync();
+var app = builder.Build();
+await app.RunAsync();

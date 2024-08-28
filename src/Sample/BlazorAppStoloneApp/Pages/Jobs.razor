@@ -6,6 +6,7 @@
 @inject HubConnection HubConnection
 @inject IDialogService DialogService
 @inject BackgroundService BackgroundService
+@inject LoginService LoginService
 
 <PageTitle>Jobs</PageTitle>
 
@@ -51,6 +52,7 @@
 </MudTable>
 
 <MudButton OnClick="OpenLogin">Login</MudButton>
+<MudButton OnClick="Logout">Logout</MudButton>
 
 @code {
     PagingResponse<JobModel>? model;
@@ -101,6 +103,11 @@
                 MaxWidth = MaxWidth.Small,
                 BackdropClick = false
             });
+    }
+
+    async Task Logout()
+    {
+        await LoginService.Logout();
     }
 
     async Task JobDetails(int jobId)

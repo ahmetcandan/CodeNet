@@ -45,10 +45,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB, MessageHandlerB>(builder.Configuration.GetSection("RabbitMQB"))
     //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
-    .AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
-    .AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
-    .AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
-    .AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
+    //.AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
+    //.AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
+    //.AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
+    //.AddStackExcahangeProducer<RedisProducerServiceB>(builder.Configuration.GetSection("StackExchangeB"))
     .AddMongoDB<AMongoDbContext>(builder.Configuration.GetSection("AMongoDB"))
     .AddMongoDB<BMongoDbContext>(builder.Configuration.GetSection("BMongoDB"))
     .AddMongoDB(builder.Configuration.GetSection("BMongoDB"))
@@ -66,7 +66,7 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
         options.AddEntityFrameworkHealthCheck<CustomerDbContext>();
         options.AddRedisHealthCheck();
         options.AddMongoDbHealthCheck();
-        options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
+        //options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
         options.AddElasticsearchHealthCheck();
     })
     .AddBackgroundJob(options =>
@@ -93,6 +93,10 @@ app.UseCodeNet(options =>
     options.UseAuthentication();
     options.UseAuthorization();
 });
+app.UseCors(x => x
+        .AllowAnyOrigin()
+        .AllowAnyMethod()
+        .AllowAnyHeader());
 app.UseLogging();
 app.UseDistributedCache();
 app.UseDistributedLock();
@@ -101,6 +105,6 @@ app.UseCodeNetHealthChecks("/health");
 app.UseBackgroundService("/job");
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
-app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
-app.UseStackExcahangeConsumer<RedisConsumerServiceB>();
+//app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
+//app.UseStackExcahangeConsumer<RedisConsumerServiceB>();
 app.Run();

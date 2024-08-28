@@ -11,7 +11,7 @@ public class LoginService(ApiClientService apiClientService, LocalStorageManager
     public async Task<TokenModel?> GenerateToken(string username, string password, CancellationToken cancellationToken = default)
     {
         await localStorageManager.RemoveAsync(_authToken);
-        var result = await apiClientService.SendService<TokenModel>(HttpMethod.Post, $"{AppSettings.LoginBaseUrl}/Token", new {
+        var result = await apiClientService.SendAsync<TokenModel>(HttpMethod.Post, $"{AppSettings.LoginBaseUrl}/Token", new {
             Username = username,
             Password = password
         }, cancellationToken);
