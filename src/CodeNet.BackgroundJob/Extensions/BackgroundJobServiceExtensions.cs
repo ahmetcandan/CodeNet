@@ -74,17 +74,22 @@ public static class BackgroundJobServiceExtensions
                 app.UseMiddleware<BasicAuthMiddleware>();
                 break;
             case AuthenticationType.JwtAuth:
-                var users = authOptions.Value?.JwtAuthOptions?.Users.Split(',') ?? [];
-                var roles = authOptions.Value?.JwtAuthOptions?.Roles.Split(',') ?? [];
+                var users = string.IsNullOrEmpty(authOptions.Value?.JwtAuthOptions?.Users) ? [] : (authOptions.Value?.JwtAuthOptions?.Users.Split(',') ?? []);
+                var roles = string.IsNullOrEmpty(authOptions.Value?.JwtAuthOptions?.Roles) ? [] : (authOptions.Value?.JwtAuthOptions?.Roles.Split(',') ?? []);
                 foreach (var routeHandlerBuilder in routeHandlerBuilders)
-                    routeHandlerBuilder.RequireAuthorization(policy =>
-                    {
-                        if (users.Length > 0)
-                            policy.RequireAssertion(context => users.Contains(context.User?.Identity?.Name));
+                {
+                    if (users.Length == 0 && roles.Length == 0)
+                        routeHandlerBuilder.RequireAuthorization();
+                    else
+                        routeHandlerBuilder.RequireAuthorization(policy =>
+                        {
+                            if (users.Length > 0)
+                                policy.RequireAssertion(context => users.Contains(context.User?.Identity?.Name));
 
-                        if (roles.Length > 0)
-                            policy.RequireRole(roles);
-                    });
+                            if (roles.Length > 0)
+                                policy.RequireRole(roles);
+                        });
+                }
                 break;
             default:
                 break;
