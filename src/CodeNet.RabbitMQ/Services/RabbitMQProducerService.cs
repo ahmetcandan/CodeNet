@@ -1,7 +1,6 @@
 ﻿using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
-using RabbitMQ.Client;
 using System.Text;
 
 namespace CodeNet.RabbitMQ.Services;
@@ -29,6 +28,9 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 
     public bool Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers)
     {
+        if (typeof(TModel).Equals(typeof(string)))
+            return Publish(Encoding.UTF8.GetBytes(data.ToString()), messageId, headers);
+
         return Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
     }
 
@@ -52,7 +54,6 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
                                  mandatory: options.Value.Mandatory ?? false,
                                  basicProperties: basicProperties,
                                  body: data);
-            Console.WriteLine($"RabbitMQ MessageId: {messageId}");
             return true;
         }
         catch
