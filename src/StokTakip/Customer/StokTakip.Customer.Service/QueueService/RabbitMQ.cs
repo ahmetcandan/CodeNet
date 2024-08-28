@@ -23,16 +23,18 @@ public class ProducerServiceB(IOptions<RabbitMQProducerOptions<ProducerServiceB>
 
 public class MessageHandlerA : IRabbitMQConsumerHandler<ConsumerServiceA>
 {
-    public void Handler(ReceivedMessageEventArgs args)
+    public Task Handler(ReceivedMessageEventArgs args)
     {
         Console.WriteLine($"Consumed A: {args.GetDataToString()}");
+        return Task.CompletedTask;
     }
 }
 
 public class MessageHandlerB : IRabbitMQConsumerHandler<ConsumerServiceB>
 {
-    public void Handler(ReceivedMessageEventArgs args)
+    public Task Handler(ReceivedMessageEventArgs args)
     {
         Console.WriteLine($"Consumed B: {args.GetDataToString()}");
+        return Task.CompletedTask;
     }
 }
