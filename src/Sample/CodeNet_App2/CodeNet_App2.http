@@ -1,0 +1,6 @@
+@CodeNet_App2_HostAddress = http://localhost:5086
+
+GET {{CodeNet_App2_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
