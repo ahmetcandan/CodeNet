@@ -134,11 +134,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.StackExchange.Redis
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Sample", "Sample", "{06AA95E6-BCD6-443D-ABA7-133BF10AD891}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Blazor", "Blazor", "{ACDAC208-7B4D-458B-8E66-C895C988B48D}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNetUI_Example", "src\Sample\BlazorAppStoloneApp\CodeNetUI_Example.csproj", "{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA}"
-EndProject
-Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7841020-FF7C-4A75-87A4-D42E0C7C801E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
