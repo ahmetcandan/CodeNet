@@ -1,6 +1,7 @@
 ﻿using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
+using RabbitMQ.Client;
 using System.Text;
 
 namespace CodeNet.RabbitMQ.Services;
@@ -40,15 +41,24 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
         {
             using var connection = options.Value.ConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
-            channel.QueueDeclare(queue: options.Value.Queue,
-                                 durable: options.Value.Durable,
-                                 exclusive: options.Value.Exclusive,
-                                 autoDelete: options.Value.AutoDelete,
-                                 arguments: options.Value.Arguments);
+
+            if (options.Value.DeclareQueue)
+                channel.QueueDeclare(queue: options.Value.Queue,
+                                     durable: options.Value.Durable,
+                                     exclusive: options.Value.Exclusive,
+                                     autoDelete: options.Value.AutoDelete,
+                                     arguments: options.Value.Arguments);
+
+            if (options.Value.DeclareExchange)
+                channel.ExchangeDeclare(exchange: options.Value.Exchange,
+                                        type: options.Value.Type,
+                                        durable: options.Value.Durable,
+                                        arguments: options.Value.Arguments);
+
             var basicProperties = channel.CreateBasicProperties();
             basicProperties.MessageId = messageId;
             basicProperties.Headers = headers;
-
+            
             channel.BasicPublish(exchange: options.Value.Exchange,
                                  routingKey: options.Value.RoutingKey,
                                  mandatory: options.Value.Mandatory ?? false,

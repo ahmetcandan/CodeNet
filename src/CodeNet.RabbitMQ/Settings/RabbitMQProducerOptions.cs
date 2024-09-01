@@ -4,7 +4,6 @@ namespace CodeNet.RabbitMQ.Settings;
 
 public class RabbitMQProducerOptions : BaseRabbitMQOptions
 {
-    public string? Exchange { get; set; }
     public string? RoutingKey { get; set; }
     public bool? Mandatory { get; set; }
 
