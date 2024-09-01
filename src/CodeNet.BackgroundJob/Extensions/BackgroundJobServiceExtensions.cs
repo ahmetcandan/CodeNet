@@ -19,7 +19,10 @@ public static class BackgroundJobServiceExtensions
         var builder = new BackgroundJobOptionsBuilder(services);
         services.AddAppLogger();
         action(builder);
-        services.AddSignalRNotification();
+
+        if (services.Any(c => c.ServiceType.Equals(typeof(BackgroundJobDbContext))))
+            services.AddSignalRNotification();
+
         return services;
     }
 
@@ -33,11 +36,16 @@ public static class BackgroundJobServiceExtensions
     public static WebApplication UseBackgroundService(this WebApplication app, string path)
     {
         var serviceScope = app.Services.CreateScope();
-        app.UseEndPoint(serviceScope.ServiceProvider, path);
-        app.UseSignalR<StatusChangeHub>($"{path}/jobEvents");
+
+        var dbContext = serviceScope.ServiceProvider.GetService<BackgroundJobDbContext>();
+        if (dbContext is not null)
+        {
+            app.UseEndPoint(serviceScope.ServiceProvider, path);
+            app.UseSignalR<StatusChangeHub>($"{path}/jobEvents");
+            SetPrivateJobs(dbContext);
+        }
 
         var tJobs = serviceScope.ServiceProvider.GetServices<IScheduleJob>();
-        SetPrivateJobs(serviceScope.ServiceProvider);
         var notificationHub = serviceScope.ServiceProvider.GetService<IHubContext<StatusChangeHub>>();
 
         foreach (var tJobType in tJobs.Select(c => c.GetType()).Distinct())
@@ -98,9 +106,8 @@ public static class BackgroundJobServiceExtensions
         return app;
     }
 
-    private static void SetPrivateJobs(IServiceProvider serviceProvider)
+    private static void SetPrivateJobs(BackgroundJobDbContext dbContext)
     {
-        var dbContext = serviceProvider.GetRequiredService<BackgroundJobDbContext>();
         var serviceRepository = new Repository<Job>(dbContext);
         var jobEntities = serviceRepository.Find(c => c.IsActive);
         foreach (var jobEntity in jobEntities)
