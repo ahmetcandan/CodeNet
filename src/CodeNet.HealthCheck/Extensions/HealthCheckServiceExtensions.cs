@@ -36,7 +36,7 @@ public static class HealthCheckServiceExtensions
     /// <param name="builder"></param>
     /// <param name="pattern"></param>
     /// <returns></returns>
-    public static IEndpointRouteBuilder UseCodeNetHealthChecks(this IEndpointRouteBuilder builder, string pattern)
+    public static IEndpointRouteBuilder UseCodeNetHealthChecks(this IEndpointRouteBuilder builder, string pattern = "/health")
     {
         builder.MapHealthChecks(pattern, new HealthCheckOptions
         {
