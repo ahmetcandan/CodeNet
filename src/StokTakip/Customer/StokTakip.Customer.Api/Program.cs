@@ -71,10 +71,10 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     })
     .AddBackgroundJob(options =>
     {
-        options.AddRedis(builder.Configuration.GetSection("Redis"));
-        options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(120), new() { ExpryTime = TimeSpan.FromSeconds(1) });
+        //options.AddRedis(builder.Configuration.GetSection("Redis"));
+        options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(115), new() { ExpryTime = TimeSpan.FromSeconds(1) });
         options.AddScheduleJob<TestService2>("TestService2", TimeSpan.FromSeconds(130), new() { ExpryTime = TimeSpan.FromSeconds(1) });
-        options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
+        //options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
         options.AddCurrentAuth();
     })
     ;
@@ -101,8 +101,8 @@ app.UseLogging();
 app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
-app.UseCodeNetHealthChecks("/health");
-app.UseBackgroundService("/job");
+app.UseCodeNetHealthChecks();
+app.UseBackgroundService();
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
 //app.UseStackExcahangeConsumer<RedisConsumerServiceA>();
