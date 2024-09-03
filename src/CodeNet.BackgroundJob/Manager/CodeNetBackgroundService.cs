@@ -113,10 +113,10 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         var workingDetailRepository = dbContext is not null ? new Repository<JobWorkingDetail>(dbContext) : null;
         try
         {
-            var distributedLock = serviceScope.ServiceProvider.GetService<IDistributedLockFactory>();
+            var distributedLock = serviceScope.ServiceProvider.GetService<IJobLock>();
             if (distributedLock is not null)
             {
-                using var redLock = await distributedLock.CreateLockAsync($"CNBJ_{typeof(TJob)}", options.Value.ExpryTime ?? TimeSpan.FromSeconds(10));
+                using var redLock = await distributedLock.CreateLock(typeof(TJob).ToString(), options.Value.ExpryTime ?? TimeSpan.FromSeconds(10));
                 if (!redLock.IsAcquired)
                     return null;
             }

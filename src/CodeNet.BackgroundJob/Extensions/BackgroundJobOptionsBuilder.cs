@@ -20,6 +20,7 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
     /// <returns></returns>
     public BackgroundJobOptionsBuilder AddRedis(IConfigurationSection redisSection)
     {
+        services.AddScoped<IJobLock, JobLock>();
         services.AddRedisDistributedLock(redisSection);
         return this;
     }

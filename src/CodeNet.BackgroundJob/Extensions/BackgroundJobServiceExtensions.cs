@@ -33,7 +33,7 @@ public static class BackgroundJobServiceExtensions
     /// <param name="app"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static WebApplication UseBackgroundService(this WebApplication app, string path)
+    public static WebApplication UseBackgroundService(this WebApplication app, string path = "/job")
     {
         var serviceScope = app.Services.CreateScope();
 
