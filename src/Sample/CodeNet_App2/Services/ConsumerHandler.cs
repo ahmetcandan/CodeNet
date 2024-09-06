@@ -15,4 +15,9 @@ public class ConsumerHandler : IRabbitMQConsumerHandler<RabbitMQConsumerService>
         stopwatch.Stop();
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Output, ElapsedMilliseconds: {stopwatch.ElapsedMilliseconds}, {Encoding.UTF8.GetString(args.Data.ToArray())}");
     }
+
+    public async Task Test()
+    {
+        //SuperSocket.Connection.TcpPipeConnection tcp = new SuperSocket.Connection.TcpPipeConnection()
+    }
 }

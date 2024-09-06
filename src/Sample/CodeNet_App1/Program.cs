@@ -15,9 +15,9 @@ var options = app.Services.GetRequiredService<IOptions<ProducerOptions>>();
 for (int i = 0; i < options.Value.TotalSeconds; i++)
 {
     Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {(i + 1):000}. Second Start...");
-    Task.Run(async () =>
+    await Task.Run(async () =>
     {
-        await FireAndForget.Execute(app.Services, options.Value.MessagePerSecond, i + 1);
+        FireAndForget.Execute(app.Services, options.Value.MessagePerSecond, i + 1);
     });
     await Task.Delay(TimeSpan.FromSeconds(1));
 }

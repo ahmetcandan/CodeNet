@@ -11,6 +11,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="SuperSocket" Version="2.0.0-beta.26" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
   </ItemGroup>
 
