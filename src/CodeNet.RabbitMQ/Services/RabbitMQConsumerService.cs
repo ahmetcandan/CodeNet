@@ -24,12 +24,6 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                                  autoDelete: options.Value.AutoDelete,
                                  arguments: options.Value.Arguments);
 
-        if (options.Value.DeclareExchange)
-            _channel.ExchangeDeclare(exchange: options.Value.Exchange,
-                                    type: options.Value.Type,
-                                    durable: options.Value.Durable,
-                                    arguments: options.Value.Arguments);
-
         _consumer = new EventingBasicConsumer(_channel);
 
         if (options.Value.Qos is not null)
@@ -86,4 +80,5 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
             })
             : Task.CompletedTask;
     }
+
 }

@@ -7,11 +7,11 @@ public class RabbitMQConsumerOptions : BaseRabbitMQOptions
     public bool AutoAck { get; set; } = false;
     public bool NoLocal { get; set; } = false;
     public string ConsumerTag { get; set; } = "";
-    public RabbitMqQosOptions? Qos { get; set; }
+    public RabbitMQQosOptions? Qos { get; set; }
 
     public override string ToString()
     {
-        return $"AutoAck: {AutoAck}, NoLocal: {NoLocal}, ConsumerTag: {ConsumerTag}, {(Qos is not null ? $"{{ Qos: {Qos} }}" : "")}, {base.ToString()}";
+        return $"{base.ToString()}, AutoAck: {AutoAck}, NoLocal: {NoLocal}, ConsumerTag: {ConsumerTag}{(Qos is not null ? $", Qos: {{ {Qos} }}" : "")}";
     }
 }
 

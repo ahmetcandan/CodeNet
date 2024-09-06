@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.RabbitMQ.Settings;
 
-public class RabbitMqQosOptions
+public class RabbitMQQosOptions
 {
     public uint PrefetchSize { get; set; } = 0;
     public ushort PrefetchCount { get; set; } = 1;
