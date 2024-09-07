@@ -3,7 +3,7 @@ using CodeNet.RabbitMQ.Services;
 using System.Diagnostics;
 using System.Text;
 
-namespace CodeNet_App2.Services;
+namespace CodeNet_App3.Services;
 
 public class ConsumerHandler(RabbitMQConsumerService consumerService) : IRabbitMQConsumerHandler<RabbitMQConsumerService>
 {
