@@ -8,6 +8,7 @@ public class RabbitMQConsumerOptions : BaseRabbitMQOptions
     public bool NoLocal { get; set; } = false;
     public string ConsumerTag { get; set; } = "";
     public RabbitMQQosOptions? Qos { get; set; }
+    public IDictionary<string, object>? ConsumerArguments { get; set; } = null;
 
     public override string ToString()
     {

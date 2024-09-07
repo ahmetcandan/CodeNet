@@ -47,17 +47,23 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
                                  autoDelete: options.Value.AutoDelete,
                                  arguments: options.Value.Arguments);
 
-        if (options.Value.Exchange is not null)
-            channel.ExchangeDeclare(exchange: options.Value.Exchange.Name,
-                                    type: options.Value.Exchange.Type,
+        if (options.Value.DeclareExchange)
+            channel.ExchangeDeclare(exchange: options.Value.Exchange,
+                                    type: options.Value.ExchangeType,
                                     durable: options.Value.Durable,
-                                    arguments: options.Value.Arguments);
+                                    arguments: options.Value.ExchangeArguments);
+
+        if (options.Value.QueueBind)
+            channel.QueueBind(queue: options.Value.Queue,
+                              exchange: options.Value.Exchange,
+                              routingKey: options.Value.RoutingKey,
+                              arguments: options.Value.QueueBindArguments);
 
         var basicProperties = channel.CreateBasicProperties();
         basicProperties.MessageId = messageId;
         basicProperties.Headers = headers;
 
-        channel.BasicPublish(exchange: options.Value.Exchange?.Name ?? "",
+        channel.BasicPublish(exchange: options.Value.Exchange,
                              routingKey: options.Value.RoutingKey,
                              mandatory: options.Value.Mandatory ?? false,
                              basicProperties: basicProperties,
