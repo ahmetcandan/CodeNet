@@ -12,7 +12,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     private IConnection? _connection;
     private IModel? _channel;
 
-    public void StartListening()
+    public async void StartListening()
     {
         _connection = options.Value.ConnectionFactory.CreateConnection();
         _channel = _connection.CreateModel();
@@ -41,7 +41,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
         if (options.Value.Qos is not null)
             _channel.BasicQos(prefetchSize: options.Value.Qos.PrefetchSize, prefetchCount: options.Value.Qos.PrefetchCount, global: options.Value.Qos.Global);
 
-        _consumer.Received += async (object? model, BasicDeliverEventArgs args) => await SentMessage(model, args);
+        _consumer.Received += MessageHandler;
         _channel.BasicConsume(queue: options.Value.Queue,
                                  autoAck: options.Value.AutoAck,
                                  consumerTag: options.Value.ConsumerTag,
@@ -51,35 +51,10 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                                  consumer: _consumer);
     }
 
-    public event MessageReceived? ReceivedMessage;
-
-    private async Task SentMessage(object? model, BasicDeliverEventArgs args)
+    private async void MessageHandler(object? model, BasicDeliverEventArgs args)
     {
-        //if (!options.Value.AutoAck)
-        //{
-        //    try
-        //    {
-        //        await MessageInvoke(args);
-
-        //        if (!options.Value.AutoAck)
-        //            _channel?.BasicAck(deliveryTag: args.DeliveryTag, multiple: false);
-        //    }
-        //    catch
-        //    {
-        //        if (!options.Value.AutoAck)
-        //            _channel?.BasicNack(deliveryTag: args.DeliveryTag, multiple: false, requeue: true);
-        //    }
-        //}
-        //else
-        //{
-            await MessageInvoke(args);
-        //}
-    }
-
-    private Task MessageInvoke(BasicDeliverEventArgs args)
-    {
-        return ReceivedMessage is not null ?
-            ReceivedMessage.Invoke(new ReceivedMessageEventArgs
+        if (ReceivedMessage is not null)
+            await ReceivedMessage.Invoke(new ReceivedMessageEventArgs
             {
                 Data = args.Body,
                 MessageId = args.BasicProperties?.MessageId,
@@ -89,16 +64,29 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                 Exchange = args.Exchange,
                 RoutingKey = args.RoutingKey,
                 Redelivered = args.Redelivered
-            })
-            : Task.CompletedTask;
+            });
     }
+
+    public void StopListening()
+    {
+        if (_channel?.IsOpen is true)
+        {
+            _channel.Close();
+
+            if (_consumer is not null)
+                _consumer.Received -= MessageHandler;
+        }
+    }
+
+    public event MessageReceived? ReceivedMessage;
 
     public void CheckSuccessfullMessage(ulong deliveryTag, bool multiple = false)
     {
         if (options.Value.AutoAck)
             throw new Exception("This method cannot be used if AutoAck is on.");
 
-        _channel?.BasicAck(deliveryTag: deliveryTag, multiple: multiple);
+        if (_channel?.IsOpen is true)
+            _channel.BasicAck(deliveryTag: deliveryTag, multiple: multiple);
     }
 
     public void CheckFailMessage(ulong deliveryTag, bool multiple = false, bool requeue = true)
@@ -106,6 +94,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
         if (options.Value.AutoAck)
             throw new Exception("This method cannot be used if AutoAck is on.");
 
-        _channel?.BasicNack(deliveryTag: deliveryTag, multiple: multiple, requeue: requeue);
+        if (_channel?.IsOpen is true)
+            _channel.BasicNack(deliveryTag: deliveryTag, multiple: multiple, requeue: requeue);
     }
 }
