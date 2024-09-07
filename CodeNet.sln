@@ -142,6 +142,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App1", "src\Sample\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App2", "src\Sample\CodeNet_App2\CodeNet_App2.csproj", "{C8518182-667D-4678-A1B1-69B9E16DB254}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet_App3", "src\Sample\CodeNet_App3\CodeNet_App3.csproj", "{171CBF4A-D39E-407A-B172-38697348F3A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -384,6 +386,10 @@ Global
 		{C8518182-667D-4678-A1B1-69B9E16DB254}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C8518182-667D-4678-A1B1-69B9E16DB254}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C8518182-667D-4678-A1B1-69B9E16DB254}.Release|Any CPU.Build.0 = Release|Any CPU
+		{171CBF4A-D39E-407A-B172-38697348F3A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{171CBF4A-D39E-407A-B172-38697348F3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{171CBF4A-D39E-407A-B172-38697348F3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{171CBF4A-D39E-407A-B172-38697348F3A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -454,6 +460,7 @@ Global
 		{C31CE38F-BB6D-4CF5-A6F9-CBF52B85C2EA} = {ACDAC208-7B4D-458B-8E66-C895C988B48D}
 		{A18CD7E9-7C8A-484E-9FDA-23EA7F0456FE} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 		{C8518182-667D-4678-A1B1-69B9E16DB254} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
+		{171CBF4A-D39E-407A-B172-38697348F3A6} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}
