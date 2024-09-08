@@ -1,4 +1,4 @@
 ﻿namespace CodeNet.StackExchange.Redis.Models;
 
 
-public delegate void MessageReceived(ReceivedMessageEventArgs e);
+public delegate Task MessageReceived(ReceivedMessageEventArgs e);
