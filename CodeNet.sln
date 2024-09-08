@@ -144,6 +144,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App2", "src\Sample\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet_App3", "src\Sample\CodeNet_App3\CodeNet_App3.csproj", "{171CBF4A-D39E-407A-B172-38697348F3A6}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.Kafka", "src\CodeNet.Kafka\CodeNet.Kafka.csproj", "{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -390,6 +392,10 @@ Global
 		{171CBF4A-D39E-407A-B172-38697348F3A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{171CBF4A-D39E-407A-B172-38697348F3A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{171CBF4A-D39E-407A-B172-38697348F3A6}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -461,6 +467,7 @@ Global
 		{A18CD7E9-7C8A-484E-9FDA-23EA7F0456FE} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 		{C8518182-667D-4678-A1B1-69B9E16DB254} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 		{171CBF4A-D39E-407A-B172-38697348F3A6} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
+		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

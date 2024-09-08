@@ -12,7 +12,8 @@ public class ConsumerHandler(RabbitMQConsumerService consumerService) : IRabbitM
         var message = Encoding.UTF8.GetString(args.Data.ToArray());
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Input {message}");
         Stopwatch stopwatch = Stopwatch.StartNew();
-        await Task.Delay(new Random().Next(250, 1000));
+        //await Task.Delay(new Random().Next(250, 1000));
+        await Task.Delay(250);
         consumerService.CheckSuccessfullMessage(args.DeliveryTag);
         stopwatch.Stop();
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Output, ElapsedMilliseconds: {stopwatch.ElapsedMilliseconds}, {message}");
