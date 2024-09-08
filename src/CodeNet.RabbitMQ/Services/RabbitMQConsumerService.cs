@@ -12,7 +12,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     private IConnection? _connection;
     private IModel? _channel;
 
-    public async void StartListening()
+    public void StartListening()
     {
         _connection = options.Value.ConnectionFactory.CreateConnection();
         _channel = _connection.CreateModel();
@@ -83,7 +83,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     public void CheckSuccessfullMessage(ulong deliveryTag, bool multiple = false)
     {
         if (options.Value.AutoAck)
-            throw new Exception("This method cannot be used if AutoAck is on.");
+            throw new Exception("This method cannot be used if 'AutoAck' is on.");
 
         if (_channel?.IsOpen is true)
             _channel.BasicAck(deliveryTag: deliveryTag, multiple: multiple);
@@ -92,7 +92,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     public void CheckFailMessage(ulong deliveryTag, bool multiple = false, bool requeue = true)
     {
         if (options.Value.AutoAck)
-            throw new Exception("This method cannot be used if AutoAck is on.");
+            throw new Exception("This method cannot be used if 'AutoAck' is on.");
 
         if (_channel?.IsOpen is true)
             _channel.BasicNack(deliveryTag: deliveryTag, multiple: multiple, requeue: requeue);
