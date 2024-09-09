@@ -12,6 +12,6 @@ public static class MapperServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddMapper(this IServiceCollection services)
     {
-        return services.AddScoped<IMapper, Mapper>();
+        return services.AddScoped<IMapper, AutoMapper.Mapper>();
     }
 }
