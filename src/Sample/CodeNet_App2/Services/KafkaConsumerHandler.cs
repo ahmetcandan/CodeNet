@@ -1,20 +1,20 @@
-﻿using CodeNet.RabbitMQ.Models;
-using CodeNet.RabbitMQ.Services;
+﻿using CodeNet.Kafka.Services;
+using Confluent.Kafka;
 using System.Diagnostics;
-using System.Text;
 
 namespace CodeNet_App2.Services;
 
-public class ConsumerHandler(RabbitMQConsumerService consumerService) : IRabbitMQConsumerHandler<RabbitMQConsumerService>
+public class KafkaConsumerHandler(KafkaConsumerService consumerService) : IKafkaConsumerHandler<KafkaConsumerService>
 {
-    public async Task Handler(ReceivedMessageEventArgs args)
+
+    public async Task Handler(CodeNet.Kafka.Models.ReceivedMessageEventArgs<Null, string> args)
     {
-        var message = Encoding.UTF8.GetString(args.Data.ToArray());
+        var message = args.Value;
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Input {message}");
         Stopwatch stopwatch = Stopwatch.StartNew();
         //await Task.Delay(new Random().Next(250, 1000));
         await Task.Delay(250);
-        consumerService.CheckSuccessfullMessage(args.DeliveryTag);
+        consumerService.CommitCheckPoint(args.Partition, args.Offset);
         stopwatch.Stop();
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Output, ElapsedMilliseconds: {stopwatch.ElapsedMilliseconds}, {message}");
     }

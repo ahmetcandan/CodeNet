@@ -1,4 +1,5 @@
 using CodeNet.Core.Extensions;
+using CodeNet.Kafka.Extensions;
 using CodeNet.RabbitMQ.Extensions;
 using CodeNet_App1.Services;
 using CodeNet_App1.Settings;
@@ -6,7 +7,8 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"));
-builder.Services.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"));
+//builder.Services.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"));
+builder.Services.AddKafkaProducer(builder.Configuration.GetSection("Kafka"));
 builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection("ProducerOptions"));
 
 var app = builder.Build();
