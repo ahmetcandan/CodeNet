@@ -1,0 +1,41 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet Health Check Kafka</Title>
+		<Description>CodeNet Health Check Kafka package.</Description>
+		<Copyright>Copyright 2024</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.0.7</Version>
+		<Authors>CodeNet</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;HealthCheck;Health;HealthChecks;Kafka</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\ico.png" Link="ico.png">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md">
+			<PackagePath>\</PackagePath>
+			<Pack>True</Pack>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeNet.Kafka\CodeNet.Kafka.csproj" />
+	</ItemGroup>
+
+</Project>
