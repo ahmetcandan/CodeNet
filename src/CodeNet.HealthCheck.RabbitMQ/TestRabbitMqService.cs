@@ -1,16 +1,15 @@
-﻿using CodeNet.RabbitMQ.Services;
-using CodeNet.RabbitMQ.Settings;
+﻿using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.RabbitMQ;
 
-internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> Config)
+internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> options)
 {
     public bool CanConnection()
     {
 		try
 		{
-            using var connection = Config.Value.ConnectionFactory.CreateConnection();
+            using var connection = options.Value.ConnectionFactory.CreateConnection();
             return true;
 		}
 		catch

@@ -35,10 +35,6 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="AspNetCore.HealthChecks.Rabbitmq" Version="8.0.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
 	</ItemGroup>
 

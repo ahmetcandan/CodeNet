@@ -1,9 +1,8 @@
-﻿using CodeNet.HealthCheck.RabbitMQ;
-using CodeNet.RabbitMQ.Settings;
+﻿using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
-namespace CodeNet.HealthCheck.MongoDB;
+namespace CodeNet.HealthCheck.RabbitMQ;
 
 internal class RabbitMqHealthCheck(IOptions<BaseRabbitMQOptions> config) : IHealthCheck
 {
