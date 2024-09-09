@@ -142,9 +142,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App1", "src\Sample\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App2", "src\Sample\CodeNet_App2\CodeNet_App2.csproj", "{C8518182-667D-4678-A1B1-69B9E16DB254}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet_App3", "src\Sample\CodeNet_App3\CodeNet_App3.csproj", "{171CBF4A-D39E-407A-B172-38697348F3A6}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet_App3", "src\Sample\CodeNet_App3\CodeNet_App3.csproj", "{171CBF4A-D39E-407A-B172-38697348F3A6}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.Kafka", "src\CodeNet.Kafka\CodeNet.Kafka.csproj", "{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Kafka", "src\CodeNet.Kafka\CodeNet.Kafka.csproj", "{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.HealthCheck.Kafka", "src\CodeNet.HealthCheck.Kafka\CodeNet.HealthCheck.Kafka.csproj", "{405916CF-BA73-470B-B944-1AB35F382F1B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.Mapper.Tests", "test\CodeNet.Mapper.Tests\CodeNet.Mapper.Tests.csproj", "{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -396,6 +400,14 @@ Global
 		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{405916CF-BA73-470B-B944-1AB35F382F1B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{405916CF-BA73-470B-B944-1AB35F382F1B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{405916CF-BA73-470B-B944-1AB35F382F1B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{405916CF-BA73-470B-B944-1AB35F382F1B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -468,6 +480,8 @@ Global
 		{C8518182-667D-4678-A1B1-69B9E16DB254} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 		{171CBF4A-D39E-407A-B172-38697348F3A6} = {06AA95E6-BCD6-443D-ABA7-133BF10AD891}
 		{DB84F0E8-AF75-4ABF-AF63-E0C7ADC2BFDB} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{405916CF-BA73-470B-B944-1AB35F382F1B} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{4579D5F7-EEB4-4540-BFD5-68C78CB26E4B} = {15230BF4-2524-43B5-9759-89F96C6C3A19}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}
