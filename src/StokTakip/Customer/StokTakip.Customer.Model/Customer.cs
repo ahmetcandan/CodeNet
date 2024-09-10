@@ -9,15 +9,15 @@ public class Customer : TracingEntity
 
     [Required]
     [MaxLength(100)]
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     [Required]
     [MaxLength(10)]
-    public required string No { get; set; }
+    public string No { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public required string Code { get; set; }
+    public string Code { get; set; }
 
     [MaxLength(100)]
     public string? Description { get; set; }

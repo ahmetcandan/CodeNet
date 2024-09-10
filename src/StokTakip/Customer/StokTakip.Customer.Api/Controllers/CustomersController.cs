@@ -17,7 +17,7 @@ namespace StokTakip.Customer.Api.Controllers;
 [Route("[controller]")]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    [Authorize]
+    //[Authorize]
     [HttpGet("{customerId}")]
     [Cache(10)]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
@@ -85,13 +85,15 @@ public class RabbitMQController(ProducerServiceA producerServiceA, ProducerServi
     [HttpPost("A")]
     public IActionResult SendA(QueueData data)
     {
-        return Ok(producerServiceA.Publish(data));
+        producerServiceA.Publish(data);
+        return Ok();
     }
 
     [HttpPost("B")]
     public IActionResult SendB(QueueData data)
     {
-        return Ok(producerServiceB.Publish(data));
+        producerServiceB.Publish(data);
+        return Ok();
     }
 }
 

@@ -17,7 +17,6 @@ using CodeNet.EntityFramework.InMemory.Extensions;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Service;
 using StokTakip.Customer.Abstraction.Service;
-using StokTakip.Customer.Service.Mapper;
 using CodeNet.RabbitMQ.Extensions;
 using StokTakip.Customer.Contract.Model;
 using CodeNet.RabbitMQ.Services;
@@ -31,6 +30,11 @@ using CodeNet.StackExchange.Redis.Extensions;
 using CodeNet.StackExchange.Redis.Services;
 using CodeNet.Parameters.MongoDB.Extensions;
 using CodeNet.BackgroundJob.Settings;
+using CodeNet.MakerChecker.Extensions;
+using CodeNet.Mapper.Extensions;
+using StokTakip.Customer.Contract.Request;
+using CodeNet.Mapper.Configurations;
+using StokTakip.Customer.Contract.Response;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -69,13 +73,23 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
         //options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));
         options.AddElasticsearchHealthCheck();
     })
-    .AddBackgroundJob(options =>
+    //.AddBackgroundJob(options =>
+    //{
+    //    //options.AddRedis(builder.Configuration.GetSection("Redis"));
+    //    options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(115), new() { ExpryTime = TimeSpan.FromSeconds(1) });
+    //    options.AddScheduleJob<TestService2>("TestService2", TimeSpan.FromSeconds(130), new() { ExpryTime = TimeSpan.FromSeconds(1) });
+    //    //options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
+    //    options.AddCurrentAuth();
+    //})
+    .AddMapper(c => 
     {
-        //options.AddRedis(builder.Configuration.GetSection("Redis"));
-        options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(115), new() { ExpryTime = TimeSpan.FromSeconds(1) });
-        options.AddScheduleJob<TestService2>("TestService2", TimeSpan.FromSeconds(130), new() { ExpryTime = TimeSpan.FromSeconds(1) });
-        //options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
-        options.AddCurrentAuth();
+        c.CreateMap<CreateCustomerRequest, Customer>()
+            .Map(s => s.Name, d => d.Name)
+            .Map(s => s.Number, d => d.No);
+
+        c.CreateMap<CustomerResponse, Customer>()
+            .Map(s => s.Name, d => d.Name)
+            .Map(s => s.Number, d => d.No);
     })
     ;
 
@@ -84,7 +98,6 @@ builder.Services.AddScoped<IKeyValueRepository, KeyValueMongoRepository>();
 builder.Services.AddScoped<IAKeyValueRepository, AKeyValueMongoRepository>();
 builder.Services.AddScoped<IBKeyValueRepository, BKeyValueMongoRepository>();
 builder.Services.AddScoped<ICustomerService, CustomerService>();
-builder.Services.AddScoped<IAutoMapperConfiguration, AutoMapperConfiguration>();
 
 
 var app = builder.Build();
@@ -102,7 +115,7 @@ app.UseDistributedCache();
 app.UseDistributedLock();
 app.UseExceptionHandling();
 app.UseCodeNetHealthChecks();
-app.UseBackgroundService();
+//app.UseBackgroundService();
 //app.UseRabbitMQConsumer<ConsumerServiceA>();
 //app.UseRabbitMQConsumer<ConsumerServiceB>();
 //app.UseStackExcahangeConsumer<RedisConsumerServiceA>();

@@ -23,16 +23,18 @@ public class RedisProducerServiceB(IOptions<StackExchangeProducerOptions<RedisPr
 
 public class RedisMessageHandlerA : IStackExchangeConsumerHandler<RedisConsumerServiceA>
 {
-    public void Handler(ReceivedMessageEventArgs args)
+    public Task Handler(ReceivedMessageEventArgs args)
     {
         Console.WriteLine($"Consumed A: {args.Channel} - {args.Message}");
+        return Task.CompletedTask;
     }
 }
 
 public class RedisMessageHandlerB : IStackExchangeConsumerHandler<RedisConsumerServiceB>
 {
-    public void Handler(ReceivedMessageEventArgs args)
+    public Task Handler(ReceivedMessageEventArgs args)
     {
         Console.WriteLine($"Consumed B: {args.Channel} - {args.Message}");
+        return Task.CompletedTask;
     }
 }

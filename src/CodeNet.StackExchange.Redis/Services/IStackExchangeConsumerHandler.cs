@@ -5,5 +5,5 @@ namespace CodeNet.StackExchange.Redis.Services;
 public interface IStackExchangeConsumerHandler<TConsumerService>
     where TConsumerService : StackExchangeConsumerService
 {
-    void Handler(ReceivedMessageEventArgs args);
+    Task Handler(ReceivedMessageEventArgs args);
 }
