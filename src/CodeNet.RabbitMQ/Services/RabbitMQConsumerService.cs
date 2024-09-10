@@ -8,13 +8,14 @@ namespace CodeNet.RabbitMQ.Services;
 
 public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
 {
-    private EventingBasicConsumer? _consumer;
+    private AsyncEventingBasicConsumer? _consumer;
     private IConnection? _connection;
     private IModel? _channel;
 
     public void StartListening()
     {
         _connection = options.Value.ConnectionFactory.CreateConnection();
+        options.Value.ConnectionFactory.DispatchConsumersAsync = true;
         _channel = _connection.CreateModel();
 
         if (options.Value.DeclareQueue)
@@ -36,7 +37,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                                 routingKey: options.Value.RoutingKey,
                                 arguments: options.Value.QueueBindArguments);
 
-        _consumer = new EventingBasicConsumer(_channel);
+        _consumer = new AsyncEventingBasicConsumer(_channel);
 
         if (options.Value.Qos is not null)
             _channel.BasicQos(prefetchSize: options.Value.Qos.PrefetchSize, prefetchCount: options.Value.Qos.PrefetchCount, global: options.Value.Qos.Global);
@@ -51,10 +52,10 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                                  consumer: _consumer);
     }
 
-    private async void MessageHandler(object? model, BasicDeliverEventArgs args)
+    private Task MessageHandler(object? model, BasicDeliverEventArgs args)
     {
         if (ReceivedMessage is not null)
-            await ReceivedMessage.Invoke(new ReceivedMessageEventArgs
+            return ReceivedMessage.Invoke(new ReceivedMessageEventArgs
             {
                 Data = args.Body,
                 MessageId = args.BasicProperties?.MessageId,
@@ -65,6 +66,8 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                 RoutingKey = args.RoutingKey,
                 Redelivered = args.Redelivered
             });
+
+        return Task.CompletedTask;
     }
 
     public void StopListening()
