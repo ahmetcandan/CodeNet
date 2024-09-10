@@ -11,11 +11,17 @@ public static class MapperServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder> action)
+    public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder>? action = null)
     {
-        MapperConfigurationBuilder builder = new();
-        action(builder);
-        services.Configure<MapperConfiguration>(c => c.MapperItems = builder.GetMapperItems);
+        if (action is not null)
+        {
+            MapperConfigurationBuilder builder = new();
+            action(builder);
+            services.Configure<MapperConfiguration>(c => c.MapperItems = builder.GetMapperItems);
+        }
+        else
+            services.Configure<MapperConfiguration>(c => c.MapperItems = []);
+
         return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
     }
 }

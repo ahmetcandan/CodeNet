@@ -1,5 +1,7 @@
+using CodeNet.Mapper.Extensions;
 using CodeNet.Mapper.Services;
 using CodeNet.Mapper.Tests.Models;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Mapper.Tests
 {
@@ -25,7 +27,11 @@ namespace CodeNet.Mapper.Tests
                 Ids = [1, 2, 3],
                 Detail = new PersonDetail { Description = "Detail 123" }
             };
-            var result = CodeNetMapper.MapTo<Person, Personel>(person);
+            IServiceCollection services = new ServiceCollection();
+            services.AddMapper();
+            var serviceProvider = services.BuildServiceProvider();
+            var mapper = serviceProvider.GetRequiredService<ICodeNetMapper>();
+            var result = mapper.MapTo<Person, Personel>(person);
 
             Assert.That(result, Is.Not.Null);
             Assert.Multiple(() =>
