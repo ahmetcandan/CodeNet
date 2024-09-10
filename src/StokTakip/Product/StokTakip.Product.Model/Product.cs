@@ -9,11 +9,11 @@ public class Product : TracingEntity
 
     [Required]
     [MaxLength(150)]
-    public required string Name { get; set; }
+    public string Name { get; set; }
 
     [Required]
     [MaxLength(50)]
-    public required string Code { get; set; }
+    public string Code { get; set; }
 
     [MaxLength(100)]
     public string? Barcode { get; set; }
