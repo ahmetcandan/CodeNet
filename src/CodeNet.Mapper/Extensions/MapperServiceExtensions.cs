@@ -1,7 +1,8 @@
-﻿using AutoMapper;
+﻿using CodeNet.Mapper.Configurations;
+using CodeNet.Mapper.Services;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeNet.MakerChecker.Extensions;
+namespace CodeNet.Mapper.Extensions;
 
 public static class MapperServiceExtensions
 {
@@ -10,8 +11,11 @@ public static class MapperServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMapper(this IServiceCollection services)
+    public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder> action)
     {
-        return services.AddScoped<IMapper, AutoMapper.Mapper>();
+        MapperConfigurationBuilder builder = new();
+        action(builder);
+        services.Configure<MapperConfiguration>(c => c.MapperItems = builder.GetMapperItems);
+        return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
     }
 }

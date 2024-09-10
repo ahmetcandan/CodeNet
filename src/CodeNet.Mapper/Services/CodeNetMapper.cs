@@ -1,19 +1,21 @@
-﻿using System.Collections;
+﻿using CodeNet.Mapper.Configurations;
+using Microsoft.Extensions.Options;
+using System.Collections;
 using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace CodeNet.Mapper.Services;
 
-public class CodeNetMapper
+internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
-    public static TDestination MapTo<TSource, TDestination>([NotNull] TSource source)
+    public TDestination MapTo<TSource, TDestination>([NotNull] TSource source)
         where TDestination : new()
         where TSource : new()
     {
         return MapTo<TSource, TDestination>(source, 0);
     }
 
-    private static TDestination MapTo<TSource, TDestination>([NotNull] TSource source, int depth = 0)
+    private TDestination MapTo<TSource, TDestination>([NotNull] TSource source, int depth = 0)
         where TDestination : new()
         where TSource : new()
     {
@@ -23,20 +25,36 @@ public class CodeNetMapper
         return (TDestination)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), depth);
     }
 
-    private static object MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
+    private Dictionary<string, string>? GetMapperConfiguration(Type sourceType, Type destinationType)
+    {
+        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
+        if (source is not null)
+            return source.Columns;
+
+        var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
+        if (destination is not null)
+            return destination.RevertColumns;
+
+        return null;
+    }
+
+    private object MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
     {
         if (sourceType.Equals(destinationType))
             return source;
 
         var destinationProperties = destinationType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var sourceProperties = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var mapperColumns = GetMapperConfiguration(sourceType, destinationType);
+
         for (var i = 0; i < sourceProperties.Length; i++)
         {
             var sourceProp = sourceProperties[i];
             if (!sourceProp.CanRead)
                 continue;
 
-            var targetProp = destinationProperties.FirstOrDefault(c => c.Name.Equals(sourceProp.Name) && c.CanWrite);
+            string destinationColumnName = mapperColumns?.ContainsKey(sourceProp.Name) is true ? mapperColumns[sourceProp.Name] : sourceProp.Name;
+            var targetProp = destinationProperties.FirstOrDefault(c => c.Name.Equals(destinationColumnName) && c.CanWrite);
             if (targetProp is null)
                 continue;
 
