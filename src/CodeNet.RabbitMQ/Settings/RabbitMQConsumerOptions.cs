@@ -4,6 +4,7 @@ namespace CodeNet.RabbitMQ.Settings;
 
 public class RabbitMQConsumerOptions : BaseRabbitMQOptions
 {
+    public bool AsyncConsumer { get; set; } = false;
     public bool AutoAck { get; set; } = false;
     public bool NoLocal { get; set; } = false;
     public string ConsumerTag { get; set; } = "";

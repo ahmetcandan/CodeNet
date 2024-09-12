@@ -62,6 +62,7 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
         var basicProperties = channel.CreateBasicProperties();
         basicProperties.MessageId = messageId;
         basicProperties.Headers = headers;
+        basicProperties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
 
         channel.BasicPublish(exchange: options.Value.Exchange,
                              routingKey: options.Value.RoutingKey,

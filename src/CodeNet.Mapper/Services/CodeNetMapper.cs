@@ -1,4 +1,5 @@
 ﻿using CodeNet.Mapper.Configurations;
+using CodeNet.Mapper.Extensions;
 using Microsoft.Extensions.Options;
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
@@ -25,27 +26,17 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         return (TDestination)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), depth);
     }
 
-    private Dictionary<string, string>? GetMapperConfiguration(Type sourceType, Type destinationType)
+    private object? MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
     {
-        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
-        if (source is not null)
-            return source.Columns;
+        if (depth > GetMaxDepth(sourceType, destinationType))
+            return null;
 
-        var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
-        if (destination is not null)
-            return destination.RevertColumns;
-
-        return null;
-    }
-
-    private object MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
-    {
         if (sourceType.Equals(destinationType))
             return source;
 
         var destinationProperties = destinationType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var sourceProperties = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
-        var mapperColumns = GetMapperConfiguration(sourceType, destinationType);
+        var mapperColumns = GetMapperColumns(sourceType, destinationType);
 
         for (var i = 0; i < sourceProperties.Length; i++)
         {
@@ -78,7 +69,8 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
                         continue;
 
                     var mappedItem = MapTo(item.GetType(), itemType, item, destinationResult, depth + 1);
-                    destinationList.Add(mappedItem);
+                    if (mappedItem is not null)
+                        destinationList.Add(mappedItem);
                 }
 
                 targetProp.SetValue(result, destinationList);
@@ -90,7 +82,8 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
                     continue;
 
                 var propValue = MapTo(sourceProp.PropertyType, targetProp.PropertyType, value, destinationValue, depth + 1);
-                targetProp.SetValue(result, propValue);
+                if (propValue is not null)
+                    targetProp.SetValue(result, propValue);
             }
             else
             {
@@ -100,5 +93,35 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         }
 
         return result;
+    }
+
+    private int GetMaxDepth(Type sourceType, Type destinationType)
+    {
+        int? maxDepth = null;
+        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
+        if (source is not null)
+            maxDepth = source.MaxDepth;
+
+        if (!maxDepth.HasValue)
+        {
+            var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
+            if (destination is not null)
+                maxDepth = destination.MaxDepth;
+        }
+
+        return maxDepth ?? (options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH);
+    }
+
+    private Dictionary<string, string>? GetMapperColumns(Type sourceType, Type destinationType)
+    {
+        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
+        if (source is not null)
+            return source.Columns;
+
+        var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
+        if (destination is not null)
+            return destination.RevertColumns;
+
+        return null;
     }
 }

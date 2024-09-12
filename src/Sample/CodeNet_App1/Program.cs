@@ -7,8 +7,8 @@ using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"));
-//builder.Services.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"));
-builder.Services.AddKafkaProducer(builder.Configuration.GetSection("Kafka"));
+builder.Services.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"));
+//builder.Services.AddKafkaProducer(builder.Configuration.GetSection("Kafka"));
 builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection("ProducerOptions"));
 
 var app = builder.Build();

@@ -6,13 +6,20 @@ namespace CodeNet.RabbitMQ.Models;
 public class ReceivedMessageEventArgs : EventArgs
 {
     public required ReadOnlyMemory<byte> Data { get; set; }
-    public string? MessageId { get; set; }
-    public IDictionary<string, object>? Headers { get; set; }
-    public string? Exchange { get; set; }
-    public string? RoutingKey { get; set; }
-    public string? ConsumerTag { get; set; }
-    public ulong DeliveryTag { get; set; }
-    public bool Redelivered { get; set; }
+    public string? MessageId { get; internal set; }
+    public IDictionary<string, object>? Headers { get; internal set; }
+    public string? Exchange { get; internal set; }
+    public string? RoutingKey { get; internal set; }
+    public string? ConsumerTag { get; internal set; }
+    public ulong DeliveryTag { get; internal set; }
+    public bool Redelivered { get; internal set; }
+    public DateTime? ReceivedTime { get; internal set; }
+    public string? AppId { get; internal set; }
+    public string? ClusterId { get; internal set; }
+    public DeliveredMode DeliveryMode { get; internal set; }
+    public byte? Priority { get; internal set; }
+    public string? CorrelationId { get; internal set; }
+    public string? Type { get; internal set; }
 
     public TModel? GetDataToModel<TModel>()
     {
