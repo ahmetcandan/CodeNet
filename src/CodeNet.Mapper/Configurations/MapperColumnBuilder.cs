@@ -13,10 +13,15 @@ public class MapperColumnBuilder<TSource, TDestination>
         _item = new MapperItem(typeof(TSource), typeof(TDestination));
     }
 
-    internal MapperItem GetMapperItem { get { return _item; } }
+    internal MapperItem MapperItem { get { return _item; } }
 
     internal bool AddMapColumn(Expression<Func<TSource, object>> sourceColumn, Expression<Func<TDestination, object>> destinationColumn)
     {
         return _item.AddColumn(string.Join('.', sourceColumn.Body.ToString().Split('.')[1..]), string.Join('.', destinationColumn.Body.ToString().Split('.')[1..]));
+    }
+
+    internal void SetMaxDepth(int maxDepth)
+    {
+        _item.MaxDepth = maxDepth;
     }
 }

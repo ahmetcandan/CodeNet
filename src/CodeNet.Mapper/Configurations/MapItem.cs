@@ -11,4 +11,5 @@ internal class MapperItem(Type sourceType, Type destinationType)
     public Type DestinationType { get; set; } = destinationType;
     public Dictionary<string, string> Columns { get; set; } = [];
     public Dictionary<string, string> RevertColumns { get; set; } = [];
+    public int MaxDepth { get; set; }
 }
