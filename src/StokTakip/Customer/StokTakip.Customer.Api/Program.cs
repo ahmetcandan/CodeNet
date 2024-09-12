@@ -83,13 +83,16 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     //})
     .AddMapper(c => 
     {
+        c.SetMaxDepth(3);
+
         c.CreateMap<CreateCustomerRequest, Customer>()
             .Map(s => s.Name, d => d.Name)
             .Map(s => s.Number, d => d.No);
 
         c.CreateMap<CustomerResponse, Customer>()
             .Map(s => s.Name, d => d.Name)
-            .Map(s => s.Number, d => d.No);
+            .Map(s => s.Number, d => d.No)
+            .MaxDepth(4);
     })
     ;
 
