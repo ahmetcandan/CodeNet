@@ -22,4 +22,8 @@ public interface IMakerCheckerManager
     Task<FlowUpdateModel> DeleteFlowAsync(Guid flowId, CancellationToken cancellationToken = default);
     List<MakerCheckerPending> GetPendingList();
     Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default);
+    Task<TMakerCheckerEntity> ApproveAsync<TMakerCheckerEntity>(Guid referenceId, string description, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    TMakerCheckerEntity Approve<TMakerCheckerEntity>(Guid referenceId, string description)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity;
 }

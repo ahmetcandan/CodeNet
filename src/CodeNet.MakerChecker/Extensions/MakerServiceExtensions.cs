@@ -1,5 +1,6 @@
 ﻿using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
+using CodeNet.MakerChecker.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 

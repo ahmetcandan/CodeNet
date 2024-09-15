@@ -2,14 +2,17 @@
 using CodeNet.MakerChecker.Exception;
 using CodeNet.MakerChecker.Models;
 using CodeNet.MakerChecker.Repositories;
+using System.Reflection;
+using System.Threading;
 
-namespace CodeNet.MakerChecker;
+namespace CodeNet.MakerChecker.Service;
 
 internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetContext identityContext) : IMakerCheckerManager
     where TDbContext : MakerCheckerDbContext
 {
     private readonly MakerCheckerDefinitionRepository _makerCheckerDefinitionRepository = new(dbContext, identityContext);
     private readonly MakerCheckerFlowRepository _makerCheckerFlowRepository = new(dbContext, identityContext);
+    private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository = new(dbContext, identityContext);
 
     public Guid InsertDefinition<TMakerCheckerEntity>()
         where TMakerCheckerEntity : class, IMakerCheckerEntity
@@ -169,5 +172,227 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
     public Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default)
     {
         return _makerCheckerFlowRepository.GetPendingListAsync(cancellationToken);
+    }
+
+    public async Task<TMakerCheckerEntity> ApproveAsync<TMakerCheckerEntity>(Guid referenceId, string description, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        InternalMakerCheckerReposiyory<TMakerCheckerEntity> makerCheckerRepository = new(dbContext, identityContext);
+
+        var entity = await makerCheckerRepository.GetByReferenceIdAsync(referenceId, cancellationToken) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+        TMakerCheckerEntity? mainEntity = null;
+        if (entity.MainReferenceId.HasValue)
+            mainEntity = await makerCheckerRepository.GetByReferenceIdAsync(entity.MainReferenceId.Value, cancellationToken) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntryState is EntryState.Update or EntryState.Delete && mainEntity is null)
+            throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntityStatus is not EntityStatus.Pending)
+            throw new MakerCheckerException(ExceptionMessages.NoPendingData);
+
+        var flowHistories = await makerCheckerRepository.GetMakerCheckerFlowHistoryListAsync(referenceId, cancellationToken);
+        var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
+
+        var username = identityContext.UserName;
+        var roles = identityContext.Roles;
+
+        if (flowHistory.ApproveType is ApproveType.User && !flowHistory.Approver.Equals(username, StringComparison.OrdinalIgnoreCase))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        if (flowHistory.ApproveType is ApproveType.Role && !roles.Any(r => r.Equals(flowHistory.Approver)))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        flowHistory.MakerCheckerHistory.ApproveStatus = ApproveStatus.Approved;
+        flowHistory.MakerCheckerHistory.Description = description;
+        _makerCheckerHistoryRepository.Update(flowHistory.MakerCheckerHistory);
+
+        if (flowHistories.All(c => c.MakerCheckerHistory.ApproveStatus is ApproveStatus.Approved))
+        {
+            entity.EntityStatus = EntityStatus.Completed;
+
+            switch (entity.EntryState)
+            {
+                case EntryState.Insert:
+                    entity.IsActive = true;
+                    break;
+                case EntryState.Update:
+                    entity.IsActive = false;
+                    Copy(mainEntity, entity);
+                    makerCheckerRepository.InternalUpdate(mainEntity!);
+                    break;
+                case EntryState.Delete:
+                    entity.IsActive = false;
+                    makerCheckerRepository.InternalRemove(mainEntity!);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            var nextHistory = flowHistories.FirstOrDefault(c => c.Order > entity.Order);
+            if (nextHistory is not null)
+                entity.Order = nextHistory.Order;
+        }
+        makerCheckerRepository.InternalUpdate(entity);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return entity;
+    }
+
+    public TMakerCheckerEntity Approve<TMakerCheckerEntity>(Guid referenceId, string description)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        InternalMakerCheckerReposiyory<TMakerCheckerEntity> makerCheckerRepository = new(dbContext, identityContext);
+
+        var entity = makerCheckerRepository.GetByReferenceId(referenceId) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+        TMakerCheckerEntity? mainEntity = null;
+        if (entity.MainReferenceId.HasValue)
+            mainEntity = makerCheckerRepository.GetByReferenceId(entity.MainReferenceId.Value) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntryState is EntryState.Update or EntryState.Delete && mainEntity is null)
+            throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntityStatus is not EntityStatus.Pending)
+            throw new MakerCheckerException(ExceptionMessages.NoPendingData);
+
+        var flowHistories = makerCheckerRepository.GetMakerCheckerFlowHistoryList(referenceId);
+        var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
+
+        var username = identityContext.UserName;
+        var roles = identityContext.Roles;
+
+        if (flowHistory.ApproveType is ApproveType.User && !flowHistory.Approver.Equals(username, StringComparison.OrdinalIgnoreCase))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        if (flowHistory.ApproveType is ApproveType.Role && !roles.Any(r => r.Equals(flowHistory.Approver)))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        flowHistory.MakerCheckerHistory.ApproveStatus = ApproveStatus.Approved;
+        flowHistory.MakerCheckerHistory.Description = description;
+        _makerCheckerHistoryRepository.Update(flowHistory.MakerCheckerHistory);
+
+        if (flowHistories.All(c => c.MakerCheckerHistory.ApproveStatus is ApproveStatus.Approved))
+        {
+            entity.EntityStatus = EntityStatus.Completed;
+
+            switch (entity.EntryState)
+            {
+                case EntryState.Insert:
+                    entity.IsActive = true;
+                    break;
+                case EntryState.Update:
+                    entity.IsActive = false;
+                    Copy(mainEntity, entity);
+                    makerCheckerRepository.InternalUpdate(mainEntity!);
+                    break;
+                case EntryState.Delete:
+                    entity.IsActive = false;
+                    makerCheckerRepository.InternalRemove(mainEntity!);
+                    break;
+                default:
+                    break;
+            }
+        }
+        else
+        {
+            var nextHistory = flowHistories.FirstOrDefault(c => c.Order > entity.Order);
+            if (nextHistory is not null)
+                entity.Order = nextHistory.Order;
+        }
+        makerCheckerRepository.InternalUpdate(entity);
+        dbContext.SaveChanges();
+
+        return entity;
+    }
+
+    public async Task<TMakerCheckerEntity> RejectAsync<TMakerCheckerEntity>(Guid referenceId, string description, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        InternalMakerCheckerReposiyory<TMakerCheckerEntity> makerCheckerRepository = new(dbContext, identityContext);
+        var entity = await makerCheckerRepository.GetByReferenceIdAsync(referenceId, cancellationToken) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntityStatus is not EntityStatus.Pending)
+            throw new MakerCheckerException(ExceptionMessages.NoPendingData);
+
+        var flowHistories = await makerCheckerRepository.GetMakerCheckerFlowHistoryListAsync(referenceId, cancellationToken);
+        var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
+
+        if (flowHistories.Any(c => c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Rejected))
+            throw new MakerCheckerException(ExceptionMessages.Rejected);
+
+        var username = identityContext.UserName;
+        var roles = identityContext.Roles;
+
+        if (flowHistory.ApproveType is ApproveType.User && !flowHistory.Approver.Equals(username, StringComparison.OrdinalIgnoreCase))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        if (flowHistory.ApproveType is ApproveType.Role && !roles.Any(r => r.Equals(flowHistory.Approver)))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        entity.EntityStatus = EntityStatus.Rejected;
+
+        foreach (var item in flowHistories.Where(c => c.Order > entity.Order))
+        {
+            item.MakerCheckerHistory.IsActive = false;
+            _makerCheckerHistoryRepository.Update(item.MakerCheckerHistory);
+        }
+        flowHistory.MakerCheckerHistory.ApproveStatus = ApproveStatus.Rejected;
+        flowHistory.MakerCheckerHistory.Description = description;
+        _makerCheckerHistoryRepository.Update(flowHistory.MakerCheckerHistory);
+        makerCheckerRepository.InternalUpdate(entity);
+        await dbContext.SaveChangesAsync(cancellationToken);
+
+        return entity;
+    }
+
+    public TMakerCheckerEntity Reject<TMakerCheckerEntity>(Guid referenceId, string description)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        InternalMakerCheckerReposiyory<TMakerCheckerEntity> makerCheckerRepository = new(dbContext, identityContext);
+        var entity = makerCheckerRepository.GetByReferenceId(referenceId) ?? throw new MakerCheckerException(ExceptionMessages.EntityNotFound);
+
+        if (entity.EntityStatus is not EntityStatus.Pending)
+            throw new MakerCheckerException(ExceptionMessages.NoPendingData);
+
+        var flowHistories = makerCheckerRepository.GetMakerCheckerFlowHistoryList(referenceId);
+        var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
+
+        if (flowHistories.Any(c => c.MakerCheckerHistory?.ApproveStatus == ApproveStatus.Rejected))
+            throw new MakerCheckerException(ExceptionMessages.Rejected);
+
+        var username = identityContext.UserName;
+        var roles = identityContext.Roles;
+
+        if (flowHistory.ApproveType is ApproveType.User && !flowHistory.Approver.Equals(username, StringComparison.OrdinalIgnoreCase))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        if (flowHistory.ApproveType is ApproveType.Role && !roles.Any(r => r.Equals(flowHistory.Approver)))
+            throw new MakerCheckerException(ExceptionMessages.Unauthorized);
+
+        entity.EntityStatus = EntityStatus.Rejected;
+
+        foreach (var item in flowHistories.Where(c => c.Order > entity.Order))
+        {
+            item.MakerCheckerHistory.IsActive = false;
+            _makerCheckerHistoryRepository.Update(item.MakerCheckerHistory);
+        }
+        flowHistory.MakerCheckerHistory.ApproveStatus = ApproveStatus.Rejected;
+        flowHistory.MakerCheckerHistory.Description = description;
+        _makerCheckerHistoryRepository.Update(flowHistory.MakerCheckerHistory);
+        makerCheckerRepository.InternalUpdate(entity);
+        dbContext.SaveChanges();
+
+        return entity;
+    }
+
+    private static TEntity Copy<TEntity>(TEntity source, TEntity destination)
+    {
+        var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var baseProperties = typeof(MakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        foreach (var property in properties.Where(c => !baseProperties.Select(d => d.Name).Contains(c.Name)))
+            property.SetValue(source, property.GetValue(destination));
+
+        return source;
     }
 }

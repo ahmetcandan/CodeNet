@@ -1,4 +1,6 @@
-﻿namespace CodeNet.ExceptionHandling;
+﻿using CodeNet.Core.Models;
+
+namespace CodeNet.ExceptionHandling;
 
 public class CodeNetException : Exception
 {
@@ -12,6 +14,12 @@ public class CodeNetException : Exception
     {
         UserMessage = message;
         Code = code;
+    }
+
+    public CodeNetException(ExceptionMessage exceptionMessage)
+    {
+        UserMessage = exceptionMessage.Message;
+        Code = exceptionMessage.Code;
     }
 
     public CodeNetException(string code, string message, int httpStatusCode)

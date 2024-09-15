@@ -4,15 +4,9 @@ namespace CodeNet.MakerChecker.Models;
 
 public abstract class MakerCheckerEntity : TracingEntity, IMakerCheckerEntity
 {
-    public Guid? ReferenceId { get; set; }
-
-    public MakerCheckerDraftEntity NewDraft(EntryState entryState, byte order)
-    {
-        var draft = new MakerCheckerDraftEntity();
-        draft.SetOrder(order);
-        draft.SetNewReferenceId();
-        draft.SetApproveStatus(ApproveStatus.Pending);
-        draft.SetEntryState(entryState);
-        return draft;
-    }
+    public Guid ReferenceId { get; set; }
+    public Guid? MainReferenceId { get; set; }
+    public EntryState EntryState { get; set; }
+    public EntityStatus EntityStatus { get; set; }
+    public byte Order { get; set; }
 }

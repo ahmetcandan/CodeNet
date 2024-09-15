@@ -12,5 +12,5 @@ public class MakerCheckerDefinition : TracingEntity, ISoftDelete
     public string EntityName { get; set; } = "";
 
     [MaxLength(250)]
-    public string Description { get; set; }
+    public string? Description { get; set; }
 }
