@@ -217,8 +217,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     private IQueryable<MakerCheckerFlowHistory> GetMakerCheckerFlowHistoryListQueryable(Guid referenceId)
     {
         return from definition in _makerCheckerDefinitions
-               join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
-               join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
+               join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
+               join history in _makerCheckerHistories on flow.Id equals history.FlowId
                where definition.EntityName == _entityName
                    && history.ReferenceId == referenceId
                    && definition.IsActive && !definition.IsDeleted
@@ -231,7 +231,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
     {
         return (from definition in _makerCheckerDefinitions
-                join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
+                join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
                 where definition.EntityName == _entityName
                     && definition.IsActive && !definition.IsDeleted
                     && flow.IsActive && !flow.IsDeleted
@@ -244,7 +244,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     {
         Id = Guid.NewGuid(),
         ApproveStatus = ApproveStatus.Pending,
-        MakerCheckerFlowId = flow.Id,
+        FlowId = flow.Id,
         ReferenceId = referenceId
     };
 

@@ -86,7 +86,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
-            MakerCheckerDefinitionId = flow.DefinitionId
+            DefinitionId = flow.DefinitionId
         });
         _makerCheckerFlowRepository.SaveChanges();
         return result.Id;
@@ -101,7 +101,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
-            MakerCheckerDefinitionId = flow.DefinitionId
+            DefinitionId = flow.DefinitionId
         }, cancellationToken);
         await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return result.Id;
@@ -140,7 +140,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             ApproveType = result.ApproveType,
             Id = flowId,
             Description = result.Description,
-            DefinitionId = result.MakerCheckerDefinitionId,
+            DefinitionId = result.DefinitionId,
             Order = result.Order
         };
     }
@@ -156,7 +156,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             ApproveType = result.ApproveType,
             Id = flowId,
             Description = result.Description,
-            DefinitionId = result.MakerCheckerDefinitionId,
+            DefinitionId = result.DefinitionId,
             Order = result.Order
         };
     }

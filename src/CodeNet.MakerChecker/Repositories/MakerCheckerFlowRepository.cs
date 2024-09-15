@@ -35,8 +35,8 @@ internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
         var username = _identityContext.UserName;
         var roles = _identityContext.Roles.ToList();
         return (from definition in _makerCheckerDefinitions
-                join flow in _makerCheckerFlows on definition.Id equals flow.MakerCheckerDefinitionId
-                join history in _makerCheckerHistories on flow.Id equals history.MakerCheckerFlowId
+                join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
+                join history in _makerCheckerHistories on flow.Id equals history.FlowId
                 where definition.IsActive && !definition.IsDeleted
                   && flow.IsActive && !flow.IsDeleted
                   && history.IsActive && !history.IsDeleted

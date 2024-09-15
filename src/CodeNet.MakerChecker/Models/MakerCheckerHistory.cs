@@ -9,7 +9,7 @@ public class MakerCheckerHistory : TracingEntity, ISoftDelete
 
     public Guid ReferenceId { get; set; }
 
-    public Guid MakerCheckerFlowId { get; set; }
+    public Guid FlowId { get; set; }
 
     public ApproveStatus ApproveStatus { get; set; }
 
