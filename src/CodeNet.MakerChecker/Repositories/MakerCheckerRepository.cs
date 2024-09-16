@@ -3,6 +3,7 @@ using CodeNet.EntityFramework.Repositories;
 using CodeNet.MakerChecker.Exception;
 using CodeNet.MakerChecker.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Reflection;
 
 namespace CodeNet.MakerChecker.Repositories;
 
@@ -28,12 +29,12 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         return Add(entity, EntryState.Insert);
     }
 
-    private TMakerCheckerEntity Add(TMakerCheckerEntity entity, EntryState entityState, Guid? mainReferenceId = null)
+    private TMakerCheckerEntity Add(TMakerCheckerEntity entity, EntryState entryState, Guid? mainReferenceId = null)
     {
         entity.EntityStatus = EntityStatus.Pending;
         entity.ReferenceId = Guid.NewGuid();
         entity.MainReferenceId = mainReferenceId;
-        entity.EntryState = entityState;
+        entity.EntryState = entryState;
         entity.IsActive = false;
 
         var flows = GetMakerCheckerFlowListQueryable().ToList();
@@ -44,7 +45,40 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
             _makerCheckerHistoryRepository.Add(NewHistory(flow, entity.ReferenceId));
 
         entity.Order = flows.Min(x => x.Order);
+        if (entryState is EntryState.Update or EntryState.Delete)
+        {
+            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<AutoIncrementAttribute>() is not null || c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
+            foreach (var property in properties)
+                property.SetValue(entity, null);
+        }
+
         return base.Add(entity);
+    }
+
+    private async Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, EntryState entryState, Guid? mainReferenceId = null, CancellationToken cancellationToken = default)
+    {
+        entity.EntityStatus = EntityStatus.Pending;
+        entity.ReferenceId = Guid.NewGuid();
+        entity.MainReferenceId = mainReferenceId;
+        entity.EntryState = entryState;
+        entity.IsActive = false;
+
+        var flows = await GetMakerCheckerFlowListQueryable().ToListAsync(cancellationToken);
+        if (flows.Count is 0)
+            throw new MakerCheckerException(ExceptionMessages.FlowNotFound);
+
+        foreach (var flow in flows)
+            await _makerCheckerHistoryRepository.AddAsync(NewHistory(flow, entity.ReferenceId), cancellationToken);
+
+        entity.Order = flows.Min(x => x.Order);
+        if (entryState is EntryState.Update or EntryState.Delete)
+        {
+            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<AutoIncrementAttribute>() is not null || c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
+            foreach (var property in properties)
+                property.SetValue(entity, null);
+        }
+
+        return await base.AddAsync(entity, cancellationToken);
     }
 
     public override Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity)
@@ -80,9 +114,29 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         return Add(entity, EntryState.Update, entity.ReferenceId);
     }
 
+    public Task<TMakerCheckerEntity> UpdateAsync(TMakerCheckerEntity entity)
+    {
+        return UpdateAsync(entity, CancellationToken.None);
+    }
+
+    public Task<TMakerCheckerEntity> UpdateAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
+    {
+        return AddAsync(entity, EntryState.Update, entity.ReferenceId, cancellationToken);
+    }
+
     public override TMakerCheckerEntity Remove(TMakerCheckerEntity entity)
     {
         return Add(entity, EntryState.Delete, entity.ReferenceId);
+    }
+    
+    public Task<TMakerCheckerEntity> RemoveAsync(TMakerCheckerEntity entity)
+    {
+        return RemoveAsync(entity, CancellationToken.None);
+    }
+
+    public Task<TMakerCheckerEntity> RemoveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
+    {
+        return AddAsync(entity, EntryState.Delete, entity.ReferenceId, cancellationToken);
     }
 
     public virtual TMakerCheckerEntity? GetByReferenceId(Guid referenceId)

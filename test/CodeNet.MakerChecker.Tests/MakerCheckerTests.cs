@@ -56,15 +56,19 @@ namespace CodeNet.MakerChecker.Tests
             //insert test data
             var entity = tableRepository.Add(new TestTable
             {
-                Name = "Test kaydı",
-                Id = 1
+                Name = "Test kaydı"
             });
             Assert.That(entity, Is.Not.Null);
             Assert.That(entity.ReferenceId, Is.Not.Empty);
 
             //insert test data + insert flow history
             var saveChangeResponse = tableRepository.SaveChanges();
-            Assert.That(saveChangeResponse, Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(entity.Id, Is.EqualTo(1));
+                Assert.That(saveChangeResponse, Is.EqualTo(3));
+            });
+            var mainId = entity.Id;
 
             var pendingList = makerCheckerManager.GetPendingList();
             Assert.That(pendingList, Has.Count.EqualTo(2));
@@ -78,7 +82,9 @@ namespace CodeNet.MakerChecker.Tests
             });
 
             //approve test data
-            makerCheckerManager.Approve<TestTable>(pendingItem.ReferenceId, "test onayı");
+            var firstApprove = makerCheckerManager.Approve<TestTable>(pendingItem.ReferenceId, "test onayı");
+            Assert.That(firstApprove, Is.Not.Null);
+            Assert.That(firstApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
 
             entity = tableRepository.GetByReferenceId(entity.ReferenceId);
             Assert.That(entity, Is.Not.Null);
@@ -91,15 +97,65 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(pendingItem, Is.Not.Null);
 
             //approve test data
-            var approvedData = makerCheckerManager.Approve<TestTable>(pendingItem.ReferenceId, "ikinci test onayı");
+            var lastApprove = makerCheckerManager.Approve<TestTable>(pendingItem.ReferenceId, "ikinci test onayı");
+            Assert.That(lastApprove, Is.Not.Null);
+            Assert.That(lastApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
             pendingList = makerCheckerManager.GetPendingList();
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            var result = tableRepository.Get(approvedData!.Id);
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+            entity = tableRepository.Get(mainId);
+            Assert.That(entity, Is.Not.Null);
+            Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            string updateName = "Test kaydı 2";
+            entity.Name = updateName;
+            var tempEntity = tableRepository.Update(entity);
+            dbContext.SaveChanges();
+            Assert.That(tempEntity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(tempEntity.Id, Is.EqualTo(2));
+                Assert.That(tempEntity.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+                Assert.That(tempEntity.MainReferenceId, Is.Not.Null);
+            });
+
+            var firstUpdateApprove = makerCheckerManager.Approve<TestTable>(tempEntity.ReferenceId, "test update onayı");
+            Assert.That(firstUpdateApprove, Is.Not.Null);
+            Assert.That(firstUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+
+            var lastUpdateApprove = makerCheckerManager.Approve<TestTable>(tempEntity.ReferenceId, "ikinci test update onayı");
+            Assert.That(lastUpdateApprove, Is.Not.Null);
+            Assert.That(lastUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            entity = tableRepository.Get(mainId);
+            Assert.That(entity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(entity.Name, Is.EqualTo(updateName));
+                Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+            });
+
+            var deletedTempEntity = tableRepository.Remove(entity);
+            dbContext.SaveChanges();
+            Assert.That(deletedTempEntity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(deletedTempEntity.Id, Is.EqualTo(3));
+                Assert.That(deletedTempEntity.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+            });
+
+            var firstDeleteApprove = makerCheckerManager.Approve<TestTable>(deletedTempEntity.ReferenceId, "test delete onayı");
+            Assert.That(firstDeleteApprove, Is.Not.Null);
+            Assert.That(firstDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+
+            var lastDeleteApprove = makerCheckerManager.Approve<TestTable>(deletedTempEntity.ReferenceId, "ikinci test delete onayı");
+            Assert.That(lastDeleteApprove, Is.Not.Null);
+            Assert.That(lastDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            entity = tableRepository.Get(mainId);
+            Assert.That(entity, Is.Null);
         }
 
         [Test]
@@ -113,7 +169,7 @@ namespace CodeNet.MakerChecker.Tests
 
             IServiceCollection services = new ServiceCollection();
             var configurationManager = new ConfigurationManager();
-            services.AddMakerChecker<MockMakerCheckerDbContext>(options => options.UseInMemoryDatabase("TestMCDb"));
+            services.AddMakerChecker<MockMakerCheckerDbContext>(options => options.UseInMemoryDatabase("TestAsyncMCDb"));
             services.AddScoped(c => mockCodeNetContext.Object);
             var serviceProvider = services.BuildServiceProvider();
             var makerCheckerManager = serviceProvider.GetRequiredService<IMakerCheckerManager>();
@@ -141,15 +197,19 @@ namespace CodeNet.MakerChecker.Tests
             //insert test data
             var entity = await tableRepository.AddAsync(new TestTable
             {
-                Name = "Test kaydı",
-                Id = 1
+                Name = "Test kaydı"
             });
             Assert.That(entity, Is.Not.Null);
             Assert.That(entity.ReferenceId, Is.Not.Empty);
 
             //insert test data + insert flow history
             var saveChangeResponse = await tableRepository.SaveChangesAsync();
-            Assert.That(saveChangeResponse, Is.EqualTo(3));
+            Assert.Multiple(() =>
+            {
+                Assert.That(entity.Id, Is.EqualTo(1));
+                Assert.That(saveChangeResponse, Is.EqualTo(3));
+            });
+            var mainId = entity.Id;
 
             var pendingList = await makerCheckerManager.GetPendingListAsync();
             Assert.That(pendingList, Has.Count.EqualTo(2));
@@ -163,7 +223,9 @@ namespace CodeNet.MakerChecker.Tests
             });
 
             //approve test data
-            await makerCheckerManager.ApproveAsync<TestTable>(pendingItem.ReferenceId, "test onayı");
+            var firstApprove = await makerCheckerManager.ApproveAsync<TestTable>(pendingItem.ReferenceId, "test onayı");
+            Assert.That(firstApprove, Is.Not.Null);
+            Assert.That(firstApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
 
             entity = await tableRepository.GetByReferenceIdAsync(entity.ReferenceId);
             Assert.That(entity, Is.Not.Null);
@@ -176,15 +238,65 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(pendingItem, Is.Not.Null);
 
             //approve test data
-            var approvedData = await makerCheckerManager.ApproveAsync<TestTable>(pendingItem.ReferenceId, "ikinci test onayı");
+            var lastApprove = await makerCheckerManager.ApproveAsync<TestTable>(pendingItem.ReferenceId, "ikinci test onayı");
+            Assert.That(lastApprove, Is.Not.Null);
+            Assert.That(lastApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
             pendingList = await makerCheckerManager.GetPendingListAsync();
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            var result = await tableRepository.GetAsync(approvedData!.Id);
-            Assert.That(result, Is.Not.Null);
-            Assert.That(result.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+            entity = await tableRepository.GetAsync(mainId);
+            Assert.That(entity, Is.Not.Null);
+            Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            string updateName = "Test kaydı 2";
+            entity.Name = updateName;
+            var tempEntity = await tableRepository.UpdateAsync(entity);
+            await dbContext.SaveChangesAsync();
+            Assert.That(tempEntity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(tempEntity.Id, Is.EqualTo(2));
+                Assert.That(tempEntity.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+                Assert.That(tempEntity.MainReferenceId, Is.Not.Null);
+            });
+
+            var firstUpdateApprove = await makerCheckerManager.ApproveAsync<TestTable>(tempEntity.ReferenceId, "test update onayı");
+            Assert.That(firstUpdateApprove, Is.Not.Null);
+            Assert.That(firstUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+
+            var lastUpdateApprove = await makerCheckerManager.ApproveAsync<TestTable>(tempEntity.ReferenceId, "ikinci test update onayı");
+            Assert.That(lastUpdateApprove, Is.Not.Null);
+            Assert.That(lastUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            entity = await tableRepository.GetAsync(mainId);
+            Assert.That(entity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(entity.Name, Is.EqualTo(updateName));
+                Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+            });
+
+            var deletedTempEntity = await tableRepository.RemoveAsync(entity);
+            await dbContext.SaveChangesAsync();
+            Assert.That(deletedTempEntity, Is.Not.Null);
+            Assert.Multiple(() =>
+            {
+                Assert.That(deletedTempEntity.Id, Is.EqualTo(3));
+                Assert.That(deletedTempEntity.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+            });
+
+            var firstDeleteApprove = await makerCheckerManager.ApproveAsync<TestTable>(deletedTempEntity.ReferenceId, "test delete onayı");
+            Assert.That(firstDeleteApprove, Is.Not.Null);
+            Assert.That(firstDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+
+            var lastDeleteApprove = await makerCheckerManager.ApproveAsync<TestTable>(deletedTempEntity.ReferenceId, "ikinci test delete onayı");
+            Assert.That(lastDeleteApprove, Is.Not.Null);
+            Assert.That(lastDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
+
+            entity = await tableRepository.GetAsync(mainId);
+            Assert.That(entity, Is.Null);
         }
 
         /*

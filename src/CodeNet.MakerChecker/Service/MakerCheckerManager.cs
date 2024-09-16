@@ -391,7 +391,12 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
         var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var baseProperties = typeof(MakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var property in properties.Where(c => !baseProperties.Select(d => d.Name).Contains(c.Name)))
-            property.SetValue(source, property.GetValue(destination));
+        {
+            var hasPrimaryKey = property.GetCustomAttribute<PrimaryKeyAttribute>() is not null;
+            var autoIncrement = property.GetCustomAttribute<AutoIncrementAttribute>() is not null;
+            if (!hasPrimaryKey && !autoIncrement)
+                property.SetValue(source, property.GetValue(destination));
+        }
 
         return source;
     }
