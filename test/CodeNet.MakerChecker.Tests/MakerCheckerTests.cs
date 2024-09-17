@@ -105,7 +105,7 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            entity = tableRepository.Get(mainId);
+            entity = tableRepository.Get(c => c.Id == mainId);
             Assert.That(entity, Is.Not.Null);
             Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
@@ -129,7 +129,7 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(lastUpdateApprove, Is.Not.Null);
             Assert.That(lastUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
-            entity = tableRepository.Get(mainId);
+            entity = tableRepository.Get(c => c.Id == mainId);
             Assert.That(entity, Is.Not.Null);
             Assert.Multiple(() =>
             {
@@ -154,7 +154,7 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(lastDeleteApprove, Is.Not.Null);
             Assert.That(lastDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
-            entity = tableRepository.Get(mainId);
+            entity = tableRepository.Get(c => c.Id == mainId);
             Assert.That(entity, Is.Null);
         }
 
@@ -246,7 +246,7 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            entity = await tableRepository.GetAsync(mainId);
+            entity = await tableRepository.GetAsync(c => c.Id == mainId);
             Assert.That(entity, Is.Not.Null);
             Assert.That(entity.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
@@ -270,7 +270,7 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(lastUpdateApprove, Is.Not.Null);
             Assert.That(lastUpdateApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
-            entity = await tableRepository.GetAsync(mainId);
+            entity = await tableRepository.GetAsync(c => c.Id == mainId);
             Assert.That(entity, Is.Not.Null);
             Assert.Multiple(() =>
             {
@@ -295,15 +295,14 @@ namespace CodeNet.MakerChecker.Tests
             Assert.That(lastDeleteApprove, Is.Not.Null);
             Assert.That(lastDeleteApprove.EntityStatus, Is.EqualTo(EntityStatus.Completed));
 
-            entity = await tableRepository.GetAsync(mainId);
+            entity = await tableRepository.GetAsync(c => c.Id == mainId);
             Assert.That(entity, Is.Null);
         }
-
-        /*
 
         [Test]
         public void Maker_Checker_Reject_Tests()
         {
+
             Mock<ICodeNetContext> mockCodeNetContext = new();
             mockCodeNetContext.Setup(c => c.UserName)
                 .Returns("admin");
@@ -347,29 +346,29 @@ namespace CodeNet.MakerChecker.Tests
             var saveChangeResponse = tableRepository.SaveChanges();
             Assert.That(saveChangeResponse, Is.EqualTo(3));
 
-            var pendingTest = tableRepository.GetDraft(entity.ReferenceId!.Value);
+            var pendingTest = tableRepository.GetByReferenceId(entity.ReferenceId);
             Assert.Multiple(() =>
             {
                 Assert.That(pendingTest, Is.Not.Null);
-                Assert.That(pendingTest!.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
-                Assert.That(pendingTest.Id, Is.EqualTo(entity.ReferenceId));
+                Assert.That(pendingTest!.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+                Assert.That(pendingTest.ReferenceId, Is.EqualTo(entity.ReferenceId));
             });
 
             var pendingList = makerCheckerManager.GetPendingList();
             Assert.That(pendingList?.Count, Is.EqualTo(2));
 
+            var pendingItem = pendingList.OrderBy(c => c.Flow.Order).First();
+
             //reject test data
-            tableRepository.Reject(pendingTest, "reddedildi...");
-            tableRepository.SaveChanges();
+            makerCheckerManager.Reject<TestTable>(pendingItem.ReferenceId, "reddedildi...");
 
 
             pendingList = makerCheckerManager.GetPendingList();
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            var draft = tableRepository.GetDraft(entity.ReferenceId.Value);
-            Assert.That(draft, Is.Not.Null);
-            Assert.That(draft.ApproveStatus, Is.EqualTo(ApproveStatus.Rejected));
+            var resultEntity = tableRepository.Get(c => c.Id == entity.Id);
+            Assert.That(resultEntity, Is.Null);
         }
 
         [Test]
@@ -418,30 +417,29 @@ namespace CodeNet.MakerChecker.Tests
             var saveChangeResponse = await tableRepository.SaveChangesAsync();
             Assert.That(saveChangeResponse, Is.EqualTo(3));
 
-            var pendingTest = await tableRepository.GetDraftAsync(entity.ReferenceId!.Value);
+            var pendingTest = await tableRepository.GetByReferenceIdAsync(entity.ReferenceId);
             Assert.Multiple(() =>
             {
                 Assert.That(pendingTest, Is.Not.Null);
-                Assert.That(pendingTest!.ApproveStatus, Is.EqualTo(ApproveStatus.Pending));
-                Assert.That(pendingTest.Id, Is.EqualTo(entity.ReferenceId));
+                Assert.That(pendingTest!.EntityStatus, Is.EqualTo(EntityStatus.Pending));
+                Assert.That(pendingTest.ReferenceId, Is.EqualTo(entity.ReferenceId));
             });
 
             var pendingList = await makerCheckerManager.GetPendingListAsync();
             Assert.That(pendingList?.Count, Is.EqualTo(2));
 
+            var pendingItem = pendingList.OrderBy(c => c.Flow.Order).First();
+
             //reject test data
-            tableRepository.Reject(pendingTest, "reddedildi...");
-            tableRepository.SaveChanges();
+            await makerCheckerManager.RejectAsync<TestTable>(pendingItem.ReferenceId, "reddedildi...");
 
 
             pendingList = await makerCheckerManager.GetPendingListAsync();
             Assert.That(pendingList?.Count, Is.EqualTo(0));
 
             //get approved data
-            var draft = await tableRepository.GetDraftAsync(entity.ReferenceId.Value);
-            Assert.That(draft, Is.Not.Null);
-            Assert.That(draft.ApproveStatus, Is.EqualTo(ApproveStatus.Rejected));
+            var resultEntity = await tableRepository.GetAsync(c => c.Id == entity.Id);
+            Assert.That(resultEntity, Is.Null);
         }
-        */
     }
 }

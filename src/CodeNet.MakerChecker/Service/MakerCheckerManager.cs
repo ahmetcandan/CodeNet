@@ -331,6 +331,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             throw new MakerCheckerException(ExceptionMessages.Unauthorized);
 
         entity.EntityStatus = EntityStatus.Rejected;
+        entity.IsActive = false;
 
         foreach (var item in flowHistories.Where(c => c.Order > entity.Order))
         {

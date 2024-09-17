@@ -1,8 +1,6 @@
 ﻿using CodeNet.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
-using StackExchange.Redis;
 using System.Linq.Expressions;
-using System.Threading;
 
 namespace CodeNet.EntityFramework.Repositories;
 

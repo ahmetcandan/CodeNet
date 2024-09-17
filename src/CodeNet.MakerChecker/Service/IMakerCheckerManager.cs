@@ -26,4 +26,8 @@ public interface IMakerCheckerManager
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
     TMakerCheckerEntity Approve<TMakerCheckerEntity>(Guid referenceId, string description)
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    Task<TMakerCheckerEntity> RejectAsync<TMakerCheckerEntity>(Guid referenceId, string description, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity;
+    TMakerCheckerEntity Reject<TMakerCheckerEntity>(Guid referenceId, string description)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity;
 }
