@@ -13,7 +13,7 @@ public class ReceivedMessageEventArgs : EventArgs
     public string? ConsumerTag { get; internal set; }
     public ulong DeliveryTag { get; internal set; }
     public bool Redelivered { get; internal set; }
-    public DateTime? ReceivedTime { get; internal set; }
+    public DateTimeOffset? Timestamp { get; internal set; }
     public string? AppId { get; internal set; }
     public string? ClusterId { get; internal set; }
     public DeliveredMode DeliveryMode { get; internal set; }

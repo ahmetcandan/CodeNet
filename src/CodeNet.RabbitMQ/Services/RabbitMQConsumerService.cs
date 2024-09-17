@@ -81,7 +81,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                 CorrelationId = args.BasicProperties?.CorrelationId,
                 Type = args.BasicProperties?.Type,
                 DeliveryMode = GetDeliveryMode(args.BasicProperties),
-                ReceivedTime = GetReceivedTime(args.BasicProperties)
+                Timestamp = GetTimestamp(args.BasicProperties)
             });
     }
 
@@ -104,16 +104,16 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                 CorrelationId = args.BasicProperties?.CorrelationId,
                 Type = args.BasicProperties?.Type,
                 DeliveryMode = GetDeliveryMode(args.BasicProperties),
-                ReceivedTime = GetReceivedTime(args.BasicProperties)
+                Timestamp = GetTimestamp(args.BasicProperties)
             });
 
         return Task.CompletedTask;
     }
 
-    private static DateTime? GetReceivedTime(IBasicProperties? basicProperties)
+    private static DateTimeOffset? GetTimestamp(IBasicProperties? basicProperties)
     {
         if (basicProperties is not null)
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime);
+            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime).AddTicks(DateTimeOffset.Now.Offset.Ticks);
 
         return null;
     }
