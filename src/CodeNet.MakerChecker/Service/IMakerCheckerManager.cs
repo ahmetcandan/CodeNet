@@ -4,20 +4,18 @@ namespace CodeNet.MakerChecker;
 
 public interface IMakerCheckerManager
 {
-    Guid InsertDefinition<TMakerCheckerEntity>()
+    Guid InsertFlow<TMakerCheckerEntity>(FlowInserModel flow)
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
-    Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default)
+    Guid InsertFlow(FlowInserModel flow, string entityName);
+    Task<Guid> InsertFlowAsync<TMakerCheckerEntity>(FlowInserModel flow, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
-    DefinitionUpdateModel UpdateDefinition<TMakerCheckerEntity>(DefinitionUpdateModel definition)
+    Task<Guid> InsertFlowAsync(FlowInserModel flow, string entityName, CancellationToken cancellationToken = default);
+    FlowUpdateModel UpdateFlow(FlowUpdateModel flow, string entityName);
+    FlowUpdateModel UpdateFlow<TMakerCheckerEntity>(FlowUpdateModel flow)
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
-    Task<DefinitionUpdateModel> UpdateDefinitionAsync<TMakerCheckerEntity>(DefinitionUpdateModel definition, CancellationToken cancellationToken = default)
+    Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, string entityName, CancellationToken cancellationToken = default);
+    Task<FlowUpdateModel> UpdateFlowAsync<TMakerCheckerEntity>(FlowUpdateModel flow, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity;
-    DefinitionUpdateModel DeleteDefinition(Guid definitionId);
-    Task<DefinitionUpdateModel> DeleteDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default);
-    Guid InsertFlow(FlowInserModel flow);
-    Task<Guid> InsertFlowAsync(FlowInserModel flow, CancellationToken cancellationToken = default);
-    FlowUpdateModel UpdateFlow(FlowUpdateModel flow);
-    Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, CancellationToken cancellationToken = default);
     FlowUpdateModel DeleteFlow(Guid flowId);
     Task<FlowUpdateModel> DeleteFlowAsync(Guid flowId, CancellationToken cancellationToken = default);
     List<MakerCheckerPending> GetPendingList();

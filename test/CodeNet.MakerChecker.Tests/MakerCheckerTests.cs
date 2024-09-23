@@ -35,21 +35,18 @@ namespace CodeNet.MakerChecker.Tests
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
 
-            var definitionId = makerCheckerManager.InsertDefinition<TestTable>();
-            makerCheckerManager.InsertFlow(new FlowInserModel
+            makerCheckerManager.InsertFlow<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 1
             });
-            makerCheckerManager.InsertFlow(new FlowInserModel
+            makerCheckerManager.InsertFlow<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı 2",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 2
             });
 
@@ -175,22 +172,19 @@ namespace CodeNet.MakerChecker.Tests
             var makerCheckerManager = serviceProvider.GetRequiredService<IMakerCheckerManager>();
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
-
-            var definitionId = await makerCheckerManager.InsertDefinitionAsync<TestTable>();
-            await makerCheckerManager.InsertFlowAsync(new FlowInserModel
+            
+            await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 1
             });
-            await makerCheckerManager.InsertFlowAsync(new FlowInserModel
+            await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı 2",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 2
             });
 
@@ -318,21 +312,18 @@ namespace CodeNet.MakerChecker.Tests
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
 
-            var definitionId = makerCheckerManager.InsertDefinition<TestTable>();
-            makerCheckerManager.InsertFlow(new FlowInserModel
+            makerCheckerManager.InsertFlow<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 1
             });
-            makerCheckerManager.InsertFlow(new FlowInserModel
+            makerCheckerManager.InsertFlow<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı 2",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 2
             });
 
@@ -389,21 +380,18 @@ namespace CodeNet.MakerChecker.Tests
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
 
-            var definitionId = await makerCheckerManager.InsertDefinitionAsync<TestTable>();
-            await makerCheckerManager.InsertFlowAsync(new FlowInserModel
+            await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 1
             });
-            await makerCheckerManager.InsertFlowAsync(new FlowInserModel
+            await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",
                 Description = "Admin Onayı 2",
                 ApproveType = ApproveType.User,
-                DefinitionId = definitionId,
                 Order = 2
             });
 

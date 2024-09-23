@@ -10,15 +10,13 @@ namespace CodeNet.MakerChecker.Repositories;
 public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMakerCheckerEntity>, IMakerCheckerRepository<TMakerCheckerEntity>
     where TMakerCheckerEntity : class, IMakerCheckerEntity
 {
-    private readonly string _entityName = typeof(TMakerCheckerEntity).Name;
-    private readonly DbSet<MakerCheckerDefinition> _makerCheckerDefinitions;
+    private readonly string _entityName = typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name;
     private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
     private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories;
     private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository;
 
     public MakerCheckerRepository(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
     {
-        _makerCheckerDefinitions = _dbContext.Set<MakerCheckerDefinition>();
         _makerCheckerFlows = _dbContext.Set<MakerCheckerFlow>();
         _makerCheckerHistories = _dbContext.Set<MakerCheckerHistory>();
         _makerCheckerHistoryRepository = new MakerCheckerHistoryRepository(dbContext, identityContext);
@@ -47,7 +45,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         entity.Order = flows.Min(x => x.Order);
         if (entryState is EntryState.Update or EntryState.Delete)
         {
-            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<AutoIncrementAttribute>() is not null || c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
+            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
             foreach (var property in properties)
                 property.SetValue(entity, null);
         }
@@ -73,7 +71,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         entity.Order = flows.Min(x => x.Order);
         if (entryState is EntryState.Update or EntryState.Delete)
         {
-            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<AutoIncrementAttribute>() is not null || c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
+            var properties = typeof(TMakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance).Where(c => c.GetCustomAttribute<Models.PrimaryKeyAttribute>() is not null);
             foreach (var property in properties)
                 property.SetValue(entity, null);
         }
@@ -151,10 +149,8 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
 
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
     {
-        return (from definition in _makerCheckerDefinitions
-                join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
-                where definition.EntityName == _entityName
-                    && definition.IsActive && !definition.IsDeleted
+        return (from flow in _makerCheckerFlows
+                where flow.EntityName == _entityName
                     && flow.IsActive && !flow.IsDeleted
                 orderby flow.Order
                 select flow)
@@ -171,16 +167,14 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
 
     internal IQueryable<MakerCheckerFlowHistory> GetMakerCheckerFlowHistoryListQueryable(Guid referenceId)
     {
-        return from definition in _makerCheckerDefinitions
-               join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
+        return from flow in _makerCheckerFlows
                join history in _makerCheckerHistories on flow.Id equals history.FlowId
-               where definition.EntityName == _entityName
+               where flow.EntityName == _entityName
                    && history.ReferenceId == referenceId
-                   && definition.IsActive && !definition.IsDeleted
                    && flow.IsActive && !flow.IsDeleted
                    && history.IsActive && !history.IsDeleted
                orderby flow.Order ascending
-               select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = definition.EntityName };
+               select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = flow.EntityName };
     }
 
     protected internal TMakerCheckerEntity InternalUpdate(TMakerCheckerEntity entity)

@@ -6,5 +6,4 @@ public class FlowInserModel
     public required string Description { get; set; }
     public ApproveType ApproveType { get; set; }
     public byte Order { get; set; }
-    public Guid DefinitionId { get; set; }
 }

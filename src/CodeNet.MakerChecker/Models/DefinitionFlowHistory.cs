@@ -2,7 +2,7 @@
 
 public class DefinitionFlowHistory
 {
-    public required MakerCheckerDefinition Definition { get; set; }
+    public required string EntityName { get; set; }
     public required MakerCheckerFlow Flow { get; set; }
     public required MakerCheckerHistory History { get; set; }
 }

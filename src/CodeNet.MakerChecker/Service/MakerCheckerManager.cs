@@ -3,84 +3,16 @@ using CodeNet.MakerChecker.Exception;
 using CodeNet.MakerChecker.Models;
 using CodeNet.MakerChecker.Repositories;
 using System.Reflection;
-using System.Threading;
 
 namespace CodeNet.MakerChecker.Service;
 
 internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetContext identityContext) : IMakerCheckerManager
     where TDbContext : MakerCheckerDbContext
 {
-    private readonly MakerCheckerDefinitionRepository _makerCheckerDefinitionRepository = new(dbContext, identityContext);
     private readonly MakerCheckerFlowRepository _makerCheckerFlowRepository = new(dbContext, identityContext);
     private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository = new(dbContext, identityContext);
 
-    public Guid InsertDefinition<TMakerCheckerEntity>()
-        where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        var result = _makerCheckerDefinitionRepository.Add(new MakerCheckerDefinition
-        {
-            EntityName = typeof(TMakerCheckerEntity).Name,
-            Id = Guid.NewGuid()
-        });
-        _makerCheckerDefinitionRepository.SaveChanges();
-        return result.Id;
-    }
-
-    public async Task<Guid> InsertDefinitionAsync<TMakerCheckerEntity>(CancellationToken cancellationToken = default)
-        where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        var result = await _makerCheckerDefinitionRepository.AddAsync(new MakerCheckerDefinition
-        {
-            EntityName = typeof(TMakerCheckerEntity).Name,
-            Id = Guid.NewGuid()
-        }, cancellationToken);
-        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
-        return result.Id;
-    }
-
-    public DefinitionUpdateModel UpdateDefinition<TMakerCheckerEntity>(DefinitionUpdateModel definition)
-        where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        var updateModel = _makerCheckerDefinitionRepository.Get(definition.Id) ?? throw new MakerCheckerException("MC007", "No records found to update.");
-        updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
-        _makerCheckerDefinitionRepository.Update(updateModel);
-        _makerCheckerDefinitionRepository.SaveChanges();
-        return definition;
-    }
-
-    public async Task<DefinitionUpdateModel> UpdateDefinitionAsync<TMakerCheckerEntity>(DefinitionUpdateModel definition, CancellationToken cancellationToken = default)
-        where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definition.Id], cancellationToken) ?? throw new MakerCheckerException("MC007", "No records found to update.");
-        updateModel.EntityName = typeof(TMakerCheckerEntity).Name;
-        _makerCheckerDefinitionRepository.Update(updateModel);
-        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
-        return definition;
-    }
-
-    public DefinitionUpdateModel DeleteDefinition(Guid definitionId)
-    {
-        var updateModel = _makerCheckerDefinitionRepository.Get(definitionId) ?? throw new MakerCheckerException("MC009", "No records found to delete.");
-        var result = _makerCheckerDefinitionRepository.Remove(updateModel);
-        _makerCheckerDefinitionRepository.SaveChanges();
-        return new DefinitionUpdateModel
-        {
-            Id = result.Id
-        };
-    }
-
-    public async Task<DefinitionUpdateModel> DeleteDefinitionAsync(Guid definitionId, CancellationToken cancellationToken = default)
-    {
-        var updateModel = await _makerCheckerDefinitionRepository.GetAsync([definitionId], cancellationToken) ?? throw new MakerCheckerException("MC009", "No records found to delete.");
-        var result = _makerCheckerDefinitionRepository.Remove(updateModel);
-        await _makerCheckerDefinitionRepository.SaveChangesAsync(cancellationToken);
-        return new DefinitionUpdateModel
-        {
-            Id = result.Id
-        };
-    }
-
-    public Guid InsertFlow(FlowInserModel flow)
+    public Guid InsertFlow(FlowInserModel flow, string entityName)
     {
         var result = _makerCheckerFlowRepository.Add(new MakerCheckerFlow
         {
@@ -89,13 +21,19 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
-            DefinitionId = flow.DefinitionId
+            EntityName = entityName
         });
         _makerCheckerFlowRepository.SaveChanges();
         return result.Id;
     }
 
-    public async Task<Guid> InsertFlowAsync(FlowInserModel flow, CancellationToken cancellationToken = default)
+    public Guid InsertFlow<TMakerCheckerEntity>(FlowInserModel flow)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        return InsertFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
+    }
+
+    public async Task<Guid> InsertFlowAsync(FlowInserModel flow, string entityName, CancellationToken cancellationToken = default)
     {
         var result = await _makerCheckerFlowRepository.AddAsync(new MakerCheckerFlow
         {
@@ -104,32 +42,52 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             Description = flow.Description,
             Id = Guid.NewGuid(),
             Order = flow.Order,
-            DefinitionId = flow.DefinitionId
+            EntityName = entityName
         }, cancellationToken);
         await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return result.Id;
     }
 
-    public FlowUpdateModel UpdateFlow(FlowUpdateModel flow)
+    public Task<Guid> InsertFlowAsync<TMakerCheckerEntity>(FlowInserModel flow, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        return InsertFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
+    }
+
+    public FlowUpdateModel UpdateFlow(FlowUpdateModel flow, string entityName)
     {
         var updateModel = _makerCheckerFlowRepository.Get(flow.Id) ?? throw new MakerCheckerException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
         updateModel.Description = flow.Description;
+        updateModel.EntityName = entityName;
         _makerCheckerFlowRepository.Update(updateModel);
         _makerCheckerFlowRepository.SaveChanges();
         return flow;
     }
 
-    public async Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, CancellationToken cancellationToken = default)
+    public FlowUpdateModel UpdateFlow<TMakerCheckerEntity>(FlowUpdateModel flow)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        return UpdateFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
+    }
+
+    public async Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, string entityName, CancellationToken cancellationToken = default)
     {
         var updateModel = await _makerCheckerFlowRepository.GetAsync([flow.Id], cancellationToken) ?? throw new MakerCheckerException("MC008", "No records found to update.");
         updateModel.Approver = flow.Approver;
         updateModel.ApproveType = flow.ApproveType;
         updateModel.Description = flow.Description;
+        updateModel.EntityName = entityName;
         _makerCheckerFlowRepository.Update(updateModel);
         await _makerCheckerFlowRepository.SaveChangesAsync(cancellationToken);
         return flow;
+    }
+
+    public Task<FlowUpdateModel> UpdateFlowAsync<TMakerCheckerEntity>(FlowUpdateModel flow, CancellationToken cancellationToken = default)
+        where TMakerCheckerEntity : class, IMakerCheckerEntity
+    {
+        return UpdateFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
     }
 
     public FlowUpdateModel DeleteFlow(Guid flowId)
@@ -143,7 +101,6 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             ApproveType = result.ApproveType,
             Id = flowId,
             Description = result.Description,
-            DefinitionId = result.DefinitionId,
             Order = result.Order
         };
     }
@@ -159,7 +116,6 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
             ApproveType = result.ApproveType,
             Id = flowId,
             Description = result.Description,
-            DefinitionId = result.DefinitionId,
             Order = result.Order
         };
     }
@@ -192,7 +148,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
         var flowHistories = await makerCheckerRepository.GetMakerCheckerFlowHistoryListAsync(referenceId, cancellationToken);
         var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
-
+        
         var username = identityContext.UserName;
         var roles = identityContext.Roles;
 
@@ -393,9 +349,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
         var baseProperties = typeof(MakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var property in properties.Where(c => !baseProperties.Select(d => d.Name).Contains(c.Name)))
         {
-            var hasPrimaryKey = property.GetCustomAttribute<PrimaryKeyAttribute>() is not null;
-            var autoIncrement = property.GetCustomAttribute<AutoIncrementAttribute>() is not null;
-            if (!hasPrimaryKey && !autoIncrement)
+            if (property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
                 property.SetValue(source, property.GetValue(destination));
         }
 

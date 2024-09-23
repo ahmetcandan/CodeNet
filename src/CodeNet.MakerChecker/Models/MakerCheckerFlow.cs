@@ -7,7 +7,7 @@ public class MakerCheckerFlow : TracingEntity, ISoftDelete
 {
     public Guid Id { get; set; }
 
-    public Guid DefinitionId { get; set; }
+    public required string EntityName { get; set; }
 
     public byte Order { get; set; }
 

@@ -36,11 +36,11 @@ public static class MakerServiceExtensions
     /// Add Maker Checker
     /// </summary>
     /// <param name="services"></param>
-    /// <param name="optionsAction"></param>
+    /// <param name="dbOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions)
     {
-        return services.AddMakerChecker<MakerCheckerDbContext>(optionsAction);
+        return services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
     }
 
     /// <summary>
@@ -50,10 +50,10 @@ public static class MakerServiceExtensions
     /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction)
+    public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions)
         where TDbContext : MakerCheckerDbContext
     {
-        services.AddDbContext<TDbContext>(optionsAction);
+        services.AddDbContext<TDbContext>(dbOptions);
         services.AddScoped<IMakerCheckerManager, MakerCheckerManager<TDbContext>>();
         new CodeNetOptionsBuilder(services).AddCodeNetContext();
         return services;

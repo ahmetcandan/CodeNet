@@ -2,10 +2,10 @@
 
 namespace CodeNet.MakerChecker.Tests.Mock.Models;
 
+[EntityName("Test")]
 public class TestTable : MakerCheckerEntity
 {
     [PrimaryKey]
-    [AutoIncrement]
     public int Id { get; set; }
     public required string Name { get; set; }
 }

@@ -8,14 +8,12 @@ namespace CodeNet.MakerChecker.Repositories;
 internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
 {
     private readonly ICodeNetContext _identityContext;
-    private readonly DbSet<MakerCheckerDefinition> _makerCheckerDefinitions;
     private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
     private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories;
 
     public MakerCheckerFlowRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetContext identityContext) : base(makerCheckerDbContext, identityContext)
     {
         _identityContext = identityContext;
-        _makerCheckerDefinitions = _dbContext.Set<MakerCheckerDefinition>();
         _makerCheckerFlows = _dbContext.Set<MakerCheckerFlow>();
         _makerCheckerHistories = _dbContext.Set<MakerCheckerHistory>();
     }
@@ -34,14 +32,12 @@ internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
     {
         var username = _identityContext.UserName;
         var roles = _identityContext.Roles.ToList();
-        return (from definition in _makerCheckerDefinitions
-                join flow in _makerCheckerFlows on definition.Id equals flow.DefinitionId
+        return (from flow in _makerCheckerFlows
                 join history in _makerCheckerHistories on flow.Id equals history.FlowId
-                where definition.IsActive && !definition.IsDeleted
-                  && flow.IsActive && !flow.IsDeleted
+                where flow.IsActive && !flow.IsDeleted
                   && history.IsActive && !history.IsDeleted
                   && history.ApproveStatus == ApproveStatus.Pending
-                select new MakerCheckerPending { ReferenceId = history.ReferenceId, History = history, EntityName = definition.EntityName, Flow = flow })
+                select new MakerCheckerPending { ReferenceId = history.ReferenceId, History = history, Flow = flow })
                 .AsNoTracking();
     }
 }
