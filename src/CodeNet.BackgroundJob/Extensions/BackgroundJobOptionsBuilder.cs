@@ -80,6 +80,30 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
         return this;
     }
 
+    /// <summary>
+    /// Add Schedule Job
+    /// </summary>
+    /// <typeparam name="TJob"></typeparam>
+    /// <param name="serviceName"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public BackgroundJobOptionsBuilder AddScheduleJob<TJob>(string serviceName, JobOptions options)
+        where TJob : class, IScheduleJob
+    {
+        services.Configure<JobOptions<TJob>>(c =>
+        {
+            c.Cron = null;
+            c.PeriodTime = null;
+            c.ExpryTime = options.ExpryTime;
+            c.Timeout = options.Timeout;
+            c.ServiceType = typeof(TJob).ToString();
+            c.Title = serviceName;
+        });
+
+        AddServices<TJob>(services);
+        return this;
+    }
+
     private static void AddServices<TJob>(IServiceCollection services)
         where TJob : class, IScheduleJob
     {

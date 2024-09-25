@@ -19,3 +19,12 @@ public class TestService2 : IScheduleJob
         await Task.Delay(TimeSpan.FromSeconds(20), cancellationToken);
     }
 }
+
+public class TestService3 : IScheduleJob
+{
+    public async Task Execute(CancellationToken cancellationToken)
+    {
+        Console.WriteLine("<<<<<<<<<< TEST 3 WRITE ASYNC >>>>>>>>>>");
+        await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+    }
+}

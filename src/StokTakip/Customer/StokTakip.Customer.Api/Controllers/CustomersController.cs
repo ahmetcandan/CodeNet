@@ -1,4 +1,5 @@
-﻿using CodeNet.Redis.Attributes;
+﻿using CodeNet.BackgroundJob.Manager;
+using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
@@ -7,7 +8,9 @@ using StokTakip.Customer.Abstraction.Service;
 using StokTakip.Customer.Contract.Request;
 using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Model;
+using StokTakip.Customer.Service;
 using StokTakip.Customer.Service.QueueService;
+using System;
 using System.Diagnostics;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -111,6 +114,25 @@ public class StackExchangeController(RedisProducerServiceA producerServiceA, Red
     public async Task<IActionResult> SendB(QueueData data)
     {
         return Ok(await producerServiceB.PublishAsync(data));
+    }
+}
+
+[ApiController]
+[Route("[controller]")]
+public class JobsController(ICodeNetBackgroundService<TestService3> job) : ControllerBase
+{
+    [HttpPost("SetTimeSpan")]
+    public async Task<IActionResult> SetTimeSpan(TimeSpan timeSpan)
+    {
+        job.SetManuelTime(timeSpan);
+        return Ok("Success");
+    }
+
+    [HttpPost("SetDateTime")]
+    public async Task<IActionResult> SetDateTime(DateTime dateTime)
+    {
+        job.SetManuelTime(dateTime);
+        return Ok("Success");
     }
 }
 

@@ -5,6 +5,7 @@ using CodeNet.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RedLockNet;
+using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -14,8 +15,35 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     where TJob : class, IScheduleJob
 {
     private bool _exit = false;
+    private readonly bool _manuelExecute = (options.Value.Cron is null && options.Value.PeriodTime is null);
+    private bool _manuelRunning = false;
+    private Stopwatch? _stopwatch = null;
+    private TimeSpan? _manuelTime;
     private JobStatus _jobStatus = JobStatus.Pending;
     private int _jobId;
+    private const int _manuelDelaySeconds = 60;
+
+    public void SetManuelTime(TimeSpan manuelTimeSpan)
+    {
+        if (!_manuelExecute)
+            return;
+
+        _manuelTime = manuelTimeSpan;
+        _stopwatch = Stopwatch.StartNew();
+    }
+
+    public void SetManuelTime(DateTime manuelDateTime)
+    {
+        if (!_manuelExecute)
+            return;
+
+        var now = DateTime.Now;
+        if (manuelDateTime > now)
+        {
+            _stopwatch = Stopwatch.StartNew();
+            _manuelTime = manuelDateTime - now;
+        }
+    }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
@@ -38,18 +66,29 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             if (options.Value.Cron is not null)
             {
                 var nextTime = options.Value.Cron.GetNextOccurrence(now, TimeZoneInfo.Local);
-                timeSpan = nextTime - now ?? new TimeSpan(0);
+                timeSpan = (nextTime - now) ?? new TimeSpan(0);
             }
             else if (options.Value.PeriodTime is not null)
             {
                 timeSpan = options.Value.PeriodTime.Value;
             }
+            else if (_manuelTime.HasValue)
+            {
+                _stopwatch?.Stop();
+                timeSpan = _manuelTime.Value.Subtract(new TimeSpan(_stopwatch?.ElapsedTicks ?? 0));
+                _manuelRunning = true;
+            }
             else
             {
-                throw new Exception("Cron or PeridTime is null");
+                timeSpan = new TimeSpan(_manuelDelaySeconds * 10000000 - (now.Second * 10000000 + now.Millisecond * 10000 + now.Microsecond * 10 + now.Nanosecond / 100));
+                _manuelRunning = false;
             }
             await Task.Delay(timeSpan, cancellationToken);
             var result = await DoWorkAsync(tJob, _jobId, cancellationToken);
+
+            if (_manuelRunning)
+                _manuelTime = null;
+            _manuelRunning = false;
 
             if (result is { Status: DetailStatus.Fail or DetailStatus.Stopped })
             {
@@ -67,7 +106,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     {
         using var serviceScope = serviceProvider.CreateScope();
         var dbContext = serviceScope.ServiceProvider.GetService<BackgroundJobDbContext>();
-        
+
         if (dbContext is null)
             return;
 
@@ -105,6 +144,9 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
 
     public async Task<JobWorkingDetail?> DoWorkAsync(IScheduleJob tJob, int jobId, CancellationToken cancellationToken = default)
     {
+        if (_manuelExecute && !_manuelRunning)
+            return null;
+
         DateTimeOffset? startDate = null;
         var methodInfo = MethodBase.GetCurrentMethod();
         using var serviceScope = serviceProvider.CreateScope();

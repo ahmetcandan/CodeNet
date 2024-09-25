@@ -9,6 +9,8 @@ public interface ICodeNetBackgroundService<TJob> : ICodeNetBackgroundService
 
 public interface ICodeNetBackgroundService
 {
+    void SetManuelTime(TimeSpan manuelTimeSpan);
+    void SetManuelTime(DateTime manuelDateTime);
     Task StartAsync(CancellationToken cancellationToken = default);
     Task StopAsync(CancellationToken cancellationToken = default);
     Task<JobWorkingDetail?> DoWorkAsync(IScheduleJob tJob, int jobId, CancellationToken cancellationToken = default);
