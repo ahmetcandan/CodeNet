@@ -25,9 +25,21 @@ public static class HealthCheckServiceExtensions
         return services;
     }
 
+    /// <summary>
+    /// Add CodeNet Health Check
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="timeSpan"></param>
+    /// <returns></returns>
     public static IHealthChecksBuilder AddCodeNetHealthCheck(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
     {
         return builder.AddCheck<CodeNetHealthCheck>("codenet", HealthStatus.Unhealthy, ["codenet", "identity-context"], timeSpan ?? TimeSpan.FromSeconds(5));
+    }
+
+    public static IHealthChecksBuilder AddHealthCheck<THealthCheck>(this IHealthChecksBuilder builder, string name, IEnumerable<string> tags, HealthStatus failureStatus = HealthStatus.Unhealthy, TimeSpan? timeSpan = null)
+        where THealthCheck : class, IHealthCheck
+    {
+        return builder.AddCheck<THealthCheck>(name, failureStatus, tags);
     }
 
     /// <summary>

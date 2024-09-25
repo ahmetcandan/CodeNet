@@ -23,6 +23,7 @@
 		<ProjectReference Include="..\..\..\CodeNet.EntityFramework.InMemory\CodeNet.EntityFramework.InMemory.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.Elasticsearch\CodeNet.HealthCheck.Elasticsearch.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.EntityFramework\CodeNet.HealthCheck.EntityFramework.csproj" />
+		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.Kafka\CodeNet.HealthCheck.Kafka.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.MongoDB\CodeNet.HealthCheck.MongoDB.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.RabbitMQ\CodeNet.HealthCheck.RabbitMQ.csproj" />
 		<ProjectReference Include="..\..\..\CodeNet.HealthCheck.Redis\CodeNet.HealthCheck.Redis.csproj" />

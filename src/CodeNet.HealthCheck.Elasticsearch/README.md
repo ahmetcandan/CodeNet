@@ -16,8 +16,10 @@ program.cs
 using CodeNet.HealthCheck.Elasticsearch.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHealthChecks()
-    .AddElasticsearchHealthCheck();
+builder.Services.AddHealthChecks(options =>
+    {
+        options.AddElasticsearchHealthCheck();
+    });
 //...
 
 var app = builder.Build();

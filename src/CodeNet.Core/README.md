@@ -32,12 +32,18 @@ using CodeNet.Core.Enums;
 using CodeNet.Core.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"))
-                .AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"))
+builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), options => 
+    {
+        options.AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("JWT"));
+    })
 //...
 
 var app = builder.Build();
-app.UseCodeNet(builder.Configuration, "Application");
+app.UseCodeNet(options =>
+{
+    options.UseAuthentication();
+    options.UseAuthorization();
+});
 //...
 app.Run();
 ```

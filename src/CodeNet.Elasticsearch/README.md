@@ -21,6 +21,7 @@ appSettings.json
   }
 }
 ```
+
 program.cs
 ```csharp
 using CodeNet.Elasticsearch.Extensions;
@@ -33,16 +34,14 @@ var app = builder.Build();
 //...
 app.Run();
 ```
+
 Repository
 ```csharp
-public class TestElasticRepository : ElasticsearchRepository<ElasticModel>
+public class TestElasticRepository(ElasticsearchDbContext dbContext) : ElasticsearchRepository<ElasticModel>(dbContext), ITestElasticRepository
 {
-    public TestElasticRepository(ElasticsearchDbContext dbContext) : base(dbContext)
-    {
-        //...
-    }
 }
 ```
+
 Model
 ```csharp
 [IndexName("Test")]

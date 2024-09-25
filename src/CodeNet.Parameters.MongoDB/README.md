@@ -1,13 +1,13 @@
-## CodeNet.Parameters
+## CodeNet.Parameters.MongoDB
 
 CodeNet.Parameters is a .Net library.
 
 ### Installation
 
-Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Parameters/) to install CodeNet.Parameters
+Use the package manager [npm](https://www.nuget.org/packages/CodeNet.Parameters.MongoDB/) to install CodeNet.Parameters
 
 ```bash
-dotnet add package CodeNet.Parameters
+dotnet add package CodeNet.Parameters.MongoDB
 ```
 
 ### Usage

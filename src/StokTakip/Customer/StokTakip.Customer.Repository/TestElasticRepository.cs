@@ -5,9 +5,6 @@ using StokTakip.Customer.Contract.Model;
 
 namespace StokTakip.Customer.Repository;
 
-public class TestElasticRepository : ElasticsearchRepository<ElasticModel>, ITestElasticRepository
+public class TestElasticRepository(ElasticsearchDbContext dbContext) : ElasticsearchRepository<ElasticModel>(dbContext), ITestElasticRepository
 {
-    public TestElasticRepository(ElasticsearchDbContext dbContext) : base(dbContext)
-    {
-    }
 }

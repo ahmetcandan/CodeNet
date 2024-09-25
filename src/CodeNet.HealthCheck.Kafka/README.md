@@ -16,8 +16,10 @@ program.cs
 using CodeNet.HealthCheck.Kafka.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHealthChecks()
-    .AddKafkaHealthCheck(builder.Services, builder.Configuration.GetSection("Kafka"));
+builder.Services.AddHealthChecks(options =>
+    {
+        options.AddKafkaHealthCheck(builder.Services, builder.Configuration.GetSection("Kafka")!);
+    });
 //...
 
 var app = builder.Build();

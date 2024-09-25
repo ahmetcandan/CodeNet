@@ -16,8 +16,10 @@ program.cs
 using CodeNet.HealthCheck.EntityFramework.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHealthChecks()
-    .AddEntityFrameworkHealthCheck();
+builder.Services.AddHealthChecks(options =>
+    {
+        options.AddEntityFrameworkHealthCheck<XDbContext>();
+    });
 //...
 
 var app = builder.Build();

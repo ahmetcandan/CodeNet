@@ -16,8 +16,10 @@ program.cs
 using CodeNet.HealthCheck.Redis.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHealthChecks()
-    .AddRedisHealthCheck();
+builder.Services.AddHealthChecks(options =>
+    {
+        options.AddRedisHealthCheck();
+    });
 //...
 
 var app = builder.Build();

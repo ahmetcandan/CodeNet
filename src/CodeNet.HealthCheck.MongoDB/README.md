@@ -16,8 +16,10 @@ program.cs
 using CodeNet.HealthCheck.MongoDB.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddHealthChecks()
-    .AddMongoDbHealthCheck();
+builder.Services.AddHealthChecks(options =>
+    {
+        options.AddMongoDbHealthCheck();
+    });
 //...
 
 var app = builder.Build();
