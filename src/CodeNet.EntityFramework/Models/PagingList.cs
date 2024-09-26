@@ -1,6 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
-
-namespace CodeNet.EntityFramework.Models;
+﻿namespace CodeNet.EntityFramework.Models;
 
 public class PagingList<TEntity>
 {

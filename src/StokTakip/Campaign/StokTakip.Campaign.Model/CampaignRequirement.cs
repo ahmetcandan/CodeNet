@@ -1,6 +1,4 @@
-﻿using CodeNet.EntityFramework.Models;
-
-namespace StokTakip.Campaign.Model;
+﻿namespace StokTakip.Campaign.Model;
 
 public class CampaignRequirement
 {

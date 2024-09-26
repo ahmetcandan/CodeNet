@@ -2,7 +2,6 @@
 using CodeNet.EntityFramework.Extensions;
 using CodeNet.Identity.Manager;
 using CodeNet.Identity.Settings;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

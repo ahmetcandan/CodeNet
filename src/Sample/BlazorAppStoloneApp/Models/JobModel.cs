@@ -10,7 +10,8 @@ public class JobModel : INotifyPropertyChanged
     public string? CronExpression { get; set; }
     public TimeSpan? PeriodTime { get; set; }
     public TimeSpan? ExpryTime { get; set; }
-    JobStatus _status;
+
+    private JobStatus _status;
 
     public event PropertyChangedEventHandler? PropertyChanged;
 

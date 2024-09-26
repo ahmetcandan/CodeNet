@@ -1,8 +1,8 @@
-﻿using MudBlazor;
-using CodeNetUI_Example.Pages;
-using System.Text.Json;
+﻿using CodeNetUI_Example.Pages;
 using Microsoft.AspNetCore.Components.WebAssembly.Http;
+using MudBlazor;
 using System.Net.Http.Json;
+using System.Text.Json;
 
 namespace CodeNetUI_Example.Services;
 

@@ -20,10 +20,9 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         where TDestination : new()
         where TSource : new()
     {
-        if (source is null)
-            throw new ArgumentNullException(nameof(source));
-
-        return (TDestination)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), depth);
+        return source is null
+            ? throw new ArgumentNullException(nameof(source))
+            : (TDestination)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), depth);
     }
 
     private object? MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
@@ -109,7 +108,7 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
                 maxDepth = destination.MaxDepth;
         }
 
-        return maxDepth ?? (options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH);
+        return maxDepth ?? options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
     }
 
     private Dictionary<string, string>? GetMapperColumns(Type sourceType, Type destinationType)
@@ -119,9 +118,6 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
             return source.Columns;
 
         var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
-        if (destination is not null)
-            return destination.RevertColumns;
-
-        return null;
+        return destination?.RevertColumns;
     }
 }

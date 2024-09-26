@@ -87,8 +87,8 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
 
     private Task AsyncMessageHandler(object? model, BasicDeliverEventArgs args)
     {
-        if (ReceivedMessage is not null)
-            return ReceivedMessage.Invoke(new ReceivedMessageEventArgs
+        return ReceivedMessage is not null
+            ? ReceivedMessage.Invoke(new ReceivedMessageEventArgs
             {
                 Data = args.Body,
                 MessageId = args.BasicProperties?.MessageId,
@@ -105,17 +105,15 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
                 Type = args.BasicProperties?.Type,
                 DeliveryMode = GetDeliveryMode(args.BasicProperties),
                 Timestamp = GetTimestamp(args.BasicProperties)
-            });
-
-        return Task.CompletedTask;
+            })
+            : Task.CompletedTask;
     }
 
     private static DateTimeOffset? GetTimestamp(IBasicProperties? basicProperties)
     {
-        if (basicProperties is not null)
-            return new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime).AddTicks(DateTimeOffset.Now.Offset.Ticks);
-
-        return null;
+        return basicProperties is not null
+            ? (DateTimeOffset?)new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime).AddTicks(DateTimeOffset.Now.Offset.Ticks)
+            : null;
     }
 
     private static DeliveredMode GetDeliveryMode(IBasicProperties? basicProperties)

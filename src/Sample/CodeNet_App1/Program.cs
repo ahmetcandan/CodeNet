@@ -1,5 +1,4 @@
 using CodeNet.Core.Extensions;
-using CodeNet.Kafka.Extensions;
 using CodeNet.RabbitMQ.Extensions;
 using CodeNet_App1.Services;
 using CodeNet_App1.Settings;
@@ -16,7 +15,7 @@ app.UseCodeNet();
 var options = app.Services.GetRequiredService<IOptions<ProducerOptions>>();
 for (int i = 0; i < options.Value.TotalSeconds; i++)
 {
-    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {(i + 1):000}. Second Start...");
+    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {i + 1:000}. Second Start...");
     await Task.Run(async () =>
     {
         FireAndForget.Execute(app.Services, options.Value.MessagePerSecond, i + 1);

@@ -1,7 +1,7 @@
-﻿using CodeNet.StackExchange.Redis.Settings;
+﻿using CodeNet.StackExchange.Redis.Models;
+using CodeNet.StackExchange.Redis.Settings;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
-using CodeNet.StackExchange.Redis.Models;
 
 namespace CodeNet.StackExchange.Redis.Services;
 

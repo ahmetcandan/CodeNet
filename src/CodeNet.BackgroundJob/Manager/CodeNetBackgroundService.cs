@@ -4,8 +4,6 @@ using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
-using RedLockNet;
-using System;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -15,7 +13,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     where TJob : class, IScheduleJob
 {
     private bool _exit = false;
-    private readonly bool _manuelExecute = (options.Value.Cron is null && options.Value.PeriodTime is null);
+    private readonly bool _manuelExecute = options.Value.Cron is null && options.Value.PeriodTime is null;
     private bool _manuelRunning = false;
     private Stopwatch? _stopwatch = null;
     private TimeSpan? _manuelTime;
@@ -80,7 +78,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             }
             else
             {
-                timeSpan = new TimeSpan(_manuelDelaySeconds * 10000000 - (now.Second * 10000000 + now.Millisecond * 10000 + now.Microsecond * 10 + now.Nanosecond / 100));
+                timeSpan = new TimeSpan((_manuelDelaySeconds * 10000000) - ((now.Second * 10000000) + (now.Millisecond * 10000) + (now.Microsecond * 10) + (now.Nanosecond / 100)));
                 _manuelRunning = false;
             }
             await Task.Delay(timeSpan, cancellationToken);

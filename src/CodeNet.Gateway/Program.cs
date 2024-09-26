@@ -1,5 +1,5 @@
-using MMLib.SwaggerForOcelot.DependencyInjection;
 using CodeNet.Gateway;
+using MMLib.SwaggerForOcelot.DependencyInjection;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 using Ocelot.Provider.Polly;

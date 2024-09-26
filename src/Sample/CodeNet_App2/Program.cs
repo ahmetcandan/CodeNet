@@ -1,5 +1,4 @@
 using CodeNet.Core.Extensions;
-using CodeNet.Kafka.Extensions;
 using CodeNet.RabbitMQ.Extensions;
 using CodeNet_App2.Services;
 

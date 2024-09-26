@@ -10,13 +10,11 @@ internal class MakerCheckerItem(Type entityType, string entityName)
 
 public class MakerCheckerBuilder
 {
-    private readonly List<MakerCheckerItem> _makerCheckerItems = [];
-
-    internal List<MakerCheckerItem> MakerCheckerItems { get { return _makerCheckerItems; } }
+    internal List<MakerCheckerItem> MakerCheckerItems { get; } = [];
 
     internal void AddItem(Type entityType, string entityName)
     {
-        _makerCheckerItems.Add(new MakerCheckerItem(entityType, entityName));
+        MakerCheckerItems.Add(new MakerCheckerItem(entityType, entityName));
     }
 }
 

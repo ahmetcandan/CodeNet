@@ -72,7 +72,7 @@ internal class HttpRequest(IServiceProvider serviceProvider) : IHttpRequest
                         httpRequest.Headers.Remove(item.Key);
                     httpRequest.Headers.Add(item.Key, item.Value);
                 }
-            
+
             if (content is not null)
                 httpRequest.Content = new StringContent(requestJson, Encoding.UTF8, System.Net.Mime.MediaTypeNames.Application.Json);
 
