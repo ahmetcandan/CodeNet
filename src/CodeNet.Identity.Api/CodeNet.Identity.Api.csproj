@@ -12,10 +12,6 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.20.1" />
-	</ItemGroup>
-
-	<ItemGroup>
 	  <ProjectReference Include="..\CodeNet.EntityFramework.PostgreSQL\CodeNet.EntityFramework.PostgreSQL.csproj" />
 	  <ProjectReference Include="..\CodeNet.Identity\CodeNet.Identity.csproj" />
 	</ItemGroup>
