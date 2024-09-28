@@ -1,19 +1,20 @@
 ﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
+using CodeNet.Identity.Model;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityUserManager(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+internal class IdentityUserManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
 {
     public async Task<IdentityResult> CreateUser(RegisterUserModel model)
     {
         var userExists = await userManager.FindByNameAsync(model.Username);
         if (userExists is not null)
-            throw new IdentityException("ID001", "User already exists!");
+            throw new IdentityException(ExceptionMessages.UserAlreadyExists);
 
-        var user = new IdentityUser()
+        var user = new ApplicationUser()
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),
@@ -23,13 +24,13 @@ internal class IdentityUserManager(UserManager<IdentityUser> userManager, RoleMa
         if (result.Succeeded && model.Roles != null && model.Roles.Count > 0)
             await userManager.AddToRolesAsync(user, model.Roles);
         return !result.Succeeded
-            ? throw new IdentityException("ID003", "User creation failed! Please check user details and try again.")
+            ? throw new IdentityException(ExceptionMessages.UserCreationFailed)
             : result;
     }
 
     public async Task<ResponseMessage> EditUserRoles(UpdateUserRolesModel model)
     {
-        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException("ID002", "User not found!");
+        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var currentRoles = await userManager.GetRolesAsync(user);
 
         // delete roles
@@ -45,7 +46,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> userManager, RoleMa
     {
         IdentityException.ThrowIfNull(model?.Claims);
 
-        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException("ID002", "User not found!");
+        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var currentClaims = await userManager.GetClaimsAsync(user);
 
         // delete roles
@@ -59,7 +60,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> userManager, RoleMa
 
     public async Task<UserModel> GetUser(string username)
     {
-        var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException("ID002", "User not found!");
+        var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var claims = await userManager.GetClaimsAsync(user);
         var roles = await userManager.GetRolesAsync(user);
         foreach (var roleName in roles)
@@ -82,7 +83,7 @@ internal class IdentityUserManager(UserManager<IdentityUser> userManager, RoleMa
 
     public async Task<ResponseMessage> RemoveUser(RemoveUserModel model)
     {
-        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException("ID002", "User not found!");
+        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         await userManager.DeleteAsync(user);
 
         return new ResponseMessage("000", "User removed successfully!");

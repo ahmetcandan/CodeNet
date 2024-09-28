@@ -1,6 +1,8 @@
 ﻿using CodeNet.Core.Enums;
+using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
 using CodeNet.Identity.Manager;
+using CodeNet.Identity.Model;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -40,12 +42,24 @@ public static class IdentityServiceExtensions
     /// <exception cref="NotImplementedException"></exception>
     public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfigurationSection authorizationSection)
     {
-        return securityKeyType switch
+        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
+        switch (securityKeyType)
         {
-            SecurityKeyType.AsymmetricKey => services.AddAuthorizationWithAsymmetricKey(optionsAction, authorizationSection),
-            SecurityKeyType.SymmetricKey => services.AddAuthorizationWithSymmetricKey(optionsAction, authorizationSection),
-            _ => throw new NotImplementedException(),
-        };
+            case SecurityKeyType.AsymmetricKey:
+                services.AddAuthorizationWithAsymmetricKey(optionsAction, authorizationSection);
+                break;
+            case SecurityKeyType.SymmetricKey:
+                services.AddAuthorizationWithSymmetricKey(optionsAction, authorizationSection);
+                break;
+            default:
+                throw new NotImplementedException($"{nameof(SecurityKeyType)}: {securityKeyType}, not implemented.");
+        }
+        services.AddIdentity<ApplicationUser, IdentityRole>()
+            .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
+            .AddDefaultTokenProviders();
+        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
+        new CodeNetOptionsBuilder(services).AddCodeNetContext();
+        return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
 
     /// <summary>
@@ -56,17 +70,10 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddAuthorizationWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static void AddAuthorizationWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
-        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
         services.Configure<IdentitySettingsWithAsymmetricKey>(identitySection);
-        services.AddIdentity<IdentityUser, IdentityRole>()
-            .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
-            .AddDefaultTokenProviders();
-
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey>();
-        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
-        return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
 
     /// <summary>
@@ -77,16 +84,9 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddAuthorizationWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static void AddAuthorizationWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
     {
-        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
         services.Configure<IdentitySettingsWithSymmetricKey>(identitySection);
-        services.AddIdentity<IdentityUser, IdentityRole>()
-            .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
-            .AddDefaultTokenProviders();
-
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
-        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
-        return services.AddScoped<IIdentityRoleManager, IdentityRoleManager>();
     }
 }

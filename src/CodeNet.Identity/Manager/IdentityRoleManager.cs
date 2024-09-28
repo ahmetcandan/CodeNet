@@ -13,7 +13,7 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
     {
         var roleExists = await roleManager.FindByNameAsync(model.Name);
         if (roleExists is not null)
-            throw new IdentityException("ID011", "Role already exists!");
+            throw new IdentityException(ExceptionMessages.RoleAlreadyExists);
 
         IdentityRole role = new()
         {
@@ -25,13 +25,13 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
         var result = await roleManager.CreateAsync(role);
 
         return !result.Succeeded
-            ? throw new IdentityException("ID013", "Role creation failed! Please check role details and try again.")
+            ? throw new IdentityException(ExceptionMessages.RoleCreationFailed)
             : new ResponseMessage("000", "Role created successfully!");
     }
 
     public async Task<ResponseMessage> EditRole(RoleModel model)
     {
-        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
+        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException(ExceptionMessages.RoleNotFound);
         role.Name = model.Name;
         role.NormalizedName = string.IsNullOrEmpty(model.NormalizedName)
             ? model.Name.Replace(" ", "").ToUpper()
@@ -39,13 +39,13 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
         var result = await roleManager.UpdateAsync(role);
 
         return !result.Succeeded
-            ? throw new IdentityException("ID014", "Role update failed! Please check role details and try again.")
+            ? throw new IdentityException(ExceptionMessages.RoleUpdateFailed)
             : new ResponseMessage("000", "Role updated successfully!");
     }
 
     public async Task<ResponseMessage> EditRoleClaims(RoleClaimsModel model)
     {
-        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
+        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException(ExceptionMessages.RoleNotFound);
         var currentClaims = await roleManager.GetClaimsAsync(role);
 
         // delete roles
@@ -61,11 +61,11 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
 
     public async Task<ResponseMessage> DeleteRole(RoleModel model)
     {
-        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException("ID012", "Role not found!");
+        var role = await roleManager.FindByIdAsync(model.Id) ?? throw new IdentityException(ExceptionMessages.RoleNotFound);
         var result = await roleManager.DeleteAsync(role);
 
         return !result.Succeeded
-            ? throw new IdentityException("ID015", "Role delete failed! Please check role details and try again.")
+            ? throw new IdentityException(ExceptionMessages.RoleDeleteFailed)
             : new ResponseMessage("000", "Role deleted successfully!");
     }
 
