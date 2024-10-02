@@ -7,5 +7,5 @@ public interface IIdentityTokenManager
 {
     Task<TokenResponse> GenerateToken(LoginModel model, bool generateRefreshToken = true);
     Task<TokenResponse> GenerateToken(string token, string refreshToken);
-    Task<ResponseMessage> RemoveRefreshToken();
+    Task<ResponseMessage> RemoveRefreshToken(string username);
 }

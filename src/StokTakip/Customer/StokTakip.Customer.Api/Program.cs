@@ -114,6 +114,7 @@ builder.Services.AddScoped<ICustomerService, CustomerService>();
 var app = builder.Build();
 app.UseCodeNet(options =>
 {
+    options.UseSwagger();
     options.UseAuthentication();
     options.UseAuthorization();
 });
@@ -121,10 +122,10 @@ app.UseCors(x => x
         .AllowAnyOrigin()
         .AllowAnyMethod()
         .AllowAnyHeader());
+app.UseExceptionHandling();
 app.UseLogging();
 app.UseDistributedCache();
 app.UseDistributedLock();
-app.UseExceptionHandling();
 app.UseCodeNetHealthChecks();
 app.UseBackgroundService();
 //app.UseSignalR<THub>("/tst");

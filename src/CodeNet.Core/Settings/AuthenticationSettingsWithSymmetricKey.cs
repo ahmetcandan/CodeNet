@@ -1,8 +1,6 @@
 ﻿namespace CodeNet.Core.Settings;
 
-public class AuthenticationSettingsWithSymmetricKey
+public class AuthenticationSettingsWithSymmetricKey : AuthenticationSettings
 {
-    public required string ValidAudience { get; set; }
-    public required string ValidIssuer { get; set; }
     public required string IssuerSigningKey { get; set; }
 }

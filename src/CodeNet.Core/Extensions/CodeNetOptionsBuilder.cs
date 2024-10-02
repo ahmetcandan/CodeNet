@@ -36,24 +36,23 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
     /// <exception cref="NotImplementedException"></exception>
     public CodeNetOptionsBuilder AddAuthentication(SecurityKeyType securityKeyType, IConfigurationSection identitySection)
     {
-        return securityKeyType switch
+        SecurityKey? securityKey;
+        AuthenticationSettings? authenticationSettings;
+        switch (securityKeyType)
         {
-            SecurityKeyType.AsymmetricKey => AddAuthenticationWithAsymmetricKey(identitySection),
-            SecurityKeyType.SymmetricKey => AddAuthenticationWithSymmetricKey(identitySection),
-            _ => throw new NotImplementedException(),
-        };
-    }
-
-    /// <summary>
-    /// Add Authentication With Asymmetric Key
-    /// </summary>
-    /// <param name="identitySection"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private CodeNetOptionsBuilder AddAuthenticationWithAsymmetricKey(IConfigurationSection identitySection)
-    {
-        var authenticationSettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
-        var rsa = AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath);
+            case SecurityKeyType.AsymmetricKey:
+                var asymmetricKeysettings = identitySection.Get<AuthenticationSettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
+                securityKey = GetAsymmetricKey(asymmetricKeysettings);
+                authenticationSettings = asymmetricKeysettings;
+                break;
+            case SecurityKeyType.SymmetricKey:
+                var symmetricKeysettings = identitySection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{identitySection.Path}' is null or empty in appSettings.json");
+                securityKey = GetSymmetricKey(symmetricKeysettings);
+                authenticationSettings = symmetricKeysettings;
+                break;
+            default:
+                throw new NotImplementedException();
+        }
         services.AddAuthentication(options =>
         {
             options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -67,11 +66,12 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
             options.TokenValidationParameters = new TokenValidationParameters()
             {
                 ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new RsaSecurityKey(rsa),
-                ValidIssuer = authenticationSettings.ValidIssuer,
+                IssuerSigningKey = securityKey,
                 ValidateIssuer = true,
-                ValidAudience = authenticationSettings.ValidAudience,
+                ValidIssuer = authenticationSettings.ValidIssuer,
                 ValidateAudience = true,
+                ValidAudience = authenticationSettings.ValidAudience,
+                ValidateLifetime = true,
                 ClockSkew = TimeSpan.Zero
             };
         });
@@ -79,36 +79,14 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
         return this;
     }
 
-    /// <summary>
-    /// Add Authentication With Symmetric Key
-    /// </summary>
-    /// <param name="applicationSection"></param>
-    /// <returns></returns>
-    /// <exception cref="ArgumentNullException"></exception>
-    private CodeNetOptionsBuilder AddAuthenticationWithSymmetricKey(IConfigurationSection applicationSection)
+    private static RsaSecurityKey GetAsymmetricKey(AuthenticationSettingsWithAsymmetricKey authenticationSettings)
     {
-        var authenticationSettings = applicationSection.Get<AuthenticationSettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{applicationSection.Path}' is null or empty in appSettings.json");
-        services.AddAuthentication(options =>
-        {
-            options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
-        })
-        .AddJwtBearer(options =>
-        {
-            options.SaveToken = true;
-            options.RequireHttpsMetadata = false;
-            options.TokenValidationParameters = new TokenValidationParameters()
-            {
-                ValidateIssuer = true,
-                ValidateAudience = true,
-                ValidAudience = authenticationSettings.ValidAudience,
-                ValidIssuer = authenticationSettings.ValidIssuer,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey))
-            };
-        });
+        return new RsaSecurityKey(AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath));
+    }
 
-        return this;
+    private static SymmetricSecurityKey GetSymmetricKey(AuthenticationSettingsWithSymmetricKey authenticationSettings)
+    {
+        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey));
     }
 
     /// <summary>

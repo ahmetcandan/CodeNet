@@ -1,7 +1,6 @@
 ﻿using CodeNet.BackgroundJob.Manager;
 using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Html;
 using Microsoft.AspNetCore.Mvc;
 using StokTakip.Customer.Abstraction.Repository;
 using StokTakip.Customer.Abstraction.Service;
@@ -10,9 +9,6 @@ using StokTakip.Customer.Contract.Response;
 using StokTakip.Customer.Model;
 using StokTakip.Customer.Service;
 using StokTakip.Customer.Service.QueueService;
-using System;
-using System.Diagnostics;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace StokTakip.Customer.Api.Controllers;
 
@@ -20,9 +16,9 @@ namespace StokTakip.Customer.Api.Controllers;
 [Route("[controller]")]
 public class CustomersController(ICustomerService customerService) : ControllerBase
 {
-    //[Authorize]
+    [Authorize]
     [HttpGet("{customerId}")]
-    [Cache(10)]
+    //[Cache(10)]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
     public async Task<IActionResult> GetPersonel(int customerId, CancellationToken cancellationToken)
@@ -33,7 +29,6 @@ public class CustomersController(ICustomerService customerService) : ControllerB
     [HttpPost]
     [ProducesResponseType(200, Type = typeof(CustomerResponse))]
     [ProducesDefaultResponseType(typeof(ProblemDetails))]
-
     public async Task<IActionResult> Post(CreateCustomerRequest request, CancellationToken cancellationToken)
     {
         return Ok(await customerService.CreateCustomer(request, cancellationToken));

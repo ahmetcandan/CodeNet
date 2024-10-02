@@ -3,9 +3,9 @@ using CodeNet.ExceptionHandling;
 
 namespace CodeNet.Identity.Exception;
 
-public class IdentityException : CodeNetException
+public class IdentityException : UserLevelException
 {
-    public IdentityException(ExceptionMessage exceptionMessage) : base(exceptionMessage)
+    public IdentityException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message)
     {
     }
 

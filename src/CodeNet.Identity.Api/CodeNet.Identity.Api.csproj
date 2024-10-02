@@ -12,8 +12,8 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\CodeNet.EntityFramework.PostgreSQL\CodeNet.EntityFramework.PostgreSQL.csproj" />
 	  <ProjectReference Include="..\CodeNet.Identity\CodeNet.Identity.csproj" />
+	  <ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
 	</ItemGroup>
 
 </Project>

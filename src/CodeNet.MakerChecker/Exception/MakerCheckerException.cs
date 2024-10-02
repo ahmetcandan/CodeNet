@@ -3,9 +3,9 @@ using CodeNet.ExceptionHandling;
 
 namespace CodeNet.MakerChecker.Exception;
 
-public class MakerCheckerException : CodeNetException
+public class MakerCheckerException : UserLevelException
 {
-    public MakerCheckerException(ExceptionMessage exceptionMessage) : base(exceptionMessage)
+    public MakerCheckerException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message)
     {
     }
 

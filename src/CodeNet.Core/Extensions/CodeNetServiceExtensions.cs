@@ -45,23 +45,23 @@ public static class CodeNetServiceExtensions
 
         services.Configure<ApplicationSettings>(configurationSection);
         var applicationSettings = configurationSection.Get<ApplicationSettings>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
+        services.AddControllers();
         services.AddSwaggerGen(options =>
         {
             options.SwaggerDoc(applicationSettings.Version, new OpenApiInfo { Title = applicationSettings.Title, Version = applicationSettings.Version });
-            options.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+            options.AddSecurityDefinition("Authorization", new OpenApiSecurityScheme
             {
                 Description = @"JWT Authorization header using the Bearer scheme. 
                   Enter 'Bearer' [space] and then your token in the text input below.
-                  Example: 'Bearer 12345abcdef'",
+                  Example: 'Bearer {token}'",
                 Name = "Authorization",
                 In = ParameterLocation.Header,
                 Type = SecuritySchemeType.ApiKey,
                 Scheme = "Bearer"
             });
 
-            options.OperationFilter<SecurityRequirementsOperationFilter>();
+            options.OperationFilter<SecurityRequirementsOperationFilter>(true, "Authorization");
         });
-        services.AddControllers();
         services.AddEndpointsApiExplorer();
         services.AddHttpContextAccessor();
 
@@ -103,16 +103,13 @@ public static class CodeNetServiceExtensions
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();
 
-        app.UseSwagger();
-        app.UseSwaggerUI(options => options.SwaggerEndpoint($"/swagger/{applicationSettings.Value.Version}/swagger.json", $"{applicationSettings.Value.Title} {applicationSettings.Value.Version}"));
         app.UseHttpsRedirection();
-        
-
         app.UseRouting();
-        if (action is not null)
-            action(new CodeNetApplicationBuilder(app));
-        app.MapControllers();
 
+        if (action is not null)
+            action(new CodeNetApplicationBuilder(app, applicationSettings.Value));
+
+        app.MapControllers();
         return app;
     }
 }
