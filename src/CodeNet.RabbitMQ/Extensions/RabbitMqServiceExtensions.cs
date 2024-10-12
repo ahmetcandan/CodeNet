@@ -62,7 +62,6 @@ public static class RabbitMqServiceExtensions
         where TConsumerService : RabbitMQConsumerService
         where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
     {
-        services.AddRabitMQConfigure(config);
         _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
             ? services.Configure<RabbitMQConsumerOptions>(c =>
             {
@@ -161,7 +160,6 @@ public static class RabbitMqServiceExtensions
     public static IServiceCollection AddRabbitMQProducer<TProducerService>(this IServiceCollection services, RabbitMQProducerOptions<TProducerService> config)
     where TProducerService : RabbitMQProducerService
     {
-        services.AddRabitMQConfigure(config);
         _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
             ? services.Configure<RabbitMQProducerOptions>(c =>
             {
@@ -201,24 +199,6 @@ public static class RabbitMqServiceExtensions
             });
         return services.AddScoped<TProducerService>();
     }
-
-    private static IServiceCollection AddRabitMQConfigure(this IServiceCollection services, BaseRabbitMQOptions config) => services.Configure<BaseRabbitMQOptions>(c =>
-    {
-        c.QueueBind = config.QueueBind;
-        c.Queue = config.Queue;
-        c.DeclareQueue = config.DeclareQueue;
-        c.Durable = config.Durable;
-        c.AutoDelete = config.AutoDelete;
-        c.Arguments = config.Arguments;
-        c.QueueBindArguments = config.QueueBindArguments;
-        c.ConnectionFactory = config.ConnectionFactory;
-        c.DeclareExchange = config.DeclareExchange;
-        c.Exchange = config.Exchange;
-        c.RoutingKey = config.RoutingKey;
-        c.ExchangeArguments = config.ExchangeArguments;
-        c.ExchangeType = config.ExchangeType;
-        c.Exclusive = config.Exclusive;
-    });
 
     /// <summary>
     /// Use RabbitMQ Consumer

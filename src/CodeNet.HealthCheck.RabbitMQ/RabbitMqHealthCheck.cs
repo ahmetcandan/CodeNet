@@ -1,10 +1,9 @@
-﻿using CodeNet.RabbitMQ.Settings;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.RabbitMQ;
 
-internal class RabbitMqHealthCheck(IOptions<BaseRabbitMQOptions> config) : IHealthCheck
+internal class RabbitMqHealthCheck(IOptions<HealthCheckRabitMQSettings> config) : IHealthCheck
 {
     public Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {

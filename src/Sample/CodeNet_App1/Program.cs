@@ -21,7 +21,7 @@ builder.Services.AddHealthChecks(c =>
 {
     c.AddRabbitMqHealthCheck(c.Services, builder.Configuration.GetSection("RabbitMQ"), "RabbitMQ");
     c.AddMongoDbHealthCheck(builder.Configuration.GetSection("OutboxMongoDB"), "OutboxMongoDB");
-    c.AddRedisHealthCheck("Redis");
+    c.AddRedisHealthCheck(builder.Configuration.GetSection("Redis"), "Redis");
 });
 //builder.Services.AddKafkaProducer(builder.Configuration.GetSection("Kafka"));
 builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection("ProducerOptions"));
