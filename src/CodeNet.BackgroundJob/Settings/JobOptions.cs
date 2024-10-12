@@ -14,6 +14,22 @@ internal class JobOptions<TJob> : JobOptions
 
 public class JobOptions
 {
-    public TimeSpan? ExpryTime { get; set; }
-    public TimeSpan? Timeout { get; set; }
+    public JobOptions()
+    {
+        
+    }
+
+    public JobOptions(TimeSpan lockExpryTime)
+    {
+        LockExpryTime = lockExpryTime;
+    }
+
+    public JobOptions(TimeSpan lockExpryTime, TimeSpan timeOut)
+    {
+        LockExpryTime = lockExpryTime;
+        TimeOut = timeOut;
+    }
+
+    public TimeSpan? LockExpryTime { get; set; }
+    public TimeSpan? TimeOut { get; set; }
 }

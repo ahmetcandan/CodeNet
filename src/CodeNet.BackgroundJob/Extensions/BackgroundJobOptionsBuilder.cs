@@ -45,8 +45,8 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
         {
             c.Cron = cron;
             c.PeriodTime = null;
-            c.ExpryTime = options.ExpryTime;
-            c.Timeout = options.Timeout;
+            c.LockExpryTime = options.LockExpryTime;
+            c.TimeOut = options.TimeOut;
             c.ServiceType = typeof(TJob).ToString();
             c.Title = serviceName;
         });
@@ -70,8 +70,8 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
         {
             c.Cron = null;
             c.PeriodTime = periodTime;
-            c.ExpryTime = options.ExpryTime;
-            c.Timeout = options.Timeout;
+            c.LockExpryTime = options.LockExpryTime;
+            c.TimeOut = options.TimeOut;
             c.ServiceType = typeof(TJob).ToString();
             c.Title = serviceName;
         });
@@ -94,8 +94,8 @@ public class BackgroundJobOptionsBuilder(IServiceCollection services)
         {
             c.Cron = null;
             c.PeriodTime = null;
-            c.ExpryTime = options.ExpryTime;
-            c.Timeout = options.Timeout;
+            c.LockExpryTime = options.LockExpryTime;
+            c.TimeOut = options.TimeOut;
             c.ServiceType = typeof(TJob).ToString();
             c.Title = serviceName;
         });

@@ -4,6 +4,7 @@ using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RedLockNet;
 using System.Diagnostics;
 using System.Reflection;
 
@@ -19,7 +20,6 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     private TimeSpan? _manuelTime;
     private JobStatus _jobStatus = JobStatus.Pending;
     private int _jobId;
-    private const int _manuelDelaySeconds = 60;
 
     public void SetManuelTime(TimeSpan manuelTimeSpan)
     {
@@ -78,7 +78,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             }
             else
             {
-                timeSpan = new TimeSpan((_manuelDelaySeconds * 10000000) - ((now.Second * 10000000) + (now.Millisecond * 10000) + (now.Microsecond * 10) + (now.Nanosecond / 100)));
+                timeSpan = new TimeSpan((JobConstants.ManuelDelaySeconds * 10000000) - ((now.Second * 10000000) + (now.Millisecond * 10000) + (now.Microsecond * 10) + (now.Nanosecond / 100)));
                 _manuelRunning = false;
             }
             await Task.Delay(timeSpan, cancellationToken);
@@ -116,7 +116,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             {
                 PeriodTime = options.Value.PeriodTime,
                 CronExpression = options.Value.Cron?.ToString(),
-                ExpryTime = options.Value.ExpryTime,
+                ExpryTime = options.Value.LockExpryTime,
                 ServiceType = options.Value.ServiceType,
                 Title = options.Value.ServiceType,
                 Status = JobStatus.Pending,
@@ -128,7 +128,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         else
         {
             currentJob.Status = JobStatus.Pending;
-            currentJob.ExpryTime = options.Value.ExpryTime;
+            currentJob.ExpryTime = options.Value.LockExpryTime;
             currentJob.PeriodTime = options.Value.PeriodTime;
             currentJob.CronExpression = options.Value.Cron?.ToString();
             currentJob.ServiceType = options.Value.ServiceType;
@@ -154,9 +154,10 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         try
         {
             var distributedLock = serviceScope.ServiceProvider.GetService<IJobLock>();
+            IRedLock? redLock = null;
             if (distributedLock is not null)
             {
-                using var redLock = await distributedLock.CreateLock(typeof(TJob).ToString(), options.Value.ExpryTime ?? TimeSpan.FromSeconds(10));
+                redLock = await distributedLock.CreateLock(typeof(TJob).ToString(), options.Value.LockExpryTime ?? TimeSpan.FromSeconds(JobConstants.DefaultLockExpryTimeSeconds));
                 if (!redLock.IsAcquired)
                     return null;
             }
@@ -190,7 +191,8 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 var currentStatus = _jobStatus;
                 _jobStatus = JobStatus.Running;
                 MessageInvoke();
-                await tJob.Execute(cancellationToken);
+                await tJob.Execute(GetCancellationToken(cancellationToken));
+                redLock?.Dispose();
                 _jobStatus = currentStatus;
                 timer.Stop();
                 appLogger?.ExitLog($"'{typeof(TJob)}' scheduled mission is over.", methodInfo, timer.ElapsedMilliseconds);
@@ -281,5 +283,15 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
             Status = _jobStatus,
             JobId = _jobId
         });
+    }
+
+    private CancellationToken GetCancellationToken(CancellationToken cancellationToken)
+    {
+        if (cancellationToken != CancellationToken.None)
+            return cancellationToken;
+
+        using var cts = new CancellationTokenSource();
+        cts.CancelAfter(options.Value?.TimeOut ?? TimeSpan.FromSeconds(JobConstants.DefaultTimeOutSeconds));
+        return cts.Token;
     }
 }
