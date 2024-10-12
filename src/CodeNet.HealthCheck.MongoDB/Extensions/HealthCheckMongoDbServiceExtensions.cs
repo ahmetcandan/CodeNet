@@ -1,4 +1,6 @@
 ﻿using CodeNet.MongoDB;
+using CodeNet.MongoDB.Settings;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
@@ -9,24 +11,54 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <summary>
     /// Add MongoDB Health Check
     /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="timeSpan"></param>
+    /// <returns></returns>
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, string name = "mongo-db", TimeSpan? timeSpan = null)
+    {
+        return builder.AddMongoDbHealthCheck<MongoDBContext>(name, timeSpan);
+    }
+
+    /// <summary>
+    /// Add MongoDB Health Check
+    /// </summary>
     /// <typeparam name="TDbContext"></typeparam>
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck<TDbContext>(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddMongoDbHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = "mongo-db", TimeSpan? timeSpan = null)
         where TDbContext : MongoDBContext
     {
-        return builder.AddCheck<MongoDbHealthCheck<TDbContext>>("mongo-db", HealthStatus.Unhealthy, ["mongo-db", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<MongoDbHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["mongo-db", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 
     /// <summary>
     /// Add MongoDB Health Check
     /// </summary>
     /// <param name="builder"></param>
+    /// <param name="configuration"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = "mongo-db", TimeSpan? timeSpan = null)
     {
-        return builder.AddCheck<MongoDbHealthCheck<MongoDBContext>>("mongo-db", HealthStatus.Unhealthy, ["mongo-db", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddMongoDbHealthCheck(configuration.Get<MongoDbOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
+    }
+
+    /// <summary>
+    /// Add MongoDB Health Check
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <param name="options"></param>
+    /// <param name="timeSpan"></param>
+    /// <returns></returns>
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, MongoDbOptions options, string name = "mongo-db", TimeSpan? timeSpan = null)
+    {
+        builder.AddCheck(name, (cancellationToken) =>
+        {
+            var mongoDbHealthCheck = new MongoDbHealthCheck(options);
+            return mongoDbHealthCheck.CheckHealthAsync(null, cancellationToken).Result;
+        }, ["mongo-db", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder;
     }
 }

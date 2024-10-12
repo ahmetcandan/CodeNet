@@ -13,9 +13,9 @@ public static class HealthCheckRabbitMqServiceExtensions
     /// <param name="sectionName"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configurationSection, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configurationSection, string name = "rabbit-mq", TimeSpan? timeSpan = null)
     {
         services.Configure<HealthCheckRabitMQSettings>(configurationSection);
-        return builder.AddCheck<RabbitMqHealthCheck>("rabbit-mq", HealthStatus.Unhealthy, ["rabbit-mq", "queue"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<RabbitMqHealthCheck>(name, HealthStatus.Unhealthy, ["rabbit-mq", "queue"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }

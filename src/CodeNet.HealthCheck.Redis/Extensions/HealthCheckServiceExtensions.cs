@@ -10,8 +10,8 @@ public static class HealthCheckServiceExtensions
     /// </summary>
     /// <param name="builder"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, string name = "redis", TimeSpan? timeSpan = null)
     {
-        return builder.AddCheck<RedisHealthCheck>("redis", HealthStatus.Unhealthy, ["redis"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<RedisHealthCheck>(name, HealthStatus.Unhealthy, ["redis"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }

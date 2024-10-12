@@ -1,4 +1,8 @@
 using CodeNet.Core.Extensions;
+using CodeNet.HealthCheck.Extensions;
+using CodeNet.HealthCheck.MongoDB.Extensions;
+using CodeNet.HealthCheck.RabbitMQ.Extensions;
+using CodeNet.HealthCheck.Redis.Extensions;
 using CodeNet.RabbitMQ.Extensions;
 using CodeNet.RabbitMQ.Outbox.Extensions;
 using CodeNet_App1.Services;
@@ -12,6 +16,12 @@ builder.Services.AddRabbitMQOutboxModule(builder.Configuration.GetSection("Outbo
     c.AddRabbitMQProducer(builder.Configuration.GetSection("RabbitMQ"));
     c.AddMongoDB(builder.Configuration.GetSection("OutboxMongoDB"));
     c.AddRedis(builder.Configuration.GetSection("Redis"));
+});
+builder.Services.AddHealthChecks(c =>
+{
+    c.AddRabbitMqHealthCheck(c.Services, builder.Configuration.GetSection("RabbitMQ"), "RabbitMQ");
+    c.AddMongoDbHealthCheck(builder.Configuration.GetSection("OutboxMongoDB"), "OutboxMongoDB");
+    c.AddRedisHealthCheck("Redis");
 });
 //builder.Services.AddKafkaProducer(builder.Configuration.GetSection("Kafka"));
 builder.Services.Configure<ProducerOptions>(builder.Configuration.GetSection("ProducerOptions"));
@@ -29,4 +39,5 @@ app.UseCodeNet(c => c.UseSwagger());
 //    await Task.Delay(TimeSpan.FromSeconds(1));
 //}
 app.UseRabbitMQOutboxModule();
+app.UseCodeNetHealthChecks();
 app.Run();

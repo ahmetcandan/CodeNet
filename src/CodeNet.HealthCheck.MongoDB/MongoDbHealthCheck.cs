@@ -1,5 +1,7 @@
 ﻿using CodeNet.MongoDB;
+using CodeNet.MongoDB.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.MongoDB;
 
@@ -19,4 +21,8 @@ internal class MongoDbHealthCheck<TDbContext>(TDbContext dbContext) : IHealthChe
             return HealthCheckResult.Unhealthy($"Sorry, MongoDB is down :(");
         }
     }
+}
+
+internal class MongoDbHealthCheck(MongoDbOptions options) : MongoDbHealthCheck<MongoDBContext>(new MongoDBContext(Options.Create(options)))
+{
 }

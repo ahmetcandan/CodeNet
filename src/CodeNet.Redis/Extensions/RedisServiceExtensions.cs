@@ -65,6 +65,12 @@ public static class RedisServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, RedisSettings settings)
     {
+        services.Configure<RedisSettings>(c =>
+        {
+            c.Port = settings.Port;
+            c.Hostname = settings.Hostname;
+            c.InstanceName = settings.InstanceName;
+        });
         services.AddStackExchangeRedisCache(option =>
         {
             option.Configuration = $"{settings.Hostname}:{settings.Port}";
@@ -106,6 +112,12 @@ public static class RedisServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, RedisSettings settings)
     {
+        services.Configure<RedisSettings>(c =>
+        {
+            c.Port = settings.Port;
+            c.Hostname = settings.Hostname;
+            c.InstanceName = settings.InstanceName;
+        });
         var ipAddresses = Dns.GetHostAddresses(settings.Hostname);
         var endPoints = new List<RedLockEndPoint?>
         {

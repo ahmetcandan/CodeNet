@@ -2,7 +2,7 @@
 
 namespace CodeNet.RabbitMQ.Settings;
 
-public abstract class BaseRabbitMQOptions
+public class BaseRabbitMQOptions
 {
     public string Queue { get; set; } = "";
     public string Exchange { get; set; } = "";
