@@ -9,36 +9,36 @@ namespace CodeNet.RabbitMQ.Services;
 
 public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 {
-    public void Publish<TModel>(TModel data)
+    public PublishModel? Publish<TModel>(TModel data)
     {
-        Publish(data, Guid.NewGuid().ToString("N"));
+        return Publish(data, Guid.NewGuid().ToString("N"));
     }
 
-    public void Publish(byte[] data)
+    public PublishModel? Publish(byte[] data)
     {
-        Publish(data, Guid.NewGuid().ToString("N"));
+        return Publish(data, Guid.NewGuid().ToString("N"));
     }
-    public void Publish<TModel>(TModel data, string messageId)
+    public PublishModel? Publish<TModel>(TModel data, string messageId)
     {
-        Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
-    }
-
-    public void Publish(byte[] data, string messageId)
-    {
-        Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
+        return Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
     }
 
-    public void Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers)
+    public PublishModel? Publish(byte[] data, string messageId)
+    {
+        return Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
+    }
+
+    public PublishModel? Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers)
     {
         if (typeof(TModel).Equals(typeof(string)))
-            Publish(Encoding.UTF8.GetBytes(data?.ToString() ?? ""), messageId, headers);
+            return Publish(Encoding.UTF8.GetBytes(data?.ToString() ?? ""), messageId, headers);
         else
-            Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
+            return Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
     }
 
-    public void Publish(byte[] data, string messageId, IDictionary<string, object> headers)
+    public PublishModel? Publish(byte[] data, string messageId, IDictionary<string, object> headers)
     {
-        Publish([new PublishModel(data, messageId, headers)]);
+        return Publish([new PublishModel(data, messageId, headers)]).FirstOrDefault() ?? null;
     }
 
     public virtual IEnumerable<PublishModel> Publish(IEnumerable<PublishModel> messages)
@@ -46,7 +46,6 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
         List<PublishModel> result = [];
         try
         {
-            Console.WriteLine($"Publis message count: {messages.Count()}");
             using var connection = options.Value.ConnectionFactory.CreateConnection();
             using var channel = connection.CreateModel();
 
@@ -83,12 +82,8 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
                                      body: message.Data);
                 result.Add(message);
             }
-            Console.WriteLine($"Publis message count: {messages.Count()} successfull");
         }
-        catch
-        {
-            return result;
-        }
+        catch { }
 
         return result;
     }

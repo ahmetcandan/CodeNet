@@ -16,7 +16,6 @@ internal class OutboxRabbitMQProducerService(IOutboxService outboxService, IOpti
 {
     public override IEnumerable<PublishModel> Publish(IEnumerable<PublishModel> messages)
     {
-        Console.WriteLine($"Send MongoDb message count: {messages.Count()}");
         foreach (var message in messages)
             outboxService.AddMessage(new CreateMessageModel
             {
