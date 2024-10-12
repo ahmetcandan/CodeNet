@@ -27,9 +27,31 @@ public static class MongoDBServiceCollectionExtensions
     public static IServiceCollection AddMongoDB<TMongoDbContext>(this IServiceCollection services, IConfigurationSection mongoSection)
         where TMongoDbContext : MongoDBContext
     {
+        var options = mongoSection.Get<MongoDbOptions<TMongoDbContext>>() ?? throw new ArgumentNullException($"'{mongoSection.Path}' is null or empty in appSettings.json");
+        return AddMongoDB(services, options);
+    }
+
+    /// <summary>
+    /// Add MongoDB Settings
+    /// </summary>
+    /// <typeparam name="TMongoDbContext"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="mongoDbOptions"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddMongoDB<TMongoDbContext>(this IServiceCollection services, MongoDbOptions<TMongoDbContext> mongoDbOptions)
+    where TMongoDbContext : MongoDBContext
+    {
         _ = typeof(TMongoDbContext).Equals(typeof(MongoDBContext))
-            ? services.Configure<MongoDbOptions>(mongoSection)
-            : services.Configure<MongoDbOptions<TMongoDbContext>>(mongoSection);
+            ? services.Configure<MongoDbOptions>(c =>
+            {
+                c.ConnectionString = mongoDbOptions.ConnectionString;
+                c.DatabaseName = mongoDbOptions.DatabaseName;
+            })
+            : services.Configure<MongoDbOptions<TMongoDbContext>>(c =>
+            {
+                c.ConnectionString = mongoDbOptions.ConnectionString;
+                c.DatabaseName = mongoDbOptions.DatabaseName;
+            });
         return services.AddScoped<TMongoDbContext>();
     }
 }

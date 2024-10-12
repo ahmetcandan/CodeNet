@@ -4,17 +4,19 @@ namespace CodeNet.MongoDB.Repositories;
 
 public interface IMongoDBSyncRepository<TModel> where TModel : class
 {
-    public List<TModel> GetList(Expression<Func<TModel, bool>> filter);
+    List<TModel> GetList(Expression<Func<TModel, bool>> filter);
 
-    public TModel GetById(Expression<Func<TModel, bool>> filter);
+    TModel GetById(Expression<Func<TModel, bool>> filter);
 
-    public TModel Create(TModel model);
+    TModel Create(TModel model);
+    IEnumerable<TModel> Create(IEnumerable<TModel> models);
 
-    public void Update(Expression<Func<TModel, bool>> filter, TModel model);
+    void Update(Expression<Func<TModel, bool>> filter, TModel model);
+    void Update(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues);
 
-    public void Delete(Expression<Func<TModel, bool>> filter);
+    void Delete(Expression<Func<TModel, bool>> filter);
 
-    public bool Exists(Expression<Func<TModel, bool>> filter);
+    bool Exists(Expression<Func<TModel, bool>> filter);
 
-    public long Count(Expression<Func<TModel, bool>> filter);
+    long Count(Expression<Func<TModel, bool>> filter);
 }

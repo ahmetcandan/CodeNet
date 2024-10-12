@@ -47,6 +47,17 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     }
 
     /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="models"></param>
+    /// <returns></returns>
+    public virtual IEnumerable<TModel> Create(IEnumerable<TModel> models)
+    {
+        _mongoCollection.InsertMany(models);
+        return models;
+    }
+
+    /// <summary>
     /// Update
     /// </summary>
     /// <param name="filter"></param>
@@ -62,7 +73,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     public virtual void Delete(Expression<Func<TModel, bool>> filter)
     {
-        _mongoCollection.DeleteOne(filter);
+        _mongoCollection.DeleteMany(filter);
     }
 
     /// <summary>
@@ -114,12 +125,15 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="count"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, int page, int count, CancellationToken cancellationToken)
+    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
     {
+        if (page < 1 || count < 1) throw new ArgumentException("Page or count cannot be less than 1");
+
         return await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
         {
-            Skip = page * count,
-            BatchSize = count
+            Skip = (page - 1) * count,
+            Limit = count,
+            Sort = isAcending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
         }, cancellationToken)).ToListAsync(cancellationToken);
     }
 
@@ -158,6 +172,16 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <summary>
     /// Create
     /// </summary>
+    /// <param name="models"></param>
+    /// <returns></returns>
+    public virtual Task<IEnumerable<TModel>> CreateAsync(IEnumerable<TModel> models)
+    {
+        return CreateAsync(models, CancellationToken.None);
+    }
+
+    /// <summary>
+    /// Create
+    /// </summary>
     /// <param name="model"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
@@ -165,6 +189,18 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     {
         await _mongoCollection.InsertOneAsync(model, cancellationToken: cancellationToken);
         return model;
+    }
+
+    /// <summary>
+    /// Create
+    /// </summary>
+    /// <param name="models"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task<IEnumerable<TModel>> CreateAsync(IEnumerable<TModel> models, CancellationToken cancellationToken)
+    {
+        await _mongoCollection.InsertManyAsync(models, cancellationToken: cancellationToken);
+        return models;
     }
 
     /// <summary>
@@ -191,6 +227,38 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     }
 
     /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="updatedValues"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues, CancellationToken cancellationToken)
+    {
+        var first = updatedValues.First();
+        var _update = Builders<TModel>.Update.Set(first.Key, first.Value);
+        for (int i = 1; i < updatedValues.Count; i++)
+            _update.Set(updatedValues[i].Key, updatedValues[i].Value);
+
+        await _mongoCollection.UpdateManyAsync(filter, _update, cancellationToken: cancellationToken);
+    }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="updatedValues"></param>
+    public virtual void Update(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues)
+    {
+        var first = updatedValues.First();
+        var _update = Builders<TModel>.Update.Set(first.Key, first.Value);
+        for (int i = 1; i < updatedValues.Count; i++)
+            _update.Set(updatedValues[i].Key, updatedValues[i].Value);
+
+        _mongoCollection.UpdateMany(filter, _update);
+    }
+
+    /// <summary>
     /// Delete
     /// </summary>
     /// <param name="filter"></param>
@@ -208,7 +276,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <returns></returns>
     public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
     {
-        await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
+        await _mongoCollection.DeleteManyAsync(filter, cancellationToken);
     }
 
     /// <summary>
