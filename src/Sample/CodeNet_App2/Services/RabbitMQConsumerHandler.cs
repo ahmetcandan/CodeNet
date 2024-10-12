@@ -13,9 +13,8 @@ public class RabbitMQConsumerHandler(RabbitMQConsumerService consumerService) : 
         
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Input {message}, Timestamp: {args.Timestamp}");
         Stopwatch stopwatch = Stopwatch.StartNew();
+        await Task.Delay(1000);
         consumerService.CheckSuccessfullMessage(args.DeliveryTag);
-        await Task.Delay(new Random().Next(2000, 5000));
-        //await Task.Delay(1000);
         stopwatch.Stop();
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Output, ElapsedMilliseconds: {stopwatch.ElapsedMilliseconds}, {message}");
     }

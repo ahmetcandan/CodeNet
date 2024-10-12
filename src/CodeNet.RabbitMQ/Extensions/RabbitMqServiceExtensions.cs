@@ -67,8 +67,52 @@ public static class RabbitMqServiceExtensions
         where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
     {
         _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
-            ? services.Configure<RabbitMQConsumerOptions>(c => c = config)
-            : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(c => c = config);
+            ? services.Configure<RabbitMQConsumerOptions>(c =>
+            {
+                c.QueueBind = config.QueueBind;
+                c.Queue = config.Queue;
+                c.DeclareQueue = config.DeclareQueue;
+                c.Durable = config.Durable;
+                c.AutoDelete = config.AutoDelete;
+                c.Arguments = config.Arguments;
+                c.QueueBindArguments = config.QueueBindArguments;
+                c.ConnectionFactory = config.ConnectionFactory;
+                c.DeclareExchange = config.DeclareExchange;
+                c.Exchange = config.Exchange;
+                c.RoutingKey = config.RoutingKey;
+                c.ExchangeArguments = config.ExchangeArguments;
+                c.ExchangeType = config.ExchangeType;
+                c.Exclusive = config.Exclusive;
+                c.AutoAck = config.AutoAck;
+                c.AsyncConsumer = config.AsyncConsumer;
+                c.NoLocal = config.NoLocal;
+                c.ConsumerTag = config.ConsumerTag;
+                c.Qos = config.Qos;
+                c.ConsumerArguments = config.ConsumerArguments;
+            })
+            : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(c =>
+            {
+                c.QueueBind = config.QueueBind;
+                c.Queue = config.Queue;
+                c.DeclareQueue = config.DeclareQueue;
+                c.Durable = config.Durable;
+                c.AutoDelete = config.AutoDelete;
+                c.Arguments = config.Arguments;
+                c.QueueBindArguments = config.QueueBindArguments;
+                c.ConnectionFactory = config.ConnectionFactory;
+                c.DeclareExchange = config.DeclareExchange;
+                c.Exchange = config.Exchange;
+                c.RoutingKey = config.RoutingKey;
+                c.ExchangeArguments = config.ExchangeArguments;
+                c.ExchangeType = config.ExchangeType;
+                c.Exclusive = config.Exclusive;
+                c.AutoAck = config.AutoAck;
+                c.AsyncConsumer = config.AsyncConsumer;
+                c.NoLocal = config.NoLocal;
+                c.ConsumerTag = config.ConsumerTag;
+                c.Qos = config.Qos;
+                c.ConsumerArguments = config.ConsumerArguments;
+            });
 
         services.AddSingleton<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
@@ -95,10 +139,8 @@ public static class RabbitMqServiceExtensions
     public static IServiceCollection AddRabbitMQProducer<TProducerService>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TProducerService : RabbitMQProducerService
     {
-        _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
-            ? services.Configure<RabbitMQProducerOptions>(rabbitSection)
-            : services.Configure<RabbitMQProducerOptions<TProducerService>>(rabbitSection);
-        return services.AddScoped<TProducerService>();
+        var options = rabbitSection.Get<RabbitMQProducerOptions<TProducerService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json");
+        return AddRabbitMQProducer(services, options);
     }
 
     /// <summary>
@@ -123,8 +165,42 @@ public static class RabbitMqServiceExtensions
     where TProducerService : RabbitMQProducerService
     {
         _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
-            ? services.Configure<RabbitMQProducerOptions>(c => c = config)
-            : services.Configure<RabbitMQProducerOptions<TProducerService>>(c => c = config);
+            ? services.Configure<RabbitMQProducerOptions>(c =>
+            {
+                c.QueueBind = config.QueueBind;
+                c.Queue = config.Queue;
+                c.DeclareQueue = config.DeclareQueue;
+                c.Durable = config.Durable;
+                c.AutoDelete = config.AutoDelete;
+                c.Arguments = config.Arguments;
+                c.QueueBindArguments = config.QueueBindArguments;
+                c.ConnectionFactory = config.ConnectionFactory;
+                c.DeclareExchange = config.DeclareExchange;
+                c.Exchange = config.Exchange;
+                c.RoutingKey = config.RoutingKey;
+                c.Mandatory = config.Mandatory;
+                c.ExchangeArguments = config.ExchangeArguments;
+                c.ExchangeType = config.ExchangeType;
+                c.Exclusive = config.Exclusive;
+            })
+            : services.Configure<RabbitMQProducerOptions<TProducerService>>(c =>
+            {
+                c.QueueBind = config.QueueBind;
+                c.Queue = config.Queue;
+                c.DeclareQueue = config.DeclareQueue;
+                c.Durable = config.Durable;
+                c.AutoDelete = config.AutoDelete;
+                c.Arguments = config.Arguments;
+                c.QueueBindArguments = config.QueueBindArguments;
+                c.ConnectionFactory = config.ConnectionFactory;
+                c.DeclareExchange = config.DeclareExchange;
+                c.Exchange = config.Exchange;
+                c.RoutingKey = config.RoutingKey;
+                c.Mandatory = config.Mandatory;
+                c.ExchangeArguments = config.ExchangeArguments;
+                c.ExchangeType = config.ExchangeType;
+                c.Exclusive = config.Exclusive;
+            });
         return services.AddScoped<TProducerService>();
     }
 

@@ -8,7 +8,10 @@ public class FireAndForget
     public static async Task Execute(IServiceProvider serviceProvider, int messagePerSecond, int second)
     {
         using var scope = serviceProvider.CreateScope();
-        var producerService = scope.ServiceProvider.GetRequiredService<RabbitMQProducerService>();
+        var producerService = scope.ServiceProvider.GetService<RabbitMQProducerService>();
+        if (producerService is null)
+            return;
+
         //var producerService = scope.ServiceProvider.GetRequiredService<KafkaProducerService>();
         for (int i = 1; i <= messagePerSecond; i++)
         {

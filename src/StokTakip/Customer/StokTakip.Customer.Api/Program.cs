@@ -49,9 +49,9 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     .AddRedisDistributedLock(builder.Configuration.GetSection("Redis"))
     .AddAppLogger()
     //.AddRabbitMQConsumer<ConsumerServiceA, MessageHandlerA>(builder.Configuration.GetSection("RabbitMQA"))
-    //.AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
+    .AddRabbitMQProducer<ProducerServiceA>(builder.Configuration.GetSection("RabbitMQA"))
     //.AddRabbitMQConsumer<ConsumerServiceB, MessageHandlerB>(builder.Configuration.GetSection("RabbitMQB"))
-    //.AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
+    .AddRabbitMQProducer<ProducerServiceB>(builder.Configuration.GetSection("RabbitMQB"))
     //.AddStackExcahangeConsumer<RedisConsumerServiceA, RedisMessageHandlerA>(builder.Configuration.GetSection("StackExchangeA"))
     //.AddStackExcahangeConsumer<RedisConsumerServiceB, RedisMessageHandlerB>(builder.Configuration.GetSection("StackExchangeB"))
     //.AddStackExcahangeProducer<RedisProducerServiceA>(builder.Configuration.GetSection("StackExchangeA"))
@@ -83,8 +83,8 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     {
         //options.AddRedis(builder.Configuration.GetSection("Redis"));
         //options.AddScheduleJob<TestService1>("TestService1", TimeSpan.FromSeconds(115), new() { ExpryTime = TimeSpan.FromSeconds(1) });
-        options.AddScheduleJob<TestService2>("TestService2", "0 */5 * * *", new() { ExpryTime = TimeSpan.FromSeconds(1) });
-        options.AddScheduleJob<TestService3>("TestService3", new() { ExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService2>("TestService2", "0 */5 * * *", new() { LockExpryTime = TimeSpan.FromSeconds(1) });
+        options.AddScheduleJob<TestService3>("TestService3", new() { LockExpryTime = TimeSpan.FromSeconds(1) });
         //options.AddDbContext(c => c.UseSqlServer(builder.Configuration.GetConnectionString("BackgroundService")!));
         options.AddCurrentAuth();
         options.AddBasicAuth(new Dictionary<string, string> { { "admin", "Admin123!" } });

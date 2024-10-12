@@ -8,7 +8,7 @@ builder.Services.AddRabbitMQConsumer<RabbitMQConsumerHandler>(builder.Configurat
 //builder.Services.AddKafkaConsumer<KafkaConsumerHandler>(builder.Configuration.GetSection("Kafka"));
 
 var app = builder.Build();
-app.UseCodeNet();
+app.UseCodeNet(c => c.UseSwagger());
 app.UseRabbitMQConsumer();
 //app.UseKafkaConsumer();
 app.Run();

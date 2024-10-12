@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\CodeNet.Kafka\CodeNet.Kafka.csproj" />
+    <ProjectReference Include="..\..\CodeNet.RabbitMQ.Outbox\CodeNet.RabbitMQ.Outbox.csproj" />
     <ProjectReference Include="..\..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
   </ItemGroup>
 

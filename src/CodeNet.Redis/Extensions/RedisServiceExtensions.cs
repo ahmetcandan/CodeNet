@@ -53,10 +53,22 @@ public static class RedisServiceExtensions
     public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         var redisSettings = configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
+        return services.AddRedisDistributedCache(redisSettings);
+    }
+
+    /// <summary>
+    /// Add Redis Distributed Cache
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="configurationSection"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, RedisSettings settings)
+    {
         services.AddStackExchangeRedisCache(option =>
         {
-            option.Configuration = $"{redisSettings.Hostname}:{redisSettings.Port}";
-            option.InstanceName = redisSettings.InstanceName;
+            option.Configuration = $"{settings.Hostname}:{settings.Port}";
+            option.InstanceName = settings.InstanceName;
         });
         return services.AddScoped(typeof(IDistributedCache<>), typeof(DistributedCache<>));
     }
@@ -83,10 +95,21 @@ public static class RedisServiceExtensions
     public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, IConfigurationSection configurationSection)
     {
         var redisSettings = configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
-        var ipAddresses = Dns.GetHostAddresses(redisSettings.Hostname);
+        return services.AddRedisDistributedLock(redisSettings);
+    }
+
+    /// <summary>
+    /// Add Redis Distributed Lock
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="settings"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, RedisSettings settings)
+    {
+        var ipAddresses = Dns.GetHostAddresses(settings.Hostname);
         var endPoints = new List<RedLockEndPoint?>
         {
-            new() { EndPoint = new IPEndPoint(ipAddresses[0], redisSettings.Port) }
+            new() { EndPoint = new IPEndPoint(ipAddresses[0], settings.Port) }
         };
         return services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
     }

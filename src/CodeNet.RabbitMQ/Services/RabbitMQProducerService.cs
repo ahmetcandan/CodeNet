@@ -1,4 +1,5 @@
-﻿using CodeNet.RabbitMQ.Settings;
+﻿using CodeNet.RabbitMQ.Models;
+using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
 using Newtonsoft.Json;
 using RabbitMQ.Client;
@@ -37,37 +38,58 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 
     public void Publish(byte[] data, string messageId, IDictionary<string, object> headers)
     {
-        using var connection = options.Value.ConnectionFactory.CreateConnection();
-        using var channel = connection.CreateModel();
+        Publish([new PublishModel(data, messageId, headers)]);
+    }
 
-        if (options.Value.DeclareQueue)
-            channel.QueueDeclare(queue: options.Value.Queue,
-                                 durable: options.Value.Durable,
-                                 exclusive: options.Value.Exclusive,
-                                 autoDelete: options.Value.AutoDelete,
-                                 arguments: options.Value.Arguments);
+    public virtual IEnumerable<PublishModel> Publish(IEnumerable<PublishModel> messages)
+    {
+        List<PublishModel> result = [];
+        try
+        {
+            Console.WriteLine($"Publis message count: {messages.Count()}");
+            using var connection = options.Value.ConnectionFactory.CreateConnection();
+            using var channel = connection.CreateModel();
 
-        if (options.Value.DeclareExchange)
-            channel.ExchangeDeclare(exchange: options.Value.Exchange,
-                                    type: options.Value.ExchangeType,
-                                    durable: options.Value.Durable,
-                                    arguments: options.Value.ExchangeArguments);
+            if (options.Value.DeclareQueue)
+                channel.QueueDeclare(queue: options.Value.Queue,
+                                     durable: options.Value.Durable,
+                                     exclusive: options.Value.Exclusive,
+                                     autoDelete: options.Value.AutoDelete,
+                                     arguments: options.Value.Arguments);
 
-        if (options.Value.QueueBind)
-            channel.QueueBind(queue: options.Value.Queue,
-                              exchange: options.Value.Exchange,
-                              routingKey: options.Value.RoutingKey,
-                              arguments: options.Value.QueueBindArguments);
+            if (options.Value.DeclareExchange)
+                channel.ExchangeDeclare(exchange: options.Value.Exchange,
+                                        type: options.Value.ExchangeType,
+                                        durable: options.Value.Durable,
+                                        arguments: options.Value.ExchangeArguments);
 
-        var basicProperties = channel.CreateBasicProperties();
-        basicProperties.MessageId = messageId;
-        basicProperties.Headers = headers;
-        basicProperties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+            if (options.Value.QueueBind)
+                channel.QueueBind(queue: options.Value.Queue,
+                                  exchange: options.Value.Exchange,
+                                  routingKey: options.Value.RoutingKey,
+                                  arguments: options.Value.QueueBindArguments);
 
-        channel.BasicPublish(exchange: options.Value.Exchange,
-                             routingKey: options.Value.RoutingKey,
-                             mandatory: options.Value.Mandatory ?? false,
-                             basicProperties: basicProperties,
-                             body: data);
+            foreach (var message in messages)
+            {
+                var basicProperties = channel.CreateBasicProperties();
+                basicProperties.MessageId = message.MessageId;
+                basicProperties.Headers = message.Headers;
+                basicProperties.Timestamp = new AmqpTimestamp(DateTimeOffset.UtcNow.ToUnixTimeSeconds());
+
+                channel.BasicPublish(exchange: options.Value.Exchange,
+                                     routingKey: options.Value.RoutingKey,
+                                     mandatory: options.Value.Mandatory ?? false,
+                                     basicProperties: basicProperties,
+                                     body: message.Data);
+                result.Add(message);
+            }
+            Console.WriteLine($"Publis message count: {messages.Count()} successfull");
+        }
+        catch
+        {
+            return result;
+        }
+
+        return result;
     }
 }
