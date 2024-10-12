@@ -13,6 +13,7 @@ namespace CodeNet.Outbox.Builder;
 public class OutboxOptionsBuilder
 {
     private readonly IServiceCollection _services;
+    public IServiceCollection Services { get { return _services; } }
 
     public OutboxOptionsBuilder(IServiceCollection services)
     {
@@ -40,7 +41,7 @@ public class OutboxOptionsBuilder
     /// <returns></returns>
     public OutboxOptionsBuilder AddMongoDB(MongoDbOptions options)
     {
-        _services.AddMongoDB(new MongoDbOptions<OutboxDbContext>
+        Services.AddMongoDB(new MongoDbOptions<OutboxDbContext>
         {
             ConnectionString = options.ConnectionString,
             DatabaseName = options.DatabaseName
@@ -67,7 +68,7 @@ public class OutboxOptionsBuilder
     /// <returns></returns>
     public OutboxOptionsBuilder AddRedis(RedisSettings settings)
     {
-        _services.AddRedisDistributedLock(settings);
+        Services.AddRedisDistributedLock(settings);
         return this;
     }
 }

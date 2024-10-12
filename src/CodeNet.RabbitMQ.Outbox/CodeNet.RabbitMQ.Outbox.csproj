@@ -1,14 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet RabbitMQ</Title>
+		<Description>CodeNet RabbitMQ package.</Description>
+		<Copyright>Copyright 2024</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.1.1</Version>
+		<Authors>CodeNet</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;RabbitMQ;Rabbit;Consumer;Producer;Queue;Messaging;Outbox;Outgoing</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CodeNet.Outbox\CodeNet.Outbox.csproj" />
-    <ProjectReference Include="..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\ico.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeNet.Outbox\CodeNet.Outbox.csproj" />
+		<ProjectReference Include="..\CodeNet.RabbitMQ\CodeNet.RabbitMQ.csproj" />
+	</ItemGroup>
 
 </Project>

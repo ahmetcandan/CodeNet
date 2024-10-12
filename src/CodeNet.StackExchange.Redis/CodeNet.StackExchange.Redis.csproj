@@ -17,7 +17,7 @@
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
-		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;StackExchange;StackExchangeRedis;Consumer;Producer;Queue</PackageTags>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;StackExchange;StackExchangeRedis;Consumer;Messaging;Producer;Queue</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>

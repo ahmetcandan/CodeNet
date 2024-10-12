@@ -29,6 +29,9 @@ public static class RabbitMQOutboxServiceExtension
 
     public static IServiceCollection AddRabbitMQOutboxModule(this IServiceCollection services, OutboxSettings settings, Action<OutboxOptionsBuilder> action)
     {
+        OutboxOptionsBuilder builder = new(services);
+        action(builder);
+
         var producerServices = services.Where(c => IsRabbitMQProducerServiceType(c.ServiceType)).ToList();
         int index = 0;
         foreach (var producerService in producerServices)
@@ -50,9 +53,6 @@ public static class RabbitMQOutboxServiceExtension
                 addScheduleJobMethod?.Invoke(c, [$"{outboxProducerServiceType.Name}[{index:000}]", settings.SendPeriod, new JobOptions(settings?.LockSettings?.LockTime ?? TimeSpan.FromMinutes(1), settings?.LockSettings?.TimeOut ?? TimeSpan.FromMinutes(1))]);
             });
         }
-
-        OutboxOptionsBuilder builder = new(services);
-        action(builder);
 
         return services.Configure<OutboxSettings>(c =>
         {
