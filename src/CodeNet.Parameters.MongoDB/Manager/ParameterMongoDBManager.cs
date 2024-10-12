@@ -82,7 +82,7 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
 
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
     {
-        var dtoList = await _repository.GetPagingListAsync(c => c.IsActive, page, count, cancellationToken);
+        var dtoList = await _repository.GetPagingListAsync(c => c.IsActive, c => c.CreatedDate, true, page, count, cancellationToken);
         return dtoList.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
