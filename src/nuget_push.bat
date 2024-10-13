@@ -1,0 +1,1 @@
+dotnet nuget push C:\SourceCode\GitHub\repo\ahmetcandan\NetCore\src\CodeNet.Core\bin\Release\CodeNet.Core.1.1.1-beta01.nupkg --api-key oy2pxmftzoug7r7jifeqerrpunenznouffoss7guikyjky --source https://api.nuget.org/v3/index.json
