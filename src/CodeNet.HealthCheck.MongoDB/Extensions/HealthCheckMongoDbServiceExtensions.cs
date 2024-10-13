@@ -8,13 +8,16 @@ namespace CodeNet.HealthCheck.MongoDB.Extensions;
 
 public static class HealthCheckMongoDbServiceExtensions
 {
+    private const string _name = "mongo-db";
+
     /// <summary>
     /// Add MongoDB Health Check
+    /// Checks for MongoDBContext
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, string name = "mongo-db", TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
     {
         return builder.AddMongoDbHealthCheck<MongoDBContext>(name, timeSpan);
     }
@@ -26,7 +29,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = "mongo-db", TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddMongoDbHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
         where TDbContext : MongoDBContext
     {
         return builder.AddCheck<MongoDbHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["mongo-db", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
@@ -40,7 +43,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = "mongo-db", TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
     {
         return builder.AddMongoDbHealthCheck(configuration.Get<MongoDbOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
     }
@@ -52,7 +55,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="options"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, MongoDbOptions options, string name = "mongo-db", TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, MongoDbOptions options, string name = _name, TimeSpan? timeSpan = null)
     {
         builder.AddCheck(name, (cancellationToken) =>
         {

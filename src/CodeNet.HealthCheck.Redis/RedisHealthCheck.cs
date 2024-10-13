@@ -1,11 +1,10 @@
-﻿using CodeNet.Redis.Settings;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
+﻿using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 
 namespace CodeNet.HealthCheck.Redis;
 
-internal class RedisHealthCheck(IOptions<RedisSettings> redisSettings) : IHealthCheck
+internal class RedisHealthCheck(IOptions<RedisHealthCheckOptions> redisSettings) : IHealthCheck
 {
     public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
     {

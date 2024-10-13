@@ -21,3 +21,7 @@ internal class EntityFrameworkHealthCheck<TDbContext>(TDbContext dbContext) : IH
         }
     }
 }
+
+internal class EntityFrameworkHealthCheck(DbContextOptions options) : EntityFrameworkHealthCheck<DbContext>(new DbContext(options))
+{
+}

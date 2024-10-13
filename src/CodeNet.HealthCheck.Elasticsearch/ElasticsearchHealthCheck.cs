@@ -1,5 +1,7 @@
 ﻿using CodeNet.Elasticsearch;
+using CodeNet.Elasticsearch.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
+using Microsoft.Extensions.Options;
 
 namespace CodeNet.HealthCheck.Elasticsearch;
 
@@ -19,4 +21,8 @@ internal class ElasticsearchHealthCheck<TDbContext>(TDbContext dbContext) : IHea
             return HealthCheckResult.Unhealthy($"Sorry, Elasticsearch is down :(");
         }
     }
+}
+
+internal class ElasticsearchHealthCheck(ElasticsearchOptions options) : ElasticsearchHealthCheck<ElasticsearchDbContext>(new ElasticsearchDbContext(Options.Create(options)))
+{
 }

@@ -73,7 +73,7 @@ builder.Services.AddCodeNet(builder.Configuration.GetSection("Application"), opt
     {
         options.AddCodeNetHealthCheck();
         options.AddEntityFrameworkHealthCheck<CustomerDbContext>();
-        options.AddRedisHealthCheck();
+        options.AddRedisHealthCheck(builder.Configuration.GetSection("Redis"));
         options.AddMongoDbHealthCheck();
         options.AddKafkaHealthCheck(builder.Services, builder.Configuration.GetSection("Kafka")!);
         //options.AddRabbitMqHealthCheck(builder.Services, builder.Configuration.GetSection("RabbitMQ"));

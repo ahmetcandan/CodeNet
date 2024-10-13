@@ -2,6 +2,6 @@
 
 namespace CodeNet.HealthCheck.RabbitMQ;
 
-internal class HealthCheckRabitMQSettings : BaseRabbitMQOptions
+public class HealthCheckRabitMQSettings : BaseRabbitMQOptions
 {
 }

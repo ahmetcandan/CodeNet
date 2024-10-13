@@ -2,6 +2,6 @@
 
 namespace CodeNet.HealthCheck.Kafka;
 
-internal class HealthCheckKafkaSettings : KafkaConsumerOptions
+public class HealthCheckKafkaSettings : KafkaConsumerOptions
 {
 }
