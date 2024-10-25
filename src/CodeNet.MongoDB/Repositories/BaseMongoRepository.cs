@@ -30,7 +30,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual TModel GetById(Expression<Func<TModel, bool>> filter)
+    public virtual TModel? GetById(Expression<Func<TModel, bool>> filter)
     {
         return _mongoCollection.Find(filter).FirstOrDefault();
     }
@@ -142,7 +142,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter)
+    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter)
     {
         return await GetByIdAsync(filter, CancellationToken.None);
     }
@@ -153,7 +153,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<TModel> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
+    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
     {
         return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefaultAsync(cancellationToken: cancellationToken);
     }

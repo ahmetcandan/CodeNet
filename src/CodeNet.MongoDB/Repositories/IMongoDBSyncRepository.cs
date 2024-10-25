@@ -6,7 +6,7 @@ public interface IMongoDBSyncRepository<TModel> where TModel : class
 {
     List<TModel> GetList(Expression<Func<TModel, bool>> filter);
 
-    TModel GetById(Expression<Func<TModel, bool>> filter);
+    TModel? GetById(Expression<Func<TModel, bool>> filter);
 
     TModel Create(TModel model);
     IEnumerable<TModel> Create(IEnumerable<TModel> models);
