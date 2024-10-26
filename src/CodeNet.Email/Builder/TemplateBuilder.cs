@@ -115,13 +115,13 @@ internal class TemplateBuilder : ITemplateBuilder
         }
     }
 
-    private int staticParamId = 1;
+    private int _staticParamId = 1;
     private string GenerateParamName()
     {
-        while (Parameters.Any(c => c.Name == $"STATIC_VALUE_{staticParamId:000}")) 
-         staticParamId++;
+        while (Parameters.Any(c => c.Name == $"STATIC_VALUE_{_staticParamId:000}")) 
+         _staticParamId++;
 
-        return $"STATIC_VALUE_{staticParamId:000}";
+        return $"STATIC_VALUE_{_staticParamId:000}";
     }
 
     public string Content { get; set; } = string.Empty;
