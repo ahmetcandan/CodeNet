@@ -14,6 +14,12 @@ namespace CodeNet.BackgroundJob.Extensions;
 
 public static class BackgroundJobServiceExtensions
 {
+    /// <summary>
+    /// Add Background Job
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
     public static IServiceCollection AddBackgroundJob(this IServiceCollection services, Action<BackgroundJobOptionsBuilder> action)
     {
         var builder = new BackgroundJobOptionsBuilder(services);
