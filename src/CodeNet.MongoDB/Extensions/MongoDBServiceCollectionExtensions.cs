@@ -32,6 +32,21 @@ public static class MongoDBServiceCollectionExtensions
     }
 
     /// <summary>
+    /// Add MongoDB Setting
+    /// </summary>
+    /// <param name="services"></param>
+    /// <param name="mongoDbOptions"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoDbOptions mongoDbOptions)
+    {
+        return services.AddMongoDB(new MongoDbOptions<MongoDBContext>
+        {
+            ConnectionString = mongoDbOptions.ConnectionString,
+            DatabaseName = mongoDbOptions.DatabaseName
+        });
+    }
+
+    /// <summary>
     /// Add MongoDB Settings
     /// </summary>
     /// <typeparam name="TMongoDbContext"></typeparam>
