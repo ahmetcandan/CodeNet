@@ -3,11 +3,27 @@ using CodeNet.Email.Models;
 using Microsoft.Extensions.Options;
 using CodeNet.Email.Settings;
 using CodeNet.Email.Repositories;
+using CodeNet.Email.Builder;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Email.Services;
 
-internal class EmailService(MailTemplateRepositories templateRepositories, OutboxRepositories outboxRepositories, IOptions<MailOptions> options) : IEmailService
+internal class EmailService : IEmailService
 {
+    private readonly MailOptions _options;
+    private readonly MailTemplateRepositories? _templateRepositories;
+    private readonly OutboxRepositories? _outboxRepositories;
+
+    public EmailService(IServiceProvider serviceProvider, IOptions<MailOptions> options)
+    {
+        _options = options.Value;
+        if (_options.HasMongoDB)
+        {
+            _templateRepositories = serviceProvider.GetService<MailTemplateRepositories>();
+            _outboxRepositories = serviceProvider.GetService<OutboxRepositories>();
+        }
+    }
+
     public async Task SendMail(SendMailRequest request, CancellationToken cancellationToken)
     {
         var template = await GetMailTemplate(request.TemplateCode, cancellationToken);
@@ -33,12 +49,12 @@ internal class EmailService(MailTemplateRepositories templateRepositories, Outbo
         }
     }
 
-    private async Task SendMail(MailTemplateResult mailTemplate, SendMailModel request, string templateCode, CancellationToken cancellationToken)
+    private Task SendMail(MailTemplateResult mailTemplate, SendMailModel request, string templateCode, CancellationToken cancellationToken)
     {
         MailMessage mailMessage = new()
         {
             From = string.IsNullOrEmpty(mailTemplate.From)
-                        ? new MailAddress(options.Value.EmailAddress)
+                        ? new MailAddress(_options.EmailAddress)
                         : new MailAddress(mailTemplate.From),
             Subject = request.Subject,
             Body = mailTemplate.Body,
@@ -53,7 +69,7 @@ internal class EmailService(MailTemplateRepositories templateRepositories, Outbo
         mailMessage.CC.Add(request.Cc.ToString());
         mailMessage.Bcc.Add(request.Bcc.ToString());
 
-        await SendMail(mailMessage, templateCode, cancellationToken);
+        return SendMail(mailMessage, templateCode, cancellationToken);
     }
 
     public Task SendMail(MailMessage mailMessage, CancellationToken cancellationToken)
@@ -61,11 +77,18 @@ internal class EmailService(MailTemplateRepositories templateRepositories, Outbo
         return SendMail(mailMessage, string.Empty, cancellationToken);
     }
 
+    public Task SendMail(MailMessage mailMessage, object param, CancellationToken cancellationToken)
+    {
+        var builder = TemplateBuilder.Compile(mailMessage.Body);
+        mailMessage.Body = builder.Build(param).ToString();
+        return SendMail(mailMessage, cancellationToken);
+    }
+
     private async Task SendMail(MailMessage mailMessage, string templateCode, CancellationToken cancellationToken)
     {
-        await options.Value.SmtpClient.SendMailAsync(mailMessage, cancellationToken);
-        if (options.Value.HasMongoDB)
-            await outboxRepositories.CreateAsync(new Outbox()
+        await _options.SmtpClient.SendMailAsync(mailMessage, cancellationToken);
+        if (_options.HasMongoDB)
+            await _outboxRepositories!.CreateAsync(new Outbox()
             {
                 Id = Guid.NewGuid(),
                 Bcc = mailMessage.Bcc,
@@ -80,10 +103,10 @@ internal class EmailService(MailTemplateRepositories templateRepositories, Outbo
 
     private async Task<MailTemplate> GetMailTemplate(string templateCode, CancellationToken cancellationToken)
     {
-        if (!options.Value.HasMongoDB)
+        if (!_options.HasMongoDB)
             throw new NotImplementedException("MongoDB is not implemented!");
 
-        return await templateRepositories.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
+        return await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
     }
 
     private static MailTemplateResult GenerateMailBody(MailTemplate template, object parameters)

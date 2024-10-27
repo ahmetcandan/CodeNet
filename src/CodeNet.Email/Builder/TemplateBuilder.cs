@@ -9,7 +9,7 @@ internal class TemplateBuilder : ITemplateBuilder
     {
     }
 
-    private const string _loopPattern = @"\$each\(@item * in  *@(?<array>[A-z][A-z0-9_]*)\)\s*\{\{(?<body>[^}]+)\}\}";
+    private const string _loopPattern = @"\$each\(@(?<item>[A-z][A-z0-9_]*) * in  *@(?<array>[A-z][A-z0-9_]*)\)\s*\{\{(?<body>[^}]+)\}\}";
     private const string _paramPattern = @"@(?<param>\w+(\.\w+)*)";
     private const string _funcPattern = @"\$(?<function>(?!each\b)[A-Za-z][A-Za-z0-9_]*)\((?<params>.+?)\)";
     private const string _funcParamPattern = @"(?<null>null)|(?<number>\d+\.\d+|\d+)|'(?<text>.+?|)'|@(?<param>\w+(\.\w+)*)|(?<bool>true|false)";
@@ -30,7 +30,7 @@ internal class TemplateBuilder : ITemplateBuilder
             stringBuilder.Replace(builder.Content, "");
 
         result.AddFuncBuilder(stringBuilder.ToString());
-        foreach (var builder in result.LoopBuilders.Where(c => c.Type == BuildType.Func).OrderBy(c => c.Index))
+        foreach (var builder in result.FuncBuilders.Where(c => c.Type == BuildType.Func).OrderBy(c => c.Index))
             stringBuilder.Replace(builder.Content, "");
 
         MatchCollection paramMatches = Regex.Matches(stringBuilder.ToString(), _paramPattern);
