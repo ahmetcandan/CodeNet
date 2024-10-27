@@ -1,14 +1,42 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet Email</Title>
+		<Description>CodeNet Email package.</Description>
+		<Copyright>Copyright 2024</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.1.1</Version>
+		<Authors>CodeNet</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Email;Mail;Smtp;Mailing;Messaging</PackageTags>
+	</PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
-    <ProjectReference Include="..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\ico.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
 
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
+	</ItemGroup>
+	
 </Project>
