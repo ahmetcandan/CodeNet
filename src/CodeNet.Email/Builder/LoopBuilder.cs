@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using CodeNet.Email.Exception;
+using System.Dynamic;
+using System.Text;
 
 namespace CodeNet.Email.Builder;
 
@@ -28,8 +30,25 @@ internal class LoopBuilder : ITemplateBuilder
         Array?.SetValue(data);
         StringBuilder builder = new();
         if (Array?.HasValue is true)
+        {
+            dynamic dynamicObj = new ExpandoObject();
+            var dictionary = (IDictionary<string, object>)dynamicObj;
+            var type = data.GetType();
+            foreach (var prop in type.GetProperties())
+            {
+                if (prop.Name == ItemName)
+                    throw new EmailException(ExceptionMessages.LoopItemParam);
+
+                var value = prop.GetValue(data);
+                if (value is not null)
+                    dictionary[prop.Name] = value;
+            }
             foreach (var item in (dynamic)Array.Value!)
-                builder.Append(BodyBuilder.Build(new { item }));
+            {
+                dictionary[ItemName] = item;
+                builder.Append(BodyBuilder.Build(dynamicObj));
+            }
+        }
 
         return builder;
     }
