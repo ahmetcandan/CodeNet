@@ -1,4 +1,4 @@
-using CodeNet.Email.Extensions;
+﻿using CodeNet.Email.Extensions;
 using CodeNet.Email.Services;
 using CodeNet.Email.Settings;
 using Microsoft.Extensions.DependencyInjection;
@@ -36,6 +36,7 @@ public class EmailServiceTests
     </tr>}}
 </table>
 
+$if(@name == 'Ahmet'){{isim doğrudur}} $else{{isim yanlıştır}}
 Send date: $Now('dd.MM.yyyy HH:mm')";
         object param = new
         {
