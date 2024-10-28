@@ -23,12 +23,12 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
 
     public async Task<bool> GetApprovalRequiredAsync(int groupId, CancellationToken cancellationToken = default)
     {
-        return (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {groupId}).");
+        return (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
     }
 
     public bool GetApprovalRequired(int groupId)
     {
-        return _entities.Find(groupId)?.ApprovalRequired ?? throw new ParameterException("PR001", $"Not found parameter group (Id: {groupId}).");
+        return _entities.Find(groupId)?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
     }
 
     public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParams(int groupId, CancellationToken cancellationToken)

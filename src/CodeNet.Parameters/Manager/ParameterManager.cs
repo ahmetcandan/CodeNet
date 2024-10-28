@@ -136,7 +136,7 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
             return result;
         }
 
-        throw new ParameterException("PR001", $"Not found parameter group (Id: {model.Id}).");
+        throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(model.Id.ToString()));
     }
 
     public async Task DeleteParameterAsync(string groupCode, CancellationToken cancellationToken = default)
@@ -145,7 +145,7 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
         if (parameterGroup is not null)
             _parameterGroupRepository.Remove(parameterGroup);
         else
-            throw new ParameterException("PR001", $"Not found parameter group (Code: {groupCode}).");
+            throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupCode));
 
         await _parameterGroupRepository.SaveChangesAsync(cancellationToken);
 
