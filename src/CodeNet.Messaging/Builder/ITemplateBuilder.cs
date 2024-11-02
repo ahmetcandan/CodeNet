@@ -1,8 +1,8 @@
 ﻿using System.Text;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
-internal interface ITemplateBuilder
+public interface ITemplateBuilder
 {
     StringBuilder Build(object data);
     int Index { get; set; }

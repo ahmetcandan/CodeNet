@@ -1,6 +1,6 @@
-﻿namespace CodeNet.Email.Builder;
+﻿namespace CodeNet.Messaging.Builder;
 
-internal class ParamValue
+public class ParamValue
 {
     public ParamValue()
     {

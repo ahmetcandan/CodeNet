@@ -1,9 +1,9 @@
-﻿using CodeNet.Email.Exception;
+﻿using CodeNet.Messaging.Exception;
 using System.Text;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
-internal class IfBuilder : ITemplateBuilder
+public class IfBuilder : ITemplateBuilder
 {
     private IfBuilder()
     {
@@ -19,7 +19,7 @@ internal class IfBuilder : ITemplateBuilder
             ">=" => Operator.GreaterThanOrEqual,
             "<" => Operator.LessThan,
             "<=" => Operator.LessThanOrEqual,
-            _ => throw new EmailException(ExceptionMessages.LoopItemParam)
+            _ => throw new MessagingException(ExceptionMessages.LoopItemParam)
         };
         IfBuilder builder = new()
         {
@@ -62,7 +62,7 @@ internal class IfBuilder : ITemplateBuilder
             };
 
         if (result is null)
-            throw new EmailException(ExceptionMessages.IfConditionException);
+            throw new MessagingException(ExceptionMessages.IfConditionException);
 
         return result.Value ? IfBodyBuilder.Build(data) : (ElseBodyBuilder?.Build(data) ?? new(""));
     }

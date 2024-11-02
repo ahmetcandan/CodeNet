@@ -3,7 +3,7 @@ using CodeNet.Email.Models;
 using Microsoft.Extensions.Options;
 using CodeNet.Email.Settings;
 using CodeNet.Email.Repositories;
-using CodeNet.Email.Builder;
+using CodeNet.Messaging.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Email.Services;

@@ -1,6 +1,6 @@
 ﻿using System.Dynamic;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
 internal static class ObjectExtension
 {

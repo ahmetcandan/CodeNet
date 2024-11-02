@@ -1,10 +1,10 @@
-﻿using CodeNet.Email.Exception;
+﻿using CodeNet.Messaging.Exception;
 using System.Dynamic;
 using System.Text;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
-internal class LoopBuilder : ITemplateBuilder
+public class LoopBuilder : ITemplateBuilder
 {
     private LoopBuilder()
     {
@@ -37,7 +37,7 @@ internal class LoopBuilder : ITemplateBuilder
             foreach (var prop in type.GetProperties())
             {
                 if (prop.Name == ItemName)
-                    throw new EmailException(ExceptionMessages.LoopItemParam);
+                    throw new MessagingException(ExceptionMessages.LoopItemParam);
 
                 var value = prop.GetValue(data);
                 if (value is not null)

@@ -13,7 +13,7 @@
 		<Description>CodeNet Email package.</Description>
 		<Copyright>Copyright 2024</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.1.1</Version>
+		<Version>1.1.1-preview1</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.ExceptionHandling\CodeNet.ExceptionHandling.csproj" />
+		<ProjectReference Include="..\CodeNet.Messaging\CodeNet.Messaging.csproj" />
 		<ProjectReference Include="..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
 	</ItemGroup>
 	

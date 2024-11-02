@@ -1,20 +1,14 @@
-﻿using CodeNet.Email.Exception;
+﻿using CodeNet.Messaging.Exception;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
-internal class TemplateBuilder : ITemplateBuilder
+public class TemplateBuilder : ITemplateBuilder
 {
     private TemplateBuilder()
     {
     }
-
-    private const string _loopPattern = @"\$each\(@(?<item>[A-z][A-z0-9_]*) * in  *@(?<array>[A-z][A-z0-9_]*)\)\s*\{\{(?<body>[^}]+)\}\}";
-    private const string _paramPattern = @"@(?<param>\w+(\.\w+)*)";
-    private const string _funcPattern = @"\$(?<function>(?!each\b)[A-Za-z][A-Za-z0-9_]*)\((?<params>.+?)\)";
-    private const string _funcParamPattern = @"(?<null>null)|(?<number>\d+\.\d+|\d+)|'(?<text>.+?|)'|@(?<param>\w+(\.\w+)*)|(?<bool>true|false)";
-    private const string _ifPattern = @"\$if\((?<left>@(?<param1>\w+(\.\w+)*)|(?<number1>\d+\.\d+|\d+)|'(?<text1>.+?|)'|(?<bool1>true|false)|(?<null1>null)) *(?<operator>==|!=|<|>|<=|>=) *(?<right>@(?<param2>\w+(\.\w+)*)|(?<number2>\d+\.\d+|\d+)|'(?<text2>.+?|)'|(?<bool2>true|false)|(?<null2>null))\)\s*\{\{(?<if>[^}]+)\}\}(\s*\$else\s*\{\{(?<else>[^}]+)\}\})?";
 
     public static TemplateBuilder Compile(string content)
     {
@@ -39,7 +33,7 @@ internal class TemplateBuilder : ITemplateBuilder
         foreach (var builder in result.FuncBuilders.Where(c => c.Type == BuildType.Func).OrderBy(c => c.Index))
             stringBuilder.Replace(builder.Content, "");
 
-        MatchCollection paramMatches = Regex.Matches(stringBuilder.ToString(), _paramPattern);
+        MatchCollection paramMatches = MessagingRegex.ParamRegex().Matches(stringBuilder.ToString());
         foreach (var match in paramMatches.Where(c => c.Success))
         {
             string paramName = match.Groups["param"].Value;
@@ -70,7 +64,7 @@ internal class TemplateBuilder : ITemplateBuilder
 
     private void AddLoopBuilder(string content)
     {
-        MatchCollection eachMatches = Regex.Matches(content, _loopPattern);
+        MatchCollection eachMatches = MessagingRegex.LoopRegex().Matches(content);
         foreach (var match in eachMatches.Where(c => c.Success))
         {
             string itemName = match.Groups["item"].Value;
@@ -83,11 +77,11 @@ internal class TemplateBuilder : ITemplateBuilder
 
     private void AddFuncBuilder(string content)
     {
-        MatchCollection funcMatches = Regex.Matches(content, _funcPattern);
+        MatchCollection funcMatches = MessagingRegex.FuncRegex().Matches(content);
         foreach (var match in funcMatches.Where(c => c.Success))
         {
             FuncBuilder funcBuilder = FuncBuilder.Compile(match.Groups["function"].Value, match.Value, match.Index);
-            MatchCollection paramMatches = Regex.Matches(match.Groups["params"].Value, _funcParamPattern);
+            MatchCollection paramMatches = MessagingRegex.FuncParamRegex().Matches(match.Groups["params"].Value);
             foreach (var paramMatch in paramMatches.Where(c => c.Success))
             {
                 string param = paramMatch.Groups["param"].Value;
@@ -104,7 +98,7 @@ internal class TemplateBuilder : ITemplateBuilder
 
     private void AddIfBuilder(string content)
     {
-        MatchCollection ifMatches = Regex.Matches(content, _ifPattern);
+        MatchCollection ifMatches = MessagingRegex.IfRegex().Matches(content);
         foreach (var match in ifMatches.Where(c => c.Success))
         {
             IfBuilder ifBuilder = IfBuilder.Compile(match.Value, match.Index, match.Groups["operator"].Value, match.Groups["if"].Value, match.Groups["else"].Value);
@@ -148,7 +142,7 @@ internal class TemplateBuilder : ITemplateBuilder
             return new(GenerateParamName(), boolean == "true");
         }
 
-        throw new EmailException(ExceptionMessages.IncorrectValue);
+        throw new MessagingException(ExceptionMessages.IncorrectValue);
     }
 
     private int _staticParamId = 1;

@@ -1,9 +1,9 @@
-﻿using CodeNet.Email.Builder;
+﻿using CodeNet.Messaging.Builder;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CodeNet.Email.Models;
 
-internal class MailTemplate
+public partial class MailTemplate
 {
     [BsonId]
     public string Code { get; set; }

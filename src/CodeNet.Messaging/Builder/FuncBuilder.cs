@@ -1,10 +1,12 @@
-﻿using CodeNet.Email.Services;
+﻿using CodeNet.Messaging.Manager;
 using System.Text;
 
-namespace CodeNet.Email.Builder;
+namespace CodeNet.Messaging.Builder;
 
-internal class FuncBuilder : ITemplateBuilder
+public class FuncBuilder : ITemplateBuilder
 {
+    FunctionExecuter _functionExecuter;
+
     private FuncBuilder()
     {
     }
@@ -23,12 +25,12 @@ internal class FuncBuilder : ITemplateBuilder
 
     public StringBuilder Build(object data)
     {
-        FunctionExecuter executer = new();
+        _functionExecuter = new();
         foreach (var param in Parameters.Where(c => c.Type is ParamType.Parameter))
             param.SetValue(data);
-        var method = executer.GetType().GetMethod(FunctionName, Parameters.Where(c => c.HasValue).Select(c => c.Value!.GetType()).ToArray());
+        var method = typeof(FunctionExecuter).GetType().GetMethod(FunctionName, Parameters.Where(c => c.HasValue).Select(c => c.Value!.GetType()).ToArray());
 
-        var result = method?.Invoke(executer, Parameters.Select(c => c.Value).ToArray()) as string ?? string.Empty;
+        var result = method?.Invoke(_functionExecuter, Parameters.Select(c => c.Value).ToArray()) as string ?? string.Empty;
         return new(result);
     }
 

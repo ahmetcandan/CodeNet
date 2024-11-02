@@ -1,4 +1,4 @@
-﻿namespace CodeNet.Email.Services;
+﻿namespace CodeNet.Messaging.Manager;
 
 public partial class FunctionExecuter
 {

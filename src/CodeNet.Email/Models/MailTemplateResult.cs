@@ -1,6 +1,4 @@
-﻿using CodeNet.Email.Builder;
-
-namespace CodeNet.Email.Models;
+﻿namespace CodeNet.Email.Models;
 
 internal class MailTemplateResult
 {

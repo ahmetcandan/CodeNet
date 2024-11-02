@@ -3,7 +3,7 @@ using System.Net.Mail;
 
 namespace CodeNet.Email.Models;
 
-internal class Outbox
+public partial class Outbox
 {
     [BsonId]
     public Guid Id { get; set; }

@@ -1,4 +1,4 @@
-﻿using CodeNet.Email.Builder;
+﻿using CodeNet.Messaging.Builder;
 using CodeNet.Email.Models;
 using CodeNet.Email.Repositories;
 
