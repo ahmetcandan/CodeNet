@@ -2,6 +2,8 @@
 using CodeNet.BackgroundJob.Settings;
 using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
+using CodeNet.Redis;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using RedLockNet;
@@ -20,33 +22,59 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
     private TimeSpan? _manuelTime;
     private JobStatus _jobStatus = JobStatus.Pending;
     private int _jobId;
+    private readonly string _manuelTimeCacheKey = $"{options.Value.Title}_ManuelTime";
 
-    public void SetManuelTime(TimeSpan manuelTimeSpan)
+    public async Task SetManuelTime(TimeSpan manuelTimeSpan, CancellationToken cancellationToken = default)
     {
         if (!_manuelExecute)
             return;
 
-        _manuelTime = manuelTimeSpan;
-        _stopwatch = Stopwatch.StartNew();
+        await SetManuelTime(manuelTimeSpan, true, cancellationToken);
     }
 
-    public void SetManuelTime(DateTime manuelDateTime)
+    public async Task SetManuelTime(DateTime manuelDateTime, CancellationToken cancellationToken = default)
     {
         if (!_manuelExecute)
             return;
 
         var now = DateTime.Now;
         if (manuelDateTime > now)
-        {
-            _stopwatch = Stopwatch.StartNew();
-            _manuelTime = manuelDateTime - now;
-        }
+            await SetManuelTime(manuelDateTime - now, true, cancellationToken);
+    }
+
+    private async Task SetManuelTime(TimeSpan manuelTime, bool setCache = true, CancellationToken cancellationToken = default)
+    {
+        _manuelTime = manuelTime;
+        _stopwatch = Stopwatch.StartNew();
+
+        if (setCache)
+            await SetManuelTimeCache(manuelTime, cancellationToken);
+    }
+
+    private async Task SetManuelTimeCache(TimeSpan manuelTimeSpan, CancellationToken cancellationToken)
+    {
+        var distributeCache = serviceProvider.GetService<IDistributedCache<ManuelTimeModel>>();
+        if (distributeCache is not null)
+            await distributeCache.SetValueAsync(new ManuelTimeModel
+            {
+                Time = manuelTimeSpan
+            }, _manuelTimeCacheKey, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = manuelTimeSpan }, cancellationToken);
+    }
+
+    private async Task GetManuelTimeCache(CancellationToken cancellationToken)
+    {
+        var distributeCache = serviceProvider.GetService<IDistributedCache<ManuelTimeModel>>();
+        var model = distributeCache is not null ? await distributeCache.GetValueAsync(_manuelTimeCacheKey, cancellationToken) : null;
+
+        if (model is not null)
+            await SetManuelTime(model.Time, false, cancellationToken);
     }
 
     public async Task StartAsync(CancellationToken cancellationToken = default)
     {
         _exit = false;
         await AddOrUpdateService(cancellationToken);
+        await GetManuelTimeCache(cancellationToken);
 
         var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
         if (tJob is null)
