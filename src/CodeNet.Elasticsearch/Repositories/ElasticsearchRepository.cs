@@ -1,12 +1,14 @@
 ﻿using CodeNet.Elasticsearch.Attributes;
 using CodeNet.Elasticsearch.Models;
 using Elastic.Clients.Elasticsearch;
+using System.Linq.Expressions;
 
 namespace CodeNet.Elasticsearch.Repositories;
 
 public class ElasticsearchRepository<TModel>(ElasticsearchDbContext dbContext) : IElasticsearchRepository<TModel> where TModel : class, IElasticsearchModel
 {
     protected readonly ElasticsearchClient _elasticsearchClient = dbContext.Set();
+
     private readonly string _indexName = (typeof(TModel).GetCustomAttributes(typeof(IndexNameAttribute), true).FirstOrDefault() is not IndexNameAttribute indexAttribute
                 ? typeof(TModel).Name
                 : indexAttribute.Name).ToLower();
@@ -53,6 +55,20 @@ public class ElasticsearchRepository<TModel>(ElasticsearchDbContext dbContext) :
     {
         var response = await _elasticsearchClient.GetAsync<TModel>(id, idx => idx.Index(_indexName), cancellationToken);
         return response.IsValidResponse ? response.Source : null;
+    }
+
+    public virtual async Task<IEnumerable<TModel>> GetListAsync(Expression<Func<TModel, bool>> predicate, CancellationToken cancellationToken)
+    {
+        var result = await _elasticsearchClient.SearchAsync<TModel>(s =>
+            s.Query(q =>
+                q.Bool(b =>
+                    b.Filter(f =>
+                        f.Script(script =>
+                            script.Script(_s =>
+                                _s.Source("params.predicate(doc)")
+                                    .Params(p => p.Add("predicate", predicate))))))), cancellationToken);
+
+        return result.Documents;
     }
 
     /// <summary>

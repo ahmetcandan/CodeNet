@@ -1,10 +1,10 @@
-﻿namespace CodeNet.Elasticsearch.Settings;
+﻿using Elastic.Clients.Elasticsearch;
+
+namespace CodeNet.Elasticsearch.Settings;
 
 public class ElasticsearchOptions
 {
-    public required string HostName { get; set; }
-    public required string Username { get; set; }
-    public required string Password { get; set; }
+    public ElasticsearchClientSettings ElasticsearchClientSettings { get; set; }
 }
 
 public class ElasticsearchOptions<TDbContext> : ElasticsearchOptions

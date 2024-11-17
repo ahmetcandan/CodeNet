@@ -1,6 +1,5 @@
 ﻿using CodeNet.Elasticsearch.Settings;
 using Elastic.Clients.Elasticsearch;
-using Elastic.Transport;
 using Microsoft.Extensions.Options;
 
 namespace CodeNet.Elasticsearch;
@@ -9,11 +8,7 @@ public class ElasticsearchDbContext(IOptions<ElasticsearchOptions> config)
 {
     public ElasticsearchClient Set()
     {
-        var settings = new ElasticsearchClientSettings(new Uri(config.Value.HostName))
-            .Authentication(new BasicAuthentication(config.Value.Username, config.Value.Password))
-            .ServerCertificateValidationCallback((o, cer, chain, errors) => true);
-
-        return new ElasticsearchClient(settings);
+        return new ElasticsearchClient(config.Value.ElasticsearchClientSettings);
     }
 
     public async Task<bool> CanConnectionAsync(CancellationToken cancellationToken)
