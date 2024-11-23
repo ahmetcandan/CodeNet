@@ -62,6 +62,7 @@ public static class StackExchangeServiceExtensions
             });
 
         services.AddSingleton<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
+        services.AddScoped<ISerializer, Serializer>();
         return services.AddSingleton<TConsumerService>();
     }
 
@@ -113,6 +114,8 @@ public static class StackExchangeServiceExtensions
                 c.CommandFlags = options.CommandFlags;
                 c.Configuration = options.Configuration;
             });
+
+        services.AddScoped<ISerializer, Serializer>();
         return services.AddScoped<TProducerService>();
     }
 

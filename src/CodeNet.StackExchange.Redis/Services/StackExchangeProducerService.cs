@@ -1,29 +1,33 @@
 ﻿using CodeNet.StackExchange.Redis.Settings;
 using Microsoft.Extensions.Options;
-using Newtonsoft.Json;
 using StackExchange.Redis;
 
 namespace CodeNet.StackExchange.Redis.Services;
 
-public class StackExchangeProducerService(IOptions<StackExchangeProducerOptions> options)
+public class StackExchangeProducerService(ISerializer serializer, IOptions<StackExchangeProducerOptions> options)
 {
-    public Task<bool> PublishAsync(object data)
+    public Task<long> PublishAsync(object data)
     {
-        var json = JsonConvert.SerializeObject(data);
-        return PublishAsync(json);
+        return PublishAsync(serializer.Serialize(data));
     }
 
-    public async Task<bool> PublishAsync(string message)
-	{
-		try
-		{
-            var connection = await ConnectionMultiplexer.ConnectAsync(options.Value.Configuration);
-            var subscriber = connection.GetSubscriber();
-            return (await subscriber.PublishAsync(RedisChannel.Pattern(options.Value.Channel), message, options.Value.CommandFlags)) > 0;
-        }
-        catch
-        {
-            return false;
-        }
+    public Task PublishAsync(object[] datas)
+    {
+        return PublishAsync(datas.Select(data => serializer.Serialize(data)).ToArray());
+    }
+
+    public async Task<long> PublishAsync(string message)
+    {
+        var connection = await ConnectionMultiplexer.ConnectAsync(options.Value.Configuration);
+        var subscriber = connection.GetSubscriber();
+        return await subscriber.PublishAsync(RedisChannel.Pattern(options.Value.Channel), message, options.Value.CommandFlags);
+    }
+
+    public async Task PublishAsync(string[] messages)
+    {
+        var connection = await ConnectionMultiplexer.ConnectAsync(options.Value.Configuration);
+        var subscriber = connection.GetSubscriber();
+        foreach (var message in messages)
+            await subscriber.PublishAsync(RedisChannel.Pattern(options.Value.Channel), message, options.Value.CommandFlags);
     }
 }
