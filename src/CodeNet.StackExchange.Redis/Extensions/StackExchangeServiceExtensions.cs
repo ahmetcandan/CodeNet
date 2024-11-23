@@ -33,9 +33,33 @@ public static class StackExchangeServiceExtensions
         where TConsumerService : StackExchangeConsumerService
         where TConsumerHandler : class, IStackExchangeConsumerHandler<TConsumerService>
     {
+        var options = stackExcahangeSection.Get<StackExchangeProducerOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
+        return services.AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(options);
+    }
+
+    /// <summary>
+    /// Add StackExchange Consumer
+    /// </summary>
+    /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, StackExchangeConsumerOptions options)
+        where TConsumerService : StackExchangeConsumerService
+        where TConsumerHandler : class, IStackExchangeConsumerHandler<TConsumerService>
+    {
         _ = typeof(TConsumerService).Equals(typeof(StackExchangeConsumerService))
-            ? services.Configure<StackExchangeConsumerOptions>(stackExcahangeSection)
-            : services.Configure<StackExchangeConsumerOptions<TConsumerService>>(stackExcahangeSection);
+            ? services.Configure<StackExchangeConsumerOptions>(c =>
+            {
+                c.Channel = options.Channel;
+                c.Configuration = options.Configuration;
+            })
+            : services.Configure<StackExchangeConsumerOptions<TConsumerService>>(c =>
+            {
+                c.Channel = options.Channel;
+                c.Configuration = options.Configuration;
+            });
 
         services.AddSingleton<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
         return services.AddSingleton<TConsumerService>();
@@ -62,9 +86,33 @@ public static class StackExchangeServiceExtensions
     public static IServiceCollection AddStackExcahangeProducer<TProducerService>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
         where TProducerService : StackExchangeProducerService
     {
+        var options = stackExcahangeSection.Get<StackExchangeProducerOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
+        return services.AddStackExcahangeProducer<TProducerService>(options);
+    }
+
+    /// <summary>
+    /// Add StackExchange Producer
+    /// </summary>
+    /// <typeparam name="TProducerService"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="options"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddStackExcahangeProducer<TProducerService>(this IServiceCollection services, StackExchangeProducerOptions options)
+        where TProducerService : StackExchangeProducerService
+    {
         _ = typeof(TProducerService).Equals(typeof(StackExchangeProducerService))
-            ? services.Configure<StackExchangeProducerOptions>(stackExcahangeSection)
-            : services.Configure<StackExchangeProducerOptions<TProducerService>>(stackExcahangeSection);
+            ? services.Configure<StackExchangeProducerOptions>(c =>
+            {
+                c.Channel = options.Channel;
+                c.CommandFlags = options.CommandFlags;
+                c.Configuration = options.Configuration;
+            })
+            : services.Configure<StackExchangeProducerOptions<TProducerService>>(c =>
+            {
+                c.Channel = options.Channel;
+                c.CommandFlags = options.CommandFlags;
+                c.Configuration = options.Configuration;
+            });
         return services.AddScoped<TProducerService>();
     }
 

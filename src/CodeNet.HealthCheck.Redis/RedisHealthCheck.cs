@@ -10,13 +10,8 @@ internal class RedisHealthCheck(IOptions<RedisHealthCheckOptions> redisSettings)
     {
         try
         {
-            await ConnectionMultiplexer.Connect(new ConfigurationOptions
-            {
-                EndPoints = new EndPointCollection
-                {
-                    { redisSettings.Value.Hostname, redisSettings.Value.Port }
-                }
-            }).GetDatabase().PingAsync();
+            var redisConnection = ConnectionMultiplexer.Connect(redisSettings.Value.Configuration);
+            await redisConnection.GetDatabase().PingAsync();
             return HealthCheckResult.Healthy("This is Redis, standing as always. Have a good work ;) ");
         }
         catch

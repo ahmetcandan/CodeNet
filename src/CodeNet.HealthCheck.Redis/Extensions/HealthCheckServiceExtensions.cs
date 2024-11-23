@@ -31,9 +31,7 @@ public static class HealthCheckServiceExtensions
     {
         builder.Services.Configure<RedisHealthCheckOptions>(c => 
         {
-            c.InstanceName = options.InstanceName;
-            c.Hostname = options.Hostname;
-            c.Port = options.Port;
+            c.Configuration = options.Configuration;
         });
         return builder.AddCheck<RedisHealthCheck>(name, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, ["redis"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
