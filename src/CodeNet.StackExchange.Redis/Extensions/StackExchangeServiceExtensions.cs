@@ -9,106 +9,106 @@ namespace CodeNet.StackExchange.Redis.Extensions;
 public static class StackExchangeServiceExtensions
 {
     /// <summary>
-    /// Add StackExchange Consumer
+    /// Add StackExchange Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscribeHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-        where TConsumerHandler : class, IStackExchangeConsumerHandler<StackExchangeConsumerService>
+    public static IServiceCollection AddStackExcahangeSubscribe<TSubscribeHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<StackExchangeSubscribeService>
     {
-        return services.AddStackExcahangeConsumer<StackExchangeConsumerService, TConsumerHandler>(stackExcahangeSection);
+        return services.AddStackExcahangeSubscribe<StackExchangeSubscribeService, TSubscribeHandler>(stackExcahangeSection);
     }
 
     /// <summary>
-    /// Add StackExchange Consumer
+    /// Add StackExchange Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscribeService"></typeparam>
+    /// <typeparam name="TSubscribeHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-        where TConsumerService : StackExchangeConsumerService
-        where TConsumerHandler : class, IStackExchangeConsumerHandler<TConsumerService>
+    public static IServiceCollection AddStackExcahangeSubscribe<TSubscribeService, TSubscribeHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+        where TSubscribeService : StackExchangeSubscribeService
+        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<TSubscribeService>
     {
-        var options = stackExcahangeSection.Get<StackExchangeProducerOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
-        return services.AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(options);
+        var options = stackExcahangeSection.Get<StackExchangePublisherOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
+        return services.AddStackExcahangeSubscribe<TSubscribeService, TSubscribeHandler>(options);
     }
 
     /// <summary>
-    /// Add StackExchange Consumer
+    /// Add StackExchange Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscribeService"></typeparam>
+    /// <typeparam name="TSubscribeHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeConsumer<TConsumerService, TConsumerHandler>(this IServiceCollection services, StackExchangeConsumerOptions options)
-        where TConsumerService : StackExchangeConsumerService
-        where TConsumerHandler : class, IStackExchangeConsumerHandler<TConsumerService>
+    public static IServiceCollection AddStackExcahangeSubscribe<TSubscribeService, TSubscribeHandler>(this IServiceCollection services, StackExchangeSubscribeOptions options)
+        where TSubscribeService : StackExchangeSubscribeService
+        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<TSubscribeService>
     {
-        _ = typeof(TConsumerService).Equals(typeof(StackExchangeConsumerService))
-            ? services.Configure<StackExchangeConsumerOptions>(c =>
+        _ = typeof(TSubscribeService).Equals(typeof(StackExchangeSubscribeService))
+            ? services.Configure<StackExchangeSubscribeOptions>(c =>
             {
                 c.Channel = options.Channel;
                 c.Configuration = options.Configuration;
             })
-            : services.Configure<StackExchangeConsumerOptions<TConsumerService>>(c =>
+            : services.Configure<StackExchangeSubscribeOptions<TSubscribeService>>(c =>
             {
                 c.Channel = options.Channel;
                 c.Configuration = options.Configuration;
             });
 
-        services.AddSingleton<IStackExchangeConsumerHandler<TConsumerService>, TConsumerHandler>();
+        services.AddSingleton<IStackExchangeSubscribeHandler<TSubscribeService>, TSubscribeHandler>();
         services.AddScoped<ISerializer, Serializer>();
-        return services.AddSingleton<TConsumerService>();
+        return services.AddSingleton<TSubscribeService>();
     }
 
     /// <summary>
-    /// Add StackExchange Producer
+    /// Add StackExchange Publisher
     /// </summary>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeProducer(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+    public static IServiceCollection AddStackExcahangePublisher(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
     {
-        return services.AddStackExcahangeProducer<StackExchangeProducerService>(stackExcahangeSection);
+        return services.AddStackExcahangePublisher<StackExchangePublisherService>(stackExcahangeSection);
     }
 
     /// <summary>
-    /// Add StackExchange Producer
+    /// Add StackExchange Publisher
     /// </summary>
-    /// <typeparam name="TProducerService"></typeparam>
+    /// <typeparam name="TPublisherService"></typeparam>
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeProducer<TProducerService>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-        where TProducerService : StackExchangeProducerService
+    public static IServiceCollection AddStackExcahangePublisher<TPublisherService>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
+        where TPublisherService : StackExchangePublisherService
     {
-        var options = stackExcahangeSection.Get<StackExchangeProducerOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
-        return services.AddStackExcahangeProducer<TProducerService>(options);
+        var options = stackExcahangeSection.Get<StackExchangePublisherOptions>() ?? throw new ArgumentNullException($"'{stackExcahangeSection.Path}' is null or empty in appSettings.json");
+        return services.AddStackExcahangePublisher<TPublisherService>(options);
     }
 
     /// <summary>
-    /// Add StackExchange Producer
+    /// Add StackExchange Publisher
     /// </summary>
-    /// <typeparam name="TProducerService"></typeparam>
+    /// <typeparam name="TPublisherService"></typeparam>
     /// <param name="services"></param>
     /// <param name="options"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangeProducer<TProducerService>(this IServiceCollection services, StackExchangeProducerOptions options)
-        where TProducerService : StackExchangeProducerService
+    public static IServiceCollection AddStackExcahangePublisher<TPublisherService>(this IServiceCollection services, StackExchangePublisherOptions options)
+        where TPublisherService : StackExchangePublisherService
     {
-        _ = typeof(TProducerService).Equals(typeof(StackExchangeProducerService))
-            ? services.Configure<StackExchangeProducerOptions>(c =>
+        _ = typeof(TPublisherService).Equals(typeof(StackExchangePublisherService))
+            ? services.Configure<StackExchangePublisherOptions>(c =>
             {
                 c.Channel = options.Channel;
                 c.CommandFlags = options.CommandFlags;
                 c.Configuration = options.Configuration;
             })
-            : services.Configure<StackExchangeProducerOptions<TProducerService>>(c =>
+            : services.Configure<StackExchangePublisherOptions<TPublisherService>>(c =>
             {
                 c.Channel = options.Channel;
                 c.CommandFlags = options.CommandFlags;
@@ -116,35 +116,35 @@ public static class StackExchangeServiceExtensions
             });
 
         services.AddScoped<ISerializer, Serializer>();
-        return services.AddScoped<TProducerService>();
+        return services.AddScoped<TPublisherService>();
     }
 
     /// <summary>
-    /// Use StackExchange Consumer
-    /// IStackExchangeConsumerHandler<StackExchangeConsumerService> must be registered.
+    /// Use StackExchange Subscriber
+    /// IStackExchangeSubscribeHandler<StackExchangeSubscribeService> must be registered.
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseStackExcahangeConsumer(this WebApplication app)
+    public static WebApplication UseStackExcahangeSubscriber(this WebApplication app)
     {
-        return app.UseStackExcahangeConsumer<StackExchangeConsumerService>();
+        return app.UseStackExcahangeSubscriber<StackExchangeSubscribeService>();
     }
 
     /// <summary>
-    /// Use StackExcahange Consumer
-    /// IStackExchangeConsumerHandler<TConsumerService> must be registered.
+    /// Use StackExchange Subscriber
+    /// IStackExchangeSubscribeHandler<TSubscribeService> must be registered.
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TSubscribeService"></typeparam>
     /// <param name="app"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static WebApplication UseStackExcahangeConsumer<TConsumerService>(this WebApplication app)
-        where TConsumerService : StackExchangeConsumerService
+    public static WebApplication UseStackExcahangeSubscriber<TSubscribeService>(this WebApplication app)
+        where TSubscribeService : StackExchangeSubscribeService
     {
         var serviceScope = app.Services.CreateScope();
-        var consumerService = serviceScope.ServiceProvider.GetService<TConsumerService>() ?? throw new NotImplementedException($"'{nameof(TConsumerService)}' not implemented service.");
-        if (DependHandler(serviceScope, consumerService))
-            app.Lifetime.ApplicationStarted.Register(async () => await consumerService.StartListening());
+        var subscribeService = serviceScope.ServiceProvider.GetService<TSubscribeService>() ?? throw new NotImplementedException($"'{nameof(TSubscribeService)}' not implemented service.");
+        if (DependHandler(serviceScope, subscribeService))
+            app.Lifetime.ApplicationStarted.Register(async () => await subscribeService.StartListening());
 
         return app;
     }
@@ -152,16 +152,16 @@ public static class StackExchangeServiceExtensions
     /// <summary>
     /// Depend Handler
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TSubscribeService"></typeparam>
     /// <param name="app"></param>
-    /// <param name="consumerService"></param>
-    private static bool DependHandler<TConsumerService>(IServiceScope serviceScope, TConsumerService consumerService)
-        where TConsumerService : StackExchangeConsumerService
+    /// <param name="subscribeService"></param>
+    private static bool DependHandler<TSubscribeService>(IServiceScope serviceScope, TSubscribeService subscribeService)
+        where TSubscribeService : StackExchangeSubscribeService
     {
-        var messageHandlerService = serviceScope.ServiceProvider.GetService<IStackExchangeConsumerHandler<TConsumerService>>();
+        var messageHandlerService = serviceScope.ServiceProvider.GetService<IStackExchangeSubscribeHandler<TSubscribeService>>();
         if (messageHandlerService is not null)
         {
-            consumerService.ReceivedMessage += messageHandlerService.Handler;
+            subscribeService.ReceivedMessage += messageHandlerService.Handler;
             return true;
         }
 

@@ -29,30 +29,30 @@ using ExampleApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder
-    .AddStackExcahangeProducer(builder.Configuration.GetSection("StackExchangeRedis"))
-    .AddStackExcahangeConsumer(builder.Configuration.GetSection("StackExchangeRedis"));
-builder.Services.AddScoped<IStackExchangeConsumerHandler<StackExchangeConsumerService>, MessageConsumerHandler>();
+    .AddStackExcahangePublisher(builder.Configuration.GetSection("StackExchangeRedis"))
+    .AddStackExcahangeSubscribe(builder.Configuration.GetSection("StackExchangeRedis"));
+builder.Services.AddScoped<IStackExchangeSubscribeHandler<StackExchangeSubscribeService>, MessageSubscribeHandler>();
 //...
 
 var app = builder.Build();
-app.UseStackExcahangeConsumer<StackExchangeConsumerService>();
+app.UseStackExcahangeSubscribe<StackExchangeSubscribeService>();
 //...
 app.Run();
 ```
-#### Usage Producer
+#### Usage Publisher
 ```csharp
-public class MessageProducer(StackExchangeProducerService Producer)
+public class MessagePublisher(StackExchangePublisherService Publisher)
 {
-    public async Task<ResponseBase> Send(MessageProducerRequest request, CancellationToken cancellationToken)
+    public async Task<ResponseBase> Send(MessagePublisherRequest request, CancellationToken cancellationToken)
     {
-        await Producer.Publish(request.Data);
+        await Publisher.Publish(request.Data);
         return new ResponseBase("200", "Successfull");
     }
 }
 ```
-#### Usage Consumer
+#### Usage Subscriber
 ```csharp
-public class MessageConsumerHandler : IStackExchangeConsumerHandler<StackExchangeConsumerService>
+public class MessageSubscribeHandler : IStackExchangeSubscribeHandler<StackExchangeSubscribeService>
 {
     public void Handler(ReceivedMessageEventArgs<KeyValueModel> args)
     {

@@ -4,7 +4,7 @@ using StackExchange.Redis;
 
 namespace CodeNet.StackExchange.Redis.Services;
 
-public class StackExchangeProducerService(ISerializer serializer, IOptions<StackExchangeProducerOptions> options)
+public class StackExchangePublisherService(ISerializer serializer, IOptions<StackExchangePublisherOptions> options)
 {
     public Task<long> PublishAsync(object data)
     {

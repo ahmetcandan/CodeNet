@@ -2,13 +2,13 @@
 
 namespace CodeNet.StackExchange.Redis.Settings;
 
-public class StackExchangeConsumerOptions
+public class StackExchangeSubscribeOptions
 {
     public string Configuration { get; set; }
     public string Channel { get; set; } = "default";
 }
 
-public class StackExchangeConsumerOptions<TConsumerService> : StackExchangeConsumerOptions
-    where TConsumerService : StackExchangeConsumerService
+public class StackExchangeSubscribeOptions<TSubscribeService> : StackExchangeSubscribeOptions
+    where TSubscribeService : StackExchangeSubscribeService
 {
 }

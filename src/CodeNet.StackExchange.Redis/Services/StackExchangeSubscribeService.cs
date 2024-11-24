@@ -5,7 +5,7 @@ using StackExchange.Redis;
 
 namespace CodeNet.StackExchange.Redis.Services;
 
-public class StackExchangeConsumerService(IOptions<StackExchangeConsumerOptions> options)
+public class StackExchangeSubscribeService(IOptions<StackExchangeSubscribeOptions> options)
 {
     private ConnectionMultiplexer? _connection;
     private ISubscriber? _subscriber;
