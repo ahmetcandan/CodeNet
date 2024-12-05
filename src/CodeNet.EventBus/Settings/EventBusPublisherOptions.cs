@@ -1,14 +1,12 @@
-﻿namespace CodeNet.EventBus.Settings;
+﻿using CodeNet.EventBus.Services;
+
+namespace CodeNet.EventBus.Settings;
 
 public class EventBusPublisherOptions : BaseEventBusOptions
 {
 }
 
-public class RabbitMQProducerOptions<TPublisherService> : EventBusPublisherOptions
+public class EventBusPublisherOptions<TPublisherService> : EventBusPublisherOptions
     where TPublisherService : EventBusPublisherService
 {
-    public override string ToString()
-    {
-        return base.ToString();
-    }
 }

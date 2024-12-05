@@ -5,23 +5,23 @@ using Microsoft.Extensions.Options;
 
 namespace StokTakip.Customer.Service.QueueService;
 
-public class RedisConsumerServiceA(IOptions<StackExchangeConsumerOptions<RedisConsumerServiceA>> options) : StackExchangeConsumerService(options)
+public class RedisConsumerServiceA(IOptions<StackExchangeSubscribeOptions<RedisConsumerServiceA>> options) : StackExchangeSubscribeService(options)
 {
 }
 
-public class RedisConsumerServiceB(IOptions<StackExchangeConsumerOptions<RedisConsumerServiceB>> options) : StackExchangeConsumerService(options)
+public class RedisConsumerServiceB(IOptions<StackExchangeSubscribeOptions<RedisConsumerServiceB>> options) : StackExchangeSubscribeService(options)
 {
 }
 
-public class RedisProducerServiceA(IOptions<StackExchangeProducerOptions<RedisProducerServiceA>> options) : StackExchangeProducerService(options)
+public class RedisProducerServiceA(IOptions<StackExchangePublisherOptions<RedisProducerServiceA>> options) : StackExchangePublisherService(options)
 {
 }
 
-public class RedisProducerServiceB(IOptions<StackExchangeProducerOptions<RedisProducerServiceB>> options) : StackExchangeProducerService(options)
+public class RedisProducerServiceB(IOptions<StackExchangePublisherOptions<RedisProducerServiceB>> options) : StackExchangePublisherService(options)
 {
 }
 
-public class RedisMessageHandlerA : IStackExchangeConsumerHandler<RedisConsumerServiceA>
+public class RedisMessageHandlerA : IStackExchangeSubscribeHandler<RedisConsumerServiceA>
 {
     public Task Handler(ReceivedMessageEventArgs args)
     {
@@ -30,7 +30,7 @@ public class RedisMessageHandlerA : IStackExchangeConsumerHandler<RedisConsumerS
     }
 }
 
-public class RedisMessageHandlerB : IStackExchangeConsumerHandler<RedisConsumerServiceB>
+public class RedisMessageHandlerB : IStackExchangeSubscribeHandler<RedisConsumerServiceB>
 {
     public Task Handler(ReceivedMessageEventArgs args)
     {

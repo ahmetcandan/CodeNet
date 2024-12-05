@@ -1,11 +1,13 @@
-﻿namespace CodeNet.EventBus.Settings;
+﻿using CodeNet.EventBus.Services;
+
+namespace CodeNet.EventBus.Settings;
 
 public class EventBusSubscriberOptions : BaseEventBusOptions
 {
     public string? ConsumerGroup { get; set; }
 }
 
-public class RabbitMQConsumerOptions<TSubscriberService> : EventBusSubscriberOptions
-    where TSubscriberService : EventBusSubscribeService
+public class EventBusSubscriberOptions<TSubscriberService> : EventBusSubscriberOptions
+    where TSubscriberService : EventBusSubscriberService
 {
 }

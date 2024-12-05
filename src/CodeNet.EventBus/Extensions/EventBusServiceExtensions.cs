@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using CodeNet.EventBus.Services;
+using CodeNet.EventBus.Settings;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -7,223 +9,169 @@ namespace CodeNet.EventBus.Extensions;
 public static class EventBusServiceExtensions
 {
     /// <summary>
-    /// Add RabbitMQ Consumer
+    /// Add EventBus Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscriberHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddEventBusMQSubscriber<TSubscriberHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
-        where TSubscriberHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
+        where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
     {
-        return services.AddEventBusMQSubscriber<RabbitMQConsumerService, TSubscriberHandler>(rabbitSection);
+        return services.AddEventBusMQSubscriber<EventBusSubscriberService, TSubscriberHandler>(rabbitSection);
     }
 
     /// <summary>
-    /// Add RabbitMQ Consumer
+    /// Add EventBus Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscriberService"></typeparam>
+    /// <typeparam name="TSubscriberHandler"></typeparam>
     /// <param name="services"></param>
-    /// <param name="rabbitSection"></param>
+    /// <param name="section"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TConsumerService, TConsumerHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
-        where TConsumerService : RabbitMQConsumerService
-        where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, IConfigurationSection section)
+        where TSubscriberService : EventBusSubscriberService
+        where TSubscriberHandler : class, IEventBusSubscriberHandler<TSubscriberService>
     {
-        var options = rabbitSection.Get<RabbitMQConsumerOptions<TConsumerService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json");
-        return services.AddRabbitMQConsumer<TConsumerService, TConsumerHandler>(options);
+        var options = section.Get<EventBusSubscriberOptions<TSubscriberService>>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json");
+        return services.AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(options);
     }
 
     /// <summary>
-    /// Add RabbitMQ Consumer
+    /// Add EventBus Subscriber
     /// </summary>
-    /// <typeparam name="TConsumerHandler"></typeparam>
-    /// <param name="services"></param>
-    /// <param name="rabbitSection"></param>
-    /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions config)
-        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
-    {
-        return services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>((RabbitMQConsumerOptions<RabbitMQConsumerService>)config);
-    }
-
-    /// <summary>
-    /// Add RabbitMQ Consumer
-    /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
-    /// <typeparam name="TConsumerHandler"></typeparam>
+    /// <typeparam name="TSubscriberHandler"></typeparam>
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TConsumerService, TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions<TConsumerService> config)
-        where TConsumerService : RabbitMQConsumerService
-        where TConsumerHandler : class, IRabbitMQConsumerHandler<TConsumerService>
+    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions config)
+        where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
     {
-        _ = typeof(TConsumerService).Equals(typeof(RabbitMQConsumerService))
-            ? services.Configure<RabbitMQConsumerOptions>(c =>
-            {
-                c.QueueBind = config.QueueBind;
-                c.Queue = config.Queue;
-                c.DeclareQueue = config.DeclareQueue;
-                c.Durable = config.Durable;
-                c.AutoDelete = config.AutoDelete;
-                c.Arguments = config.Arguments;
-                c.QueueBindArguments = config.QueueBindArguments;
-                c.ConnectionFactory = config.ConnectionFactory;
-                c.DeclareExchange = config.DeclareExchange;
-                c.Exchange = config.Exchange;
-                c.RoutingKey = config.RoutingKey;
-                c.ExchangeArguments = config.ExchangeArguments;
-                c.ExchangeType = config.ExchangeType;
-                c.Exclusive = config.Exclusive;
-                c.AutoAck = config.AutoAck;
-                c.AsyncConsumer = config.AsyncConsumer;
-                c.NoLocal = config.NoLocal;
-                c.ConsumerTag = config.ConsumerTag;
-                c.Qos = config.Qos;
-                c.ConsumerArguments = config.ConsumerArguments;
-            })
-            : services.Configure<RabbitMQConsumerOptions<TConsumerService>>(c =>
-            {
-                c.QueueBind = config.QueueBind;
-                c.Queue = config.Queue;
-                c.DeclareQueue = config.DeclareQueue;
-                c.Durable = config.Durable;
-                c.AutoDelete = config.AutoDelete;
-                c.Arguments = config.Arguments;
-                c.QueueBindArguments = config.QueueBindArguments;
-                c.ConnectionFactory = config.ConnectionFactory;
-                c.DeclareExchange = config.DeclareExchange;
-                c.Exchange = config.Exchange;
-                c.RoutingKey = config.RoutingKey;
-                c.ExchangeArguments = config.ExchangeArguments;
-                c.ExchangeType = config.ExchangeType;
-                c.Exclusive = config.Exclusive;
-                c.AutoAck = config.AutoAck;
-                c.AsyncConsumer = config.AsyncConsumer;
-                c.NoLocal = config.NoLocal;
-                c.ConsumerTag = config.ConsumerTag;
-                c.Qos = config.Qos;
-                c.ConsumerArguments = config.ConsumerArguments;
-            });
-
-        services.AddSingleton<IRabbitMQConsumerHandler<TConsumerService>, TConsumerHandler>();
-        return services.AddSingleton<TConsumerService>();
+        return services.AddEventBusMQSubscriber<EventBusSubscriberService, TSubscriberHandler>((EventBusSubscriberOptions<EventBusSubscriberService>)config);
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer
+    /// Add EventBus Subscriber
+    /// </summary>
+    /// <typeparam name="TSubscriberService"></typeparam>
+    /// <typeparam name="TSubscriberHandler"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="config"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions<TSubscriberService> config)
+        where TSubscriberService : EventBusSubscriberService
+        where TSubscriberHandler : class, IEventBusSubscriberHandler<TSubscriberService>
+    {
+        _ = typeof(TSubscriberService).Equals(typeof(EventBusSubscriberService))
+            ? services.Configure<EventBusSubscriberOptions>(c =>
+            {
+                c.HostName = config.HostName;
+                c.Port = config.Port;
+                c.Channel = config.Channel;
+                c.ConsumerGroup = config.ConsumerGroup;
+            })
+            : services.Configure<EventBusSubscriberOptions<TSubscriberService>>(c =>
+            {
+                c.HostName = config.HostName;
+                c.Port = config.Port;
+                c.Channel = config.Channel;
+                c.ConsumerGroup = config.ConsumerGroup;
+            });
+
+        services.AddSingleton<IEventBusSubscriberHandler<TSubscriberService>, TSubscriberHandler>();
+        return services.AddSingleton<TSubscriberService>();
+    }
+
+    /// <summary>
+    /// Add EventBus Publisher
     /// </summary>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddEventBusPublisher(this IServiceCollection services, IConfigurationSection rabbitSection)
     {
-        return services.AddRabbitMQProducer<RabbitMQProducerService>(rabbitSection);
+        return services.AddEventBusPublisher<EventBusPublisherService>(rabbitSection);
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer
+    /// Add EventBus Publisher
     /// </summary>
-    /// <typeparam name="TProducerService"></typeparam>
+    /// <typeparam name="TPublisherService"></typeparam>
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusPublisher<TProducerService>(this IServiceCollection services, IConfigurationSection rabbitSection)
-        where TProducerService : RabbitMQProducerService
+    /// <exception cref="ArgumentNullException"></exception>
+    public static IServiceCollection AddEventBusPublisher<TPublisherService>(this IServiceCollection services, IConfigurationSection rabbitSection)
+        where TPublisherService : EventBusPublisherService
     {
-        var options = rabbitSection.Get<RabbitMQProducerOptions<TProducerService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json");
-        return AddRabbitMQProducer(services, options);
+        var options = rabbitSection.Get<EventBusPublisherOptions<TPublisherService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json");
+        return AddEventBusPublisher(services, options);
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer
+    /// Add EventBus Publisher
     /// </summary>
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusPublisher(this IServiceCollection services, RabbitMQProducerOptions config)
+    public static IServiceCollection AddEventBusPublisher(this IServiceCollection services, EventBusPublisherOptions config)
     {
-        return services.AddRabbitMQProducer((RabbitMQProducerOptions<RabbitMQProducerService>)config);
+        return services.AddEventBusPublisher((EventBusPublisherOptions<EventBusPublisherService>)config);
     }
 
     /// <summary>
-    /// Add RabbitMQ Producer
+    /// Add EventBus Publisher
     /// </summary>
-    /// <typeparam name="TProducerService"></typeparam>
+    /// <typeparam name="TPublisherService"></typeparam>
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusPublisher<TProducerService>(this IServiceCollection services, RabbitMQProducerOptions<TProducerService> config)
-    where TProducerService : RabbitMQProducerService
+    public static IServiceCollection AddEventBusPublisher<TPublisherService>(this IServiceCollection services, EventBusPublisherOptions<TPublisherService> config)
+    where TPublisherService : EventBusPublisherService
     {
-        _ = typeof(TProducerService).Equals(typeof(RabbitMQProducerService))
-            ? services.Configure<RabbitMQProducerOptions>(c =>
+        _ = typeof(TPublisherService).Equals(typeof(EventBusPublisherService))
+            ? services.Configure<EventBusPublisherOptions>(c =>
             {
-                c.QueueBind = config.QueueBind;
-                c.Queue = config.Queue;
-                c.DeclareQueue = config.DeclareQueue;
-                c.Durable = config.Durable;
-                c.AutoDelete = config.AutoDelete;
-                c.Arguments = config.Arguments;
-                c.QueueBindArguments = config.QueueBindArguments;
-                c.ConnectionFactory = config.ConnectionFactory;
-                c.DeclareExchange = config.DeclareExchange;
-                c.Exchange = config.Exchange;
-                c.RoutingKey = config.RoutingKey;
-                c.Mandatory = config.Mandatory;
-                c.ExchangeArguments = config.ExchangeArguments;
-                c.ExchangeType = config.ExchangeType;
-                c.Exclusive = config.Exclusive;
+                c.HostName = config.HostName;
+                c.Port = config.Port;
+                c.Channel = config.Channel;
             })
-            : services.Configure<RabbitMQProducerOptions<TProducerService>>(c =>
+            : services.Configure<EventBusPublisherOptions<TPublisherService>>(c =>
             {
-                c.QueueBind = config.QueueBind;
-                c.Queue = config.Queue;
-                c.DeclareQueue = config.DeclareQueue;
-                c.Durable = config.Durable;
-                c.AutoDelete = config.AutoDelete;
-                c.Arguments = config.Arguments;
-                c.QueueBindArguments = config.QueueBindArguments;
-                c.ConnectionFactory = config.ConnectionFactory;
-                c.DeclareExchange = config.DeclareExchange;
-                c.Exchange = config.Exchange;
-                c.RoutingKey = config.RoutingKey;
-                c.Mandatory = config.Mandatory;
-                c.ExchangeArguments = config.ExchangeArguments;
-                c.ExchangeType = config.ExchangeType;
-                c.Exclusive = config.Exclusive;
+                c.HostName = config.HostName;
+                c.Port = config.Port;
+                c.Channel = config.Channel;
             });
-        return services.AddScoped<TProducerService>();
+        return services.AddScoped<TPublisherService>();
     }
 
     /// <summary>
-    /// Use RabbitMQ Consumer
-    /// IRabbitMQConsumerHandler<RabbitMQConsumerService> must be registered.
+    /// Use EventBus Subscriber
+    /// IEventBusSubscriberHandler<EventBusSubscriberService> must be registered.
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
     public static WebApplication UseEventBusSubscriber(this WebApplication app)
     {
-        return app.UseRabbitMQConsumer<RabbitMQConsumerService>();
+        return app.UseEventBusSubscriber<EventBusSubscriberService>();
     }
 
     /// <summary>
-    /// Use RabbitMQ Consumer
-    /// IRabbitMQConsumerHandler<TConsumerService> must be registered.
+    /// Use EventBus Subscriber
+    /// IEventBusSubscriberHandler<TSubscriberService> must be registered.
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
+    /// <typeparam name="TSubscriberService"></typeparam>
     /// <param name="app"></param>
     /// <returns></returns>
     /// <exception cref="NotImplementedException"></exception>
-    public static WebApplication UseEventBusSubscriber<TConsumerService>(this WebApplication app)
-        where TConsumerService : RabbitMQConsumerService
+    public static WebApplication UseEventBusSubscriber<TSubscriberService>(this WebApplication app)
+        where TSubscriberService : EventBusSubscriberService
     {
         var serviceScope = app.Services.CreateScope();
-        var consumerService = serviceScope.ServiceProvider.GetService<TConsumerService>() ?? throw new NotImplementedException($"'{nameof(TConsumerService)}' not implemented service.");
-        if (DependHandler(serviceScope, consumerService))
-            app.Lifetime.ApplicationStarted.Register(consumerService.StartListening);
+        var subscriberService = serviceScope.ServiceProvider.GetService<TSubscriberService>() ?? throw new NotImplementedException($"'{nameof(TSubscriberService)}' not implemented service.");
+        if (DependHandler(serviceScope, subscriberService))
+            app.Lifetime.ApplicationStarted.Register(subscriberService.StartListening);
 
         return app;
     }
@@ -231,16 +179,17 @@ public static class EventBusServiceExtensions
     /// <summary>
     /// Depend Handler
     /// </summary>
-    /// <typeparam name="TConsumerService"></typeparam>
-    /// <param name="app"></param>
-    /// <param name="consumerService"></param>
-    private static bool DependHandler<TConsumerService>(IServiceScope serviceScope, TConsumerService consumerService)
-        where TConsumerService : RabbitMQConsumerService
+    /// <typeparam name="TSubscriberService"></typeparam>
+    /// <param name="serviceScope"></param>
+    /// <param name="subscriberService"></param>
+    /// <returns></returns>
+    private static bool DependHandler<TSubscriberService>(IServiceScope serviceScope, TSubscriberService subscriberService)
+        where TSubscriberService : EventBusSubscriberService
     {
-        var messageHandlerService = serviceScope.ServiceProvider.GetService<IRabbitMQConsumerHandler<TConsumerService>>();
+        var messageHandlerService = serviceScope.ServiceProvider.GetService<IEventBusSubscriberHandler<TSubscriberService>>();
         if (messageHandlerService is not null)
         {
-            consumerService.ReceivedMessage += messageHandlerService.Handler;
+            subscriberService.ReceivedMessage += messageHandlerService.Handler;
             return true;
         }
 

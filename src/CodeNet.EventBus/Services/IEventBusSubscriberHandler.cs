@@ -3,5 +3,5 @@
 public interface IEventBusSubscriberHandler<TSubscriberService>
     where TSubscriberService : EventBusSubscriberService
 {
-    Task Handler(ReceivedMessageEventArgs args);
+    void Handler(ReceivedMessageEventArgs args);
 }

@@ -160,6 +160,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Email.Tests", "test
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Messaging", "src\CodeNet.Messaging\CodeNet.Messaging.csproj", "{4241F7B8-BACA-4288-9C1C-E84F102A2422}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.EventBus", "src\CodeNet.EventBus\CodeNet.EventBus.csproj", "{0BBD3B9C-CB94-4E87-A114-325F91ED9580}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -438,6 +440,10 @@ Global
 		{4241F7B8-BACA-4288-9C1C-E84F102A2422}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4241F7B8-BACA-4288-9C1C-E84F102A2422}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4241F7B8-BACA-4288-9C1C-E84F102A2422}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BBD3B9C-CB94-4E87-A114-325F91ED9580}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BBD3B9C-CB94-4E87-A114-325F91ED9580}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BBD3B9C-CB94-4E87-A114-325F91ED9580}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BBD3B9C-CB94-4E87-A114-325F91ED9580}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -517,6 +523,7 @@ Global
 		{6CE0F174-5408-4B6E-AABC-2C0DC56B61CA} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{19381BB6-2A27-4E47-B47C-56F31BC9E1DB} = {15230BF4-2524-43B5-9759-89F96C6C3A19}
 		{4241F7B8-BACA-4288-9C1C-E84F102A2422} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{0BBD3B9C-CB94-4E87-A114-325F91ED9580} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

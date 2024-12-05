@@ -4,9 +4,9 @@ using CodeNet.EventBus.Models;
 
 namespace CodeNet.EventBus.Subscriber;
 
-public class CodeNetSubscriber(string hostname, int port)
+public class CodeNetSubscriber(string hostname, int port, string channel)
 {
-    public CodeNetSubscriber(string hostname, int port, string consumerGroup) : this(hostname, port)
+    public CodeNetSubscriber(string hostname, int port, string channel, string consumerGroup) : this(hostname, port, channel)
     {
         _consumerGroup = consumerGroup;
     }
@@ -16,6 +16,8 @@ public class CodeNetSubscriber(string hostname, int port)
 
     public string ConsumerGroup { get { return _consumerGroup; } }
 
+    public bool Connected { get { return _client.Working; } }
+
     public event MessageConsumed? MessageConsumed;
 
     public async Task<bool> ConnectAsync()
@@ -24,20 +26,27 @@ public class CodeNetSubscriber(string hostname, int port)
         if (result is false)
             return false;
 
-        _client.NewMessgeReceived += Client_NewMessgeReceived;
-        _client.SetClientType(ClientType.Subscriber);
-        if (!string.IsNullOrWhiteSpace(ConsumerGroup))
-            _client.SetConsumerGroup(ConsumerGroup);
-
+        ConnectProcess();
         return result;
     }
 
     public bool Connect()
     {
         var result = _client.Connect();
+        if (result is false)
+            return false;
+
+        ConnectProcess();
+        return result;
+    }
+
+    private void ConnectProcess()
+    {
         _client.NewMessgeReceived += Client_NewMessgeReceived;
         _client.SetClientType(ClientType.Subscriber);
-        return result;
+        _client.SetChannel(channel);
+        if (!string.IsNullOrWhiteSpace(ConsumerGroup))
+            _client.SetConsumerGroup(ConsumerGroup);
     }
 
     public void Disconnect()
