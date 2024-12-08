@@ -1,4 +1,4 @@
-﻿using CodeNet.RabbitMQ.Models;
+﻿using CodeNet.EventBus.Services;
 using CodeNet.RabbitMQ.Services;
 using System.Diagnostics;
 using System.Text;
@@ -7,7 +7,7 @@ namespace CodeNet_App3.Services;
 
 public class ConsumerHandler(RabbitMQConsumerService consumerService) : IRabbitMQConsumerHandler<RabbitMQConsumerService>
 {
-    public async Task Handler(ReceivedMessageEventArgs args)
+    public async Task Handler(CodeNet.RabbitMQ.Models.ReceivedMessageEventArgs args)
     {
         var message = Encoding.UTF8.GetString(args.Data.ToArray());
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Input {message}");
@@ -16,5 +16,13 @@ public class ConsumerHandler(RabbitMQConsumerService consumerService) : IRabbitM
         consumerService.CheckSuccessfullMessage(args.DeliveryTag);
         stopwatch.Stop();
         Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Output, ElapsedMilliseconds: {stopwatch.ElapsedMilliseconds}, {message}");
+    }
+}
+
+public class EventBusSubscriberHandler : IEventBusSubscriberHandler<EventBusSubscriberService>
+{
+    public void Handler(ReceivedMessageEventArgs args)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] EventBus.Subscriber, {Encoding.UTF8.GetString(args.Message)}");
     }
 }

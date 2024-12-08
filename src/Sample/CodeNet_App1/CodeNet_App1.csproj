@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\CodeNet.EventBus\CodeNet.EventBus.csproj" />
     <ProjectReference Include="..\..\CodeNet.HealthCheck.MongoDB\CodeNet.HealthCheck.MongoDB.csproj" />
     <ProjectReference Include="..\..\CodeNet.HealthCheck.RabbitMQ\CodeNet.HealthCheck.RabbitMQ.csproj" />
     <ProjectReference Include="..\..\CodeNet.HealthCheck.Redis\CodeNet.HealthCheck.Redis.csproj" />
