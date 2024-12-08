@@ -1,6 +1,5 @@
 ﻿using CodeNet.EventBus.EventDefinitions;
 using CodeNet.EventBus.Models;
-using System.IO;
 using System.Net.Sockets;
 using System.Text;
 
@@ -131,6 +130,7 @@ public class CodeNetClient : ICodeNetClient
             return false;
 
         _writer?.Write(message.Seriliaze());
+        _writer?.Flush();
         return true;
     }
 }

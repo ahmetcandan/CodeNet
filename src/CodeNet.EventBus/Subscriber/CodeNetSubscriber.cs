@@ -44,9 +44,9 @@ public class CodeNetSubscriber(string hostname, int port, string channel)
     {
         _client.NewMessgeReceived += Client_NewMessgeReceived;
         _client.SetClientType(ClientType.Subscriber);
-        _client.SetChannel(channel);
         if (!string.IsNullOrWhiteSpace(ConsumerGroup))
             _client.SetConsumerGroup(ConsumerGroup);
+        _client.SetChannel(channel);
     }
 
     public void Disconnect()

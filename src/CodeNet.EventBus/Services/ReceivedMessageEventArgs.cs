@@ -4,5 +4,5 @@ public delegate void MessageReceived(ReceivedMessageEventArgs e);
 
 public class ReceivedMessageEventArgs : EventArgs
 {
-    public byte[] Message { get; set; }
+    public byte[] Message { get; set; } = [];
 }

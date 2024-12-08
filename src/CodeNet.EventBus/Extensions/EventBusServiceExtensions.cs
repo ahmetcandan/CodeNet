@@ -15,10 +15,10 @@ public static class EventBusServiceExtensions
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
+    public static IServiceCollection AddEventBusSubscriber<TSubscriberHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
     {
-        return services.AddEventBusMQSubscriber<EventBusSubscriberService, TSubscriberHandler>(rabbitSection);
+        return services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>(rabbitSection);
     }
 
     /// <summary>
@@ -30,12 +30,12 @@ public static class EventBusServiceExtensions
     /// <param name="section"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, IConfigurationSection section)
+    public static IServiceCollection AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, IConfigurationSection section)
         where TSubscriberService : EventBusSubscriberService
         where TSubscriberHandler : class, IEventBusSubscriberHandler<TSubscriberService>
     {
         var options = section.Get<EventBusSubscriberOptions<TSubscriberService>>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json");
-        return services.AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(options);
+        return services.AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(options);
     }
 
     /// <summary>
@@ -45,10 +45,10 @@ public static class EventBusServiceExtensions
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions config)
+    public static IServiceCollection AddEventBusSubscriber<TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions config)
         where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
     {
-        return services.AddEventBusMQSubscriber<EventBusSubscriberService, TSubscriberHandler>((EventBusSubscriberOptions<EventBusSubscriberService>)config);
+        return services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>((EventBusSubscriberOptions<EventBusSubscriberService>)config);
     }
 
     /// <summary>
@@ -59,7 +59,7 @@ public static class EventBusServiceExtensions
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddEventBusMQSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions<TSubscriberService> config)
+    public static IServiceCollection AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions<TSubscriberService> config)
         where TSubscriberService : EventBusSubscriberService
         where TSubscriberHandler : class, IEventBusSubscriberHandler<TSubscriberService>
     {

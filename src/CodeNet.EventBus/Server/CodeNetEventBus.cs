@@ -17,6 +17,7 @@ public class CodeNetEventBus(int port)
         _server.NewMessgeReceived += Server_NewMessgeReceived;
         _server.ClientConnected += Server_ClientConnected;
         _server.ClientDisconnected += Server_ClientDisconnected;
+        _server.ClientConnectFinish += Server_ClientConnectedFinish;
     }
 
     public void Stop()
@@ -25,10 +26,12 @@ public class CodeNetEventBus(int port)
         _server.NewMessgeReceived -= Server_NewMessgeReceived;
         _server.ClientConnected -= Server_ClientConnected;
         _server.ClientDisconnected -= Server_ClientDisconnected;
+        _server.ClientConnectFinish -= Server_ClientConnectedFinish;
     }
 
     private void Server_NewMessgeReceived(ServerMessageReceivingArguments<CodeNetEventBusClient> e)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] new message");
         if (e.Client.ClientType is not ClientType.Publisher || e.Message.Type is not MessageType.Publish)
             return;
 
@@ -38,7 +41,11 @@ public class CodeNetEventBus(int port)
     private void Server_ClientConnected(ClientArguments<CodeNetEventBusClient> e)
     {
         _clients.Add(e.Client.ClientId, e.Client);
+    }
 
+    private void Server_ClientConnectedFinish(ClientArguments<CodeNetEventBusClient> e)
+    {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Client (ClientId: {e.Client.ClientId}, ClientType: {e.Client.ClientType}, ConsumerGroup: {e.Client.ConsumerGroup}) connected");
         if (e.Client.ClientType is ClientType.Subscriber)
         {
             if (!_channels.ContainsKey(e.Client.Channel))
@@ -67,6 +74,7 @@ public class CodeNetEventBus(int port)
 
     private void Server_ClientDisconnected(ClientArguments<CodeNetEventBusClient> e)
     {
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Client (ClientId: {e.Client.ClientId}, ClientType: {e.Client.ClientType}) disconnected");
         _clients.Remove(e.Client.ClientId);
 
         if (e.Client.ClientType is ClientType.Subscriber)
@@ -97,7 +105,7 @@ public class CodeNetEventBus(int port)
     {
         foreach (var consumerGroup in _channels[channel])
         {
-            if (consumerGroup.Name is not null)
+            if (consumerGroup.Name is null)
                 foreach (var clientId in consumerGroup.ClientIds)
                     ClientToMessage(clientId, message);
 
@@ -106,7 +114,7 @@ public class CodeNetEventBus(int port)
                 var group = new ChannelToConsumerGroup(channel, consumerGroup.Name!);
                 var index = _consumerGroupIndex[group];
                 ClientToMessage(consumerGroup.ClientIds[index], message);
-                index = index >= consumerGroup.ClientIds.Count ? 0 : index + 1;
+                index = index >= (consumerGroup.ClientIds.Count - 1) ? 0 : index + 1;
                 _consumerGroupIndex[group] = index;
             }
         }

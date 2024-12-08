@@ -62,8 +62,8 @@ public class CodeNetServer<TClient>(int port)
                         TClient client = new();
                         client.SetTcpClient(tcpClient, ++_lastClientId);
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
-                        client.Disconnected += (e) => ClientDisconnected?.Invoke(new(client));
-                        ClientConnected?.Invoke(new(client));
+                        client.Disconnected += (e) => Client_Disonnected(client);
+                        Client_Connected(client);
                         _clients.Add(client);
                     }
                 }
@@ -75,6 +75,26 @@ public class CodeNetServer<TClient>(int port)
                 Stop();
             }
         }
+    }
+
+    private void Client_Connected(TClient client)
+    {
+        ClientConnecting(client);
+        ClientConnected?.Invoke(new(client));
+    }
+
+    internal virtual void ClientConnecting(TClient client)
+    {
+    }
+
+    private void Client_Disonnected(TClient client)
+    {
+        ClientDisconnecting(client);
+        ClientDisconnected?.Invoke(new(client));
+    }
+
+    internal virtual void ClientDisconnecting(TClient client)
+    {
     }
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)

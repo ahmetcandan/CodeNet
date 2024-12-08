@@ -1,4 +1,5 @@
-﻿using CodeNet.EventBus.Models;
+﻿using CodeNet.EventBus.EventDefinitions;
+using CodeNet.EventBus.Models;
 using System.Net.Sockets;
 using System.Text;
 
@@ -9,6 +10,8 @@ internal class CodeNetEventBusClient : CodeNetClient
     private ClientType _clientType;
     private string? _consumerGroup;
     private string _channel;
+
+    public event ClientConnectFinish<CodeNetEventBusClient>? ClientConnectFinish;
 
     public ClientType ClientType { get { return _clientType; } internal set { _clientType = value; } }
     public string? ConsumerGroup { get { return _consumerGroup; } internal set { _consumerGroup = value; } }
@@ -78,6 +81,7 @@ internal class CodeNetEventBusClient : CodeNetClient
                 return;
             case MessageType.SetChannel:
                 Channel = Encoding.UTF8.GetString(message.Data);
+                ClientConnectFinish?.Invoke(new(this));
                 return;
             case MessageType.None:
             default:
