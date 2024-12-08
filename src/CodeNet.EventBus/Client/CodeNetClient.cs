@@ -18,6 +18,11 @@ public class CodeNetClient : ICodeNetClient
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
 
+    public void Dispose()
+    {
+        Disconnect(false);
+        GC.SuppressFinalize(this);
+    }
 
     public bool Working { get { return _working; } }
     internal int ClientId { get { return _clientId; } }
@@ -84,6 +89,14 @@ public class CodeNetClient : ICodeNetClient
 
     public void Disconnect()
     {
+        Disconnect(true);
+    }
+
+    private void Disconnect(bool notify)
+    {
+        if (notify)
+            SendMessage(new() { Type = MessageType.Disconnected, Data = [] });
+
         _client?.Close();
         _working = false;
         _thread?.Join();
@@ -114,13 +127,19 @@ public class CodeNetClient : ICodeNetClient
             }
             catch
             {
-                Disconnect();
+                Disconnect(_clientId == 0);
             }
         }
     }
 
     internal virtual void ReceivedMessage(Message message)
     {
+        if (message.Type is MessageType.Disconnected)
+        {
+            Disconnect(false);
+            return;
+        }
+
         NewMessgeReceived?.Invoke(new(message));
     }
 
@@ -130,7 +149,6 @@ public class CodeNetClient : ICodeNetClient
             return false;
 
         _writer?.Write(message.Seriliaze());
-        _writer?.Flush();
         return true;
     }
 }

@@ -7,5 +7,6 @@ public enum MessageType : byte
     SetClientType = 2,
     SetConsumerGroup = 3,
     SetChannel = 4,
-    Publish = 5
+    Publish = 5,
+    Disconnected = 6
 }

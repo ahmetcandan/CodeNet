@@ -1,6 +1,7 @@
 ﻿using CodeNet.EventBus.Publisher;
 using CodeNet.EventBus.Settings;
 using Microsoft.Extensions.Options;
+using System.Collections.Concurrent;
 
 namespace CodeNet.EventBus.Services;
 
@@ -23,14 +24,19 @@ public class EventBusPublisherService(IOptions<EventBusPublisherOptions> options
 
         _publisher.Publish(message);
     }
-    public virtual void Publish(IEnumerable<byte[]> messages)
+    public virtual void Publish(IList<byte[]> messages)
     {
         _publisher ??= new(options.Value.HostName, options.Value.Port, options.Value.Channel);
 
         if (!_publisher.Connected)
             _publisher.Connect();
 
-        foreach (var message in messages)
-            _publisher.Publish(message);
+        var queue = new ConcurrentQueue<byte[]>(messages);
+        int consumerCount = Environment.ProcessorCount;
+        Parallel.For(0, messages.Count, _ =>
+        {
+            while (queue.TryDequeue(out var message))
+                _publisher.Publish(message);
+        });
     }
 }

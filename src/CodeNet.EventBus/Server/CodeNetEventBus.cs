@@ -31,7 +31,6 @@ public class CodeNetEventBus(int port)
 
     private void Server_NewMessgeReceived(ServerMessageReceivingArguments<CodeNetEventBusClient> e)
     {
-        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] new message");
         if (e.Client.ClientType is not ClientType.Publisher || e.Message.Type is not MessageType.Publish)
             return;
 

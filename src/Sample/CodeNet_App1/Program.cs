@@ -44,7 +44,7 @@ for (int i = 0; i < options.Value.TotalSeconds; i++)
     Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] {i + 1:000}. Second Start...");
     await Task.Run(async () =>
     {
-        FireAndForget.Execute(app.Services, options.Value.MessagePerSecond, i + 1);
+        await FireAndForget.Execute(app.Services, options.Value.MessagePerSecond, i + 1);
     });
     await Task.Delay(TimeSpan.FromSeconds(1));
 }

@@ -2,7 +2,7 @@
 
 namespace CodeNet.EventBus.Client;
 
-internal interface ICodeNetClient
+internal interface ICodeNetClient : IDisposable
 {
     void SetTcpClient(TcpClient client, int clientId);
 }

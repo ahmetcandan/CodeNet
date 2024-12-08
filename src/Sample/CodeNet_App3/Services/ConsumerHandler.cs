@@ -23,6 +23,6 @@ public class EventBusSubscriberHandler : IEventBusSubscriberHandler<EventBusSubs
 {
     public void Handler(ReceivedMessageEventArgs args)
     {
-        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] EventBus.Subscriber, {Encoding.UTF8.GetString(args.Message)}");
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] EventBus.Subscriber, {BitConverter.ToInt32(args.Message)}");
     }
 }

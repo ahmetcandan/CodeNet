@@ -10,7 +10,7 @@ public class CodeNetServer(int port) : CodeNetServer<CodeNetClient>(port)
 {
 }
 
-public class CodeNetServer<TClient>(int port)
+public class CodeNetServer<TClient>(int port) : IDisposable
     where TClient : CodeNetClient, new()
 {
     private readonly List<TClient> _clients = [];
@@ -105,5 +105,11 @@ public class CodeNetServer<TClient>(int port)
 
     internal virtual void ReceivedMessage(TClient client, Message message)
     {
+    }
+
+    public void Dispose()
+    {
+        Stop();
+        GC.SuppressFinalize(this);
     }
 }

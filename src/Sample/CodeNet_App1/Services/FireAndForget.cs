@@ -15,20 +15,27 @@ public class FireAndForget
         //if (producerService is null)
         //    return;
 
-        var publisherService = scope.ServiceProvider.GetService<EventBusPublisherService>();
+        using var publisherService = scope.ServiceProvider.GetService<EventBusPublisherService>();
         if (publisherService is null)
             return;
 
 
         //var producerService = scope.ServiceProvider.GetRequiredService<KafkaProducerService>();
+        List<byte[]> datas = new List<byte[]>(messagePerSecond);
         for (int i = 1; i <= messagePerSecond; i++)
         {
-            await Task.Run(() =>
-            {
-                publisherService.Publish(Encoding.UTF8.GetBytes($"[{second:000}] - [{i:000}] Message Time: {DateTime.Now:HH:mm:ss.fff}"));
-                Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{second:000}] - [{i:000}] Message Published");
-                return Task.CompletedTask;
-            });
+            datas.Add(BitConverter.GetBytes(i));
+            //await Task.Run(() =>
+            //{
+            //    //publisherService.Publish(Encoding.UTF8.GetBytes($"[{second:000}] - [{i:000}] Message Time: {DateTime.Now:HH:mm:ss.fff}"));
+            //    publisherService.Publish(BitConverter.GetBytes(i));
+            //    //Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{second:000}] - [{i:000}] Message Published");
+            //    Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] [{i}] Message Published");
+            //    return Task.CompletedTask;
+            //});
         }
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Message Publish Started");
+        publisherService.Publish(datas);
+        Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fff}] Message Publish Finished");
     }
 }
