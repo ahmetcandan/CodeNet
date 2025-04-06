@@ -77,12 +77,36 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
             : null;
     }
 
-    private IQueryable<ParameterGroupParameter> GetParameterGroupParameter()
+    public async Task<ParameterGroupWithDefaultParamResult?> GetParameterGroupWithDefaultParam(string groupCode, CancellationToken cancellationToken)
+    {
+        var result = (await GetParameterGroupParameter(true).Where(c => c.ParameterGroup.Code == groupCode).ToListAsync(cancellationToken))
+            .GroupBy(c => new
+            {
+                c.ParameterGroup.Id,
+                c.ParameterGroup.Code,
+                c.ParameterGroup.ApprovalRequired,
+                c.ParameterGroup.Description
+            }).FirstOrDefault();
+
+        return result is not null
+            ? new ParameterGroupWithDefaultParamResult
+            {
+                Code = result.Key.Code,
+                ApprovalRequired = result.Key.ApprovalRequired,
+                Description = result.Key.Description,
+                Id = result.Key.Id,
+                Parameter = result.Select(c => c.Parameter.ToParameterResult()).Single()
+            }
+            : null;
+    }
+
+    private IQueryable<ParameterGroupParameter> GetParameterGroupParameter(bool hasIsDefault = false)
     {
         return (from pg in _entities
                 join p in _parameters on pg.Id equals p.GroupId
                 where pg.IsActive && !pg.IsDeleted
                     && p.IsActive && !p.IsDeleted
+                    && (!hasIsDefault || p.IsDefault)
                 select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg })
                 .AsNoTracking();
     }
