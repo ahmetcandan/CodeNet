@@ -1,6 +1,0 @@
-@CodeNet_App3_HostAddress = http://localhost:5201
-
-GET {{CodeNet_App3_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
