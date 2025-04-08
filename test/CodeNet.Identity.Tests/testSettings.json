@@ -8,7 +8,9 @@
     "ValidAudience": "http://codenet",
     "ValidIssuer": "http://login.codenet",
     "ExpiryTime": 5.0,
+    "RefreshTokenExpiryTime": 72.0,
     "PublicKeyPath": "../../../public_key.pem",
-    "PrivateKeyPath": "../../../private_key.pem"
+    "PrivateKeyPath": "../../../private_key.pem",
+    "SecurityAlgorithm": "RS256"
   }
 }

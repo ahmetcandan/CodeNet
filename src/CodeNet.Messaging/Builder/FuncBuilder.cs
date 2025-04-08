@@ -28,7 +28,7 @@ public class FuncBuilder : ITemplateBuilder
         _functionExecuter = new();
         foreach (var param in Parameters.Where(c => c.Type is ParamType.Parameter))
             param.SetValue(data);
-        var method = typeof(FunctionExecuter).GetType().GetMethod(FunctionName, Parameters.Where(c => c.HasValue).Select(c => c.Value!.GetType()).ToArray());
+        var method = typeof(FunctionExecuter).GetMethod(FunctionName, Parameters.Where(c => c.HasValue).Select(c => c.Value!.GetType()).ToArray());
 
         var result = method?.Invoke(_functionExecuter, Parameters.Select(c => c.Value).ToArray()) as string ?? string.Empty;
         return new(result);

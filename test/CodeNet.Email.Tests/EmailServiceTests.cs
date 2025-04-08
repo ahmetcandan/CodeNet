@@ -1,8 +1,7 @@
 ﻿using CodeNet.Email.Extensions;
-using CodeNet.Email.Services;
 using CodeNet.Email.Settings;
+using CodeNet.Messaging.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Mail;
 
 namespace CodeNet.Email.Tests;
 
@@ -23,48 +22,78 @@ public class EmailServiceTests
             EmailAddress = "candanahm@gmail.com",
             SmtpClient = new()
         });
-        var serviceProvider = services.BuildServiceProvider();
-        var emailService = serviceProvider.GetRequiredService<IEmailService>();
         string body = @"Merhaba @name,
 <table>
     <th>
         <td>Date</td><td>Amount</td>
     </th>
-    $each(@i in @list){{
+    $each(@item in @list){{
     <tr>
-        <td>$DateFormat(@i.Date, 'dd/MM/yyyy')</td><td>$NumberFormat(@i.Amount, 'N')</td>
+        <td>$DateFormat(@item.Date, 'dd/MM/yyyy')</td><td>$NumberFormat(@item.Amount, 'N')</td>
     </tr>}}
 </table>
 
-$if(@name == 'Ahmet'){{isim doğrudur}} $else{{isim yanlıştır}}
-Send date: $Now('dd.MM.yyyy HH:mm')";
+$if(@name == 'Ahmet'){{
+    Name is @name
+}}
+$else{{
+    Name is not Ahmet
+}}
+
+Send date: $DateFormat(@date, 'dd.MM.yyyy HH:mm')";
+        string expected = @"Merhaba Ahmet,
+<table>
+    <th>
+        <td>Date</td><td>Amount</td>
+    </th>
+    
+    <tr>
+        <td>08-04-2025</td><td>12.46</td>
+    </tr>
+    <tr>
+        <td>09-04-2025</td><td>15.90</td>
+    </tr>
+    <tr>
+        <td>10-04-2025</td><td>13.00</td>
+    </tr>
+</table>
+
+
+    Name is Ahmet
+
+
+Send date: 08.04.2025 22:55";
+
+        DateTime date = new(2025, 4, 8, 22, 55, 0);
         object param = new
         {
             name = "Ahmet",
+            date,
             list = new List<object>
             {
                 new
                 {
-                    Date = DateTime.Now,
+                    Date = date,
                     Amount = 12.456
                 },
                 new
                 {
-                    Date = DateTime.Now.AddDays(1),
+                    Date = date.AddDays(1),
                     Amount = 15.905
                 },
                 new
                 {
-                    Date = DateTime.Now.AddDays(2),
+                    Date = date.AddDays(2),
                     Amount = 13
                 }
             }
         };
-        await emailService.SendMail(new MailMessage
-        {
-            Body = body
-        }, param, CancellationToken.None);
 
-        Assert.That(true);
+        var builder = TemplateBuilder.Compile(body);
+
+        var txt = builder.Build(param).ToString() ?? string.Empty;
+
+
+        Assert.That(txt, Is.EqualTo(expected));
     }
 }

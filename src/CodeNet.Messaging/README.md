@@ -53,21 +53,26 @@ Send date: $Now('dd.MM.yyyy HH:mm')
 
 Output
 ```html
-Merhaba Ahmet Candan,
+Merhaba Ahmet,
 <table>
     <th>
         <td>Date</td><td>Amount</td>
     </th>
-
+    
     <tr>
-        <td>29/10/2024</td><td>12.34</td>
+        <td>08-04-2025</td><td>12.46</td>
     </tr>
     <tr>
-        <td>30/10/2024</td><td>13.56</td>
+        <td>09-04-2025</td><td>15.90</td>
+    </tr>
+    <tr>
+        <td>10-04-2025</td><td>13.00</td>
     </tr>
 </table>
 
-Name is Ahmet
 
-Send date: 29.10.2024 19:23
+    Name is Ahmet
+
+
+Send date: 08.04.2025 22:53
 ```
