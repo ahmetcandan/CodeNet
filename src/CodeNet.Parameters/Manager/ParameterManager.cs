@@ -143,7 +143,7 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
         throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(model.Id.ToString()));
     }
 
-    private void ValidationDefaultParameter(ParameterGroupWithParamsModel model)
+    private static void ValidationDefaultParameter(ParameterGroupWithParamsModel model)
     {
         if (model.Parameters.Count(c => c.IsDefault) > 1)
             throw new ParameterException(ExceptionMessages.DefaultParameterMoreThanOne);

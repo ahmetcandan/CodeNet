@@ -1,8 +1,10 @@
 ﻿using CodeNet.Core;
+using CodeNet.Core.Models;
 using CodeNet.MongoDB;
 using CodeNet.MongoDB.Repositories;
 using CodeNet.Parameters.Manager;
 using CodeNet.Parameters.Models;
+using CodeNet.Parameters.MongoDB.Exception;
 using CodeNet.Parameters.MongoDB.Models;
 using CodeNet.Parameters.Settings;
 using CodeNet.Redis;
@@ -20,6 +22,8 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
     #region Parameter Group CRUD
     public async Task<ParameterGroupWithParamsResult> AddParameterAsync(ParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
     {
+        ValidationDefaultParameter(model);
+
         await _repository.CreateAsync(new ParameterDto
         {
             Code = model.Code,
@@ -49,6 +53,8 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
 
     public async Task<ParameterGroupWithParamsResult?> UpdateParameterAsync(ParameterGroupWithParamsModel model, CancellationToken cancellationToken = default)
     {
+        ValidationDefaultParameter(model);
+
         await _repository.UpdateAsync(c => c.Code == model.Code, ModelToDto(model), cancellationToken);
         var dto = await _repository.GetByIdAsync(c => c.Code == model.Code, cancellationToken);
         var result = DtoToResult(dto);
@@ -62,6 +68,12 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         return result;
     }
 
+    private static void ValidationDefaultParameter(ParameterGroupWithParamsModel model)
+    {
+        if (model.Parameters.Count(c => c.IsDefault) > 1)
+            throw new ParameterException(ExceptionMessages.DefaultParameterMoreThanOne);
+    }
+
     public async Task DeleteParameterAsync(string groupCode, CancellationToken cancellationToken = default)
     {
         await _repository.DeleteAsync(c => c.Code == groupCode, cancellationToken);
@@ -70,14 +82,49 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
             await RemoveCacheAsync(groupCode, cancellationToken);
     }
 
-    public async Task<ParameterGroupWithParamsResult?> GetParameterAsync(string groupCode, CancellationToken cancellationToken = default)
+    public async Task<ParameterGroupWithParamsResult?> GetParameterAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
     {
-        var result = DtoToResult(await _repository.GetByIdAsync(c => c.Code == groupCode, cancellationToken));
+        var result = DtoToResult(await _repository.GetByIdAsync(c => c.Code == parameterGroupCode, cancellationToken));
 
         if (_distributedCache is not null && result is not null)
             await SetCacheAsync(result, cancellationToken);
 
         return result;
+    }
+
+    public async Task<ParameterGroupWithDefaultParamResult?> GetParameterDefaultAsync(string parameterGroupCode, CancellationToken cancellationToken = default)
+    {
+        if (_distributedCache is not null)
+        {
+            var cacheValue = await _distributedCache.GetValueAsync($"{_parameterSettings?.RedisPrefix}_Code:{parameterGroupCode}", cancellationToken);
+            if (cacheValue is not null && cacheValue.Parameters.Any(c => c.IsDefault))
+            {
+                return new ParameterGroupWithDefaultParamResult
+                {
+                    Id = cacheValue.Id,
+                    Code = cacheValue.Code,
+                    Description = cacheValue.Description,
+                    Parameter = cacheValue.Parameters.Single(c => c.IsDefault),
+                    ApprovalRequired = cacheValue.ApprovalRequired
+                };
+            }
+        }
+        var result = await _repository.GetByIdAsync(c => c.Code == parameterGroupCode, cancellationToken);
+        
+        if (result is null)
+            return null;
+
+        if (!result.Parameters.Any(c => c.IsDefault))
+            throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(result.Id.ToString()));
+
+        return new()
+        {
+            Id = result.Id,
+            Code = result.Code,
+            Description = result.Description,
+            ApprovalRequired = result.ApprovalRequired,
+            Parameter = ParameterModelToResult(result.Parameters.Single(c => c.IsDefault))
+        };
     }
 
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
@@ -108,21 +155,24 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         })
     };
 
-    private static ParameterGroupWithParamsResult DtoToResult(ParameterDto dto) => new()
+    private static ParameterGroupWithParamsResult? DtoToResult(ParameterDto? dto)
     {
-        Code = dto.Code,
-        ApprovalRequired = dto.ApprovalRequired,
-        Description = dto.Description,
-        Id = dto.Id,
-        Parameters = dto.Parameters.Select(c => new ParameterResult
+        return dto is null ? null : new()
         {
-            Code = c.Code,
-            Value = c.Value,
-            IsDefault = c.IsDefault,
-            Order = c.Order,
-            Id = c.Id
-        })
-    };
+            Code = dto.Code,
+            ApprovalRequired = dto.ApprovalRequired,
+            Description = dto.Description,
+            Id = dto.Id,
+            Parameters = dto.Parameters.Select(c => new ParameterResult
+            {
+                Code = c.Code,
+                Value = c.Value,
+                IsDefault = c.IsDefault,
+                Order = c.Order,
+                Id = c.Id
+            })
+        };
+    }
 
     private static ParameterDto ModelToDto(ParameterGroupWithParamsModel model) => new()
     {
@@ -130,14 +180,16 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         ApprovalRequired = model.ApprovalRequired,
         Description = model.Description,
         Id = model.Id,
-        Parameters = model.Parameters.Select(c => new ParameterModel
-        {
-            Code = c.Code,
-            Value = c.Value,
-            IsDefault = c.IsDefault,
-            Order = c.Order,
-            Id = c.Id
-        })
+        Parameters = model.Parameters.Select(c => ParameterModelToResult(c))
+    };
+
+    private static ParameterResult ParameterModelToResult(ParameterModel model) => new()
+    {
+        Code = model.Code,
+        Value = model.Value,
+        IsDefault = model.IsDefault,
+        Order = model.Order,
+        Id = model.Id
     };
     #endregion
 

@@ -1,3 +1,0 @@
-oy2pxmftzoug7r7jifeqerrpunenznouffoss7guikyjky
-nuget push MyNuGetPackage.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey oy2pxmftzoug7r7jifeqerrpunenznouffoss7guikyjky
-dotnet nuget push MyNuGetPackage.nupkg --api-key oy2pxmftzoug7r7jifeqerrpunenznouffoss7guikyjky --source https://api.nuget.org/v3/index.json

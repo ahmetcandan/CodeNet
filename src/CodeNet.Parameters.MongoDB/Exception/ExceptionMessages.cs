@@ -1,6 +1,6 @@
 ﻿using CodeNet.Core.Models;
 
-namespace CodeNet.Parameters.Exception
+namespace CodeNet.Parameters.MongoDB.Exception
 {
     internal static class ExceptionMessages
     {

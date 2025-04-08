@@ -88,6 +88,9 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 c.ParameterGroup.Description
             }).FirstOrDefault();
 
+        if (!result?.Select(c => c.Parameter).Any(c => c.IsDefault) == false)
+            throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(result?.Key.Id.ToString() ?? ""));
+
         return result is not null
             ? new ParameterGroupWithDefaultParamResult
             {
