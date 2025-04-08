@@ -29,7 +29,7 @@ public class EmailServiceTests
     </th>
     $each(@item in @list){{
     <tr>
-        <td>$DateFormat(@item.Date, 'dd/MM/yyyy')</td><td>$NumberFormat(@item.Amount, 'N')</td>
+        <td>$DateFormat(@item.Date, 'dd-MM-yyyy')</td><td>$NumberFormat(@item.Amount, 'N')</td>
     </tr>}}
 </table>
 
