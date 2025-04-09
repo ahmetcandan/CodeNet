@@ -11,9 +11,9 @@
 		<PackageIcon>ico.png</PackageIcon>
 		<Title>CodeNet Entity Framework PostgreSQL</Title>
 		<Description>CodeNet Entity Framework PostgreSQL package.</Description>
-		<Copyright>Copyright 2024</Copyright>
+		<Copyright>Copyright 2025</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.1.2</Version>
+		<Version>1.1.3</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
