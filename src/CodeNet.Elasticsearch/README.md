@@ -37,7 +37,7 @@ app.Run();
 
 Repository
 ```csharp
-public class TestElasticRepository(ElasticsearchDbContext dbContext) : ElasticsearchRepository<ElasticModel>(dbContext), ITestElasticRepository
+public class TestElasticRepository(ElasticsearchDbContext dbContext) : ElasticsearchRepository<ElasticModel>(dbContext)
 {
 }
 ```

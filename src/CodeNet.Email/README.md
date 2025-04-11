@@ -41,6 +41,19 @@ app.Run();
 ```
 
 Example
+
+```csharp
+public class EmailSenderService(IEmailService EmailService)
+{
+	public Task SendEmailAsync(SendMailRequest request, CancellationToken cancellationToken)
+	{
+		return EmailService.SendEmailAsync(request, cancellationToken);
+	}
+}
+
+```
+
+Data
 ```json
 {
     "name": "Ahmet Candan",
@@ -56,6 +69,8 @@ Example
     ]
 }
 ```
+
+Template
 ```html
 Merhaba @name,
 <table>
@@ -70,6 +85,7 @@ Merhaba @name,
 
 Send date: $Now('dd.MM.yyyy HH:mm')
 ```
+Output
 ```html
 Merhaba Ahmet Candan,
 <table>
