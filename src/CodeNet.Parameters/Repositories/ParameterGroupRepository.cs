@@ -49,7 +49,7 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 ApprovalRequired = result.Key.ApprovalRequired,
                 Description = result.Key.Description,
                 Id = result.Key.Id,
-                Parameters = result.Select(c => c.Parameter.ToParameterResult()).ToList()
+                Parameters = result.Select(c => c.Parameter.ToParameterResult())
             }
             : null;
     }
@@ -72,7 +72,7 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 ApprovalRequired = result.Key.ApprovalRequired,
                 Description = result.Key.Description,
                 Id = result.Key.Id,
-                Parameters = result.Select(c => c.Parameter.ToParameterResult()).ToList()
+                Parameters = result.Select(c => c.Parameter.ToParameterResult())
             }
             : null;
     }
@@ -88,9 +88,6 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 c.ParameterGroup.Description
             }).FirstOrDefault();
 
-        if (!result?.Select(c => c.Parameter).Any(c => c.IsDefault) == false)
-            throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(result?.Key.Id.ToString() ?? ""));
-
         return result is not null
             ? new ParameterGroupWithDefaultParamResult
             {
@@ -98,7 +95,7 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
                 ApprovalRequired = result.Key.ApprovalRequired,
                 Description = result.Key.Description,
                 Id = result.Key.Id,
-                Parameter = result.Select(c => c.Parameter.ToParameterResult()).Single()
+                Parameter = result.Select(c => c.Parameter.ToParameterResult()).FirstOrDefault()
             }
             : null;
     }
@@ -106,10 +103,10 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
     private IQueryable<ParameterGroupParameter> GetParameterGroupParameter(bool hasIsDefault = false)
     {
         return (from pg in _entities
-                join p in _parameters on pg.Id equals p.GroupId
+                join p in _parameters.Where(c => !hasIsDefault || c.IsDefault).OrderBy(c => c.Order) on pg.Id equals p.GroupId into pi
+                from p in pi.DefaultIfEmpty()
                 where pg.IsActive && !pg.IsDeleted
                     && p.IsActive && !p.IsDeleted
-                    && (!hasIsDefault || p.IsDefault)
                 select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg })
                 .AsNoTracking();
     }

@@ -192,7 +192,7 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
                     Id = cacheValue.Id,
                     Code = cacheValue.Code,
                     Description = cacheValue.Description,
-                    Parameter = cacheValue.Parameters.Single(c => c.IsDefault),
+                    Parameter = cacheValue.Parameters.First(c => c.IsDefault),
                     ApprovalRequired = cacheValue.ApprovalRequired
                 };
             }

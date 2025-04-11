@@ -110,20 +110,14 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
             }
         }
         var result = await _repository.GetByIdAsync(c => c.Code == parameterGroupCode, cancellationToken);
-        
-        if (result is null)
-            return null;
 
-        if (!result.Parameters.Any(c => c.IsDefault))
-            throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(result.Id.ToString()));
-
-        return new()
+        return result is null ? null : new()
         {
             Id = result.Id,
             Code = result.Code,
             Description = result.Description,
             ApprovalRequired = result.ApprovalRequired,
-            Parameter = ParameterModelToResult(result.Parameters.Single(c => c.IsDefault))
+            Parameter = ParameterModelToResult(result.Parameters.Where(c => c.IsDefault).OrderBy(c => c.Order).FirstOrDefault())
         };
     }
 
@@ -180,10 +174,10 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         ApprovalRequired = model.ApprovalRequired,
         Description = model.Description,
         Id = model.Id,
-        Parameters = model.Parameters.Select(c => ParameterModelToResult(c))
+        Parameters = model.Parameters.Select(c => ParameterModelToResult(c)!)
     };
 
-    private static ParameterResult ParameterModelToResult(ParameterModel model) => new()
+    private static ParameterResult? ParameterModelToResult(ParameterModel? model) => model is null ? null : new()
     {
         Code = model.Code,
         Value = model.Value,

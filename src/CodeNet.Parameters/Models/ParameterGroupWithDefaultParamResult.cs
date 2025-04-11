@@ -2,5 +2,5 @@
 
 public class ParameterGroupWithDefaultParamResult : ParameterGroupResult
 {
-    public required ParameterResult Parameter { get; set; }
+    public required ParameterResult? Parameter { get; set; }
 }
