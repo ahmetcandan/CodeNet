@@ -27,6 +27,8 @@ internal sealed class LockMiddleware(RequestDelegate next) : BaseMiddleware
             throw new RedisException("RDS0012", "Distributed Lock Fail !");
 
         await next(context);
+        await redLock.DisposeAsync();
+
         return;
     }
 }
