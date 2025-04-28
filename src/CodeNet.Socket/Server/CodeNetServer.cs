@@ -1,10 +1,10 @@
 ﻿using System.Net.Sockets;
 using System.Net;
-using CodeNet.EventBus.Client;
-using CodeNet.EventBus.Models;
-using CodeNet.EventBus.EventDefinitions;
+using CodeNet.Socket.Client;
+using CodeNet.Socket.Models;
+using CodeNet.Socket.EventDefinitions;
 
-namespace CodeNet.EventBus.Server;
+namespace CodeNet.Socket.Server;
 
 public class CodeNetServer(int port) : CodeNetServer<CodeNetClient>(port)
 {
@@ -25,7 +25,7 @@ public class CodeNetServer<TClient>(int port) : IDisposable
     public event ClientDisconnected<TClient>? ClientDisconnected;
 
     public TcpStatus Status { get { return _status; } }
-    internal List<TClient> Clients { get { return _clients; } }
+    public List<TClient> Clients { get { return _clients; } }
 
     public void Start()
     {
@@ -63,8 +63,8 @@ public class CodeNetServer<TClient>(int port) : IDisposable
                         client.SetTcpClient(tcpClient, ++_lastClientId);
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
                         client.Disconnected += (e) => Client_Disonnected(client);
-                        Client_Connected(client);
                         _clients.Add(client);
+                        Client_Connected(client);
                     }
                 }
                 else
@@ -83,7 +83,7 @@ public class CodeNetServer<TClient>(int port) : IDisposable
         ClientConnected?.Invoke(new(client));
     }
 
-    internal virtual void ClientConnecting(TClient client)
+    protected internal virtual void ClientConnecting(TClient client)
     {
     }
 
@@ -103,7 +103,7 @@ public class CodeNetServer<TClient>(int port) : IDisposable
         NewMessgeReceived?.Invoke(new(client, e.Message));
     }
 
-    internal virtual void ReceivedMessage(TClient client, Message message)
+    protected internal virtual void ReceivedMessage(TClient client, Message message)
     {
     }
 

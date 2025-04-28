@@ -1,4 +1,4 @@
-﻿namespace CodeNet.EventBus.Models;
+﻿namespace CodeNet.Socket.Models;
 
 public enum TcpStatus : byte
 {

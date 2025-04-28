@@ -1,6 +1,6 @@
-﻿using CodeNet.EventBus.Models;
+﻿using CodeNet.Socket.Models;
 
-namespace CodeNet.EventBus.EventDefinitions;
+namespace CodeNet.Socket.EventDefinitions;
 
 public class MessageReceivingArguments(Message message)
 {

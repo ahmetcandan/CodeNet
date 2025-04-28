@@ -1,9 +1,9 @@
-﻿using CodeNet.EventBus.EventDefinitions;
-using CodeNet.EventBus.Models;
+﻿using CodeNet.Socket.EventDefinitions;
+using CodeNet.Socket.Models;
 using System.Net.Sockets;
 using System.Text;
 
-namespace CodeNet.EventBus.Client;
+namespace CodeNet.Socket.Client;
 
 public class CodeNetClient : ICodeNetClient
 {
@@ -25,7 +25,7 @@ public class CodeNetClient : ICodeNetClient
     }
 
     public bool Working { get { return _working; } }
-    internal int ClientId { get { return _clientId; } }
+    public int ClientId { get { return _clientId; } }
 
     public event NewMessageReceived? NewMessgeReceived;
     public event ClientDisconnected<CodeNetClient>? Disconnected;
@@ -49,7 +49,7 @@ public class CodeNetClient : ICodeNetClient
         Start();
     }
 
-    public async Task<bool> ConnectAsync()
+    public virtual async Task<bool> ConnectAsync()
     {
         if (_client is not null)
         {
@@ -63,7 +63,7 @@ public class CodeNetClient : ICodeNetClient
         return false;
     }
 
-    public bool Connect()
+    public virtual bool Connect()
     {
         if (_client is not null)
         {
@@ -95,7 +95,7 @@ public class CodeNetClient : ICodeNetClient
     private void Disconnect(bool notify)
     {
         if (notify)
-            SendMessage(new() { Type = MessageType.Disconnected, Data = [] });
+            SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
 
         _client?.Close();
         _working = false;
@@ -132,9 +132,9 @@ public class CodeNetClient : ICodeNetClient
         }
     }
 
-    internal virtual void ReceivedMessage(Message message)
+    protected internal virtual void ReceivedMessage(Message message)
     {
-        if (message.Type is MessageType.Disconnected)
+        if (message.Type is (byte)MessageType.Disconnected)
         {
             Disconnect(false);
             return;

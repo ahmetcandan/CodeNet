@@ -1,5 +1,7 @@
-﻿using CodeNet.EventBus.EventDefinitions;
-using CodeNet.EventBus.Models;
+﻿using CodeNet.EventBus.Models;
+using CodeNet.Socket.Client;
+using CodeNet.Socket.EventDefinitions;
+using CodeNet.Socket.Models;
 using System.Net.Sockets;
 using System.Text;
 
@@ -22,7 +24,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         ClientType = clientType;
         return SendMessage(new()
         {
-            Type = MessageType.SetClientType,
+            Type = (byte)Models.MessageType.SetClientType,
             Data = [(byte)clientType]
         });
     }
@@ -32,7 +34,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         ConsumerGroup = consumerGroup;
         return SendMessage(new()
         {
-            Type = MessageType.SetConsumerGroup,
+            Type = (byte)Models.MessageType.SetConsumerGroup,
             Data = Encoding.UTF8.GetBytes(consumerGroup)
         });
     }
@@ -42,7 +44,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         Channel = channel;
         return SendMessage(new()
         {
-            Type = MessageType.SetChannel,
+            Type = (byte)Models.MessageType.SetChannel,
             Data = Encoding.UTF8.GetBytes(channel)
         });
     }
@@ -65,28 +67,27 @@ internal class CodeNetEventBusClient : CodeNetClient
         _channel = string.Empty;
     }
 
-    internal override void ReceivedMessage(Message message)
+    protected override void ReceivedMessage(Message message)
     {
         switch (message.Type)
         {
-            case MessageType.Publish:
-            case MessageType.Message:
+            case (byte)Models.MessageType.Publish:
+            case (byte)Models.MessageType.Message:
                 base.ReceivedMessage(message);
                 return;
-            case MessageType.SetClientType:
+            case (byte)Models.MessageType.SetClientType:
                 ClientType = (ClientType)message.Data[0];
                 return;
-            case MessageType.SetConsumerGroup:
+            case (byte)Models.MessageType.SetConsumerGroup:
                 ConsumerGroup = Encoding.UTF8.GetString(message.Data);
                 return;
-            case MessageType.SetChannel:
+            case (byte)Models.MessageType.SetChannel:
                 Channel = Encoding.UTF8.GetString(message.Data);
                 ClientConnectFinish?.Invoke(new(this));
                 return;
-            case MessageType.None:
+            case (byte)Models.MessageType.None:
             default:
                 return;
         }
-
     }
 }

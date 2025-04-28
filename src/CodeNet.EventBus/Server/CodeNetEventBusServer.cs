@@ -1,6 +1,7 @@
 ﻿using CodeNet.EventBus.Client;
-using CodeNet.EventBus.EventDefinitions;
-using CodeNet.EventBus.Models;
+using CodeNet.Socket.EventDefinitions;
+using CodeNet.Socket.Models;
+using CodeNet.Socket.Server;
 
 namespace CodeNet.EventBus.Server;
 
@@ -8,13 +9,13 @@ internal class CodeNetEventBusServer(int port) : CodeNetServer<CodeNetEventBusCl
 {
     public event ClientConnectFinish<CodeNetEventBusClient>? ClientConnectFinish;
 
-    internal override void ReceivedMessage(CodeNetEventBusClient client, Message message)
+    protected override void ReceivedMessage(CodeNetEventBusClient client, Message message)
     {
-        if (message.Type is MessageType.SetChannel)
+        if (message.Type is (byte)Models.MessageType.SetChannel)
             ClientConnectFinish?.Invoke(new(client));
     }
 
-    internal override void ClientConnecting(CodeNetEventBusClient client)
+    protected override void ClientConnecting(CodeNetEventBusClient client)
     {
         client.ClientConnectFinish += Client_ClientConnectFinish;
     }

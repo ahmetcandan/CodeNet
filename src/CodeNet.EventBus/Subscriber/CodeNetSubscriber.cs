@@ -1,6 +1,7 @@
 ﻿using CodeNet.EventBus.Client;
 using CodeNet.EventBus.EventDefinitions;
 using CodeNet.EventBus.Models;
+using CodeNet.Socket.EventDefinitions;
 
 namespace CodeNet.EventBus.Subscriber;
 

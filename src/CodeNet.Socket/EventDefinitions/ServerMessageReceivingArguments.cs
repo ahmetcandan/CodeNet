@@ -1,7 +1,7 @@
-﻿using CodeNet.EventBus.Client;
-using CodeNet.EventBus.Models;
+﻿using CodeNet.Socket.Client;
+using CodeNet.Socket.Models;
 
-namespace CodeNet.EventBus.EventDefinitions;
+namespace CodeNet.Socket.EventDefinitions;
 
 public class ServerMessageReceivingArguments<TClient>(TClient client, Message message)
     where TClient : CodeNetClient

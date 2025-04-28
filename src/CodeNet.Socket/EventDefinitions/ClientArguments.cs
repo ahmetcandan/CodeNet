@@ -1,6 +1,6 @@
-﻿using CodeNet.EventBus.Client;
+﻿using CodeNet.Socket.Client;
 
-namespace CodeNet.EventBus.EventDefinitions;
+namespace CodeNet.Socket.EventDefinitions;
 
 public class ClientArguments<TClient>(TClient client)
     where TClient : CodeNetClient

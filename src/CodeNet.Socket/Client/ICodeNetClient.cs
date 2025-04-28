@@ -1,6 +1,6 @@
 ﻿using System.Net.Sockets;
 
-namespace CodeNet.EventBus.Client;
+namespace CodeNet.Socket.Client;
 
 internal interface ICodeNetClient : IDisposable
 {

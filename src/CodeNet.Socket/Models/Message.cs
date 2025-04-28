@@ -1,4 +1,4 @@
-﻿namespace CodeNet.EventBus.Models;
+﻿namespace CodeNet.Socket.Models;
 
 public class Message
 {
@@ -6,7 +6,7 @@ public class Message
     /// Type(1) + Length(4)
     /// </summary>
     private readonly static int _defaultLength = 5;
-    public MessageType Type { get; set; }
+    public virtual byte Type { get; set; }
 
     private byte[] _data;
     public virtual byte[] Data
@@ -42,7 +42,7 @@ public class Message
     {
         return new()
         {
-            Type = (MessageType)data[0],
+            Type = data[0],
             Data = data[_defaultLength..],
             Length = data.Length
         };
@@ -52,7 +52,7 @@ public class Message
     {
         return new()
         {
-            Type = (MessageType)type,
+            Type = type,
             Data = data,
             Length = data.Length
         };

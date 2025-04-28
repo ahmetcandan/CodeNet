@@ -36,6 +36,7 @@
 
 	<ItemGroup>
 		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+		<ProjectReference Include="..\CodeNet.Socket\CodeNet.Socket.csproj" />
 	</ItemGroup>
 
 </Project>

@@ -1,6 +1,7 @@
 ﻿using CodeNet.EventBus.Client;
-using CodeNet.EventBus.EventDefinitions;
 using CodeNet.EventBus.Models;
+using CodeNet.Socket.EventDefinitions;
+using CodeNet.Socket.Models;
 
 namespace CodeNet.EventBus.Server;
 
@@ -31,7 +32,7 @@ public class CodeNetEventBus(int port)
 
     private void Server_NewMessgeReceived(ServerMessageReceivingArguments<CodeNetEventBusClient> e)
     {
-        if (e.Client.ClientType is not ClientType.Publisher || e.Message.Type is not MessageType.Publish)
+        if (e.Client.ClientType is not ClientType.Publisher || e.Message.Type is not (byte)Models.MessageType.Publish)
             return;
 
         PublishMessageToSubscribers(e.Message, e.Client.Channel);
