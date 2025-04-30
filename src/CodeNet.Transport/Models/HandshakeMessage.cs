@@ -2,7 +2,7 @@
 
 internal class HandshakeMessage
 {
-    public int ClientId { get; set; }
+    public ulong ClientId { get; set; }
 
     /// <summary>
     /// Encrypted Key With RSA Algorithm

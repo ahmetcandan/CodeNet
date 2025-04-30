@@ -2,6 +2,6 @@
 
 internal class SendDataMessage
 {
-    public int ClientId { get; set; }
+    public ulong ClientId { get; set; }
     public required byte[] Data { get; set; }
 }

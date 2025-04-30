@@ -4,5 +4,5 @@ namespace CodeNet.Socket.Client;
 
 internal interface ICodeNetClient : IDisposable
 {
-    void SetTcpClient(TcpClient client, int clientId);
+    void SetTcpClient(TcpClient client, ulong clientId);
 }

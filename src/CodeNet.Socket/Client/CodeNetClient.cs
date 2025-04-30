@@ -11,7 +11,7 @@ public class CodeNetClient : ICodeNetClient
     private readonly int? _port;
 
     private TcpClient? _client;
-    private int _clientId = 0;
+    private ulong? _clientId = 0;
     private bool _working = false;
     private Thread? _thread;
     private NetworkStream? _stream;
@@ -25,24 +25,25 @@ public class CodeNetClient : ICodeNetClient
     }
 
     public bool Working { get { return _working; } }
-    public int ClientId { get { return _clientId; } }
+    public ulong ClientId { get { return _clientId ?? 0; } }
+    public bool IsServerSide { get { return _clientId is not null; } }
 
     public event NewMessageReceived? NewMessgeReceived;
     public event ClientDisconnected<CodeNetClient>? Disconnected;
 
     public CodeNetClient()
     {
+        _clientId = 0;
     }
 
     public CodeNetClient(string hostName, int port)
     {
         _hostName = hostName;
         _port = port;
-        _client = new(hostName, port);
-        _clientId = -1;
+        _clientId = null;
     }
 
-    public void SetTcpClient(TcpClient client, int clientId)
+    public void SetTcpClient(TcpClient client, ulong clientId)
     {
         _client = client;
         _clientId = clientId;
@@ -51,30 +52,35 @@ public class CodeNetClient : ICodeNetClient
 
     public virtual async Task<bool> ConnectAsync()
     {
-        if (_client is not null)
-        {
-            if (_clientId > 0)
-                await _client.ConnectAsync(_hostName ?? string.Empty, _port ?? 0);
+        _client = NewTcpClient(_hostName, _port);
 
-            Start();
-            return true;
-        }
+        if (_clientId > 0)
+            await _client.ConnectAsync(_hostName ?? string.Empty, _port ?? 0);
 
-        return false;
+        Start();
+        return true;
     }
 
     public virtual bool Connect()
     {
-        if (_client is not null)
-        {
-            if (_clientId > 0)
-                _client.Connect(_hostName ?? string.Empty, _port ?? 0);
+        _client = NewTcpClient(_hostName, _port);
 
-            Start();
-            return true;
-        }
+        if (_clientId > 0)
+            _client.Connect(_hostName ?? string.Empty, _port ?? 0);
 
-        return false;
+        Start();
+        return true;
+    }
+
+    private static TcpClient NewTcpClient(string? hostname, int? port)
+    {
+        if (string.IsNullOrEmpty(hostname))
+            throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.");
+
+        if (port is null or 0)
+            throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).");
+
+        return new(hostname, port.Value);
     }
 
     private void Start()
@@ -134,6 +140,7 @@ public class CodeNetClient : ICodeNetClient
 
     protected internal virtual void ReceivedMessage(Message message)
     {
+        Console.WriteLine($"Message received... MessageType: {message.Type}");
         if (message.Type is (byte)MessageType.Disconnected)
         {
             Disconnect(false);

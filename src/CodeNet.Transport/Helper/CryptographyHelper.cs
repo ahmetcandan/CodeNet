@@ -59,8 +59,8 @@ internal static class CryptographyHelper
         using Aes aes = Aes.Create();
         aes.Key = key.Key;
         aes.IV = key.IV;
-        aes.Mode = CipherMode.CBC;
-        aes.Padding = PaddingMode.PKCS7;
+        //aes.Mode = CipherMode.CBC;
+        //aes.Padding = PaddingMode.PKCS7;
         return aes;
     }
 

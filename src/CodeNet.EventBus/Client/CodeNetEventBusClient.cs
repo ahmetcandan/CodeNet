@@ -49,7 +49,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         });
     }
 
-    internal CodeNetEventBusClient(TcpClient client, int clientId, ClientType clientType) : base()
+    internal CodeNetEventBusClient(TcpClient client, ulong clientId, ClientType clientType) : base()
     {
         SetTcpClient(client, clientId);
         _clientType = clientType;

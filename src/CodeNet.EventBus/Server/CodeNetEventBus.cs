@@ -9,7 +9,7 @@ public class CodeNetEventBus(int port)
 {
     private readonly CodeNetEventBusServer _server = new(port);
     private readonly Dictionary<string, List<ConsumerGroup>> _channels = [];
-    private readonly Dictionary<int, CodeNetEventBusClient> _clients = [];
+    private readonly Dictionary<ulong, CodeNetEventBusClient> _clients = [];
     private readonly Dictionary<ChannelToConsumerGroup, int> _consumerGroupIndex = [];
 
     public void Start()
@@ -120,12 +120,12 @@ public class CodeNetEventBus(int port)
         }
     }
 
-    private void ClientToMessage(int clientId, Message message) => _clients[clientId]?.SendMessage(message);
+    private void ClientToMessage(ulong clientId, Message message) => _clients[clientId]?.SendMessage(message);
 
     class ConsumerGroup
     {
         public string? Name { get; set; }
-        public List<int> ClientIds { get; set; } = [];
+        public List<ulong> ClientIds { get; set; } = [];
     }
 
     struct ChannelToConsumerGroup(string channel, string consumerGroup)
