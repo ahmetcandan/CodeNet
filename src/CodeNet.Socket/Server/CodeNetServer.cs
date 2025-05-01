@@ -99,14 +99,12 @@ public class CodeNetServer<TClient>(int port) : IDisposable
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)
     {
-        Console.WriteLine("[Base.Server] Client_NewMessgeReceived");
         ReceivedMessage(client, e.Message);
         NewMessgeReceived?.Invoke(new(client, e.Message));
     }
 
     protected internal virtual void ReceivedMessage(TClient client, Message message)
     {
-        Console.WriteLine("[Base.Server] ReceivedMessage");
     }
 
     public void Dispose()

@@ -4,7 +4,6 @@ using CodeNet.Socket.Models;
 using CodeNet.Transport.EventDefinitions;
 using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
-using System.Net.Http.Headers;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -43,7 +42,6 @@ public partial class DataTransferClient : CodeNetClient
 
     public DataTransferClient(string hostName, int port, string clientName) : base(hostName, port)
     {
-        ConsoleLog($"Client: new to {hostName}:{port}...");
         if (!ClientNameValidation(clientName))
             throw new ArgumentException($"Client name is not valid ({clientName}).");
 
@@ -53,7 +51,6 @@ public partial class DataTransferClient : CodeNetClient
 
     public DataTransferClient()
     {
-        ConsoleLog($"Server: new to...");
     }
 
     public override async Task<bool> ConnectAsync()
@@ -68,7 +65,6 @@ public partial class DataTransferClient : CodeNetClient
 
     private bool ConnectedHandler(bool result)
     {
-        ConsoleLog($"Connecting to handeler");
         if (!result)
             return false;
 
@@ -81,14 +77,12 @@ public partial class DataTransferClient : CodeNetClient
 
             Thread.Sleep(100);
         }
-        ConsoleLog($"Connected to handeler");
 
         return true;
     }
 
     internal bool SetClientName(string clientName)
     {
-        ConsoleLog($"Set client name: {clientName}");
         ClientName = clientName;
         return SendMessage(new()
         {
@@ -106,7 +100,6 @@ public partial class DataTransferClient : CodeNetClient
 
     protected override void ReceivedMessage(Message message)
     {
-        ConsoleLog($"Received message: {(Models.MessageType)message.Type} ({message.Data.Length}) bytes");
         switch (message.Type)
         {
             case (byte)Models.MessageType.Message:
@@ -147,14 +140,13 @@ public partial class DataTransferClient : CodeNetClient
 
                 var client = _clients?.FirstOrDefault(c => c.Id == handshakeMessage?.ClientId);
                 if (client is not null)
-                    client.AESKey = CryptographyHelper.RSADecrypt(handshakeMessage.EncryptedAESKey, _privateKey!);
+                    client.AESKey = AesKey.FromData(CryptographyHelper.RSADecrypt(handshakeMessage.EncryptedAESKey, _privateKey!));
                 return;
             case (byte)Models.MessageType.ClienList:
                 if (IsServerSide)
                     return;
 
                 _clients = SerializerHelper.DeserializeObject<IList<ClientItem>>(message.Data);
-                ConsoleLog("Client send connected.");
                 SendMessage(new()
                 {
                     Type = (byte)Models.MessageType.Connected,
@@ -173,7 +165,6 @@ public partial class DataTransferClient : CodeNetClient
         var rsa = new RSACryptoServiceProvider();
         _privateKey = rsa.ToXmlString(true);
         _publicKey = rsa.ToXmlString(false);
-        ConsoleLog($"Generate RSA Key Public key: {_publicKey}");
         SendMessage(new()
         {
             Type = (byte)Models.MessageType.SharePublicKey,
@@ -183,7 +174,6 @@ public partial class DataTransferClient : CodeNetClient
 
     public bool SendData(string clientName, byte[] data)
     {
-        ConsoleLog($"Send data to {clientName} ({data.Length}) bytes");
         if (!(_clients?.Any(c => c.Name.Equals(clientName)) ?? false))
             return false;
 
@@ -195,20 +185,17 @@ public partial class DataTransferClient : CodeNetClient
 
     private bool SendDataByClient(ClientItem client, byte[] data)
     {
-        ConsoleLog($"Send data by client {client.Name} ({data.Length}) bytes");
         if (SecurityConnection)
         {
-            if (string.IsNullOrEmpty(client.AESKey))
+            if (!client.AESKey.HasValue)
             {
                 if (!Handshake(client))
                     return false;
             }
 
-            data = CryptographyHelper.AESEncrypt(data, client.AESKey!);
-            ConsoleLog("Encrypted Data");
+            data = CryptographyHelper.AESEncrypt(data, client.AESKey!.Value);
         }
 
-        ConsoleLog($"Send data by client {client.Name} ({data.Length}) bytes. End");
         return SendMessage(new()
         {
             Type = (byte)Models.MessageType.Message,
@@ -218,20 +205,18 @@ public partial class DataTransferClient : CodeNetClient
 
     private bool Handshake(ClientItem client)
     {
-        ConsoleLog($"Handshake with {client.Name}");
         if (string.IsNullOrEmpty(client.RSAPublicKey))
             throw new InvalidOperationException("Client public key is not set.");
         else
         {
             client.AESKey = CryptographyHelper.GenerateAESKey();
-            ConsoleLog($"Send Message AES Key: {client.AESKey}");
             return SendMessage(new()
             {
                 Type = (byte)Models.MessageType.ShareAESKey,
                 Data = SerializerHelper.SerializeObject(new HandshakeMessage
                 {
                     ClientId = client.Id,
-                    EncryptedAESKey = CryptographyHelper.RSAEncrypt(Encoding.UTF8.GetBytes(client.AESKey), client.RSAPublicKey)
+                    EncryptedAESKey = CryptographyHelper.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
                 })
             });
         }
@@ -239,7 +224,6 @@ public partial class DataTransferClient : CodeNetClient
 
     private void DataReceivedHandler(MessageReceivingArguments e)
     {
-        ConsoleLog($"Data received handler: {e.Message.Type} ({e.Message.Data.Length}) bytes");
         var message = SerializerHelper.DeserializeObject<SendDataMessage>(e.Message.Data);
         if (message is null)
             return;
@@ -250,10 +234,10 @@ public partial class DataTransferClient : CodeNetClient
 
         if (SecurityConnection)
         {
-            if (string.IsNullOrEmpty(client.AESKey))
+            if (!client.AESKey.HasValue)
                 return;
 
-            DataReceived?.Invoke(new(CryptographyHelper.Decrypt(message.Data, client.AESKey)) { ClientName = client.Name });
+            DataReceived?.Invoke(new(CryptographyHelper.AESDecrypt(message.Data, client.AESKey.Value)) { ClientName = client.Name });
             return;
         }
 
@@ -267,6 +251,4 @@ public partial class DataTransferClient : CodeNetClient
 
     [GeneratedRegex(@"^[a-zA-Z_][a-zA-Z0-9_.-]*$")]
     private static partial Regex ClientNameRegex();
-
-    private void ConsoleLog(string log) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fffff}] [{(IsServerSide ? $"Server.Client-[{ClientId}]" : $"Client-{ClientName}")}] {log}");
 }

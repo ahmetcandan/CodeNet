@@ -140,7 +140,6 @@ public class CodeNetClient : ICodeNetClient
 
     protected internal virtual void ReceivedMessage(Message message)
     {
-        Console.WriteLine($"Message received... MessageType: {message.Type}");
         if (message.Type is (byte)MessageType.Disconnected)
         {
             Disconnect(false);

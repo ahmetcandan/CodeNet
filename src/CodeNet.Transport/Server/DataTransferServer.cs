@@ -4,7 +4,6 @@ using CodeNet.Socket.Server;
 using CodeNet.Transport.Client;
 using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
-using System.Text;
 namespace CodeNet.Transport.Server;
 
 public class DataTransferServer(int port, bool withSecurity = false) : CodeNetServer<DataTransferClient>(port)
@@ -17,12 +16,10 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
 
     protected override void ReceivedMessage(DataTransferClient client, Message message)
     {
-        ConsoleLog($"Client {client.ClientId} sent message: {message.Type} ({message.Data?.Length})");
         DataTransferClient? receiveClient;
         switch (message.Type)
         {
             case (byte)Models.MessageType.Connected:
-                ConsoleLog("Server received connected.");
                 client.SendMessage(new()
                 {
                     Type = (byte)Models.MessageType.Connected,
@@ -31,7 +28,6 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:
-                ConsoleLog("Server received Message.");
                 if (message.Data is null)
                     return;
 
@@ -54,7 +50,6 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
                 });
                 return;
             case (byte)Models.MessageType.ShareAESKey:
-                ConsoleLog("Server received AES key.");
                 if (message.Data is null)
                     return;
 
@@ -85,7 +80,6 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
 
     protected override void ClientConnecting(DataTransferClient client)
     {
-        ConsoleLog($"Client {client.ClientId} connecting");
         client.ClientConnectFinish += Client_ClientConnectFinish;
 
         client.SendMessage(new()
@@ -107,8 +101,6 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
 
     private void SendToClientList(DataTransferClient client)
     {
-        ConsoleLog($"Sending client list to {client.ClientId}; Total Clients {Clients.Count}; Sendig List Count: {Clients.Count(c => c.ClientId != client.ClientId)}");
-
         client.SendMessage(new()
         {
             Type = (byte)Models.MessageType.ClienList,
@@ -120,5 +112,4 @@ public class DataTransferServer(int port, bool withSecurity = false) : CodeNetSe
             }))
         });
     }
-    private static void ConsoleLog(string log) => Console.WriteLine($"[{DateTime.Now:HH:mm:ss.fffff}] [Server] {log}");
 }
