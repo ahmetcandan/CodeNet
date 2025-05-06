@@ -1,4 +1,4 @@
-﻿using CodeNet.Transport.Helper;
+﻿using CodeNet.Cryptography;
 
 namespace CodeNet.Transport.Client;
 

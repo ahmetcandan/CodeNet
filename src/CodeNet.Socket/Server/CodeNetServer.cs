@@ -3,14 +3,11 @@ using System.Net;
 using CodeNet.Socket.Client;
 using CodeNet.Socket.Models;
 using CodeNet.Socket.EventDefinitions;
+using System.Text;
 
 namespace CodeNet.Socket.Server;
 
-public class CodeNetServer(int port) : CodeNetServer<CodeNetClient>(port)
-{
-}
-
-public class CodeNetServer<TClient>(int port) : IDisposable
+public abstract class CodeNetServer<TClient>(int port) : IDisposable
     where TClient : CodeNetClient, new()
 {
     private readonly List<TClient> _clients = [];
@@ -23,6 +20,8 @@ public class CodeNetServer<TClient>(int port) : IDisposable
     public event ClientConnected<TClient>? ClientConnected;
     public event ServerNewMessageReceived<TClient>? NewMessgeReceived;
     public event ClientDisconnected<TClient>? ClientDisconnected;
+
+    public abstract string ApplicationKey { get; }
 
     public TcpStatus Status { get { return _status; } }
     public List<TClient> Clients { get { return _clients; } }
@@ -99,6 +98,13 @@ public class CodeNetServer<TClient>(int port) : IDisposable
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)
     {
+        if (e.Message.Type is (byte)MessageType.Validation && !Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey) && Clients.Exists(c => c.ClientId == client.ClientId))
+        {
+            var _client = Clients.First(c => c.ClientId == client.ClientId);
+            _client.Disconnect();
+            Clients.Remove(_client);
+        }
+
         ReceivedMessage(client, e.Message);
         NewMessgeReceived?.Invoke(new(client, e.Message));
     }

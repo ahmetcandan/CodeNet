@@ -98,7 +98,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.EventBus", "src\Cod
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Socket", "src\CodeNet.Socket\CodeNet.Socket.csproj", "{AD39B257-5EC3-458A-8A62-B900147153AC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.Transport", "src\CodeNet.Transport\CodeNet.Transport.csproj", "{ED92156E-3E39-47C1-8F88-B26DB274267B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeNet.Transport", "src\CodeNet.Transport\CodeNet.Transport.csproj", "{ED92156E-3E39-47C1-8F88-B26DB274267B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeNet.Cryptography", "src\CodeNet.Cryptography\CodeNet.Cryptography.csproj", "{D197994C-F0B9-42AF-B01D-81686FC12A5D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -282,6 +284,10 @@ Global
 		{ED92156E-3E39-47C1-8F88-B26DB274267B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{ED92156E-3E39-47C1-8F88-B26DB274267B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{ED92156E-3E39-47C1-8F88-B26DB274267B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D197994C-F0B9-42AF-B01D-81686FC12A5D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D197994C-F0B9-42AF-B01D-81686FC12A5D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D197994C-F0B9-42AF-B01D-81686FC12A5D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D197994C-F0B9-42AF-B01D-81686FC12A5D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -331,6 +337,7 @@ Global
 		{0BBD3B9C-CB94-4E87-A114-325F91ED9580} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{AD39B257-5EC3-458A-8A62-B900147153AC} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 		{ED92156E-3E39-47C1-8F88-B26DB274267B} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
+		{D197994C-F0B9-42AF-B01D-81686FC12A5D} = {F9D2337D-93EE-4E04-80E8-E98B4E1FC9B6}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {FAA17E6F-03AC-435D-ADCE-2FDB598D1726}

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace CodeNet.Socket.Client;
 
-public class CodeNetClient : ICodeNetClient
+public abstract class CodeNetClient : ICodeNetClient
 {
     private readonly string? _hostName;
     private readonly int? _port;
@@ -30,6 +30,8 @@ public class CodeNetClient : ICodeNetClient
 
     public event NewMessageReceived? NewMessgeReceived;
     public event ClientDisconnected<CodeNetClient>? Disconnected;
+
+    public abstract string ApplicationKey { get; }
 
     public CodeNetClient()
     {
@@ -91,6 +93,9 @@ public class CodeNetClient : ICodeNetClient
         _thread = new(new ThreadStart(StartListening));
         _working = true;
         _thread.Start();
+
+        Thread.Sleep(100);
+        Validation();
     }
 
     public void Disconnect()
@@ -156,5 +161,14 @@ public class CodeNetClient : ICodeNetClient
 
         _writer?.Write(message.Seriliaze());
         return true;
+    }
+
+    private bool Validation()
+    {
+        return SendMessage(new Message 
+        {
+            Type = (byte)MessageType.Validation,
+            Data = Encoding.UTF8.GetBytes(ApplicationKey)
+        });
     }
 }

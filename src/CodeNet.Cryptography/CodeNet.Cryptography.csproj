@@ -9,15 +9,15 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageIcon>ico.png</PackageIcon>
-		<Title>CodeNet Outbox</Title>
-		<Description>CodeNet Outbox package.</Description>
+		<Title>CodeNet Cryptography</Title>
+		<Description>CodeNet Cryptography package.</Description>
 		<Copyright>Copyright 2025</Copyright>
 		<Company>CodeNet</Company>
 		<Version>1.1.4</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
-		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Outbox;Outgoing</PackageTags>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Cryptography;Encrypt;Decrypt;RSA;AES;Key;Security</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,12 +32,6 @@
 			<Pack>True</Pack>
 			<PackagePath>\</PackagePath>
 		</None>
-	</ItemGroup>
-
-	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.BackgroundJob\CodeNet.BackgroundJob.csproj" />
-		<ProjectReference Include="..\CodeNet.MongoDB\CodeNet.MongoDB.csproj" />
-		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
 	</ItemGroup>
 
 </Project>

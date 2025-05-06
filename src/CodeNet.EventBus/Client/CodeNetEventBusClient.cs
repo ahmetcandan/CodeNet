@@ -49,6 +49,8 @@ internal class CodeNetEventBusClient : CodeNetClient
         });
     }
 
+    public override string ApplicationKey => EventBusKey.ApplicationKey;
+
     internal CodeNetEventBusClient(TcpClient client, ulong clientId, ClientType clientType) : base()
     {
         SetTcpClient(client, clientId);

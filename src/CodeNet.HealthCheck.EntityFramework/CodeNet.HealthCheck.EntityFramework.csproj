@@ -13,7 +13,7 @@
 		<Description>CodeNet Health Check EntityFramework package.</Description>
 		<Copyright>Copyright 2025</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.1.3</Version>
+		<Version>1.1.4</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>

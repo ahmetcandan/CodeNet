@@ -1,4 +1,4 @@
-﻿namespace CodeNet.Transport.Helper;
+﻿namespace CodeNet.Cryptography;
 
 public readonly struct AesKey(byte[] key, byte[] iv)
 {

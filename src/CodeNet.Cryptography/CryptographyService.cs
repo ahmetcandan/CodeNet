@@ -1,9 +1,15 @@
 ﻿using System.Security.Cryptography;
 
-namespace CodeNet.Transport.Helper;
+namespace CodeNet.Cryptography;
 
-internal static class CryptographyHelper
+public static class CryptographyService
 {
+    public static RsaKey GenerateRSAKeys(int size = 2048)
+    {
+        var rsa = new RSACryptoServiceProvider(size);
+        return new(rsa.ToXmlString(false), rsa.ToXmlString(true));
+    }
+
     public static byte[] RSADecrypt(this byte[] data, string privateKey)
     {
         var rsa = new RSACryptoServiceProvider();
@@ -18,10 +24,10 @@ internal static class CryptographyHelper
         return [.. rsa.Encrypt(data, false)];
     }
 
-    public static AesKey GenerateAESKey()
+    public static AesKey GenerateAESKey(int size = 256)
     {
         using var aes = Aes.Create();
-        aes.KeySize = 256;
+        aes.KeySize = size;
         aes.GenerateKey();
         aes.GenerateIV();
         return new(aes.Key, aes.IV);

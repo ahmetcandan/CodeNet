@@ -1,4 +1,5 @@
 ﻿using CodeNet.EventBus.Client;
+using CodeNet.EventBus.Models;
 using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
 using CodeNet.Socket.Server;
@@ -8,6 +9,8 @@ namespace CodeNet.EventBus.Server;
 internal class CodeNetEventBusServer(int port) : CodeNetServer<CodeNetEventBusClient>(port)
 {
     public event ClientConnectFinish<CodeNetEventBusClient>? ClientConnectFinish;
+
+    public override string ApplicationKey => EventBusKey.ApplicationKey;
 
     protected override void ReceivedMessage(CodeNetEventBusClient client, Message message)
     {

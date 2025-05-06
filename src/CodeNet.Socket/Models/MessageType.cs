@@ -4,5 +4,6 @@ public enum MessageType : byte
 {
     None = 0,
     Message = 1,
-    Disconnected = 2
+    Disconnected = 2,
+    Validation = 3
 }
