@@ -86,10 +86,21 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
     {
     }
 
+    private readonly object _clientsLock = new();
+
     private void Client_Disonnected(TClient client)
     {
+        lock (_clientsLock)
+        {
+            var _client = Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
+            if (_client != null)
+            {
+                Clients.Remove(_client);
+            }
+        }
         ClientDisconnecting(client);
         ClientDisconnected?.Invoke(new(client));
+        client.Dispose();
     }
 
     internal virtual void ClientDisconnecting(TClient client)
@@ -100,9 +111,15 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
     {
         if (e.Message.Type is (byte)MessageType.Validation && !Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey) && Clients.Exists(c => c.ClientId == client.ClientId))
         {
-            var _client = Clients.First(c => c.ClientId == client.ClientId);
-            _client.Disconnect();
-            Clients.Remove(_client);
+            lock (_clientsLock)
+            {
+                var _client = Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
+                if (_client != null)
+                {
+                    _client.Disconnect();
+                    Clients.Remove(_client);
+                }
+            }
         }
 
         ReceivedMessage(client, e.Message);

@@ -19,6 +19,7 @@ partial class DataTransferClientItem : CodeNetClient
     private bool _connected = false;
     private int _connectionTimeout = 30;
     private IList<ClientItem>? _clients = null;
+    private bool sendConnectedMessage = false;
 
     public bool SecurityConnection { get { return _secureConnection; } private set { _secureConnection = value; } }
 
@@ -115,7 +116,8 @@ partial class DataTransferClientItem : CodeNetClient
                 return;
             case (byte)Models.MessageType.Connected:
                 _connected = true;
-                ClientConnectFinish?.Invoke(new(this));
+                if (IsServerSide)
+                    ClientConnectFinish?.Invoke(new(this));
                 base.ReceivedMessage(message);
                 return;
             case (byte)Models.MessageType.UseSecutity:
@@ -149,11 +151,15 @@ partial class DataTransferClientItem : CodeNetClient
                     return;
 
                 _clients = SerializerHelper.DeserializeObject<IList<ClientItem>>(message.Data);
-                SendMessage(new()
+                if (!sendConnectedMessage)
                 {
-                    Type = (byte)Models.MessageType.Connected,
-                    Data = [1]
-                });
+                    SendMessage(new()
+                    {
+                        Type = (byte)Models.MessageType.Connected,
+                        Data = [1]
+                    });
+                    sendConnectedMessage = true;
+                }
                 return;
             case (byte)Models.MessageType.None:
             default:

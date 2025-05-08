@@ -103,18 +103,19 @@ public abstract class CodeNetClient : ICodeNetClient
         Disconnect(true);
     }
 
-    private void Disconnect(bool notify)
+    private void Disconnect(bool notify, bool listening = false)
     {
         if (notify)
             SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
-
-        _client?.Close();
+        if (_client?.Connected is true)
+            _client?.Close();
         _working = false;
-        _thread?.Join();
+        if (!listening)
+            _thread?.Join();
         Disconnected?.Invoke(new(this));
     }
 
-    private async void StartListening()
+    private void StartListening()
     {
         while (_working)
         {
@@ -138,9 +139,17 @@ public abstract class CodeNetClient : ICodeNetClient
             }
             catch
             {
-                Disconnect(_clientId == 0);
+                break;
             }
         }
+
+        try
+        {
+            if (_client?.Connected is true)
+                _client.Close();
+        }
+        catch { }
+        Disconnect(!IsServerSide, true);
     }
 
     protected internal virtual void ReceivedMessage(Message message)
@@ -165,7 +174,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private bool Validation()
     {
-        return SendMessage(new Message 
+        return SendMessage(new Message
         {
             Type = (byte)MessageType.Validation,
             Data = Encoding.UTF8.GetBytes(ApplicationKey)

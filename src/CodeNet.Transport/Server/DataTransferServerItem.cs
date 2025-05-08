@@ -28,6 +28,7 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
                     Type = (byte)Models.MessageType.Connected,
                     Data = [1]
                 });
+                Console.WriteLine($"ReceivedMessage_ClientConnectFinish?.Invoke[{client.ClientName}]");
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:
@@ -83,8 +84,6 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
 
     protected override void ClientConnecting(DataTransferClientItem client)
     {
-        client.ClientConnectFinish += Client_ClientConnectFinish;
-
         client.SendMessage(new()
         {
             Type = (byte)Models.MessageType.UseSecutity,
@@ -95,11 +94,6 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
 
         foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
             SendToClientList(_client);
-    }
-
-    private void Client_ClientConnectFinish(ClientArguments<DataTransferClientItem> e)
-    {
-        ClientConnectFinish?.Invoke(e);
     }
 
     private void SendToClientList(DataTransferClientItem client)
