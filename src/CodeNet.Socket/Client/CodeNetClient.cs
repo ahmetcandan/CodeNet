@@ -95,7 +95,9 @@ public abstract class CodeNetClient : ICodeNetClient
         _thread.Start();
 
         Thread.Sleep(100);
-        Validation();
+
+        if (!IsServerSide)
+            Validation();
     }
 
     public void Disconnect()
@@ -161,6 +163,11 @@ public abstract class CodeNetClient : ICodeNetClient
             return;
         }
 
+        if (IsServerSide && message.Type is (byte)MessageType.Validation)
+        {
+            NewMessgeReceived?.Invoke(new(message));
+            return;
+        }
         ReceivedMessage(message);
     }
 
