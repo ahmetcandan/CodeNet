@@ -28,7 +28,6 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
                     Type = (byte)Models.MessageType.Connected,
                     Data = [1]
                 });
-                Console.WriteLine($"ReceivedMessage_ClientConnectFinish?.Invoke[{client.ClientName}]");
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:

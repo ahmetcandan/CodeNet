@@ -20,7 +20,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public void Dispose()
     {
-        Disconnect(false);
+        _disconnect();
         GC.SuppressFinalize(this);
     }
 
@@ -100,12 +100,12 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public void Disconnect()
     {
-        Disconnect(true);
+        _disconnect();
     }
 
-    private void Disconnect(bool notify, bool listening = false)
+    private void _disconnect(bool listening = false)
     {
-        if (notify)
+        if (!IsServerSide)
             SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
         if (_client?.Connected is true)
             _client?.Close();
@@ -132,10 +132,10 @@ public abstract class CodeNetClient : ICodeNetClient
                 {
                     byte[] message = new byte[length];
                     _reader?.Read(message, 0, length);
-                    ReceivedMessage(Message.Deseriliaze(buffer[0], message));
+                    _receivedMessage(Message.Deseriliaze(buffer[0], message));
                 }
                 else
-                    ReceivedMessage(Message.Deseriliaze(buffer[0], []));
+                    _receivedMessage(Message.Deseriliaze(buffer[0], []));
             }
             catch
             {
@@ -149,17 +149,23 @@ public abstract class CodeNetClient : ICodeNetClient
                 _client.Close();
         }
         catch { }
-        Disconnect(!IsServerSide, true);
+        if (IsServerSide)
+            Disconnected?.Invoke(new(this));
+    }
+
+    private void _receivedMessage(Message message)
+    {
+        if (IsServerSide && message.Type is (byte)MessageType.Disconnected)
+        {
+            _disconnect(true);
+            return;
+        }
+
+        ReceivedMessage(message);
     }
 
     protected internal virtual void ReceivedMessage(Message message)
     {
-        if (message.Type is (byte)MessageType.Disconnected)
-        {
-            Disconnect(false);
-            return;
-        }
-
         NewMessgeReceived?.Invoke(new(message));
     }
 
