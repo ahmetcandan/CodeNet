@@ -17,29 +17,11 @@ partial class DataTransferClientItem : CodeNetClient
     private string? _privateKey;
     private bool _secureConnection = false;
     private bool _connected = false;
-    private int _connectionTimeout = 30;
     private IList<ClientItem>? _clients = null;
-    private bool sendConnectedMessage = false;
 
     public bool SecurityConnection { get { return _secureConnection; } private set { _secureConnection = value; } }
 
-    /// <summary>
-    /// Default: 30 seconds
-    /// </summary>
-    public int ConnectionTimeout
-    {
-        get
-        {
-            return _connectionTimeout;
-        }
-        set
-        {
-            if (!Working)
-                _connectionTimeout = value;
-            else
-                throw new InvalidOperationException("Cannot set connection timeout while connected.");
-        }
-    }
+    public new bool Connected { get { return base.Connected && _connected; } }
 
     public DataTransferClientItem(string hostName, int port, string clientName) : base(hostName, port)
     {
@@ -56,42 +38,32 @@ partial class DataTransferClientItem : CodeNetClient
 
     public override async Task<bool> ConnectAsync()
     {
-        return ConnectedHandler(await base.ConnectAsync());
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        return ConnectedHandler(await base.ConnectAsync(), cts);
     }
 
     public override bool Connect()
     {
-        return ConnectedHandler(base.Connect());
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        return ConnectedHandler(base.Connect(), cts);
     }
 
     public override string ApplicationKey => TransportKey.ApplicationKey;
 
-    private bool ConnectedHandler(bool result)
+    private bool ConnectedHandler(bool result, CancellationTokenSource cancellationTokenSource)
     {
         if (!result)
             return false;
 
-        SetClientName(_clientName);
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
-        while (!_connected)
+        while (!Connected)
         {
-            if (cts.Token.IsCancellationRequested)
+            if (cancellationTokenSource.Token.IsCancellationRequested)
                 throw new TimeoutException("Connection timeout.");
 
             Thread.Sleep(100);
         }
 
         return true;
-    }
-
-    internal bool SetClientName(string clientName)
-    {
-        ClientName = clientName;
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.SetClientName,
-            Data = Encoding.UTF8.GetBytes(clientName)
-        });
     }
 
     public event ClientConnectFinish<DataTransferClientItem>? ClientConnectFinish;
@@ -111,22 +83,36 @@ partial class DataTransferClientItem : CodeNetClient
                 else
                     DataReceivedHandler(new(message));
                 return;
-            case (byte)Models.MessageType.SetClientName:
-                ClientName = Encoding.UTF8.GetString(message.Data);
-                return;
-            case (byte)Models.MessageType.Connected:
-                _connected = true;
+            case (byte)Models.MessageType.ServerConfirmation:
                 if (IsServerSide)
-                    ClientConnectFinish?.Invoke(new(this));
-                base.ReceivedMessage(message);
-                return;
-            case (byte)Models.MessageType.UseSecutity:
-                if (message.Data[0] is 1)
+                    return;
+
+                var serverConfirmationMessage = SerializerHelper.DeserializeObject<ServerConfirmationMessage>(message.Data);
+                if (serverConfirmationMessage?.UseSecurity is true)
                     GenerateRSAKeys();
+
+                _clients = serverConfirmationMessage?.Clients?.ToList() ?? [];
+                SendMessage(new()
+                {
+                    Type = (byte)Models.MessageType.ClientConfirmation,
+                    Data = SerializerHelper.SerializeObject(new ClientConfirmationMessage 
+                    { 
+                        ClientName = ClientName, 
+                        PublicKey = PublicKey 
+                    })
+                });
+                _connected = true;
                 return;
-            case (byte)Models.MessageType.SharePublicKey:
-                PublicKey = Encoding.UTF8.GetString(message.Data);
+            case (byte)Models.MessageType.ClientConfirmation:
+                if (!IsServerSide)
+                    return;
+
+                var clientConfirmationMessage = SerializerHelper.DeserializeObject<ClientConfirmationMessage>(message.Data);
+                ClientName = clientConfirmationMessage?.ClientName ?? string.Empty;
+                ClientConnectFinish?.Invoke(new(this));
+                PublicKey = clientConfirmationMessage?.PublicKey;
                 base.ReceivedMessage(message);
+                _connected = true;
                 return;
             case (byte)Models.MessageType.ShareAESKey:
                 if (IsServerSide)
@@ -151,15 +137,6 @@ partial class DataTransferClientItem : CodeNetClient
                     return;
 
                 _clients = SerializerHelper.DeserializeObject<IList<ClientItem>>(message.Data);
-                if (!sendConnectedMessage)
-                {
-                    SendMessage(new()
-                    {
-                        Type = (byte)Models.MessageType.Connected,
-                        Data = [1]
-                    });
-                    sendConnectedMessage = true;
-                }
                 return;
             case (byte)Models.MessageType.None:
             default:
@@ -172,12 +149,7 @@ partial class DataTransferClientItem : CodeNetClient
         SecurityConnection = true;
         var rsa = CryptographyService.GenerateRSAKeys();
         _privateKey = rsa.PrivateKey;
-        _publicKey = rsa.PublicKey;
-        SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.SharePublicKey,
-            Data = Encoding.UTF8.GetBytes(PublicKey!)
-        });
+        PublicKey = rsa.PublicKey;
     }
 
     public bool SendData(string clientName, byte[] data)

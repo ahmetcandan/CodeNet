@@ -11,67 +11,117 @@ public abstract class CodeNetClient : ICodeNetClient
     private readonly int? _port;
 
     private TcpClient? _client;
-    private ulong? _clientId = 0;
+    private ulong? _clientId = null;
     private bool _working = false;
     private Thread? _thread;
     private NetworkStream? _stream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
+    private bool _connected = false;
+    private int _connectionTimeout = 5;
 
     public void Dispose()
     {
-        _disconnect();
+        Disconnect_();
         GC.SuppressFinalize(this);
     }
 
-    public bool Working { get { return _working; } }
-    public ulong ClientId { get { return _clientId ?? 0; } }
+    public bool Working { get { return _working; } private set { _working = value; } }
+    public bool Connected { get { return _connected; } private set { _connected = value; } }
+    public ulong ClientId { get { return _clientId ?? 0; } private set { _clientId = value; } }
     public bool IsServerSide { get { return _clientId is not null; } }
+
+    /// <summary>
+    /// Default: 30 seconds
+    /// </summary>
+    public int ConnectionTimeout
+    {
+        get
+        {
+            return _connectionTimeout;
+        }
+        set
+        {
+            if (!Working)
+                _connectionTimeout = value;
+            else
+                throw new InvalidOperationException("Cannot set connection timeout while connected.");
+        }
+    }
 
     public event NewMessageReceived? NewMessgeReceived;
     public event ClientDisconnected<CodeNetClient>? Disconnected;
+    public event ClientConnected<CodeNetClient>? ConnectedEvent;
 
     public abstract string ApplicationKey { get; }
 
     public CodeNetClient()
     {
-        _clientId = 0;
+        ClientId = 0;
     }
 
     public CodeNetClient(string hostName, int port)
     {
         _hostName = hostName;
         _port = port;
-        _clientId = null;
     }
 
     public void SetTcpClient(TcpClient client, ulong clientId)
     {
         _client = client;
-        _clientId = clientId;
+        ClientId = clientId;
         Start();
     }
 
     public virtual async Task<bool> ConnectAsync()
     {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
         _client = NewTcpClient(_hostName, _port);
-
-        if (_clientId > 0)
-            await _client.ConnectAsync(_hostName ?? string.Empty, _port ?? 0);
-
+        await _client.ConnectAsync(_hostName!, _port!.Value);
         Start();
+        ConnectedHandler(cts);
         return true;
     }
 
     public virtual bool Connect()
     {
+        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
         _client = NewTcpClient(_hostName, _port);
-
-        if (_clientId > 0)
-            _client.Connect(_hostName ?? string.Empty, _port ?? 0);
-
+        _client.Connect(_hostName!, _port!.Value);
         Start();
+        ConnectedHandler(cts);
         return true;
+    }
+
+    public virtual async Task<bool> CanConnectionAsync()
+    {
+        if (await ConnectAsync())
+        {
+            Disconnect();
+            return true;
+        }
+        return false;
+    }
+
+    public virtual bool CanConnection()
+    {
+        if (Connect())
+        {
+            Disconnect();
+            return true;
+        }
+        return false;
+    }
+
+    private void ConnectedHandler(CancellationTokenSource cancellationTokenSource)
+    {
+        while (!Connected)
+        {
+            if (cancellationTokenSource.Token.IsCancellationRequested)
+                throw new TimeoutException("Connection timeout.");
+
+            Thread.Sleep(100);
+        }
     }
 
     private static TcpClient NewTcpClient(string? hostname, int? port)
@@ -82,7 +132,7 @@ public abstract class CodeNetClient : ICodeNetClient
         if (port is null or 0)
             throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).");
 
-        return new(hostname, port.Value);
+        return new();
     }
 
     private void Start()
@@ -91,7 +141,7 @@ public abstract class CodeNetClient : ICodeNetClient
         _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
         _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
         _thread = new(new ThreadStart(StartListening));
-        _working = true;
+        Working = true;
         _thread.Start();
 
         Thread.Sleep(100);
@@ -100,18 +150,15 @@ public abstract class CodeNetClient : ICodeNetClient
             Validation();
     }
 
-    public void Disconnect()
-    {
-        _disconnect();
-    }
+    public void Disconnect() => Disconnect_();
 
-    private void _disconnect(bool listening = false)
+    private void Disconnect_(bool listening = false)
     {
         if (!IsServerSide)
             SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
         if (_client?.Connected is true)
             _client?.Close();
-        _working = false;
+        Working = false;
         if (!listening)
             _thread?.Join();
         Disconnected?.Invoke(new(this));
@@ -119,7 +166,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private void StartListening()
     {
-        while (_working)
+        while (Working)
         {
             try
             {
@@ -134,10 +181,10 @@ public abstract class CodeNetClient : ICodeNetClient
                 {
                     byte[] message = new byte[length];
                     _reader?.Read(message, 0, length);
-                    _receivedMessage(Message.Deseriliaze(buffer[0], message));
+                    ReceivedMessage_(Message.Deseriliaze(buffer[0], message));
                 }
                 else
-                    _receivedMessage(Message.Deseriliaze(buffer[0], []));
+                    ReceivedMessage_(Message.Deseriliaze(buffer[0], []));
             }
             catch
             {
@@ -155,19 +202,45 @@ public abstract class CodeNetClient : ICodeNetClient
             Disconnected?.Invoke(new(this));
     }
 
-    private void _receivedMessage(Message message)
+    private void ReceivedMessage_(Message message)
     {
         if (IsServerSide && message.Type is (byte)MessageType.Disconnected)
         {
-            _disconnect(true);
+            Disconnect_(true);
             return;
         }
 
-        if (IsServerSide && message.Type is (byte)MessageType.Validation)
+        if (message.Type is (byte)MessageType.Validation)
         {
-            NewMessgeReceived?.Invoke(new(message));
+            if (IsServerSide)
+                NewMessgeReceived?.Invoke(new(message));
+            else
+            {
+                Connected = message.Data.Length == 1 && message.Data[0] == 1;
+                if (Connected)
+                {
+                    ConnectedEvent?.Invoke(new(this));
+                    SendMessage(new()
+                    {
+                        Type = (byte)MessageType.Connected,
+                        Data = [1]
+                    });
+                }
+            }
+
             return;
         }
+        if (IsServerSide && message.Type is (byte)MessageType.Connected)
+        {
+            Connected = message.Data.Length == 1 && message.Data[0] == 1;
+            if (Connected)
+                ConnectedEvent?.Invoke(new(this));
+            return;
+        }
+
+        if (!IsServerSide && !Connected)
+            return;
+
         ReceivedMessage(message);
     }
 
@@ -178,7 +251,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public bool SendMessage(Message message)
     {
-        if (_working is false || !(_writer?.BaseStream.CanWrite ?? false))
+        if (!Working || !(_writer?.BaseStream.CanWrite ?? false))
             return false;
 
         _writer?.Write(message.Seriliaze());

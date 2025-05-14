@@ -22,12 +22,13 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
         DataTransferClientItem? receiveClient;
         switch (message.Type)
         {
-            case (byte)Models.MessageType.Connected:
-                client.SendMessage(new()
-                {
-                    Type = (byte)Models.MessageType.Connected,
-                    Data = [1]
-                });
+            case (byte)Models.MessageType.ClientConfirmation:
+                foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
+                    _client.SendMessage(new()
+                    {
+                        Type = (byte)Models.MessageType.ClienList,
+                        Data = SerializerHelper.SerializeObject(SendToClientList(_client))
+                    });
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:
@@ -74,10 +75,6 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
                     })
                 });
                 return;
-            case (byte)Models.MessageType.SharePublicKey:
-                foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-                    SendToClientList(_client);
-                return;
         }
     }
 
@@ -85,27 +82,29 @@ class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServe
     {
         client.SendMessage(new()
         {
-            Type = (byte)Models.MessageType.UseSecutity,
-            Data = SecurityConnection ? [1] : [0]
+            Type = (byte)Models.MessageType.ServerConfirmation,
+            Data = SerializerHelper.SerializeObject(new ServerConfirmationMessage
+            {
+                UseSecurity = SecurityConnection,
+                Clients = SendToClientList(client)
+            })
         });
 
-        SendToClientList(client);
-
         foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-            SendToClientList(_client);
+            _client.SendMessage(new()
+            {
+                Type = (byte)Models.MessageType.ClienList,
+                Data = SerializerHelper.SerializeObject(SendToClientList(_client))
+            });
     }
 
-    private void SendToClientList(DataTransferClientItem client)
+    private IEnumerable<ClientItem> SendToClientList(DataTransferClientItem client)
     {
-        client.SendMessage(new()
+        return Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
         {
-            Type = (byte)Models.MessageType.ClienList,
-            Data = SerializerHelper.SerializeObject(Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
-            {
-                Id = c.ClientId,
-                Name = c.ClientName,
-                RSAPublicKey = c.PublicKey
-            }))
+            Id = c.ClientId,
+            Name = c.ClientName,
+            RSAPublicKey = c.PublicKey
         });
     }
 }

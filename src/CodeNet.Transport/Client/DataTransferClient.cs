@@ -19,6 +19,27 @@ public class DataTransferClient(string host, int port, string clientName)
         return result;
     }
 
+    public async Task<bool> ConnectAsync()
+    {
+        var result = await _client.ConnectAsync();
+        if (result)
+        {
+            _client.DataReceived += OnDataReceived;
+        }
+
+        return result;
+    }
+
+    public bool CanConnection()
+    {
+        return _client.CanConnection();
+    }
+
+    public async Task<bool> CanConnectionAsync()
+    {
+        return await _client.CanConnectionAsync();
+    }
+
     private void OnDataReceived(DataReceivedArgs e)
     {
         DataReceived?.Invoke(new(e.Data) { ClientName = e.ClientName });

@@ -62,8 +62,8 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
                         client.SetTcpClient(tcpClient, ++_lastClientId);
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
                         client.Disconnected += (e) => Client_Disonnected(client);
+                        client.ConnectedEvent += (e) => Client_Connected(client);
                         _clients.Add(client);
-                        Client_Connected(client);
                     }
                 }
                 else
@@ -90,40 +90,48 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
 
     private void Client_Disonnected(TClient client)
     {
-        lock (_clientsLock)
-        {
-            var _client = Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
-            if (_client != null)
-            {
-                Clients.Remove(_client);
-            }
-        }
+        RemoveClient(client, false);
         ClientDisconnecting(client);
         ClientDisconnected?.Invoke(new(client));
         client.Dispose();
     }
 
-    internal virtual void ClientDisconnecting(TClient client)
+    public virtual void ClientDisconnecting(TClient client)
     {
     }
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)
     {
-        if (e.Message.Type is (byte)MessageType.Validation && !Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey) && Clients.Exists(c => c.ClientId == client.ClientId))
+        if (e.Message.Type is (byte)MessageType.Validation)
         {
-            lock (_clientsLock)
+            if (Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey))
             {
-                var _client = Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
-                if (_client != null)
+                client.SendMessage(new()
                 {
-                    _client.Disconnect();
-                    Clients.Remove(_client);
-                }
+                    Type = (byte)MessageType.Validation,
+                    Data = [1]
+                });
             }
+            else
+                RemoveClient(client);
         }
 
         ReceivedMessage(client, e.Message);
         NewMessgeReceived?.Invoke(new(client, e.Message));
+    }
+
+    private void RemoveClient(TClient client, bool disconnection = true)
+    {
+        lock (_clientsLock)
+        {
+            var _client = Clients.FirstOrDefault(c => c.ClientId == client.ClientId);
+            if (_client != null)
+            {
+                if (disconnection)
+                    _client.Disconnect();
+                Clients.Remove(_client);
+            }
+        }
     }
 
     protected internal virtual void ReceivedMessage(TClient client, Message message)
