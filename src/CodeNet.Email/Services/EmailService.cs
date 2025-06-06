@@ -1,10 +1,10 @@
-﻿using System.Net.Mail;
-using CodeNet.Email.Models;
-using Microsoft.Extensions.Options;
-using CodeNet.Email.Settings;
+﻿using CodeNet.Email.Models;
 using CodeNet.Email.Repositories;
+using CodeNet.Email.Settings;
 using CodeNet.Messaging.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using System.Net.Mail;
 
 namespace CodeNet.Email.Services;
 
@@ -103,10 +103,9 @@ internal class EmailService : IEmailService
 
     private async Task<MailTemplate> GetMailTemplate(string templateCode, CancellationToken cancellationToken)
     {
-        if (!_options.HasMongoDB)
-            throw new NotImplementedException("MongoDB is not implemented!");
-
-        return await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
+        return !_options.HasMongoDB
+            ? throw new NotImplementedException("MongoDB is not implemented!")
+            : await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
     }
 
     private static MailTemplateResult GenerateMailBody(MailTemplate template, object parameters)

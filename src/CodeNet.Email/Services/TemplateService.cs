@@ -1,6 +1,6 @@
-﻿using CodeNet.Messaging.Builder;
-using CodeNet.Email.Models;
+﻿using CodeNet.Email.Models;
 using CodeNet.Email.Repositories;
+using CodeNet.Messaging.Builder;
 
 namespace CodeNet.Email.Services;
 
@@ -24,7 +24,7 @@ internal class TemplateService(MailTemplateRepositories templateRepositories) : 
     public async Task UpdateTemplate(TemplateUpdateModel model)
     {
         var builder = TemplateBuilder.Compile(model.Content);
-        await templateRepositories.UpdateAsync(c => c.Code == model.Code ,new MailTemplate
+        await templateRepositories.UpdateAsync(c => c.Code == model.Code, new MailTemplate
         {
             Bcc = model.Bcc,
             Builder = builder,

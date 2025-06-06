@@ -11,8 +11,8 @@ public class EventBusSubscriberService(IOptions<EventBusSubscriberOptions> optio
 
     public void StartListening()
     {
-        _subscriber ??= string.IsNullOrWhiteSpace(options.Value.ConsumerGroup) 
-            ? new(options.Value.HostName, options.Value.Port, options.Value.Channel) 
+        _subscriber ??= string.IsNullOrWhiteSpace(options.Value.ConsumerGroup)
+            ? new(options.Value.HostName, options.Value.Port, options.Value.Channel)
             : new(options.Value.HostName, options.Value.Port, options.Value.Channel, options.Value.ConsumerGroup);
 
         if (!_subscriber.Connected)

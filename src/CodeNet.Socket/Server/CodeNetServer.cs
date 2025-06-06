@@ -1,8 +1,8 @@
-﻿using System.Net.Sockets;
-using System.Net;
-using CodeNet.Socket.Client;
-using CodeNet.Socket.Models;
+﻿using CodeNet.Socket.Client;
 using CodeNet.Socket.EventDefinitions;
+using CodeNet.Socket.Models;
+using System.Net;
+using System.Net.Sockets;
 using System.Text;
 
 namespace CodeNet.Socket.Server;
@@ -10,10 +10,8 @@ namespace CodeNet.Socket.Server;
 public abstract class CodeNetServer<TClient>(int port) : IDisposable
     where TClient : CodeNetClient, new()
 {
-    private readonly List<TClient> _clients = [];
     private readonly int _port = port;
-    TcpListener? _tcpListener;
-    private TcpStatus _status = TcpStatus.Stop;
+    private TcpListener? _tcpListener;
     private ulong _lastClientId = 0;
     private Thread? _thread;
 
@@ -23,8 +21,8 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
 
     public abstract string ApplicationKey { get; }
 
-    public TcpStatus Status { get { return _status; } }
-    public List<TClient> Clients { get { return _clients; } }
+    public TcpStatus Status { get; private set; } = TcpStatus.Stop;
+    public List<TClient> Clients { get; } = [];
 
     public void Start()
     {
@@ -34,22 +32,22 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         _thread = new Thread(new ThreadStart(ClientAccept));
         _thread.Start();
 
-        _status = TcpStatus.Starting;
+        Status = TcpStatus.Starting;
     }
 
     public void Stop()
     {
-        if (_status is TcpStatus.Starting)
+        if (Status is TcpStatus.Starting)
         {
             _tcpListener?.Stop();
-            _status = TcpStatus.Stop;
+            Status = TcpStatus.Stop;
         }
         _thread?.Join();
     }
 
     private async void ClientAccept()
     {
-        while (_status is TcpStatus.Starting)
+        while (Status is TcpStatus.Starting)
         {
             try
             {
@@ -63,7 +61,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
                         client.Disconnected += (e) => Client_Disonnected(client);
                         client.ConnectedEvent += (e) => Client_Connected(client);
-                        _clients.Add(client);
+                        Clients.Add(client);
                     }
                 }
                 else

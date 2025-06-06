@@ -12,14 +12,13 @@ namespace CodeNet.Outbox.Builder;
 
 public class OutboxOptionsBuilder
 {
-    private readonly IServiceCollection _services;
-    public IServiceCollection Services { get { return _services; } }
+    public IServiceCollection Services { get; }
 
     public OutboxOptionsBuilder(IServiceCollection services)
     {
-        _services = services;
-        _services.AddScoped<OutboxRepository>();
-        _services.AddScoped<IOutboxService, OutboxService>();
+        Services = services;
+        Services.AddScoped<OutboxRepository>();
+        Services.AddScoped<IOutboxService, OutboxService>();
     }
 
     /// <summary>

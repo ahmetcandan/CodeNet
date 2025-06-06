@@ -8,16 +8,12 @@ internal static class ObjectExtension
     {
         var type = obj.GetType();
         var properties = property.Split('.');
-        object? value;
-        if (type.Equals(typeof(ExpandoObject)))
-            value = ((IDictionary<string, object>)obj)[properties[0]];
-        else
-            value = type.GetProperty(properties[0])?.GetValue(obj);
-
-        if (value is null)
-            return null;
-
-        return properties.Length == 1
+        object? value = type.Equals(typeof(ExpandoObject))
+            ? ((IDictionary<string, object>)obj)[properties[0]]
+            : (type.GetProperty(properties[0])?.GetValue(obj));
+        return value is null
+            ? null
+            : properties.Length == 1
             ? value
             : value?.GetValue(string.Join('.', properties[1..]));
     }

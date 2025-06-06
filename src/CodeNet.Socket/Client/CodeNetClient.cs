@@ -12,12 +12,10 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private TcpClient? _client;
     private ulong? _clientId = null;
-    private bool _working = false;
     private Thread? _thread;
     private NetworkStream? _stream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
-    private bool _connected = false;
     private int _connectionTimeout = 5;
 
     public void Dispose()
@@ -26,8 +24,8 @@ public abstract class CodeNetClient : ICodeNetClient
         GC.SuppressFinalize(this);
     }
 
-    public bool Working { get { return _working; } private set { _working = value; } }
-    public bool Connected { get { return _connected; } private set { _connected = value; } }
+    public bool Working { get; private set; } = false;
+    public bool Connected { get; private set; } = false;
     public ulong ClientId { get { return _clientId ?? 0; } private set { _clientId = value; } }
     public bool IsServerSide { get { return _clientId is not null; } }
 
@@ -42,10 +40,7 @@ public abstract class CodeNetClient : ICodeNetClient
         }
         set
         {
-            if (!Working)
-                _connectionTimeout = value;
-            else
-                throw new InvalidOperationException("Cannot set connection timeout while connected.");
+            _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
         }
     }
 
@@ -126,13 +121,9 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private static TcpClient NewTcpClient(string? hostname, int? port)
     {
-        if (string.IsNullOrEmpty(hostname))
-            throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.");
-
-        if (port is null or 0)
-            throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).");
-
-        return new();
+        return string.IsNullOrEmpty(hostname)
+            ? throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.")
+            : port is null or 0 ? throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).") : new();
     }
 
     private void Start()

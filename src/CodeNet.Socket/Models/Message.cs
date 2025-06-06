@@ -5,7 +5,7 @@ public class Message
     /// <summary>
     /// Type(1) + Length(4)
     /// </summary>
-    private readonly static int _defaultLength = 5;
+    private static readonly int _defaultLength = 5;
     public virtual byte Type { get; set; }
 
     private byte[] _data;
@@ -24,7 +24,7 @@ public class Message
     {
         var result = new byte[Data.Length + _defaultLength];
 
-        result[0] = (byte)Type;
+        result[0] = Type;
 
         var _length = BitConverter.GetBytes(Length);
         result[1] = _length[0];

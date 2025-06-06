@@ -122,13 +122,13 @@ public class CodeNetEventBus(int port)
 
     private void ClientToMessage(ulong clientId, Message message) => _clients[clientId]?.SendMessage(message);
 
-    class ConsumerGroup
+    private class ConsumerGroup
     {
         public string? Name { get; set; }
         public List<ulong> ClientIds { get; set; } = [];
     }
 
-    struct ChannelToConsumerGroup(string channel, string consumerGroup)
+    private struct ChannelToConsumerGroup(string channel, string consumerGroup)
     {
         public string Channel { get; set; } = channel;
         public string ConsumerGroup { get; set; } = consumerGroup;

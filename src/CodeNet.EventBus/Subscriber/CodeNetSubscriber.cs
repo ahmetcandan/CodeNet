@@ -9,13 +9,12 @@ public class CodeNetSubscriber(string hostname, int port, string channel)
 {
     public CodeNetSubscriber(string hostname, int port, string channel, string consumerGroup) : this(hostname, port, channel)
     {
-        _consumerGroup = consumerGroup;
+        ConsumerGroup = consumerGroup;
     }
 
     private readonly CodeNetEventBusClient _client = new(hostname, port, ClientType.Subscriber);
-    private readonly string _consumerGroup = string.Empty;
 
-    public string ConsumerGroup { get { return _consumerGroup; } }
+    public string ConsumerGroup { get; } = string.Empty;
 
     public bool Connected { get { return _client.Working; } }
 

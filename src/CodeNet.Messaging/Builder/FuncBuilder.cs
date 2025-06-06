@@ -5,7 +5,7 @@ namespace CodeNet.Messaging.Builder;
 
 public class FuncBuilder : ITemplateBuilder
 {
-    FunctionExecuter _functionExecuter;
+    private FunctionExecuter _functionExecuter;
 
     private FuncBuilder()
     {

@@ -61,10 +61,9 @@ public class IfBuilder : ITemplateBuilder
                 _ => null
             };
 
-        if (result is null)
-            throw new MessagingException(ExceptionMessages.IfConditionException);
-
-        return result.Value ? IfBodyBuilder.Build(data) : (ElseBodyBuilder?.Build(data) ?? new(""));
+        return result is null
+            ? throw new MessagingException(ExceptionMessages.IfConditionException)
+            : result.Value ? IfBodyBuilder.Build(data) : (ElseBodyBuilder?.Build(data) ?? new(""));
     }
 
     public string Content { get; set; } = string.Empty;

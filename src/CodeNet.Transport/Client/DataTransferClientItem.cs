@@ -5,21 +5,17 @@ using CodeNet.Socket.Models;
 using CodeNet.Transport.EventDefinitions;
 using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
-using System.Text;
 using System.Text.RegularExpressions;
 
 namespace CodeNet.Transport.Client;
 
-partial class DataTransferClientItem : CodeNetClient
+internal partial class DataTransferClientItem : CodeNetClient
 {
-    private string _clientName = string.Empty;
-    private string? _publicKey;
     private string? _privateKey;
-    private bool _secureConnection = false;
     private bool _connected = false;
     private IList<ClientItem>? _clients = null;
 
-    public bool SecurityConnection { get { return _secureConnection; } private set { _secureConnection = value; } }
+    public bool SecurityConnection { get; private set; } = false;
 
     public new bool Connected { get { return base.Connected && _connected; } }
 
@@ -28,7 +24,7 @@ partial class DataTransferClientItem : CodeNetClient
         if (!ClientNameValidation(clientName))
             throw new ArgumentException($"Client name is not valid ({clientName}).");
 
-        _clientName = clientName;
+        ClientName = clientName;
         _clients = [];
     }
 
@@ -68,8 +64,8 @@ partial class DataTransferClientItem : CodeNetClient
 
     public event ClientConnectFinish<DataTransferClientItem>? ClientConnectFinish;
 
-    public string ClientName { get { return _clientName; } private set { _clientName = value; } }
-    public string? PublicKey { get { return _publicKey; } private set { _publicKey = value; } }
+    public string ClientName { get; private set; } = string.Empty;
+    public string? PublicKey { get; private set; }
 
     public event DataReceived? DataReceived;
 
@@ -95,10 +91,10 @@ partial class DataTransferClientItem : CodeNetClient
                 SendMessage(new()
                 {
                     Type = (byte)Models.MessageType.ClientConfirmation,
-                    Data = SerializerHelper.SerializeObject(new ClientConfirmationMessage 
-                    { 
-                        ClientName = ClientName, 
-                        PublicKey = PublicKey 
+                    Data = SerializerHelper.SerializeObject(new ClientConfirmationMessage
+                    {
+                        ClientName = ClientName,
+                        PublicKey = PublicKey
                     })
                 });
                 _connected = true;

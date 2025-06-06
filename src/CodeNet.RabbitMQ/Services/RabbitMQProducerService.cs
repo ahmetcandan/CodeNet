@@ -30,10 +30,9 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 
     public PublishModel? Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers)
     {
-        if (typeof(TModel).Equals(typeof(string)))
-            return Publish(Encoding.UTF8.GetBytes(data?.ToString() ?? ""), messageId, headers);
-        else
-            return Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
+        return typeof(TModel).Equals(typeof(string))
+            ? Publish(Encoding.UTF8.GetBytes(data?.ToString() ?? ""), messageId, headers)
+            : Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
     }
 
     public PublishModel? Publish(byte[] data, string messageId, IDictionary<string, object> headers)

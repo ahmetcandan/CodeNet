@@ -127,14 +127,14 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <returns></returns>
     public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
     {
-        if (page < 1 || count < 1) throw new ArgumentException("Page or count cannot be less than 1");
-
-        return await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
-        {
-            Skip = (page - 1) * count,
-            Limit = count,
-            Sort = isAcending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
-        }, cancellationToken)).ToListAsync(cancellationToken);
+        return page < 1 || count < 1
+            ? throw new ArgumentException("Page or count cannot be less than 1")
+            : await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
+            {
+                Skip = (page - 1) * count,
+                Limit = count,
+                Sort = isAcending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
+            }, cancellationToken)).ToListAsync(cancellationToken);
     }
 
     /// <summary>

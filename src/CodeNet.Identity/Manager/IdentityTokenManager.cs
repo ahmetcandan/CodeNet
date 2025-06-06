@@ -16,10 +16,9 @@ internal abstract class IdentityTokenManager(UserManager<ApplicationUser> userMa
     public async Task<TokenResponse> GenerateToken(LoginModel model, bool generateRefreshToken = true)
     {
         var user = await userManager.FindByNameAsync(model.Username);
-        if (user is not null && await userManager.CheckPasswordAsync(user, model.Password))
-            return await GenerateToken(user, generateRefreshToken);
-
-        throw new IdentityException(ExceptionMessages.IncorrectUserPass);
+        return user is not null && await userManager.CheckPasswordAsync(user, model.Password)
+            ? await GenerateToken(user, generateRefreshToken)
+            : throw new IdentityException(ExceptionMessages.IncorrectUserPass);
     }
 
     public async Task<TokenResponse> GenerateToken(string token, string refreshToken)
@@ -55,10 +54,9 @@ internal abstract class IdentityTokenManager(UserManager<ApplicationUser> userMa
         user.RefreshToken = null;
         var result = await userManager.UpdateAsync(user);
 
-        if (!result.Succeeded)
-            throw new IdentityException(ExceptionMessages.RefreshTokenRemoveFailed);
-
-        return new ResponseMessage("000", "Removed refresh token");
+        return !result.Succeeded
+            ? throw new IdentityException(ExceptionMessages.RefreshTokenRemoveFailed)
+            : new ResponseMessage("000", "Removed refresh token");
     }
 
     private async Task<TokenResponse> GenerateToken(ApplicationUser user, bool generateRefreshToken = true)

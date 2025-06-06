@@ -7,11 +7,9 @@ using CodeNet.Transport.Models;
 
 namespace CodeNet.Transport.Server;
 
-class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServer<DataTransferClientItem>(port)
+internal class DataTransferServerItem(int port, bool withSecurity = false) : CodeNetServer<DataTransferClientItem>(port)
 {
-    private readonly bool _securityConnection = withSecurity;
-
-    public bool SecurityConnection { get { return _securityConnection; } }
+    public bool SecurityConnection { get; } = withSecurity;
 
     public event ClientConnectFinish<DataTransferClientItem>? ClientConnectFinish;
 

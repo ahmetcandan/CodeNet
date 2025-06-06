@@ -7,21 +7,19 @@ namespace CodeNet.Email.Extensions;
 
 public class MailServiceOptionsBuilder(IServiceCollection services)
 {
-    private bool _hasMongoDb = false;
-
     public MailServiceOptionsBuilder AddMongoDB(IConfigurationSection configuration)
     {
         services.AddMongoDB(configuration);
-        _hasMongoDb = true;
+        HasMongoDB = true;
         return this;
     }
 
     public MailServiceOptionsBuilder AddMongoDB(MongoDbOptions mongoDbOptions)
     {
         services.AddMongoDB(mongoDbOptions);
-        _hasMongoDb = true;
+        HasMongoDB = true;
         return this;
     }
 
-    public bool HasMongoDB { get { return _hasMongoDb; } }
+    public bool HasMongoDB { get; private set; } = false;
 }
