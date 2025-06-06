@@ -46,10 +46,10 @@ public static class IdentityServiceExtensions
         switch (securityKeyType)
         {
             case SecurityKeyType.AsymmetricKey:
-                services.AddAuthorizationWithAsymmetricKey(optionsAction, authorizationSection);
+                services.AddAuthorizationWithAsymmetricKey(authorizationSection);
                 break;
             case SecurityKeyType.SymmetricKey:
-                services.AddAuthorizationWithSymmetricKey(optionsAction, authorizationSection);
+                services.AddAuthorizationWithSymmetricKey(authorizationSection);
                 break;
             default:
                 throw new NotImplementedException($"{nameof(SecurityKeyType)}: {securityKeyType}, not implemented.");
@@ -70,7 +70,7 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    internal static void AddAuthorizationWithAsymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static void AddAuthorizationWithAsymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
     {
         services.Configure<IdentitySettingsWithAsymmetricKey>(identitySection);
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey>();
@@ -84,7 +84,7 @@ public static class IdentityServiceExtensions
     /// <param name="optionsAction"></param>
     /// <param name="identitySection"></param>
     /// <returns></returns>
-    internal static void AddAuthorizationWithSymmetricKey(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IConfigurationSection identitySection)
+    internal static void AddAuthorizationWithSymmetricKey(this IServiceCollection services, IConfigurationSection identitySection)
     {
         services.Configure<IdentitySettingsWithSymmetricKey>(identitySection);
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
