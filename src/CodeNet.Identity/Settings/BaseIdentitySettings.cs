@@ -1,4 +1,6 @@
-﻿namespace CodeNet.Identity.Settings;
+﻿using Microsoft.AspNetCore.Identity;
+
+namespace CodeNet.Identity.Settings;
 
 public abstract class BaseIdentitySettings
 {
@@ -7,4 +9,5 @@ public abstract class BaseIdentitySettings
     public double ExpiryTime { get; set; }
     public double RefreshTokenExpiryTime { get; set; }
     public required string SecurityAlgorithm { get; set; }
+    public IdentityOptions? IdentityOptions { get; set; }
 }
