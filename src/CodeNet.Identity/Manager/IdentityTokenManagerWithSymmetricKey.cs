@@ -7,7 +7,8 @@ using System.Text;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityTokenManagerWithSymmetricKey(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<IdentitySettingsWithSymmetricKey> identityOptions) : IdentityTokenManager(userManager, roleManager, identityOptions)
+internal class IdentityTokenManagerWithSymmetricKey<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<IdentitySettingsWithSymmetricKey> identityOptions) : IdentityTokenManager<TUser>(userManager, roleManager, identityOptions)
+    where TUser : ApplicationUser
 {
     internal override SymmetricSecurityKey GetSecurityKey()
     {

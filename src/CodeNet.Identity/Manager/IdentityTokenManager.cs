@@ -11,7 +11,8 @@ using System.Security.Cryptography;
 
 namespace CodeNet.Identity.Manager;
 
-internal abstract class IdentityTokenManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<BaseIdentitySettings> options) : IIdentityTokenManager
+internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<BaseIdentitySettings> options) : IIdentityTokenManager
+    where TUser : ApplicationUser
 {
     public async Task<TokenResponse> GenerateToken(LoginModel model, bool generateRefreshToken = true)
     {
@@ -59,7 +60,7 @@ internal abstract class IdentityTokenManager(UserManager<ApplicationUser> userMa
             : new ResponseMessage("000", "Removed refresh token");
     }
 
-    private async Task<TokenResponse> GenerateToken(ApplicationUser user, bool generateRefreshToken = true)
+    private async Task<TokenResponse> GenerateToken(TUser user, bool generateRefreshToken = true)
     {
         var now = DateTime.Now;
         var userRoles = await userManager.GetRolesAsync(user);

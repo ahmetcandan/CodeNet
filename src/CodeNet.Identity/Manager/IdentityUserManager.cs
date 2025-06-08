@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityUserManager(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+internal class IdentityUserManager<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+    where TUser : ApplicationUser, new()
 {
     public async Task<IdentityResult> CreateUser(RegisterUserModel model)
     {
@@ -14,7 +15,7 @@ internal class IdentityUserManager(UserManager<ApplicationUser> userManager, Rol
         if (userExists is not null)
             throw new IdentityException(ExceptionMessages.UserAlreadyExists);
 
-        var user = new ApplicationUser()
+        var user = new TUser()
         {
             Email = model.Email,
             SecurityStamp = Guid.NewGuid().ToString(),

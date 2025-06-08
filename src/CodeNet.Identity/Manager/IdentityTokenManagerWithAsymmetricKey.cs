@@ -7,7 +7,8 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityTokenManagerWithAsymmetricKey(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<IdentitySettingsWithAsymmetricKey> identityOptions) : IdentityTokenManager(userManager, roleManager, identityOptions)
+internal class IdentityTokenManagerWithAsymmetricKey<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<IdentitySettingsWithAsymmetricKey> identityOptions) : IdentityTokenManager<TUser>(userManager, roleManager, identityOptions)
+    where TUser : ApplicationUser
 {
     internal override RsaSecurityKey GetSecurityKey()
     {

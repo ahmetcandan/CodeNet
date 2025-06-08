@@ -26,7 +26,26 @@ public static class IdentityServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfiguration configuration, string sectionName, Action<IdentityOptionsBuilder>? action = null)
     {
-        return services.AddAuthorization(optionsAction, securityKeyType, configuration.GetSection(sectionName), action);
+        return services.AddAuthorization<ApplicationUser>(optionsAction, securityKeyType, configuration, sectionName, action);
+    }
+
+    /// <summary>
+    /// Add Authorization
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be IdentitySettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be IdentitySettingsWithSymmetricKey.
+    /// </summary>
+    /// <typeparam name="TUser"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="securityKeyType"></param>
+    /// <param name="configuration"></param>
+    /// <param name="sectionName"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAuthorization<TUser>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfiguration configuration, string sectionName, Action<IdentityOptionsBuilder>? action = null)
+        where TUser : ApplicationUser, new()
+    {
+        return services.AddAuthorization<TUser>(optionsAction, securityKeyType, configuration.GetSection(sectionName), action);
     }
 
     /// <summary>
@@ -42,14 +61,34 @@ public static class IdentityServiceExtensions
     /// <exception cref="NotImplementedException"></exception>
     public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfigurationSection authorizationSection, Action<IdentityOptionsBuilder>? action = null)
     {
+        return services.AddAuthorization<ApplicationUser>(optionsAction, securityKeyType, authorizationSection, action);
+    }
+
+    /// <summary>
+    /// Add Authorization
+    /// If SecurityKeyType is AsymmetricKey, IdentitySection should be IdentitySettingsWithAsymmetricKey.
+    /// Else if SecurityKeyType is SymmetricKey, IdentitySection should be IdentitySettingsWithSymmetricKey.
+    /// </summary>
+    /// <typeparam name="TUser"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="securityKeyType"></param>
+    /// <param name="authorizationSection"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    /// <exception cref="ArgumentNullException"></exception>
+    /// <exception cref="NotImplementedException"></exception>
+    public static IServiceCollection AddAuthorization<TUser>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, SecurityKeyType securityKeyType, IConfigurationSection authorizationSection, Action<IdentityOptionsBuilder>? action = null)
+        where TUser : ApplicationUser, new()
+    {
         switch (securityKeyType)
         {
             case SecurityKeyType.AsymmetricKey:
                 var optionsAsymetric = authorizationSection.Get<IdentitySettingsWithAsymmetricKey>() ?? throw new ArgumentNullException($"'{authorizationSection.Path}' is null or empty in appSettings.json");
-                return services.AddAuthorization(optionsAction, optionsAsymetric, action);
+                return services.AddAuthorization<TUser>(optionsAction, optionsAsymetric, action);
             case SecurityKeyType.SymmetricKey:
                 var optionsSymetric = authorizationSection.Get<IdentitySettingsWithSymmetricKey>() ?? throw new ArgumentNullException($"'{authorizationSection.Path}' is null or empty in appSettings.json");
-                return services.AddAuthorization(optionsAction, optionsSymetric, action);
+                return services.AddAuthorization<TUser>(optionsAction, optionsSymetric, action);
             default:
                 throw new NotImplementedException($"{nameof(SecurityKeyType)}: {securityKeyType}, not implemented.");
         }
@@ -61,11 +100,27 @@ public static class IdentityServiceExtensions
     /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <param name="settings"></param>
+    /// <param name="action"></param>
     /// <returns></returns>
     public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IdentitySettingsWithAsymmetricKey settings, Action<IdentityOptionsBuilder>? action = null)
     {
-        services.AddAuthorizationRegisterWithAsymmetricKey(settings);
-        return services.AddAuthorization(optionsAction, (BaseIdentitySettings)settings, action);
+        return services.AddAuthorization<ApplicationUser>(optionsAction, settings, action);
+    }
+
+    /// <summary>
+    /// Add Authorization With AsymmetricKey
+    /// </summary>
+    /// <typeparam name="TUser"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="settings"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAuthorization<TUser>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IdentitySettingsWithAsymmetricKey settings, Action<IdentityOptionsBuilder>? action = null)
+        where TUser : ApplicationUser, new()
+    {
+        services.AddAuthorizationRegisterWithAsymmetricKey<TUser>(settings);
+        return services.AddAuthorization<TUser>(optionsAction, (BaseIdentitySettings)settings, action);
     }
 
     /// <summary>
@@ -77,8 +132,23 @@ public static class IdentityServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IdentitySettingsWithSymmetricKey settings, Action<IdentityOptionsBuilder>? action = null)
     {
-        services.AddAuthorizationRegisterWithSymmetricKey(settings);
-        return services.AddAuthorization(optionsAction, (BaseIdentitySettings)settings, action);
+        return services.AddAuthorization<ApplicationUser>(optionsAction, settings, action);
+    }
+
+    /// <summary>
+    /// Add Authorization With SymmetricKey
+    /// </summary>
+    /// <typeparam name="TUser"></typeparam>
+    /// <param name="services"></param>
+    /// <param name="optionsAction"></param>
+    /// <param name="settings"></param>
+    /// <param name="action"></param>
+    /// <returns></returns>
+    public static IServiceCollection AddAuthorization<TUser>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, IdentitySettingsWithSymmetricKey settings, Action<IdentityOptionsBuilder>? action = null)
+        where TUser : ApplicationUser, new()
+    {
+        services.AddAuthorizationRegisterWithSymmetricKey<TUser>(settings);
+        return services.AddAuthorization<TUser>(optionsAction, (BaseIdentitySettings)settings, action);
     }
 
     /// <summary>
@@ -87,10 +157,11 @@ public static class IdentityServiceExtensions
     /// <param name="services"></param>
     /// <param name="optionsAction"></param>
     /// <returns></returns>
-    internal static IServiceCollection AddAuthorization(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, BaseIdentitySettings settings, Action<IdentityOptionsBuilder>? action = null)
+    internal static IServiceCollection AddAuthorization<TUser>(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsAction, BaseIdentitySettings settings, Action<IdentityOptionsBuilder>? action = null)
+        where TUser : ApplicationUser, new()
     {
-        services.AddDbContext<CodeNetIdentityDbContext>(optionsAction);
-        services.AddIdentity<ApplicationUser, IdentityRole>(c =>
+        services.AddDbContext<CodeNetIdentityDbContext<TUser>>(optionsAction);
+        services.AddIdentity<TUser, IdentityRole>(c =>
         {
             c.ClaimsIdentity = new ClaimsIdentityOptions
             {
@@ -140,9 +211,9 @@ public static class IdentityServiceExtensions
             };
 
         })
-            .AddEntityFrameworkStores<CodeNetIdentityDbContext>()
+            .AddEntityFrameworkStores<CodeNetIdentityDbContext<TUser>>()
             .AddDefaultTokenProviders();
-        services.AddScoped<IIdentityUserManager, IdentityUserManager>();
+        services.AddScoped<IIdentityUserManager, IdentityUserManager<TUser>>();
 
         if (action is not null)
         {
@@ -159,7 +230,8 @@ public static class IdentityServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="settings"></param>
-    internal static void AddAuthorizationRegisterWithAsymmetricKey(this IServiceCollection services, IdentitySettingsWithAsymmetricKey settings)
+    internal static void AddAuthorizationRegisterWithAsymmetricKey<TUser>(this IServiceCollection services, IdentitySettingsWithAsymmetricKey settings)
+        where TUser : ApplicationUser
     {
         services.Configure<IdentitySettingsWithAsymmetricKey>(c =>
         {
@@ -170,7 +242,7 @@ public static class IdentityServiceExtensions
             c.PrivateKeyPath = settings.PrivateKeyPath;
             c.SecurityAlgorithm = settings.SecurityAlgorithm;
         });
-        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey>();
+        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey<TUser>>();
     }
 
 
@@ -179,7 +251,8 @@ public static class IdentityServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <param name="settings"></param>
-    internal static void AddAuthorizationRegisterWithSymmetricKey(this IServiceCollection services, IdentitySettingsWithSymmetricKey settings)
+    internal static void AddAuthorizationRegisterWithSymmetricKey<TUser>(this IServiceCollection services, IdentitySettingsWithSymmetricKey settings)
+        where TUser : ApplicationUser
     {
         services.Configure<IdentitySettingsWithSymmetricKey>(c =>
         {
@@ -190,6 +263,6 @@ public static class IdentityServiceExtensions
             c.IssuerSigningKey = settings.IssuerSigningKey;
             c.SecurityAlgorithm = settings.SecurityAlgorithm;
         });
-        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey>();
+        services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithSymmetricKey<TUser>>();
     }
 }
