@@ -7,7 +7,9 @@ using System.Data;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIdentityRoleManager
+internal class IdentityRoleManager<TRole, TKey>(RoleManager<TRole> roleManager) : IIdentityRoleManager
+    where TRole : IdentityRole<TKey>, new()
+    where TKey : IEquatable<TKey>
 {
     public async Task<ResponseMessage> CreateRole(CreateRoleModel model)
     {
@@ -15,7 +17,7 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
         if (roleExists is not null)
             throw new IdentityException(ExceptionMessages.RoleAlreadyExists);
 
-        IdentityRole role = new()
+        TRole role = new()
         {
             Name = model.Name,
             NormalizedName = string.IsNullOrEmpty(model.NormalizedName)
@@ -81,7 +83,7 @@ internal class IdentityRoleManager(RoleManager<IdentityRole> roleManager) : IIde
         foreach (var role in roles)
             list.Add(new()
             {
-                Id = role.Id,
+                Id = role.Id.ToString(),
                 Name = role.Name,
                 NormalizedName = role.NormalizedName,
                 Claims = (await roleManager.GetClaimsAsync(role)).Select(c => new ClaimModel(c.Type, c.Value))

@@ -1,15 +1,15 @@
-﻿using CodeNet.Identity.Model;
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeNet.Identity.Extensions;
 
 public class IdentityOptionsBuilder(IServiceCollection services)
 {
-    public IdentityOptionsBuilder AddPasswordHasher<TPasswordHasher>()
-        where TPasswordHasher : class, IPasswordHasher<ApplicationUser>
+    public IdentityOptionsBuilder AddPasswordHasher<TPasswordHasher, TUser>()
+        where TPasswordHasher : class, IPasswordHasher<TUser>
+        where TUser : class
     {
-        services.AddScoped<IPasswordHasher<ApplicationUser>, TPasswordHasher>();
+        services.AddScoped<IPasswordHasher<TUser>, TPasswordHasher>();
         return this;
     }
 }

@@ -3,6 +3,7 @@ using CodeNet.Identity.Exception;
 using CodeNet.Identity.Model;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -11,9 +12,15 @@ using System.Security.Cryptography;
 
 namespace CodeNet.Identity.Manager;
 
-internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<BaseIdentitySettings> options) : IIdentityTokenManager
-    where TUser : ApplicationUser
+
+
+internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUser> userManager, RoleManager<TRole> roleManager, CodeNetIdentityDbContext<TUser, TRole, TKey> dbContext, IOptions<BaseIdentitySettings> options) : IIdentityTokenManager
+    where TUser : IdentityUser<TKey>
+    where TRole : IdentityRole<TKey>
+    where TKey : IEquatable<TKey>
 {
+    protected readonly DbSet<UserRefreshToken<TKey>> _userRefreshTokens = dbContext.Set<UserRefreshToken<TKey>>();
+
     public async Task<TokenResponse> GenerateToken(LoginModel model, bool generateRefreshToken = true)
     {
         var user = await userManager.FindByNameAsync(model.Username);
@@ -34,13 +41,10 @@ internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManag
         if (string.IsNullOrEmpty(username))
             throw new IdentityException(ExceptionMessages.InvalidToken);
 
-        var user = await userManager.FindByNameAsync(username);
-        if (user is null)
-            throw new IdentityException(ExceptionMessages.UserNotFound);
-        else if (!(user.RefreshToken?.Equals(refreshToken) ?? false))
+        var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
+        var refreshTokenModel = await GetActiveRefreshToken(user.Id, refreshToken);
+        if (refreshTokenModel is null || !(refreshTokenModel?.RefreshToken?.Equals(refreshToken) ?? false))
             throw new IdentityException(ExceptionMessages.InvalidRefreshToken);
-        else if (user.RefreshTokenExpiryDate < DateTime.Now)
-            throw new IdentityException(ExceptionMessages.RefreshTokenExpired);
 
         return await GenerateToken(user, false);
     }
@@ -51,25 +55,22 @@ internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManag
             throw new IdentityException(ExceptionMessages.UserNotFound);
 
         var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
-        user.RefreshTokenExpiryDate = null;
-        user.RefreshToken = null;
-        var result = await userManager.UpdateAsync(user);
-
-        return !result.Succeeded
-            ? throw new IdentityException(ExceptionMessages.RefreshTokenRemoveFailed)
-            : new ResponseMessage("000", "Removed refresh token");
+        await RemoveRefreshTokenById(user.Id);
+        return new ResponseMessage("000", "Removed refresh token");
     }
 
     private async Task<TokenResponse> GenerateToken(TUser user, bool generateRefreshToken = true)
     {
+        if (user is null) throw new IdentityException(ExceptionMessages.UserNotFound);
+
         var now = DateTime.Now;
         var userRoles = await userManager.GetRolesAsync(user);
 
         var claims = new List<Claim>
                     {
-                        new(ClaimTypes.Name, user.UserName),
-                        new(ClaimTypes.NameIdentifier, user.Id),
-                        new(ClaimTypes.Email, user.Email),
+                        new(ClaimTypes.Name, user.UserName!),
+                        new(ClaimTypes.NameIdentifier, user.Id.ToString()!),
+                        new(ClaimTypes.Email, user.Email!),
                         new(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString("N")),
                     };
 
@@ -84,19 +85,35 @@ internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManag
         claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));
 
         var token = GetJwtSecurityToken(now, claims);
+        UserRefreshToken<TKey>? userRefreshToken = null;
         if (generateRefreshToken)
         {
-            user.RefreshToken = GenerateRefreshToken();
-            user.RefreshTokenExpiryDate = now.AddHours(options.Value.RefreshTokenExpiryTime);
-            await userManager.UpdateAsync(user);
+            userRefreshToken = await GetUserRefreshToken(user.Id);
+            if (userRefreshToken is null)
+            {
+                userRefreshToken = new UserRefreshToken<TKey>
+                {
+                    UserId = user.Id,
+                    RefreshToken = GenerateRefreshToken(),
+                    RefreshTokenExpiryDate = now.AddHours(options.Value.RefreshTokenExpiryTime)
+                };
+                await _userRefreshTokens.AddAsync(userRefreshToken);
+            }
+            else
+            {
+                userRefreshToken.RefreshToken = GenerateRefreshToken();
+                userRefreshToken.RefreshTokenExpiryDate = now.AddHours(options.Value.RefreshTokenExpiryTime);
+                _userRefreshTokens.Update(userRefreshToken);
+            }
+            await dbContext.SaveChangesAsync();
         }
 
         return new TokenResponse
         {
             Token = new JwtSecurityTokenHandler().WriteToken(token),
             Expiration = token.ValidTo,
-            RefreshToken = user.RefreshToken,
-            RefreshTokenExpiration = user.RefreshTokenExpiryDate,
+            RefreshToken = userRefreshToken?.RefreshToken,
+            RefreshTokenExpiration = userRefreshToken?.RefreshTokenExpiryDate,
             CreatedDate = DateTime.UtcNow,
             Claims = from c in claims
                      select new ClaimResponse
@@ -157,5 +174,33 @@ internal abstract class IdentityTokenManager<TUser>(UserManager<TUser> userManag
         using var rng = RandomNumberGenerator.Create();
         rng.GetBytes(randomNumber);
         return Convert.ToBase64String(randomNumber);
+    }
+
+    private async Task<RefreshTokenModel<TKey>?> GetActiveRefreshToken(TKey userId, string refreshToken)
+    {
+        var result = await GetUserRefreshToken(userId, refreshToken);
+        if (result is null)
+            return null;
+
+        return new()
+        {
+            UserId = userId,
+            RefreshToken = result?.RefreshToken ?? string.Empty,
+            ExpiryTime = result?.RefreshTokenExpiryDate ?? DateTime.MinValue
+        };
+    }
+
+    private Task<UserRefreshToken<TKey>?> GetUserRefreshToken(TKey userId, string refreshToken) => _userRefreshTokens.FirstOrDefaultAsync(c => c.UserId.Equals(userId) && c.RefreshToken.Equals(refreshToken) && c.RefreshTokenExpiryDate > DateTime.Now);
+
+    private Task<UserRefreshToken<TKey>?> GetUserRefreshToken(TKey userId) => _userRefreshTokens.FirstOrDefaultAsync(c => c.UserId.Equals(userId) && c.RefreshTokenExpiryDate > DateTime.Now);
+
+    private async Task RemoveRefreshTokenById(TKey userId)
+    {
+        var refreshTokens = await _userRefreshTokens.Where(c => c.UserId.Equals(userId)).ToListAsync();
+        if (refreshTokens is not null)
+        {
+            _userRefreshTokens.RemoveRange(refreshTokens);
+            await dbContext.SaveChangesAsync();
+        }
     }
 }

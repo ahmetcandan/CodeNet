@@ -1,13 +1,13 @@
 ﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
-using CodeNet.Identity.Model;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityUserManager<TUser>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
-    where TUser : ApplicationUser, new()
+internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+    where TUser : IdentityUser<TKey>, new()
+    where TKey : IEquatable<TKey>
 {
     public async Task<IdentityResult> CreateUser(RegisterUserModel model)
     {
@@ -47,7 +47,7 @@ internal class IdentityUserManager<TUser>(UserManager<TUser> userManager, RoleMa
     {
         IdentityException.ThrowIfNull(model?.Claims);
 
-        var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
+        var user = await userManager.FindByNameAsync(model?.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var currentClaims = await userManager.GetClaimsAsync(user);
 
         // delete roles
@@ -78,7 +78,7 @@ internal class IdentityUserManager<TUser>(UserManager<TUser> userManager, RoleMa
             Email = user.Email,
             Roles = roles,
             Claims = claims.Select(c => new ClaimModel { Type = c.Type, Value = c.Value }),
-            Id = user.Id
+            Id = user.Id.ToString()
         };
     }
 

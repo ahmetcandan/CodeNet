@@ -1,14 +1,33 @@
 ﻿using CodeNet.Identity.Model;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.Identity;
 
-public class CodeNetIdentityDbContext(DbContextOptions options) : CodeNetIdentityDbContext<ApplicationUser>(options)
+public class CodeNetIdentityDbContext(DbContextOptions options) : CodeNetIdentityDbContext<IdentityUser>(options)
 {
 }
 
-public class CodeNetIdentityDbContext<TUser>(DbContextOptions options) : IdentityDbContext<ApplicationUser>(options)
-    where TUser : ApplicationUser
+public class CodeNetIdentityDbContext<TUser>(DbContextOptions options) : CodeNetIdentityDbContext<TUser, IdentityRole, string>(options)
+    where TUser : IdentityUser
 {
+}
+
+public class CodeNetIdentityDbContext<TUser, TRole>(DbContextOptions options) : CodeNetIdentityDbContext<TUser, TRole, string>(options)
+    where TUser : IdentityUser
+    where TRole : IdentityRole
+{
+}
+
+public class CodeNetIdentityDbContext<TUser, TRole, TKey>(DbContextOptions options) : IdentityDbContext<TUser, IdentityRole<TKey>, TKey>(options)
+    where TUser : IdentityUser<TKey>
+    where TRole : IdentityRole<TKey>
+    where TKey : IEquatable<TKey>
+{
+    /// <summary>
+    /// User Refresh Tokens
+    /// </summary>
+    public virtual DbSet<UserRefreshToken<TKey>> UserRefreshTokens { get; set; } = default!;
+
 }
