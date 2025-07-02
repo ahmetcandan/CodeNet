@@ -401,7 +401,6 @@ public static class IdentityServiceExtensions
         services.AddScoped<IIdentityTokenManager, IdentityTokenManagerWithAsymmetricKey<TUser, TRole, TKey>>();
     }
 
-
     /// <summary>
     /// Add Authorization Register With SymmetricKey
     /// </summary>
