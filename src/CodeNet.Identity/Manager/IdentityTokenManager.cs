@@ -12,8 +12,6 @@ using System.Security.Cryptography;
 
 namespace CodeNet.Identity.Manager;
 
-
-
 internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUser> userManager, RoleManager<TRole> roleManager, CodeNetIdentityDbContext<TUser, TRole, TKey> dbContext, IOptions<BaseIdentitySettings> options) : IIdentityTokenManager
     where TUser : IdentityUser<TKey>
     where TRole : IdentityRole<TKey>
