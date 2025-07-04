@@ -1,4 +1,5 @@
-﻿using CodeNet.Identity.Settings;
+﻿using CodeNet.Identity.DbContext;
+using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;

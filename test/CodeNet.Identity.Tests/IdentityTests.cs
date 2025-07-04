@@ -3,7 +3,7 @@ using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.Identity.Extensions;
 using CodeNet.Identity.Manager;
-using CodeNet.Identity.Model;
+using CodeNet.Identity.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -42,7 +42,7 @@ namespace CodeNet.Identity.Tests
             var roleManager = _app.Services.GetRequiredService<IIdentityRoleManager>();
             foreach (var role in userRoles.Union(adminRoles))
             {
-                var result = await roleManager.CreateRole(new Settings.CreateRoleModel
+                var result = await roleManager.CreateRole(new Models.CreateRoleModel
                 {
                     Name = role
                 });
@@ -60,7 +60,7 @@ namespace CodeNet.Identity.Tests
             new CodeNetOptionsBuilder(builder.Services).AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var userManager = _app.Services.GetRequiredService<IIdentityUserManager>();
-            var adminResult = await userManager.CreateUser(new Settings.RegisterUserModel
+            var adminResult = await userManager.CreateUser(new Models.RegisterUserModel
             {
                 Email = adminEmail,
                 Password = adminPassword,
@@ -69,7 +69,7 @@ namespace CodeNet.Identity.Tests
             });
             Assert.That(adminResult, Is.Not.Null);
 
-            var userResult = await userManager.CreateUser(new Settings.RegisterUserModel
+            var userResult = await userManager.CreateUser(new Models.RegisterUserModel
             {
                 Email = userEmail,
                 Password = userPassword,
@@ -89,7 +89,7 @@ namespace CodeNet.Identity.Tests
             new CodeNetOptionsBuilder(builder.Services).AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
-            var tokenResult = await tokenManager.GenerateToken(new Settings.LoginModel
+            var tokenResult = await tokenManager.GenerateToken(new Models.LoginModel
             {
                 Username = admin,
                 Password = adminPassword,

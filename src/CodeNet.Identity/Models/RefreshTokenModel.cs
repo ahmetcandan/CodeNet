@@ -1,4 +1,4 @@
-﻿namespace CodeNet.Identity.Model;
+﻿namespace CodeNet.Identity.Models;
 
 internal class RefreshTokenModel<TKey>
     where TKey : IEquatable<TKey>

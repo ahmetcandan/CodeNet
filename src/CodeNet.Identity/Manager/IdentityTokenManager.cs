@@ -1,6 +1,7 @@
 ﻿using CodeNet.Core.Models;
+using CodeNet.Identity.DbContext;
 using CodeNet.Identity.Exception;
-using CodeNet.Identity.Model;
+using CodeNet.Identity.Models;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -77,7 +78,8 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
         {
             claims.Add(new Claim(ClaimTypes.Role, roleName));
             var role = await roleManager.FindByNameAsync(roleName);
-            claims.AddRange(await roleManager.GetClaimsAsync(role));
+            if (role is not null)
+                claims.AddRange(await roleManager.GetClaimsAsync(role));
         }
 
         claims.Add(new Claim("LoginTime", now.ToString("O"), "DateTime[O]"));

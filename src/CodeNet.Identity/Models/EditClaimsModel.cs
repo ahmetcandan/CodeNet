@@ -1,11 +1,11 @@
 ﻿using System.Security.Claims;
 
-namespace CodeNet.Identity.Settings;
+namespace CodeNet.Identity.Models;
 
 public class EditClaimsModel
 {
-    public string Type { get; set; }
-    public string Value { get; set; }
+    public required string Type { get; set; }
+    public required string Value { get; set; }
 
     public Claim GetClaim()
     {

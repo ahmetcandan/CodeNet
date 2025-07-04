@@ -1,9 +1,9 @@
-﻿using CodeNet.Identity.Model;
+﻿using CodeNet.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeNet.Identity;
+namespace CodeNet.Identity.DbContext;
 
 public class CodeNetIdentityDbContext(DbContextOptions options) : CodeNetIdentityDbContext<IdentityUser>(options)
 {
@@ -29,5 +29,4 @@ public class CodeNetIdentityDbContext<TUser, TRole, TKey>(DbContextOptions optio
     /// User Refresh Tokens
     /// </summary>
     public virtual DbSet<UserRefreshToken<TKey>> UserRefreshTokens { get; set; } = default!;
-
 }

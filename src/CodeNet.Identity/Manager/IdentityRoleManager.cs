@@ -1,6 +1,6 @@
 ﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
-using CodeNet.Identity.Settings;
+using CodeNet.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using System.Data;
@@ -51,12 +51,13 @@ internal class IdentityRoleManager<TRole, TKey>(RoleManager<TRole> roleManager) 
         var currentClaims = await roleManager.GetClaimsAsync(role);
 
         // delete roles
-        foreach (var claim in currentClaims.Where(c => !model.Claims.Any(r => r.Type.Equals(c.Type))))
+        foreach (var claim in currentClaims.Where(c => model.Claims?.Any(r => r.Type.Equals(c.Type)) is not true))
             await roleManager.RemoveClaimAsync(role, claim);
 
         //add roles
-        foreach (var claim in model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))))
-            await roleManager.AddClaimAsync(role, claim.GetClaim());
+        if (model.Claims is not null)
+            foreach (var claim in model.Claims.Where(r => currentClaims?.Any(c => c.Type.Equals(r.Type)) is not true))
+                await roleManager.AddClaimAsync(role, claim.GetClaim());
 
         return new ResponseMessage("000", "Role claims updated successfully!");
     }
@@ -83,8 +84,8 @@ internal class IdentityRoleManager<TRole, TKey>(RoleManager<TRole> roleManager) 
         foreach (var role in roles)
             list.Add(new()
             {
-                Id = role.Id.ToString(),
-                Name = role.Name,
+                Id = role.Id.ToString() ?? string.Empty,
+                Name = role.Name ?? string.Empty,
                 NormalizedName = role.NormalizedName,
                 Claims = (await roleManager.GetClaimsAsync(role)).Select(c => new ClaimModel(c.Type, c.Value))
             });

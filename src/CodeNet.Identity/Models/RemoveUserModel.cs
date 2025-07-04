@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeNet.Identity.Settings;
+namespace CodeNet.Identity.Models;
 
 public class RemoveUserModel
 {
     [Required(ErrorMessage = "User Name is required")]
-    public string Username { get; set; }
+    public required string Username { get; set; }
 }

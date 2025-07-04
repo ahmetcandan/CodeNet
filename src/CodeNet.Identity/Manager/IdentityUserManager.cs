@@ -1,6 +1,6 @@
 ﻿using CodeNet.Core.Models;
 using CodeNet.Identity.Exception;
-using CodeNet.Identity.Settings;
+using CodeNet.Identity.Models;
 using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
@@ -22,7 +22,7 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
             UserName = model.Username
         };
         var result = await userManager.CreateAsync(user, model.Password);
-        if (result.Succeeded && model.Roles != null && model.Roles.Count > 0)
+        if (result.Succeeded && model.Roles?.Any() is true)
             await userManager.AddToRolesAsync(user, model.Roles);
         return !result.Succeeded
             ? throw new IdentityException(ExceptionMessages.UserCreationFailed)
@@ -35,26 +35,28 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
         var currentRoles = await userManager.GetRolesAsync(user);
 
         // delete roles
-        await userManager.RemoveFromRolesAsync(user, currentRoles.Where(c => !model.Roles.Any(r => r.Equals(c))));
+        await userManager.RemoveFromRolesAsync(user, currentRoles.Where(c => model.Roles?.Any(r => r.Equals(c)) is not true));
 
         //add roles
-        await userManager.AddToRolesAsync(user, model.Roles.Where(r => !currentRoles.Any(c => c.Equals(r))));
+        if (model.Roles is not null)
+            await userManager.AddToRolesAsync(user, model.Roles.Where(r => !currentRoles.Any(c => c.Equals(r))));
 
         return new ResponseMessage("000", "User updated roles successfully!");
     }
 
     public async Task<ResponseMessage> EditUserClaims(UpdateUserClaimsModel model)
     {
+        IdentityException.ThrowIfNull(model);
         IdentityException.ThrowIfNull(model?.Claims);
 
-        var user = await userManager.FindByNameAsync(model?.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
+        var user = await userManager.FindByNameAsync(model!.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var currentClaims = await userManager.GetClaimsAsync(user);
 
         // delete roles
-        await userManager.RemoveClaimsAsync(user, currentClaims.Where(c => !model.Claims.Any(r => r.Type.Equals(c.Type))));
+        await userManager.RemoveClaimsAsync(user, currentClaims.Where(c => model.Claims?.Any(r => r.Type.Equals(c.Type)) is not true));
 
         //add roles
-        await userManager.AddClaimsAsync(user, model.Claims.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))).Select(c => c.GetClaim()));
+        await userManager.AddClaimsAsync(user, model.Claims!.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))).Select(c => c.GetClaim()));
 
         return new ResponseMessage("000", "User updated claims successfully!");
     }
@@ -67,6 +69,9 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
         foreach (var roleName in roles)
         {
             var role = await roleManager.FindByNameAsync(roleName);
+            if (role is null)
+                continue;
+
             var roleClaims = await roleManager.GetClaimsAsync(role);
             foreach (var claim in roleClaims)
                 claims.Add(new System.Security.Claims.Claim(claim.Type, claim.Value));
@@ -74,11 +79,11 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
 
         return new UserModel()
         {
-            Username = user.UserName,
-            Email = user.Email,
+            Username = user.UserName ?? string.Empty,
+            Email = user.Email ?? string.Empty,
             Roles = roles,
-            Claims = claims.Select(c => new ClaimModel { Type = c.Type, Value = c.Value }),
-            Id = user.Id.ToString()
+            Claims = claims.Select(c => new ClaimModel(c.Type, c.Value)),
+            Id = user.Id.ToString() ?? string.Empty
         };
     }
 

@@ -1,11 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace CodeNet.Identity.Settings;
+namespace CodeNet.Identity.Models;
 
 public class UpdateUserRolesModel
 {
     [Required(ErrorMessage = "User Name is required")]
-    public string Username { get; set; }
+    public required string Username { get; set; }
 
-    public IList<string> Roles { get; set; }
+    public IEnumerable<string>? Roles { get; set; }
 }

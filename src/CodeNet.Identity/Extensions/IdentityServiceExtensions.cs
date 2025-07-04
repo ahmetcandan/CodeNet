@@ -1,8 +1,8 @@
 ﻿using CodeNet.Core.Enums;
 using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
+using CodeNet.Identity.DbContext;
 using CodeNet.Identity.Manager;
-using CodeNet.Identity.Model;
 using CodeNet.Identity.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

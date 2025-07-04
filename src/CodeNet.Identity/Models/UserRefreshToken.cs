@@ -1,8 +1,4 @@
-﻿namespace CodeNet.Identity.Model;
-
-public class UserRefreshToken : UserRefreshToken<string>
-{
-}
+﻿namespace CodeNet.Identity.Models;
 
 public class UserRefreshToken<TKey>
     where TKey : IEquatable<TKey>
