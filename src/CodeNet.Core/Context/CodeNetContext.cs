@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 using System.Security.Claims;
 
-namespace CodeNet.Core;
+namespace CodeNet.Core.Context;
 
 internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeNetContext
 {
@@ -72,27 +72,12 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
         }
     }
 
-    public bool SetResponseHeader(string key, string value)
-    {
-        return httpContextAccessor.HttpContext is not null
-&& httpContextAccessor.HttpContext.Response.Headers.SetResponseHeader(key, value);
-    }
+    public bool SetResponseHeader(string key, string value) => httpContextAccessor.HttpContext is not null
+        && httpContextAccessor.HttpContext.Response.Headers.SetResponseHeader(key, value);
 
-    public StringValues GetResponseHeader(string key)
-    {
-        return httpContextAccessor.HttpContext?.Response.Headers[key] ?? new();
-    }
+    public StringValues GetResponseHeader(string key) => httpContextAccessor.HttpContext?.Response.Headers[key] ?? new();
 
-    public StringValues GetRequestHeader(string key)
-    {
-        return httpContextAccessor.HttpContext?.Request.Headers[key] ?? new();
-    }
+    public StringValues GetRequestHeader(string key) => httpContextAccessor.HttpContext?.Request.Headers[key] ?? new();
 
-    public IHeaderDictionary? RequestHeaders
-    {
-        get
-        {
-            return httpContextAccessor?.HttpContext?.Request.Headers;
-        }
-    }
+    public IHeaderDictionary? RequestHeaders => httpContextAccessor?.HttpContext?.Request.Headers;
 }

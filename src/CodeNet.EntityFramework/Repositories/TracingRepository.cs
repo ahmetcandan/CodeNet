@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.EntityFramework.Models;
 using Microsoft.EntityFrameworkCore;
 

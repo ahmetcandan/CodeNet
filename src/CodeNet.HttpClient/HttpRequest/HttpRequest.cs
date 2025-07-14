@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.Core.Settings;
 using CodeNet.HttpClient.Options;
 using CodeNet.Logging;

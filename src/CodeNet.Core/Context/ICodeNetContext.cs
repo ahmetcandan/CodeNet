@@ -2,16 +2,16 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Primitives;
 
-namespace CodeNet.Core;
+namespace CodeNet.Core.Context;
 
 public interface ICodeNetContext
 {
     string CorrelationId { get; }
-    string UserName { get; }
-    string Email { get; }
-    string UserId { get; }
+    string? UserName { get; }
+    string? Email { get; }
+    string? UserId { get; }
     IEnumerable<string> Roles { get; }
-    string Token { get; }
+    string? Token { get; }
     CacheState CacheState { get; }
     bool SetResponseHeader(string key, string value);
     StringValues GetResponseHeader(string key);

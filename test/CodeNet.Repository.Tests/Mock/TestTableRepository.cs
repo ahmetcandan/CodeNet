@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.EntityFramework.Repositories;
 using CodeNet.EntityFramework.Tests.Mock.Model;
 using Microsoft.EntityFrameworkCore;

@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.Repositories;

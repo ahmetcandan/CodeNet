@@ -1,4 +1,5 @@
-﻿using CodeNet.Core.Settings;
+﻿using CodeNet.Core.Context;
+using CodeNet.Core.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

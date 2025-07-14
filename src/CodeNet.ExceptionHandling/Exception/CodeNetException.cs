@@ -35,8 +35,5 @@ public class CodeNetException : Exception
             throw new CodeNetException("400", $"{(string.IsNullOrEmpty(parameterName) ? TypeName(typeof(TObject)) : parameterName)} cannot be empty.");
     }
 
-    private static string TypeName(Type type)
-    {
-        return type.GenericTypeArguments.Length > 0 ? type.GenericTypeArguments[0].Name : type.Name;
-    }
+    private static string TypeName(Type type) => type.GenericTypeArguments.Length > 0 ? type.GenericTypeArguments[0].Name : type.Name;
 }

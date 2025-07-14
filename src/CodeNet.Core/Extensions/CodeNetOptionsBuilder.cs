@@ -1,4 +1,5 @@
-﻿using CodeNet.Core.Enums;
+﻿using CodeNet.Core.Context;
+using CodeNet.Core.Enums;
 using CodeNet.Core.Security;
 using CodeNet.Core.Settings;
 using Microsoft.AspNetCore.Authentication.JwtBearer;

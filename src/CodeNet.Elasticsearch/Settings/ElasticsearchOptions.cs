@@ -4,7 +4,7 @@ namespace CodeNet.Elasticsearch.Settings;
 
 public class ElasticsearchOptions
 {
-    public ElasticsearchClientSettings ElasticsearchClientSettings { get; set; }
+    public required ElasticsearchClientSettings ElasticsearchClientSettings { get; set; }
 }
 
 public class ElasticsearchOptions<TDbContext> : ElasticsearchOptions

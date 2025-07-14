@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.Core.Extensions;
 using CodeNet.Logging.Enum;
 using CodeNet.Logging.Models;
@@ -22,23 +22,24 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
 
     public void TraceLog(object data, MethodBase? methodBase) => PostLogData(LogTime.Trace, methodBase, data);
 
-    protected virtual string GetObjectToString(object obj)
+    protected virtual string GetObjectToString(object obj) => obj.GetType() == typeof(string) ? obj?.ToString() ?? string.Empty : JsonConvert.SerializeObject(obj);
+
+    private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null)
     {
-        return obj.GetType() == typeof(string) ? obj?.ToString() ?? string.Empty : JsonConvert.SerializeObject(obj);
+        var isJsonData = data.GetType() != typeof(string);
+        PostLogData(logTime, methodBase, isJsonData ? JsonConvert.SerializeObject(data) : data?.ToString() ?? string.Empty, isJsonData, elapsedDuration, exception: exception);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null) => PostLogData(logTime, methodBase, GetObjectToString(data), elapsedDuration, exception: exception);
-
-    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, long? elapsedDuration = null, Exception? exception = null)
+    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, bool isJsonData, long? elapsedDuration = null, Exception? exception = null)
     {
         var _methodBase = methodBase?.GetMethodBase();
-        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, elapsedDuration: elapsedDuration, exception: exception);
+        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, isJsonData, elapsedDuration: elapsedDuration, exception: exception);
     }
 
-    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null, Exception? exception = null)
+    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, bool isJsonData, long? elapsedDuration = null, Exception? exception = null)
     {
         var eventId = new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}");
-        string message = JsonConvert.SerializeObject(new LogModel
+        string message = new LogModel(isJsonData)
         {
             AssemblyName = assemblyName ?? "unknow",
             ClassName = className,
@@ -48,7 +49,7 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
             Data = data,
             CorrelationId = codeNetContext.CorrelationId,
             ElapsedDuration = elapsedDuration
-        }) ?? "";
+        }.ToString();
         switch (logTime)
         {
             case LogTime.Entry:

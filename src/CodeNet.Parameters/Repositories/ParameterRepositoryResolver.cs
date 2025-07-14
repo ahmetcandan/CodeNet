@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 
 namespace CodeNet.Parameters.Repositories;
 

@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 
 namespace CodeNet.HealthCheck;

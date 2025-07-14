@@ -1,4 +1,4 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Context;
 using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.Parameters.Extensions;
 using CodeNet.Parameters.Manager;
