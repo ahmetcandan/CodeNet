@@ -42,10 +42,9 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
 
         var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var refreshTokenModel = await GetActiveRefreshToken(user.Id, refreshToken);
-        if (refreshTokenModel is null || !(refreshTokenModel?.RefreshToken?.Equals(refreshToken) ?? false))
-            throw new IdentityException(ExceptionMessages.InvalidRefreshToken);
-
-        return await GenerateToken(user, false);
+        return refreshTokenModel is null || !(refreshTokenModel?.RefreshToken?.Equals(refreshToken) ?? false)
+            ? throw new IdentityException(ExceptionMessages.InvalidRefreshToken)
+            : await GenerateToken(user, false);
     }
 
     public async Task<ResponseMessage> RemoveRefreshToken(string username)
@@ -179,15 +178,14 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
     private async Task<RefreshTokenModel<TKey>?> GetActiveRefreshToken(TKey userId, string refreshToken)
     {
         var result = await GetUserRefreshToken(userId, refreshToken);
-        if (result is null)
-            return null;
-
-        return new()
-        {
-            UserId = userId,
-            RefreshToken = result?.RefreshToken ?? string.Empty,
-            ExpiryTime = result?.RefreshTokenExpiryDate ?? DateTime.MinValue
-        };
+        return result is null
+            ? null
+            : new()
+            {
+                UserId = userId,
+                RefreshToken = result?.RefreshToken ?? string.Empty,
+                ExpiryTime = result?.RefreshTokenExpiryDate ?? DateTime.MinValue
+            };
     }
 
     private Task<UserRefreshToken<TKey>?> GetUserRefreshToken(TKey userId, string refreshToken) => _userRefreshTokens.FirstOrDefaultAsync(c => c.UserId.Equals(userId) && c.RefreshToken.Equals(refreshToken) && c.RefreshTokenExpiryDate > DateTime.Now);

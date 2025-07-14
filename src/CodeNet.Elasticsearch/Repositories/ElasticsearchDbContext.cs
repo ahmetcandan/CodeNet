@@ -6,7 +6,7 @@ namespace CodeNet.Elasticsearch;
 
 public class ElasticsearchDbContext(IOptions<ElasticsearchOptions> config)
 {
-    public ElasticsearchClient Set() => new ElasticsearchClient(config.Value.ElasticsearchClientSettings);
+    public ElasticsearchClient Set() => new(config.Value.ElasticsearchClientSettings);
 
     public async Task<bool> CanConnectionAsync(CancellationToken cancellationToken)
     {

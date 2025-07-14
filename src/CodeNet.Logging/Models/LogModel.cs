@@ -14,13 +14,7 @@ public class LogModel(bool isJsonData)
 
     private string DataToString()
     {
-        if (Data is null)
-            return "null";
-
-        if (isJsonData)
-            return Data;
-
-        return $@"""{Data}""";
+        return Data is null ? "null" : isJsonData ? Data : $@"""{Data}""";
     }
 
     /// <summary>
