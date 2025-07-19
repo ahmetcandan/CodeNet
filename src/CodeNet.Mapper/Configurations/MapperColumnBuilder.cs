@@ -8,10 +8,11 @@ public class MapperColumnBuilder<TSource, TDestination>
 {
     public MapperColumnBuilder()
     {
-        MapperItem = new MapperItem(typeof(TSource), typeof(TDestination));
+        MapperItem = new();
     }
 
     internal MapperItem MapperItem { get; }
+    internal static MapType MapType => new(typeof(TSource), typeof(TDestination));
 
     internal bool AddMapColumn(Expression<Func<TSource, object>> sourceColumn, Expression<Func<TDestination, object>> destinationColumn)
     {

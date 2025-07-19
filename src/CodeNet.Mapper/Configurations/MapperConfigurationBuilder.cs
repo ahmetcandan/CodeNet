@@ -4,15 +4,19 @@ namespace CodeNet.Mapper.Configurations;
 
 public class MapperConfigurationBuilder
 {
-    internal IList<MapperItem> MapperItems { get; } = [];
+    internal Dictionary<MapType, MapperItem> MapperItems { get; } = [];
     internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
 
-    public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>()
+    public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action = null)
         where TSource : new()
         where TDestination : new()
     {
-        var map = new MapperColumnBuilder<TSource, TDestination>();
-        MapperItems.Add(map.MapperItem);
+        MapperColumnBuilder<TSource, TDestination> map = new();
+        if (action is not null)
+            action(map);
+
+        if (MapperItems.ContainsKey(MapperColumnBuilder<TSource, TDestination>.MapType) is false)
+            MapperItems.Add(MapperColumnBuilder<TSource, TDestination>.MapType, map.MapperItem);
         return map;
     }
 

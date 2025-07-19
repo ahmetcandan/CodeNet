@@ -158,7 +158,7 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
 
         try
         {
-            ClaimsPrincipal principal = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            _ = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
             return true;
         }
         catch (System.Exception)

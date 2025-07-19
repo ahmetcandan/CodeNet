@@ -9,23 +9,14 @@ namespace CodeNet.Mapper.Services;
 
 internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
-    public TDestination MapTo<TSource, TDestination>([NotNull] TSource source)
-        where TDestination : new()
+    public TDestination? MapTo<TSource, TDestination>([NotNull] TSource source)
         where TSource : new()
+        where TDestination : new()
     {
-        return MapTo<TSource, TDestination>(source, 0);
+        return (TDestination?)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), 0);
     }
 
-    private TDestination MapTo<TSource, TDestination>([NotNull] TSource source, int depth = 0)
-        where TDestination : new()
-        where TSource : new()
-    {
-        return source is null
-            ? throw new ArgumentNullException(nameof(source))
-            : (TDestination)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), depth);
-    }
-
-    private object? MapTo(Type sourceType, Type destinationType, object source, object result, int depth = 0)
+    private object? MapTo(Type sourceType, Type destinationType, object source, object destination, int depth = 0)
     {
         if (depth > GetMaxDepth(sourceType, destinationType))
             return null;
@@ -33,9 +24,11 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         if (sourceType.Equals(destinationType))
             return source;
 
-        var destinationProperties = destinationType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        var destinationProperties = destinationType.GetProperties(BindingFlags.Public | BindingFlags.Instance).ToDictionary(c => c.Name);
         var sourceProperties = sourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var mapperColumns = GetMapperColumns(sourceType, destinationType);
+        if (mapperColumns is null)
+            return null;
 
         for (var i = 0; i < sourceProperties.Length; i++)
         {
@@ -44,15 +37,40 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
                 continue;
 
             string destinationColumnName = mapperColumns?.ContainsKey(sourceProp.Name) is true ? mapperColumns[sourceProp.Name] : sourceProp.Name;
-            var targetProp = destinationProperties.FirstOrDefault(c => c.Name.Equals(destinationColumnName) && c.CanWrite);
-            if (targetProp is null)
+            var targetProp = destinationProperties[destinationColumnName];
+            if (targetProp?.CanWrite is not true)
                 continue;
 
             var value = sourceProp.GetValue(source);
             if (value is null)
                 continue;
 
-            if (value is IEnumerable sourceList && !sourceProp.PropertyType.Equals(typeof(string)))
+            if (targetProp.PropertyType.IsAssignableFrom(sourceProp.PropertyType) || targetProp.PropertyType.IsEnum)
+                targetProp.SetValue(destination, value, null);
+            else if (value is Array sourceArray)
+            {
+                if (Activator.CreateInstance(targetProp.PropertyType, sourceArray.Length) is not Array destinationList)
+                    continue;
+
+                var itemType = targetProp.PropertyType.GetElementType();
+                if (itemType is null)
+                    continue;
+
+                var sourceItemType = sourceArray.GetType().GetElementType();
+                if (sourceItemType is null)
+                    continue;
+
+                int j = 0;
+                foreach (var item in sourceArray)
+                {
+                    var mappedItem = GetArrayItem(sourceItemType, itemType, item, depth);
+                    if (mappedItem is not null)
+                        destinationList.SetValue(mappedItem, j++);
+                }
+
+                targetProp.SetValue(destination, destinationList);
+            }
+            else if (value is IEnumerable sourceList && !sourceProp.PropertyType.Equals(typeof(string)))
             {
                 if (Activator.CreateInstance(targetProp.PropertyType) is not IList destinationList)
                     continue;
@@ -61,18 +79,18 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
                 if (itemType is null)
                     continue;
 
+                var sourceItemType = sourceList.GetType().GetGenericArguments().FirstOrDefault();
+                if (sourceItemType is null)
+                    continue;
+
                 foreach (var item in sourceList)
                 {
-                    var destinationResult = Activator.CreateInstance(itemType);
-                    if (destinationResult is null)
-                        continue;
-
-                    var mappedItem = MapTo(item.GetType(), itemType, item, destinationResult, depth + 1);
+                    var mappedItem = GetArrayItem(sourceItemType, itemType, item, depth);
                     if (mappedItem is not null)
                         destinationList.Add(mappedItem);
                 }
 
-                targetProp.SetValue(result, destinationList);
+                targetProp.SetValue(destination, destinationList);
             }
             else if (sourceProp.PropertyType.IsClass && !sourceProp.PropertyType.Equals(targetProp.PropertyType))
             {
@@ -82,42 +100,50 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
 
                 var propValue = MapTo(sourceProp.PropertyType, targetProp.PropertyType, value, destinationValue, depth + 1);
                 if (propValue is not null)
-                    targetProp.SetValue(result, propValue);
-            }
-            else
-            {
-                if (targetProp.PropertyType.IsEnum || targetProp.PropertyType.IsAssignableFrom(sourceProp.PropertyType))
-                    targetProp.SetValue(result, value, null);
+                    targetProp.SetValue(destination, propValue);
             }
         }
 
-        return result;
+        return destination;
     }
 
     private int GetMaxDepth(Type sourceType, Type destinationType)
     {
-        int? maxDepth = null;
-        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
-        if (source is not null)
-            maxDepth = source.MaxDepth;
+        if (options.Value?.MapperItems.ContainsKey(MapType.Create(sourceType, destinationType)) is true)
+            return options.Value.MapperItems[MapType.Create(sourceType, destinationType)].MaxDepth
+                ?? (options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH);
 
-        if (!maxDepth.HasValue)
-        {
-            var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
-            if (destination is not null)
-                maxDepth = destination.MaxDepth;
-        }
+        if (options.Value?.MapperItems.ContainsKey(MapType.Create(destinationType, sourceType)) is true)
+            return options.Value.MapperItems[MapType.Create(destinationType, sourceType)].MaxDepth
+                ?? (options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH);
 
-        return maxDepth ?? options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
+        return options.Value?.MaxDepth ?? MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
     }
 
     private Dictionary<string, string>? GetMapperColumns(Type sourceType, Type destinationType)
     {
-        var source = options.Value?.MapperItems.FirstOrDefault(c => c.SourceType.Equals(sourceType) && c.DestinationType.Equals(destinationType));
-        if (source is not null)
-            return source.Columns;
+        if (options.Value?.MapperItems.ContainsKey(MapType.Create(sourceType, destinationType)) is true)
+            return options.Value.MapperItems[MapType.Create(sourceType, destinationType)].Columns;
 
-        var destination = options.Value?.MapperItems.FirstOrDefault(c => c.DestinationType.Equals(sourceType) && c.SourceType.Equals(destinationType));
-        return destination?.RevertColumns;
+        if (options.Value?.MapperItems.ContainsKey(MapType.Create(destinationType, sourceType)) is true)
+            return options.Value?.MapperItems[MapType.Create(destinationType, sourceType)].Columns;
+
+        return null;
+    }
+
+    private object? GetArrayItem(Type sourceType, Type targetType, object item, int depth)
+    {
+        if (targetType.IsAssignableFrom(sourceType) || targetType.IsEnum)
+            return item;
+        else if (targetType.IsClass)
+        {
+            var destinationResult = Activator.CreateInstance(targetType);
+            if (destinationResult is null)
+                return null;
+
+            return MapTo(item.GetType(), targetType, item, destinationResult, depth + 1);
+        }
+        else
+            return null;
     }
 }
