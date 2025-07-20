@@ -11,24 +11,17 @@ public static class MapperServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder>? action = null)
+    public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder> action)
     {
-        if (action is not null)
+        ArgumentNullException.ThrowIfNull(action, nameof(action));
+
+        MapperConfigurationBuilder builder = new();
+        action(builder);
+        services.Configure<MapperConfiguration>(c =>
         {
-            MapperConfigurationBuilder builder = new();
-            action(builder);
-            services.Configure<MapperConfiguration>(c =>
-            {
-                c.MapperItems = builder.MapperItems;
-                c.MaxDepth = builder.MaxDepth;
-            });
-        }
-        else
-            services.Configure<MapperConfiguration>(c =>
-            {
-                c.MapperItems = [];
-                c.MaxDepth = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
-            });
+            c.MapperItems = builder.MapperItems;
+            c.MaxDepth = builder.MaxDepth;
+        });
 
         return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
     }

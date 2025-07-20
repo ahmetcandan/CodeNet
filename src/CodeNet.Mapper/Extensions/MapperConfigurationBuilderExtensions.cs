@@ -14,11 +14,4 @@ public static class MapperConfigurationBuilderExtensions
         builder.AddMapColumn(sourceSelector, destinationSelector);
         return builder;
     }
-    public static MapperColumnBuilder<TSource, TDestination> MaxDepth<TSource, TDestination>(this MapperColumnBuilder<TSource, TDestination> builder, int maxDepth)
-    where TSource : new()
-    where TDestination : new()
-    {
-        builder.SetMaxDepth(maxDepth);
-        return builder;
-    }
 }
