@@ -6,4 +6,16 @@ internal class MapperItemProperties
 {
     public required PropertyInfo SourceProp { get; set; }
     public required PropertyInfo DestinationProp { get; set; }
+    public required Func<object, object> SourceGetter { get; set; }
+    public required Action<object, object?> DestinationSetter { get; set; }
+    public required Type SourceType { get; set; }
+    public required Type DestinationType { get; set; }
+    public Type? SourceElementType { get; set; }
+    public Type? DestinationElementType { get; set; }
+    public bool DestinationTypeIsEnum { get; set; }
+    public bool DestinationTypeIsArray { get; set; }
+    public bool SourceTypeHasElementType { get; set; }
+    public bool DestinationTypeHasElementType { get; set; }
+    public bool SourceTypeIsClass { get; set; }
+    public required Func<Type?, bool> DestinationTypeIsAssignableFrom { get; set; }
 }

@@ -14,10 +14,8 @@ public static class MapperCreator
         return new CodeNetMapper(Options.Create<MapperConfiguration>(new()
         {
             MapperItems = builder.MapperItems,
-            SourceGetters = builder.SourceGetters,
-            DestinationSetters = builder.DestinationSetters,
             MaxDepth = builder.MaxDepth,
-            ObjectConstructor = builder.ObjectConstructor,
+            ObjectConstructors = builder.ObjectConstructor,
             ArrayConstructors = builder.ArrayConstructors
         }));
     }
