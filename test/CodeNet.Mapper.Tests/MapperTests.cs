@@ -28,7 +28,10 @@ namespace CodeNet.Mapper.Tests
                 Detail = new PersonDetail { Description = "Detail 123" }
             };
             IServiceCollection services = new ServiceCollection();
-            services.AddMapper();
+            services.AddMapper(c =>
+            {
+                c.CreateMap<Person, Personel>();
+            });
             var serviceProvider = services.BuildServiceProvider();
             var mapper = serviceProvider.GetRequiredService<ICodeNetMapper>();
             var result = mapper.MapTo<Person, Personel>(person);

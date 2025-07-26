@@ -1,17 +1,18 @@
 ﻿using CodeNet.Mapper.Configurations;
 using Microsoft.Extensions.Options;
-using System.Collections;
+using System.Linq.Expressions;
+using System.Security.AccessControl;
 
 namespace CodeNet.Mapper.Services;
 
 internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
+    readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(MapperConfiguration));
+
     public TDestination? MapTo<TSource, TDestination>(TSource source)
         where TSource : new()
         where TDestination : new()
     {
-        ArgumentNullException.ThrowIfNull(options.Value, nameof(MapperConfiguration));
-
         if (source is null)
             return default;
 
@@ -20,97 +21,45 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
 
     private object? MapTo(Type sourceType, Type destinationType, object source, object destination, int depth = 0)
     {
-        if (sourceType.Equals(destinationType))
+        if (sourceType == destinationType)
             return source;
 
-        var columns = options.Value.MapperItems[MapType.Create(sourceType, destinationType)];
-        if (columns is null)
+        if (depth > _config.MaxDepth || !_config.MapperItems.TryGetValue(MapType.Create(sourceType, destinationType), out MapperItemProperties[]? columns))
             return null;
 
-        if (depth > options.Value.MaxDepth)
-            return null;
-
-        foreach (var column in columns)
+        for (int i = 0; i < columns.Length; i++)
         {
-            var value = column.SourceProp.GetValue(source);
+            var value = _config.SourceGetters[sourceType][columns[i].SourceProp.Name](source);
+            var sourceGetDelegate = _config.SourceGetters[sourceType][columns[i].SourceProp.Name];
+            var getSourceValueCall = Expression.Call(Expression.Constant(sourceGetDelegate.Target), sourceGetDelegate.Method, Expression.Parameter(sourceType, "source"));
+            var valueX = Expression.Variable(typeof(object), "valueX");
+
             if (value is null)
                 continue;
             
-            if (column.DestinationProp.PropertyType.IsAssignableFrom(column.SourceProp.PropertyType) || column.DestinationProp.PropertyType.IsEnum)
-                column.DestinationProp.SetValue(destination, value);
+            if (columns[i].DestinationProp.PropertyType == columns[i].SourceProp.PropertyType
+                    || columns[i].DestinationProp.PropertyType.IsAssignableFrom(columns[i].SourceProp.PropertyType)
+                    || columns[i].DestinationProp.PropertyType.IsEnum)
+                _config.DestinationSetters[destinationType][columns[i].DestinationProp.Name](destination, value);
             else if (value is Array sourceArray)
             {
-                if (Activator.CreateInstance(column.DestinationProp.PropertyType, sourceArray.Length) is not Array destinationList)
+                if (!columns[i].DestinationProp.PropertyType.HasElementType || !sourceArray.GetType().HasElementType)
                     continue;
 
-                var itemType = column.DestinationProp.PropertyType.GetElementType();
-                if (itemType is null)
-                    continue;
+                var itemType = columns[i].DestinationProp.PropertyType.GetElementType()!;
+                var destinationList = _config.ArrayConstructors[itemType](sourceArray.Length);
 
-                var sourceItemType = sourceArray.GetType().GetElementType();
-                if (sourceItemType is null)
-                    continue;
+                for (int j = 0; j < sourceArray.Length; j++)
+                    destinationList.SetValue(GetArrayItem(sourceArray.GetType().GetElementType()!, itemType, sourceArray.GetValue(j), depth), j);
 
-                int j = 0;
-                foreach (var item in sourceArray)
-                {
-                    var mappedItem = GetArrayItem(sourceItemType, itemType, item, depth);
-                    if (mappedItem is not null)
-                        destinationList.SetValue(mappedItem, j++);
-                }
-
-                column.DestinationProp.SetValue(destination, destinationList);
+                _config.DestinationSetters[destinationType][columns[i].DestinationProp.Name](destination, destinationList);
             }
-            else if (value is IEnumerable sourceList && !column.SourceProp.PropertyType.Equals(typeof(string)))
-            {
-                if (Activator.CreateInstance(column.DestinationProp.PropertyType, sourceList) is not IList destinationList)
-                    continue;
-
-                var itemType = column.DestinationProp.PropertyType.GetGenericArguments().FirstOrDefault();
-                if (itemType is null)
-                    continue;
-
-                var sourceItemType = sourceList.GetType().GetGenericArguments().FirstOrDefault();
-                if (sourceItemType is null)
-                    continue;
-
-                foreach (var item in sourceList)
-                {
-                    var mappedItem = GetArrayItem(sourceItemType, itemType, item, depth);
-                    if (mappedItem is not null)
-                        destinationList.Add(mappedItem);
-                }
-
-                column.DestinationProp.SetValue(destination, destinationList);
-            }
-            else if (column.SourceProp.PropertyType.IsClass && !column.SourceProp.PropertyType.Equals(column.DestinationProp.PropertyType))
-            {
-                var destinationValue = Activator.CreateInstance(column.DestinationProp.PropertyType);
-                if (destinationValue is null)
-                    continue;
-
-                var propValue = MapTo(column.SourceProp.PropertyType, column.DestinationProp.PropertyType, value, destinationValue, depth + 1);
-                if (propValue is not null)
-                    column.DestinationProp.SetValue(destination, propValue);
-            }
+            else if (columns[i].SourceProp.PropertyType.IsClass)
+                _config.DestinationSetters[destinationType][columns[i].DestinationProp.Name](destination, MapTo(columns[i].SourceProp.PropertyType, columns[i].DestinationProp.PropertyType, value, _config.ObjectConstructor[columns[i].DestinationProp.PropertyType].Invoke(), depth + 1));
         }
 
         return destination;
     }
 
-    private object? GetArrayItem(Type sourceType, Type targetType, object item, int depth)
-    {
-        if (targetType.IsAssignableFrom(sourceType) || targetType.IsEnum)
-            return item;
-        else if (targetType.IsClass)
-        {
-            var destinationResult = Activator.CreateInstance(targetType);
-            if (destinationResult is null)
-                return null;
-
-            return MapTo(item.GetType(), targetType, item, destinationResult, depth + 1);
-        }
-        else
-            return null;
-    }
+    private object? GetArrayItem(Type sourceType, Type targetType, object? item, int depth) => item is null || targetType.IsAssignableFrom(sourceType) || targetType.IsEnum ? item : MapTo(item.GetType(), targetType, item, _config.ObjectConstructor[targetType].Invoke(), depth + 1);
 }

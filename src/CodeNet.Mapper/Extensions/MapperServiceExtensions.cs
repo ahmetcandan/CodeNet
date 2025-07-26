@@ -20,7 +20,11 @@ public static class MapperServiceExtensions
         services.Configure<MapperConfiguration>(c =>
         {
             c.MapperItems = builder.MapperItems;
+            c.SourceGetters = builder.SourceGetters;
+            c.DestinationSetters = builder.DestinationSetters;
             c.MaxDepth = builder.MaxDepth;
+            c.ObjectConstructor = builder.ObjectConstructor;
+            c.ArrayConstructors = builder.ArrayConstructors;
         });
 
         return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
