@@ -1,6 +1,7 @@
 ﻿using CodeNet.Mapper.Configurations;
 using CodeNet.Mapper.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace CodeNet.Mapper.Extensions;
 
@@ -17,13 +18,7 @@ public static class MapperServiceExtensions
 
         MapperConfigurationBuilder builder = new();
         action(builder);
-        services.Configure<MapperConfiguration>(c =>
-        {
-            c.MapperItems = builder.MapperItems;
-            c.MaxDepth = builder.MaxDepth;
-            c.ObjectConstructors = builder.ObjectConstructor;
-            c.ArrayConstructors = builder.ArrayConstructors;
-        });
+        services.AddSingleton(Options.Create(new MapperConfiguration(builder._mapperItems, builder._objectConstructor, builder._arrayConstructors, builder.MaxDepth)));
 
         return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
     }

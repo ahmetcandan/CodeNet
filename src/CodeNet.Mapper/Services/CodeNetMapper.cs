@@ -17,28 +17,6 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         return (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, 0);
     }
 
-    private static object? SetColumnValue(MapperConfiguration _config, MapperItemProperties column, object? value, Func<int, Array>? arrayConstractor, int depth)
-    {
-        if (value is null
-                || column.DestinationType == column.SourceType
-                || column.IsAssignableFrom
-                || column.DestinationTypeIsEnum)
-            return value;
-        else if (value is Array sourceArray && column.DestinationTypeHasElementType && column.SourceTypeHasElementType)
-        {
-            var destinationList = arrayConstractor!(sourceArray.Length);
-            for (int j = 0; j < sourceArray.Length; j++)
-                destinationList.SetValue(column.ElementTypeIsAssignableFrom || column.DestinationElementTypeIsEnum
-                                            ? sourceArray.GetValue(j)
-                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(j), depth + 1),
-                                        j);
-            return destinationList;
-        }
-        else if (column.SourceTypeIsClass && column.SourceType != typeof(string))
-            return MapToObject(_config, column.SourceType, column.DestinationType, value, depth + 1);
-
-        return null;
-    }
     private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, int depth = default)
     {
         if (source is null || sourceType == destinationType)
@@ -55,5 +33,25 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
             columns[i].DestinationSetter(destination, SetColumnValue(_config, columns[i], columns[i].SourceGetter(source), columns[i].DestinationTypeHasElementType ? _config.ArrayConstructors[columns[i].DestinationElementType!] : null, depth));
 
         return destination;
+    }
+
+    private static object? SetColumnValue(MapperConfiguration _config, MapperItemProperties column, object? value, Func<int, Array>? arrayConstractor, int depth)
+    {
+        if (value is null || column.ColumnsIsEquals)
+            return value;
+        else if (value is Array sourceArray && column.ColumnHasElementType)
+        {
+            var destinationList = arrayConstractor!(sourceArray.Length);
+            for (int i = 0; i < sourceArray.Length; i++)
+                destinationList.SetValue(column.ElementTypeIsAssignableEnum
+                                            ? sourceArray.GetValue(i)
+                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(i), depth + 1),
+                                        i);
+            return destinationList;
+        }
+        else if (column.SourceTypeIsClass && column.SourceType != typeof(string))
+            return MapToObject(_config, column.SourceType, column.DestinationType, value, depth + 1);
+
+        return null;
     }
 }

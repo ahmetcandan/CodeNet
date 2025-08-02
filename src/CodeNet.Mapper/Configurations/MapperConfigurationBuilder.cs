@@ -6,9 +6,9 @@ namespace CodeNet.Mapper.Configurations;
 
 public class MapperConfigurationBuilder
 {
-    internal Dictionary<MapType, MapperItemProperties[]> MapperItems { get; } = [];
-    internal Dictionary<Type, Func<int, Array>> ArrayConstructors { get; set; } = [];
-    internal Dictionary<Type, Func<object>> ObjectConstructor { get; set; } = [];
+    internal readonly Dictionary<MapType, MapperItemProperties[]> _mapperItems = [];
+    internal readonly Dictionary<Type, Func<int, Array>> _arrayConstructors = [];
+    internal readonly Dictionary<Type, Func<object>> _objectConstructor = [];
     internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
     
     public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action, bool reverse = false)
@@ -76,23 +76,23 @@ public class MapperConfigurationBuilder
             });
         }
 
-        return MapperItems.TryAdd(mapType, [.. properties]);
+        return _mapperItems.TryAdd(mapType, [.. properties]);
     }
 
     public void SetMaxDepth(int maxDepth) => MaxDepth = maxDepth;
 
     private void CreateInstance(Type type)
     {
-        if (!ObjectConstructor.ContainsKey(type))
-            ObjectConstructor[type] = Expression.Lambda<Func<object>>(Expression.Convert(Expression.New(type), typeof(object))).Compile();
+        if (!_objectConstructor.ContainsKey(type))
+            _objectConstructor[type] = Expression.Lambda<Func<object>>(Expression.Convert(Expression.New(type), typeof(object))).Compile();
     }
 
     private void CreateArrayInstance(Type type)
     {
-        if (!ArrayConstructors.ContainsKey(type))
+        if (!_arrayConstructors.ContainsKey(type))
         {
             ParameterExpression sizeParam = Expression.Parameter(typeof(int), "size");
-            ArrayConstructors[type] = Expression.Lambda<Func<int, Array>>(Expression.NewArrayBounds(type, sizeParam), sizeParam).Compile();
+            _arrayConstructors[type] = Expression.Lambda<Func<int, Array>>(Expression.NewArrayBounds(type, sizeParam), sizeParam).Compile();
         }
     }
 }
