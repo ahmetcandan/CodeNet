@@ -60,20 +60,19 @@ public class MapperConfigurationBuilder
 
             properties.Add(new MapperItemProperties
             {
-                SourceProp = sourceProp,
-                DestinationProp = destinationProp,
                 SourceGetter = Expression.Lambda<Func<object, object>>(Expression.Convert(Expression.Property(Expression.Convert(instanceSourceParam, mapType.SourceType), sourceProp), typeof(object)), instanceSourceParam).Compile(),
                 DestinationSetter = Expression.Lambda<Action<object, object?>>(Expression.Assign(Expression.Property(Expression.Convert(instanceDestinationParam, mapType.DestinationType), destinationProp), Expression.Convert(valueParam, destinationProp.PropertyType)), instanceDestinationParam, valueParam).Compile(),
                 SourceType = sourceProp.PropertyType,
                 DestinationType = destinationProp.PropertyType,
                 DestinationTypeIsEnum = destinationProp.PropertyType.IsEnum,
-                DestinationTypeIsArray = destinationProp.PropertyType.IsArray,
-                DestinationTypeHasElementType = destinationProp.PropertyType.HasElementType,
-                SourceTypeHasElementType = sourceProp.PropertyType.HasElementType,
+                DestinationElementTypeIsEnum = destinationProp.PropertyType.GetElementType()?.IsEnum ?? false,
+                DestinationTypeHasElementType = destinationProp.PropertyType.HasElementType && destinationProp.PropertyType.GetElementType() != typeof(string),
+                SourceTypeHasElementType = sourceProp.PropertyType.HasElementType && sourceProp.PropertyType.GetElementType() != typeof(string),
                 SourceElementType = sourceProp.PropertyType.HasElementType ? sourceProp.PropertyType.GetElementType() : null,
                 DestinationElementType = destinationProp.PropertyType.HasElementType ? destinationProp.PropertyType.GetElementType() : null,
                 SourceTypeIsClass = sourceProp.PropertyType.IsClass,
-                DestinationTypeIsAssignableFrom = sourceType => destinationProp.PropertyType.IsAssignableFrom(sourceType)
+                IsAssignableFrom = destinationProp.PropertyType.IsAssignableFrom(sourceProp.PropertyType),
+                ElementTypeIsAssignableFrom = sourceProp.PropertyType.GetElementType()?.IsAssignableFrom(destinationProp.PropertyType.GetElementType()) ?? false
             });
         }
 

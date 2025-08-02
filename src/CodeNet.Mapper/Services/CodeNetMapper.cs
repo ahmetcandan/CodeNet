@@ -14,45 +14,46 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         if (source is null)
             return default;
 
-        return (TDestination?)MapTo(typeof(TSource), typeof(TDestination), source, new TDestination(), 0);
+        return (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, 0);
     }
 
-    private object? MapTo(Type sourceType, Type destinationType, object source, object destination, int depth = 0)
+    private static object? SetColumnValue(MapperConfiguration _config, MapperItemProperties column, object? value, Func<int, Array>? arrayConstractor, int depth)
     {
-        if (sourceType == destinationType)
+        if (value is null
+                || column.DestinationType == column.SourceType
+                || column.IsAssignableFrom
+                || column.DestinationTypeIsEnum)
+            return value;
+        else if (value is Array sourceArray && column.DestinationTypeHasElementType && column.SourceTypeHasElementType)
+        {
+            var destinationList = arrayConstractor!(sourceArray.Length);
+            for (int j = 0; j < sourceArray.Length; j++)
+                destinationList.SetValue(column.ElementTypeIsAssignableFrom || column.DestinationElementTypeIsEnum
+                                            ? sourceArray.GetValue(j)
+                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(j), depth + 1),
+                                        j);
+            return destinationList;
+        }
+        else if (column.SourceTypeIsClass && column.SourceType != typeof(string))
+            return MapToObject(_config, column.SourceType, column.DestinationType, value, depth + 1);
+
+        return null;
+    }
+    private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, int depth = default)
+    {
+        if (source is null || sourceType == destinationType)
             return source;
 
         if (depth > _config.MaxDepth || !_config.MapperItems.TryGetValue(MapType.Create(sourceType, destinationType), out MapperItemProperties[]? columns))
             return null;
 
+        var destination = _config.ObjectConstructors[destinationType]();
+        if (destination is null)
+            return null;
+
         for (int i = 0; i < columns.Length; i++)
-        {
-            var value = columns[i].SourceGetter(source);
-            if (value is null)
-                continue;
-            
-            if (columns[i].DestinationType == columns[i].SourceType
-                    || columns[i].DestinationTypeIsAssignableFrom(columns[i].SourceProp.PropertyType)
-                    || columns[i].DestinationTypeIsEnum)
-                columns[i].DestinationSetter(destination, value);
-            else if (value is Array sourceArray)
-            {
-                if (!columns[i].DestinationTypeHasElementType || !columns[i].SourceTypeHasElementType)
-                    continue;
-
-                var destinationList = _config.ArrayConstructors[columns[i].DestinationElementType!](sourceArray.Length);
-
-                for (int j = 0; j < sourceArray.Length; j++)
-                    destinationList.SetValue(GetArrayItem(sourceArray.GetType().GetElementType()!, columns[i].DestinationElementType!, sourceArray.GetValue(j), depth), j);
-
-                columns[i].DestinationSetter(destination, destinationList);
-            }
-            else if (columns[i].SourceTypeIsClass)
-                columns[i].DestinationSetter(destination, MapTo(columns[i].SourceType, columns[i].DestinationType, value, _config.ObjectConstructors[columns[i].DestinationType].Invoke(), depth + 1));
-        }
+            columns[i].DestinationSetter(destination, SetColumnValue(_config, columns[i], columns[i].SourceGetter(source), columns[i].DestinationTypeHasElementType ? _config.ArrayConstructors[columns[i].DestinationElementType!] : null, depth));
 
         return destination;
     }
-
-    private object? GetArrayItem(Type sourceType, Type targetType, object? item, int depth) => item is null || targetType.IsAssignableFrom(sourceType) || targetType.IsEnum ? item : MapTo(item.GetType(), targetType, item, _config.ObjectConstructors[targetType].Invoke(), depth + 1);
 }

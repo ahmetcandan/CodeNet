@@ -1,11 +1,7 @@
-﻿using System.Reflection;
-
-namespace CodeNet.Mapper.Configurations;
+﻿namespace CodeNet.Mapper.Configurations;
 
 internal class MapperItemProperties
 {
-    public required PropertyInfo SourceProp { get; set; }
-    public required PropertyInfo DestinationProp { get; set; }
     public required Func<object, object> SourceGetter { get; set; }
     public required Action<object, object?> DestinationSetter { get; set; }
     public required Type SourceType { get; set; }
@@ -13,9 +9,10 @@ internal class MapperItemProperties
     public Type? SourceElementType { get; set; }
     public Type? DestinationElementType { get; set; }
     public bool DestinationTypeIsEnum { get; set; }
-    public bool DestinationTypeIsArray { get; set; }
     public bool SourceTypeHasElementType { get; set; }
     public bool DestinationTypeHasElementType { get; set; }
     public bool SourceTypeIsClass { get; set; }
-    public required Func<Type?, bool> DestinationTypeIsAssignableFrom { get; set; }
+    public bool IsAssignableFrom { get; set; }
+    public bool ElementTypeIsAssignableFrom { get; set; }
+    public bool DestinationElementTypeIsEnum { get; set; }
 }
