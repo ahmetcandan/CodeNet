@@ -18,7 +18,7 @@ public static class MapperServiceExtensions
 
         MapperConfigurationBuilder builder = new();
         action(builder);
-        services.AddSingleton(Options.Create(new MapperConfiguration(builder._mapperItems, builder._objectConstructor, builder._arrayConstructors, builder.MaxDepth)));
+        services.AddSingleton(Options.Create(new MapperConfiguration(builder._mapperItems, builder._objectConstructor, builder._arrayConstructors, builder._listConstructors, builder.MaxDepth)));
 
         return services.AddScoped<ICodeNetMapper, CodeNetMapper>();
     }

@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.Mapper.Configurations;
 
-internal class MapperConfiguration(Dictionary<MapType, MapperItemProperties[]> mapperItems, Dictionary<Type, Func<object>> objectConstructors, Dictionary<Type, Func<int, Array>> arrayConstructors, int maxDepth)
+internal class MapperConfiguration(Dictionary<MapType, MapperItemProperties[]> mapperItems, Dictionary<Type, Func<object>> objectConstructors, Dictionary<Type, Func<int, Array>> arrayConstructors, Dictionary<Type, Func<object>> listConstructors, int maxDepth)
 {
     private readonly Dictionary<MapType, MapperItemProperties[]> _mapperItems = mapperItems;
     public Dictionary<MapType, MapperItemProperties[]> MapperItems
@@ -18,6 +18,12 @@ internal class MapperConfiguration(Dictionary<MapType, MapperItemProperties[]> m
     public Dictionary<Type, Func<int, Array>> ArrayConstructors
     {
         get => _arrayConstructors;
+    }
+
+    private readonly Dictionary<Type, Func<object>> _listConstructors = listConstructors;
+    public Dictionary<Type, Func<object>> ListConstructors
+    {
+        get => _listConstructors;
     }
 
     private readonly Dictionary<Type, Func<object>> _objectConstructors = objectConstructors;

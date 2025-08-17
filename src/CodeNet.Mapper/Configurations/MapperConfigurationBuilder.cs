@@ -8,6 +8,7 @@ public class MapperConfigurationBuilder
 {
     internal readonly Dictionary<MapType, MapperItemProperties[]> _mapperItems = [];
     internal readonly Dictionary<Type, Func<int, Array>> _arrayConstructors = [];
+    internal readonly Dictionary<Type, Func<object>> _listConstructors = [];
     internal readonly Dictionary<Type, Func<object>> _objectConstructor = [];
     internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
     
@@ -23,12 +24,14 @@ public class MapperConfigurationBuilder
         SetColumnProperties(MapperColumnBuilder<TSource, TDestination>.MapType, map.Columns);
         CreateInstance(typeof(TDestination));
         CreateArrayInstance(typeof(TDestination));
+        CreateListInstance(typeof(TDestination));
 
         if (reverse)
         {
             SetColumnProperties(MapperColumnBuilder<TDestination, TSource>.MapType, map.Columns.ToDictionary(c => c.Value, c => c.Key));
             CreateInstance(typeof(TSource));
             CreateArrayInstance(typeof(TSource));
+            CreateListInstance(typeof(TSource));
         }
 
         return map;
@@ -58,6 +61,8 @@ public class MapperConfigurationBuilder
             ParameterExpression instanceDestinationParam = Expression.Parameter(typeof(object), "instance");
             ParameterExpression valueParam = Expression.Parameter(typeof(object), "value");
 
+            Type? sourceElementType = sourceProp.PropertyType.HasElementType ? sourceProp.PropertyType.GetElementType() : sourceProp.PropertyType.GetGenericArguments().FirstOrDefault();
+            Type? destinationElementType = destinationProp.PropertyType.HasElementType ? destinationProp.PropertyType.GetElementType() : destinationProp.PropertyType.GetGenericArguments().FirstOrDefault();
             properties.Add(new MapperItemProperties
             {
                 SourceGetter = Expression.Lambda<Func<object, object>>(Expression.Convert(Expression.Property(Expression.Convert(instanceSourceParam, mapType.SourceType), sourceProp), typeof(object)), instanceSourceParam).Compile(),
@@ -66,13 +71,13 @@ public class MapperConfigurationBuilder
                 DestinationType = destinationProp.PropertyType,
                 DestinationTypeIsEnum = destinationProp.PropertyType.IsEnum,
                 DestinationElementTypeIsEnum = destinationProp.PropertyType.GetElementType()?.IsEnum ?? false,
-                DestinationTypeHasElementType = destinationProp.PropertyType.HasElementType && destinationProp.PropertyType.GetElementType() != typeof(string),
-                SourceTypeHasElementType = sourceProp.PropertyType.HasElementType && sourceProp.PropertyType.GetElementType() != typeof(string),
-                SourceElementType = sourceProp.PropertyType.HasElementType ? sourceProp.PropertyType.GetElementType() : null,
-                DestinationElementType = destinationProp.PropertyType.HasElementType ? destinationProp.PropertyType.GetElementType() : null,
+                SourceTypeHasElementType = sourceElementType is not null && sourceElementType != typeof(string),
+                DestinationTypeHasElementType = destinationElementType is not null && sourceElementType != typeof(string),
+                SourceElementType = sourceElementType,
+                DestinationElementType = destinationElementType,
                 SourceTypeIsClass = sourceProp.PropertyType.IsClass,
                 IsAssignableFrom = destinationProp.PropertyType.IsAssignableFrom(sourceProp.PropertyType),
-                ElementTypeIsAssignableFrom = sourceProp.PropertyType.GetElementType()?.IsAssignableFrom(destinationProp.PropertyType.GetElementType()) ?? false
+                ElementTypeIsAssignableFrom = sourceElementType?.IsAssignableFrom(destinationElementType) ?? false
             });
         }
 
@@ -94,5 +99,11 @@ public class MapperConfigurationBuilder
             ParameterExpression sizeParam = Expression.Parameter(typeof(int), "size");
             _arrayConstructors[type] = Expression.Lambda<Func<int, Array>>(Expression.NewArrayBounds(type, sizeParam), sizeParam).Compile();
         }
+    }
+
+    private void CreateListInstance(Type type)
+    {
+        if (!_listConstructors.ContainsKey(type))
+            _listConstructors[type] = Expression.Lambda<Func<object>>(Expression.New(typeof(List<>).MakeGenericType(type))).Compile();
     }
 }
