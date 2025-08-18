@@ -7,7 +7,7 @@ namespace CodeNet.Mapper.Services;
 internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
     readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(MapperConfiguration));
-    private static readonly Dictionary<MapType, Dictionary<object, object>> _cache = [];
+    private readonly Dictionary<MapType, Dictionary<object, object>> _cache = [];
 
     public TDestination? MapTo<TSource, TDestination>(TSource source)
         where TSource : new()
@@ -16,10 +16,10 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         if (source is null)
             return default;
 
-        return (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, 0);
+        return (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, _cache, 0);
     }
 
-    private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, int depth = default)
+    private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, Dictionary<MapType, Dictionary<object, object>> memoryCache, int depth = default)
     {
         if (source is null || sourceType == destinationType)
             return source;
@@ -27,8 +27,8 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         var mapType = MapType.Create(sourceType, destinationType);
         if (depth > _config.MaxDepth || !_config.MapperItems.TryGetValue(mapType, out MapperItemProperties[]? columns))
             return null;
-
-        if (_cache.TryGetValue(mapType, out Dictionary<object, object>? cache) && cache.TryGetValue(source, out object? cachedValue))
+        
+        if (memoryCache.TryGetValue(mapType, out Dictionary<object, object>? cache) && cache.TryGetValue(source, out object? cachedValue))
             return cachedValue;
 
         var destination = _config.ObjectConstructors[destinationType]();
@@ -36,18 +36,18 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
             return null;
 
         for (int i = 0; i < columns.Length; i++)
-            columns[i].DestinationSetter(destination, SetColumnValue(_config, columns[i], columns[i].SourceGetter(source), columns[i].DestinationTypeHasElementType ? _config.ArrayConstructors[columns[i].DestinationElementType!] : null, depth));
+            columns[i].DestinationSetter(destination, SetColumnValue(_config, columns[i], columns[i].SourceGetter(source), columns[i].DestinationTypeHasElementType ? _config.ArrayConstructors[columns[i].DestinationElementType!] : null, depth, memoryCache));
 
         if (cache is not null)
             cache.TryAdd(source, destination);
         else
             cache = new Dictionary<object, object> { { source, destination } };
-        _cache[mapType] = cache;
+        memoryCache[mapType] = cache;
 
         return destination;
     }
 
-    private static object? SetColumnValue(MapperConfiguration _config, MapperItemProperties column, object? value, Func<int, Array>? arrayConstractor, int depth)
+    private static object? SetColumnValue(MapperConfiguration _config, MapperItemProperties column, object? value, Func<int, Array>? arrayConstractor, int depth, Dictionary<MapType, Dictionary<object, object>> memoryCache)
     {
         if (value is null || column.ColumnsIsEquals)
             return value;
@@ -57,7 +57,7 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
             for (int i = 0; i < sourceArray.Length; i++)
                 destinationArray.SetValue(column.ElementTypeIsAssignableEnum
                                             ? sourceArray.GetValue(i)
-                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(i), depth + 1),
+                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(i), memoryCache, depth + 1),
                                         i);
             return destinationArray;
         }
@@ -67,11 +67,11 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
             foreach (var item in sourceList)
                 destinationList.Add(column.ElementTypeIsAssignableEnum
                                         ? item
-                                        : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, item, depth + 1));
+                                        : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, item, memoryCache, depth + 1));
             return destinationList;
         }
         else if (column.SourceTypeIsClass && column.SourceType != typeof(string))
-            return MapToObject(_config, column.SourceType, column.DestinationType, value, depth + 1);
+            return MapToObject(_config, column.SourceType, column.DestinationType, value, memoryCache, depth + 1);
 
         return null;
     }
