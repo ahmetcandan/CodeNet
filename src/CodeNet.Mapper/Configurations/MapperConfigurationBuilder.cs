@@ -71,8 +71,8 @@ public class MapperConfigurationBuilder
                 DestinationType = destinationProp.PropertyType,
                 DestinationTypeIsEnum = destinationProp.PropertyType.IsEnum,
                 DestinationElementTypeIsEnum = destinationProp.PropertyType.GetElementType()?.IsEnum ?? false,
-                SourceTypeHasElementType = sourceElementType is not null && sourceElementType != typeof(string),
-                DestinationTypeHasElementType = destinationElementType is not null && sourceElementType != typeof(string),
+                SourceTypeHasElementType = sourceElementType is not null && !IsSimpleType(sourceElementType),
+                DestinationTypeHasElementType = destinationElementType is not null && !IsSimpleType(sourceElementType),
                 SourceElementType = sourceElementType,
                 DestinationElementType = destinationElementType,
                 SourceTypeIsClass = sourceProp.PropertyType.IsClass,
@@ -83,6 +83,8 @@ public class MapperConfigurationBuilder
 
         return _mapperItems.TryAdd(mapType, [.. properties]);
     }
+
+    private static bool IsSimpleType(Type? type) => type is not null && (type.IsPrimitive || type.IsValueType || type == typeof(string));
 
     public void SetMaxDepth(int maxDepth) => MaxDepth = maxDepth;
 

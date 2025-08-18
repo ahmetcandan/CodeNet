@@ -9,7 +9,7 @@ public class CodeNetIdentityDbContext(DbContextOptions options) : CodeNetIdentit
 {
 }
 
-public class CodeNetIdentityDbContext<TUser>(DbContextOptions options) : CodeNetIdentityDbContext<TUser, IdentityRole, string>(options)
+public class CodeNetIdentityDbContext<TUser>(DbContextOptions options) : CodeNetIdentityDbContext<TUser, IdentityRole>(options)
     where TUser : IdentityUser
 {
 }
@@ -20,7 +20,7 @@ public class CodeNetIdentityDbContext<TUser, TRole>(DbContextOptions options) : 
 {
 }
 
-public class CodeNetIdentityDbContext<TUser, TRole, TKey>(DbContextOptions options) : IdentityDbContext<TUser, IdentityRole<TKey>, TKey>(options)
+public class CodeNetIdentityDbContext<TUser, TRole, TKey>(DbContextOptions options) : IdentityDbContext<TUser, TRole, TKey>(options)
     where TUser : IdentityUser<TKey>
     where TRole : IdentityRole<TKey>
     where TKey : IEquatable<TKey>

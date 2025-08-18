@@ -31,6 +31,7 @@ namespace CodeNet.Mapper.Tests
             services.AddMapper(c =>
             {
                 c.CreateMap<Person, Personel>();
+                c.CreateMap<PersonDetail, PersonelDetail>();
             });
             var serviceProvider = services.BuildServiceProvider();
             var mapper = serviceProvider.GetRequiredService<ICodeNetMapper>();
