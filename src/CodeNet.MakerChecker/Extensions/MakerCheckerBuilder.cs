@@ -12,10 +12,7 @@ public class MakerCheckerBuilder
 {
     internal List<MakerCheckerItem> MakerCheckerItems { get; } = [];
 
-    internal void AddItem(Type entityType, string entityName)
-    {
-        MakerCheckerItems.Add(new MakerCheckerItem(entityType, entityName));
-    }
+    internal void AddItem(Type entityType, string entityName) => MakerCheckerItems.Add(new MakerCheckerItem(entityType, entityName));
 }
 
 public static class MakerCheckerBuilderExtensions

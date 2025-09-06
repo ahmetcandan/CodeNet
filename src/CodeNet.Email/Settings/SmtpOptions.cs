@@ -4,8 +4,8 @@ namespace CodeNet.Email.Settings;
 
 public class SmtpOptions
 {
-    public SmtpClient SmtpClient { get; set; }
-    public string EmailAddress { get; set; }
+    public required SmtpClient SmtpClient { get; set; }
+    public required string EmailAddress { get; set; }
 }
 
 internal class MailOptions : SmtpOptions

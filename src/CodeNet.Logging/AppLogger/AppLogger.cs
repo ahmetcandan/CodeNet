@@ -38,35 +38,18 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, bool isJsonData, long? elapsedDuration = null, Exception? exception = null)
     {
-        var eventId = new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}");
-        string message = new LogModel(isJsonData)
-        {
-            AssemblyName = assemblyName ?? "unknow",
-            ClassName = className,
-            MethodName = methodName,
-            LogTime = logTime.ToString(),
-            Username = codeNetContext.UserName,
-            Data = data,
-            CorrelationId = codeNetContext.CorrelationId,
-            ElapsedDuration = elapsedDuration
-        }.ToString();
-        switch (logTime)
-        {
-            case LogTime.Entry:
-                logger.Log(LogLevel.Information, eventId, message);
-                break;
-            case LogTime.Exit:
-                logger.Log(LogLevel.Information, eventId, message);
-                break;
-            case LogTime.Trace:
-                logger.Log(LogLevel.Trace, eventId, message);
-                break;
-            case LogTime.Error:
-                logger.Log(LogLevel.Error, eventId, exception, message);
-                break;
-            default:
-                logger.Log(LogLevel.None, eventId, message);
-                break;
-        }
+        logger.Log(
+            LogTimeToLevel(logTime),
+            new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}"),
+            exception,
+            LogModel.ToJson(isJsonData, data, elapsedDuration, codeNetContext.CorrelationId, assemblyName, className, methodName, logTime.ToString(), codeNetContext.UserName));
     }
+
+    private static LogLevel LogTimeToLevel(LogTime logTime) => logTime switch
+    {
+        LogTime.Entry or LogTime.Exit => LogLevel.Information,
+        LogTime.Trace => LogLevel.Trace,
+        LogTime.Error => LogLevel.Error,
+        _ => LogLevel.None,
+    };
 }

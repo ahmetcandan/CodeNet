@@ -17,20 +17,11 @@ public class Repository<TEntity> : IRepository<TEntity>
     }
 
     #region Add
-    public virtual TEntity Add(TEntity entity)
-    {
-        return _entities.Add(entity).Entity;
-    }
+    public virtual TEntity Add(TEntity entity) => _entities.Add(entity).Entity;
 
-    public virtual Task<TEntity> AddAsync(TEntity entity)
-    {
-        return AddAsync(entity, CancellationToken.None);
-    }
+    public virtual Task<TEntity> AddAsync(TEntity entity) => AddAsync(entity, CancellationToken.None);
 
-    public virtual async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken)
-    {
-        return (await _entities.AddAsync(entity, cancellationToken)).Entity;
-    }
+    public virtual async Task<TEntity> AddAsync(TEntity entity, CancellationToken cancellationToken) => (await _entities.AddAsync(entity, cancellationToken)).Entity;
 
     public virtual IEnumerable<TEntity> AddRange(IEnumerable<TEntity> entities)
     {
@@ -38,10 +29,7 @@ public class Repository<TEntity> : IRepository<TEntity>
         return entities;
     }
 
-    public virtual Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities)
-    {
-        return AddRangeAsync(entities, CancellationToken.None);
-    }
+    public virtual Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities) => AddRangeAsync(entities, CancellationToken.None);
 
     public virtual async Task<IEnumerable<TEntity>> AddRangeAsync(IEnumerable<TEntity> entities, CancellationToken cancellationToken)
     {
@@ -69,13 +57,10 @@ public class Repository<TEntity> : IRepository<TEntity>
 
     #region Paging List
     public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-    {
-        return GetPagingList(c => true, orderBySelector, isAcending, page, count);
-    }
+        => GetPagingList(c => true, orderBySelector, isAcending, page, count);
 
     public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
     {
-        int totalCount = _entities.Count(predicate);
         List<TEntity> list = page < 1 || count < 1
             ? throw new ArgumentException("Page or count cannot be less than 1")
             : (isAcending
@@ -87,25 +72,19 @@ public class Repository<TEntity> : IRepository<TEntity>
             List = list,
             PageCount = count,
             PageNumber = page,
-            TotalCount = totalCount
+            TotalCount = _entities.Count(predicate)
         };
     }
 
 
     public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-    {
-        return GetPagingListAsync(orderBySelector, isAcending, page, count, CancellationToken.None);
-    }
+        => GetPagingListAsync(orderBySelector, isAcending, page, count, CancellationToken.None);
 
     public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-    {
-        return GetPagingListAsync(predicate, orderBySelector, isAcending, page, count, CancellationToken.None);
-    }
+        => GetPagingListAsync(predicate, orderBySelector, isAcending, page, count, CancellationToken.None);
 
     public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
-    {
-        return GetPagingListAsync(c => true, orderBySelector, isAcending, page, count, cancellationToken);
-    }
+        => GetPagingListAsync(c => true, orderBySelector, isAcending, page, count, cancellationToken);
 
     public virtual async Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
     {
@@ -126,65 +105,35 @@ public class Repository<TEntity> : IRepository<TEntity>
     }
     #endregion
 
-    public virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate)
-    {
-        return _entities.Where(predicate);
-    }
+    public virtual IQueryable<TEntity> GetQueryable(Expression<Func<TEntity, bool>> predicate) => _entities.Where(predicate);
 
     #region Find
-    public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate)
-    {
-        return [.. _entities.Where(predicate)];
-    }
+    public virtual List<TEntity> Find(Expression<Func<TEntity, bool>> predicate) => [.. _entities.Where(predicate)];
 
-    public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        return FindAsync(predicate, CancellationToken.None);
-    }
+    public virtual Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate) => FindAsync(predicate, CancellationToken.None);
 
     public virtual async Task<List<TEntity>> FindAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return await _entities.Where(predicate).ToListAsync(cancellationToken);
-    }
+         => await _entities.Where(predicate).ToListAsync(cancellationToken);
     #endregion
 
     #region Get
-    public virtual TEntity? Get(params object[] keyValues)
-    {
-        return _entities.Find(keyValues);
-    }
+    public virtual TEntity? Get(params object[] keyValues) => _entities.Find(keyValues);
 
-    public virtual TEntity? Get(Expression<Func<TEntity, bool>> predicate)
-    {
-        return _entities.FirstOrDefault(predicate);
-    }
+    public virtual TEntity? Get(Expression<Func<TEntity, bool>> predicate) => _entities.FirstOrDefault(predicate);
 
-    public virtual Task<TEntity?> GetAsync(params object[] keyValues)
-    {
-        return GetAsync(keyValues, CancellationToken.None);
-    }
+    public virtual Task<TEntity?> GetAsync(params object[] keyValues) => GetAsync(keyValues, CancellationToken.None);
 
     public virtual async Task<TEntity?> GetAsync(object[] keyValues, CancellationToken cancellationToken)
-    {
-        return await _entities.FindAsync(keyValues, cancellationToken);
-    }
+        => await _entities.FindAsync(keyValues, cancellationToken);
 
-    public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate)
-    {
-        return GetAsync(predicate, CancellationToken.None);
-    }
+    public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate) => GetAsync(predicate, CancellationToken.None);
 
     public virtual Task<TEntity?> GetAsync(Expression<Func<TEntity, bool>> predicate, CancellationToken cancellationToken)
-    {
-        return _entities.FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
-    }
+        => _entities.FirstOrDefaultAsync(predicate, cancellationToken: cancellationToken);
     #endregion
 
     #region Remove
-    public virtual TEntity Remove(TEntity entity)
-    {
-        return _entities.Remove(entity).Entity;
-    }
+    public virtual TEntity Remove(TEntity entity) => _entities.Remove(entity).Entity;
 
     public virtual IEnumerable<TEntity> RemoveRange(IEnumerable<TEntity> entities)
     {
@@ -194,19 +143,10 @@ public class Repository<TEntity> : IRepository<TEntity>
     #endregion
 
     #region SaveChanges
-    public virtual int SaveChanges()
-    {
-        return _dbContext.SaveChanges();
-    }
+    public virtual int SaveChanges() => _dbContext.SaveChanges();
 
-    public virtual Task<int> SaveChangesAsync()
-    {
-        return SaveChangesAsync(CancellationToken.None);
-    }
+    public virtual Task<int> SaveChangesAsync() => SaveChangesAsync(CancellationToken.None);
 
-    public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken)
-    {
-        return await _dbContext.SaveChangesAsync(cancellationToken);
-    }
+    public virtual async Task<int> SaveChangesAsync(CancellationToken cancellationToken) => await _dbContext.SaveChangesAsync(cancellationToken);
     #endregion
 }

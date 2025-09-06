@@ -2,8 +2,8 @@
 
 public class TemplateModel
 {
-    public string Code { get; set; }
-    public string Content { get; set; }
+    public required string Code { get; set; }
+    public string? Content { get; set; }
     public string From { get; set; } = string.Empty;
     public string To { get; set; } = string.Empty;
     public string Cc { get; set; } = string.Empty;

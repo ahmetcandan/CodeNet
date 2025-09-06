@@ -18,24 +18,16 @@ internal class HttpRequest(IServiceProvider serviceProvider) : IHttpRequest
     private readonly IAppLogger? _appLogger = serviceProvider.GetService<IAppLogger>();
 
     public async Task<TResponse?> GetAsync<TResponse>(string url, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
-    {
-        return await SendAsync<TResponse>(HttpMethod.Get, url, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
-    }
+        => await SendAsync<TResponse>(HttpMethod.Get, url, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
 
     public async Task<TResponse?> PostAsync<TResponse>(string url, object data, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
-    {
-        return await SendAsync<TResponse>(HttpMethod.Post, url, content: data, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
-    }
+        => await SendAsync<TResponse>(HttpMethod.Post, url, content: data, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
 
     public async Task<TResponse?> PutAsync<TResponse>(string url, object data, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
-    {
-        return await SendAsync<TResponse>(HttpMethod.Put, url, content: data, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
-    }
+        => await SendAsync<TResponse>(HttpMethod.Put, url, content: data, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
 
     public async Task<TResponse?> DeleteAsync<TResponse>(string url, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
-    {
-        return await SendAsync<TResponse>(HttpMethod.Delete, url, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
-    }
+        => await SendAsync<TResponse>(HttpMethod.Delete, url, headers: headers, httpClientOptions: httpClientOptions, cancellationToken: cancellationToken);
 
     public async Task<TResponse?> SendAsync<TResponse>(HttpMethod httpMethod, string url, object? content = null, IDictionary<string, string>? headers = null, HttpClientOptions? httpClientOptions = default, CancellationToken cancellationToken = default)
     {

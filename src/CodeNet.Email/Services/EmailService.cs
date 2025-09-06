@@ -110,7 +110,7 @@ internal class EmailService : IEmailService
 
     private static MailTemplateResult GenerateMailBody(MailTemplate template, object parameters)
     {
-        string body = template.Builder.Build(parameters).ToString();
+        string body = template.Builder?.Build(parameters).ToString() ?? string.Empty;
         return new MailTemplateResult
         {
             Body = body,

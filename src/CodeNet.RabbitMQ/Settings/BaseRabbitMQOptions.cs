@@ -17,10 +17,7 @@ public abstract class BaseRabbitMQOptions
     public bool DeclareQueue { get; set; } = true;
     public bool DeclareExchange { get; set; } = false;
     public bool QueueBind { get; set; } = false;
-    public ConnectionFactory ConnectionFactory { get; set; }
+    public required ConnectionFactory ConnectionFactory { get; set; }
 
-    public override string ToString()
-    {
-        return $"Queue: {Queue}, Exchange: {Exchange}, ExchangeType: {ExchangeType}, RoutingKey: {RoutingKey}, Durable: {Durable}, Exclusive: {Exclusive}, AutoDelete: {AutoDelete}, DeclareQueue: {DeclareQueue}, DeclareExchange: {DeclareExchange}, QueueBind: {QueueBind}";
-    }
+    public override string ToString() => $"Queue: {Queue}, Exchange: {Exchange}, ExchangeType: {ExchangeType}, RoutingKey: {RoutingKey}, Durable: {Durable}, Exclusive: {Exclusive}, AutoDelete: {AutoDelete}, DeclareQueue: {DeclareQueue}, DeclareExchange: {DeclareExchange}, QueueBind: {QueueBind}";
 }

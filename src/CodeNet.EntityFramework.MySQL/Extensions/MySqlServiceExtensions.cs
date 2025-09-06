@@ -14,9 +14,7 @@ public static class MySqlServiceExtensions
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
     public static IServiceCollection AddMySQL(this IServiceCollection services, IConfiguration configuration, string connectionName)
-    {
-        return services.AddMySQL<DbContext>(configuration, connectionName);
-    }
+         => services.AddMySQL<DbContext>(configuration, connectionName);
 
     /// <summary>
     /// Add MySQL
@@ -29,9 +27,7 @@ public static class MySqlServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddMySQL<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseMySQL(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseMySQL(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
 
     /// <summary>
     /// Add MySQL
@@ -40,9 +36,7 @@ public static class MySqlServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddMySQL(this IServiceCollection services, string connectionString)
-    {
-        return services.AddMySQL<DbContext>(connectionString);
-    }
+        => services.AddMySQL<DbContext>(connectionString);
 
     /// <summary>
     /// Add MySQL
@@ -53,9 +47,7 @@ public static class MySqlServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddMySQL<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseMySQL(connectionString));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseMySQL(connectionString));
 
     /// <summary>
     /// Use MySQL
@@ -64,7 +56,5 @@ public static class MySqlServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static DbContextOptionsBuilder UseMySQL(this DbContextOptionsBuilder optionsBuilder, string connectionString)
-    {
-        return MySQLDbContextOptionsExtensions.UseMySQL(optionsBuilder, connectionString);
-    }
+        => MySQLDbContextOptionsExtensions.UseMySQL(optionsBuilder, connectionString);
 }

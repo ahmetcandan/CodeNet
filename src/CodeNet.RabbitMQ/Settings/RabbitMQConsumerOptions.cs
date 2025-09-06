@@ -11,17 +11,11 @@ public class RabbitMQConsumerOptions : BaseRabbitMQOptions
     public RabbitMQQosOptions? Qos { get; set; }
     public IDictionary<string, object>? ConsumerArguments { get; set; } = null;
 
-    public override string ToString()
-    {
-        return $"{base.ToString()}, AutoAck: {AutoAck}, NoLocal: {NoLocal}, ConsumerTag: {ConsumerTag}{(Qos is not null ? $", Qos: {{ {Qos} }}" : "")}";
-    }
+    public override string ToString() => $"{base.ToString()}, AutoAck: {AutoAck}, NoLocal: {NoLocal}, ConsumerTag: {ConsumerTag}{(Qos is not null ? $", Qos: {{ {Qos} }}" : "")}";
 }
 
 public class RabbitMQConsumerOptions<TConsumerService> : RabbitMQConsumerOptions
     where TConsumerService : RabbitMQConsumerService
 {
-    public override string ToString()
-    {
-        return base.ToString();
-    }
+    public override string ToString() => base.ToString();
 }

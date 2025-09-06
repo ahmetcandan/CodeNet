@@ -9,7 +9,7 @@ public class IfBuilder : ITemplateBuilder
     {
     }
 
-    public static IfBuilder Compile(string content, int index, string operation, string ifContent, string? elseContent = null)
+    public static IfBuilder Compile(string content, int index, ParamValue paramLeft, ParamValue paramRight, string operation, string ifContent, string? elseContent = null)
     {
         var _operator = operation switch
         {
@@ -26,6 +26,8 @@ public class IfBuilder : ITemplateBuilder
             Content = content,
             Index = index,
             Operator = _operator,
+            ParamLeft = paramLeft,
+            ParamRight = paramRight,
             IfBodyBuilder = TemplateBuilder.Compile(ifContent),
             ElseBodyBuilder = string.IsNullOrEmpty(elseContent) ? null : TemplateBuilder.Compile(elseContent)
         };
@@ -68,8 +70,8 @@ public class IfBuilder : ITemplateBuilder
 
     public string Content { get; set; } = string.Empty;
     public int Index { get; set; }
-    public ParamValue ParamLeft { get; set; }
-    public ParamValue ParamRight { get; set; }
+    public required ParamValue ParamLeft { get; set; }
+    public required ParamValue ParamRight { get; set; }
     public required TemplateBuilder IfBodyBuilder { get; set; }
     public TemplateBuilder? ElseBodyBuilder { get; set; }
     public Operator Operator { get; set; }

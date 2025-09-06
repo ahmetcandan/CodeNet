@@ -38,10 +38,7 @@ public class CodeNetEventBus(int port)
         PublishMessageToSubscribers(e.Message, e.Client.Channel);
     }
 
-    private void Server_ClientConnected(ClientArguments<CodeNetEventBusClient> e)
-    {
-        _clients.Add(e.Client.ClientId, e.Client);
-    }
+    private void Server_ClientConnected(ClientArguments<CodeNetEventBusClient> e) => _clients.Add(e.Client.ClientId, e.Client);
 
     private void Server_ClientConnectedFinish(ClientArguments<CodeNetEventBusClient> e)
     {

@@ -17,9 +17,7 @@ public static class EventBusServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddEventBusSubscriber<TSubscriberHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
-    {
-        return services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>(rabbitSection);
-    }
+        => services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>(rabbitSection);
 
     /// <summary>
     /// Add EventBus Subscriber
@@ -33,10 +31,7 @@ public static class EventBusServiceExtensions
     public static IServiceCollection AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(this IServiceCollection services, IConfigurationSection section)
         where TSubscriberService : EventBusSubscriberService
         where TSubscriberHandler : class, IEventBusSubscriberHandler<TSubscriberService>
-    {
-        var options = section.Get<EventBusSubscriberOptions<TSubscriberService>>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json");
-        return services.AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(options);
-    }
+        => services.AddEventBusSubscriber<TSubscriberService, TSubscriberHandler>(section.Get<EventBusSubscriberOptions<TSubscriberService>>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json"));
 
     /// <summary>
     /// Add EventBus Subscriber
@@ -47,9 +42,7 @@ public static class EventBusServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddEventBusSubscriber<TSubscriberHandler>(this IServiceCollection services, EventBusSubscriberOptions config)
         where TSubscriberHandler : class, IEventBusSubscriberHandler<EventBusSubscriberService>
-    {
-        return services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>((EventBusSubscriberOptions<EventBusSubscriberService>)config);
-    }
+        => services.AddEventBusSubscriber<EventBusSubscriberService, TSubscriberHandler>((EventBusSubscriberOptions<EventBusSubscriberService>)config);
 
     /// <summary>
     /// Add EventBus Subscriber
@@ -90,9 +83,7 @@ public static class EventBusServiceExtensions
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddEventBusPublisher(this IServiceCollection services, IConfigurationSection rabbitSection)
-    {
-        return services.AddEventBusPublisher<EventBusPublisherService>(rabbitSection);
-    }
+        => services.AddEventBusPublisher<EventBusPublisherService>(rabbitSection);
 
     /// <summary>
     /// Add EventBus Publisher
@@ -104,10 +95,7 @@ public static class EventBusServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddEventBusPublisher<TPublisherService>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TPublisherService : EventBusPublisherService
-    {
-        var options = rabbitSection.Get<EventBusPublisherOptions<TPublisherService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json");
-        return AddEventBusPublisher(services, options);
-    }
+        => AddEventBusPublisher(services, rabbitSection.Get<EventBusPublisherOptions<TPublisherService>>() ?? throw new ArgumentNullException($"'{rabbitSection.Path}' is null or empty in appSettings.json"));
 
     /// <summary>
     /// Add EventBus Publisher
@@ -116,9 +104,7 @@ public static class EventBusServiceExtensions
     /// <param name="config"></param>
     /// <returns></returns>
     public static IServiceCollection AddEventBusPublisher(this IServiceCollection services, EventBusPublisherOptions config)
-    {
-        return services.AddEventBusPublisher((EventBusPublisherOptions<EventBusPublisherService>)config);
-    }
+        => services.AddEventBusPublisher((EventBusPublisherOptions<EventBusPublisherService>)config);
 
     /// <summary>
     /// Add EventBus Publisher
@@ -153,9 +139,7 @@ public static class EventBusServiceExtensions
     /// <param name="app"></param>
     /// <returns></returns>
     public static WebApplication UseEventBusSubscriber(this WebApplication app)
-    {
-        return app.UseEventBusSubscriber<EventBusSubscriberService>();
-    }
+        => app.UseEventBusSubscriber<EventBusSubscriberService>();
 
     /// <summary>
     /// Use EventBus Subscriber

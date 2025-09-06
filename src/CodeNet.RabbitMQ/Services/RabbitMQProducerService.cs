@@ -9,36 +9,19 @@ namespace CodeNet.RabbitMQ.Services;
 
 public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 {
-    public PublishModel? Publish<TModel>(TModel data)
-    {
-        return Publish(data, Guid.NewGuid().ToString("N"));
-    }
+    public PublishModel? Publish<TModel>(TModel data) => Publish(data, Guid.NewGuid().ToString("N"));
 
-    public PublishModel? Publish(byte[] data)
-    {
-        return Publish(data, Guid.NewGuid().ToString("N"));
-    }
-    public PublishModel? Publish<TModel>(TModel data, string messageId)
-    {
-        return Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
-    }
+    public PublishModel? Publish(byte[] data) => Publish(data, Guid.NewGuid().ToString("N"));
 
-    public PublishModel? Publish(byte[] data, string messageId)
-    {
-        return Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
-    }
+    public PublishModel? Publish<TModel>(TModel data, string messageId) => Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
 
-    public PublishModel? Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers)
-    {
-        return typeof(TModel).Equals(typeof(string))
+    public PublishModel? Publish(byte[] data, string messageId) => Publish(data, messageId, new Dictionary<string, object>(1) { { "MessageId", messageId } });
+
+    public PublishModel? Publish<TModel>(TModel data, string messageId, IDictionary<string, object> headers) => typeof(TModel).Equals(typeof(string))
             ? Publish(Encoding.UTF8.GetBytes(data?.ToString() ?? ""), messageId, headers)
             : Publish(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)), messageId, headers);
-    }
 
-    public PublishModel? Publish(byte[] data, string messageId, IDictionary<string, object> headers)
-    {
-        return Publish([new PublishModel(data, messageId, headers)]).FirstOrDefault() ?? null;
-    }
+    public PublishModel? Publish(byte[] data, string messageId, IDictionary<string, object> headers) => Publish([new PublishModel(data, messageId, headers)]).FirstOrDefault() ?? null;
 
     public virtual IEnumerable<PublishModel> Publish(IEnumerable<PublishModel> messages)
     {

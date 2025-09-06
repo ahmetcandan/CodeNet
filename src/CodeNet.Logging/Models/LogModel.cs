@@ -12,27 +12,24 @@ public class LogModel(bool isJsonData)
     public virtual string LogTime { get; set; } = string.Empty;
     public virtual string? Data { get; set; }
 
-    private string DataToString()
-    {
-        return Data is null ? "null" : isJsonData ? Data : $@"""{Data}""";
-    }
-
     /// <summary>
     /// Total Miliseconds
     /// </summary>
     public virtual long? ElapsedDuration { get; set; }
 
-    public override string ToString()
+    public override string ToString() => ToJson(isJsonData, Data, ElapsedDuration, CorrelationId, AssemblyName, ClassName, MethodName, LogTime, Username);
+
+    internal static string ToJson(bool isJsonData, string? data, long? elapsedDuration, params string?[] args)
     {
         return @$"{{
-    ""CorrelationId"": ""{CorrelationId}"",
-    ""AssemblyName"": ""{AssemblyName}"",
-    ""ClassName"": ""{ClassName}"",
-    ""MethodName"": ""{MethodName}"",
-    ""LogTime"": ""{LogTime}"",
-    ""ElapsedDuration"": {ElapsedDuration?.ToString() ?? "null"},
-    ""Data"": {DataToString()},
-    ""Username"": {(Username is not null ? $@"""{Username}""" : "null")}
+    ""CorrelationId"": ""{args[0]}"",
+    ""AssemblyName"": ""{args[1]}"",
+    ""ClassName"": ""{args[2]}"",
+    ""MethodName"": ""{args[3]}"",
+    ""LogTime"": ""{args[4]}"",
+    ""ElapsedDuration"": {elapsedDuration?.ToString() ?? "null"},
+    ""Data"": {(data is null ? "null" : isJsonData ? data : $@"""{data}""")},
+    ""Username"": {(args[5] is not null ? $@"""{args[5]}""" : "null")}
 }}";
     }
 }

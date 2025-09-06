@@ -13,10 +13,7 @@ public class TracingRepository<TTracingEntity>(DbContext dbContext, ICodeNetCont
         return base.Add(entity);
     }
 
-    public override Task<TTracingEntity> AddAsync(TTracingEntity entity)
-    {
-        return AddAsync(entity, CancellationToken.None);
-    }
+    public override Task<TTracingEntity> AddAsync(TTracingEntity entity) => AddAsync(entity, CancellationToken.None);
 
     public override Task<TTracingEntity> AddAsync(TTracingEntity entity, CancellationToken cancellationToken)
     {
@@ -33,9 +30,7 @@ public class TracingRepository<TTracingEntity>(DbContext dbContext, ICodeNetCont
     }
 
     public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities)
-    {
-        return AddRangeAsync(entities, CancellationToken.None);
-    }
+         => AddRangeAsync(entities, CancellationToken.None);
 
     public override Task<IEnumerable<TTracingEntity>> AddRangeAsync(IEnumerable<TTracingEntity> entities, CancellationToken cancellationToken)
     {
