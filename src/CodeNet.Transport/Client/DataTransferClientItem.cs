@@ -88,15 +88,11 @@ internal partial class DataTransferClientItem : CodeNetClient
                     GenerateRSAKeys();
 
                 _clients = serverConfirmationMessage?.Clients?.ToList() ?? [];
-                SendMessage(new()
+                SendMessage(new((byte)Models.MessageType.ClientConfirmation, SerializerHelper.SerializeObject(new ClientConfirmationMessage
                 {
-                    Type = (byte)Models.MessageType.ClientConfirmation,
-                    Data = SerializerHelper.SerializeObject(new ClientConfirmationMessage
-                    {
-                        ClientName = ClientName,
-                        PublicKey = PublicKey
-                    })
-                });
+                    ClientName = ClientName,
+                    PublicKey = PublicKey
+                })));
                 _connected = true;
                 return;
             case (byte)Models.MessageType.ClientConfirmation:
@@ -172,11 +168,7 @@ internal partial class DataTransferClientItem : CodeNetClient
             data = CryptographyService.AESEncrypt(data, client.AESKey!.Value);
         }
 
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.Message,
-            Data = SerializerHelper.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })
-        });
+        return SendMessage(new((byte)Models.MessageType.Message, SerializerHelper.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
     }
 
     private bool Handshake(ClientItem client)
@@ -186,15 +178,11 @@ internal partial class DataTransferClientItem : CodeNetClient
         else
         {
             client.AESKey = CryptographyService.GenerateAESKey();
-            return SendMessage(new()
+            return SendMessage(new((byte)Models.MessageType.ShareAESKey, SerializerHelper.SerializeObject(new HandshakeMessage
             {
-                Type = (byte)Models.MessageType.ShareAESKey,
-                Data = SerializerHelper.SerializeObject(new HandshakeMessage
-                {
-                    ClientId = client.Id,
-                    EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
-                })
-            });
+                ClientId = client.Id,
+                EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
+            })));
         }
     }
 
@@ -220,10 +208,7 @@ internal partial class DataTransferClientItem : CodeNetClient
         DataReceived?.Invoke(new(message.Data) { ClientName = client.Name });
     }
 
-    private static bool ClientNameValidation(string clientName)
-    {
-        return ClientNameRegex().Match(clientName).Success;
-    }
+    private static bool ClientNameValidation(string clientName) => ClientNameRegex().Match(clientName).Success;
 
     [GeneratedRegex(@"^[a-zA-Z_][a-zA-Z0-9_.-]*$")]
     private static partial Regex ClientNameRegex();

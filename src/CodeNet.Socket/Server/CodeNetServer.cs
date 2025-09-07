@@ -103,13 +103,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         if (e.Message.Type is (byte)MessageType.Validation)
         {
             if (Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey))
-            {
-                client.SendMessage(new()
-                {
-                    Type = (byte)MessageType.Validation,
-                    Data = [1]
-                });
-            }
+                client.SendMessage(new((byte)MessageType.Validation, [1]));
             else
                 RemoveClient(client);
         }

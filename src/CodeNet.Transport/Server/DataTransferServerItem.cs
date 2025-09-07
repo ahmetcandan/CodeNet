@@ -22,11 +22,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
         {
             case (byte)Models.MessageType.ClientConfirmation:
                 foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-                    _client.SendMessage(new()
-                    {
-                        Type = (byte)Models.MessageType.ClienList,
-                        Data = SerializerHelper.SerializeObject(SendToClientList(_client))
-                    });
+                    _client.SendMessage(new((byte)Models.MessageType.ClienList, SerializerHelper.SerializeObject(SendToClientList(_client))));
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:
@@ -41,15 +37,11 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (receiveClient is null)
                     return;
 
-                receiveClient.SendMessage(new()
+                receiveClient.SendMessage(new((byte)Models.MessageType.Message, SerializerHelper.SerializeObject(new SendDataMessage
                 {
-                    Type = (byte)Models.MessageType.Message,
-                    Data = SerializerHelper.SerializeObject(new SendDataMessage
-                    {
-                        ClientId = client.ClientId,
-                        Data = receiveMessage.Data,
-                    })
-                });
+                    ClientId = client.ClientId,
+                    Data = receiveMessage.Data,
+                })));
                 return;
             case (byte)Models.MessageType.ShareAESKey:
                 if (message.Data is null)
@@ -63,37 +55,25 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (receiveClient is null)
                     return;
 
-                receiveClient.SendMessage(new()
+                receiveClient.SendMessage(new((byte)Models.MessageType.ShareAESKey, SerializerHelper.SerializeObject(new HandshakeMessage
                 {
-                    Type = (byte)Models.MessageType.ShareAESKey,
-                    Data = SerializerHelper.SerializeObject(new HandshakeMessage
-                    {
-                        ClientId = client.ClientId,
-                        EncryptedAESKey = handshakeMessage.EncryptedAESKey
-                    })
-                });
+                    ClientId = client.ClientId,
+                    EncryptedAESKey = handshakeMessage.EncryptedAESKey
+                })));
                 return;
         }
     }
 
     protected override void ClientConnecting(DataTransferClientItem client)
     {
-        client.SendMessage(new()
+        client.SendMessage(new((byte)Models.MessageType.ServerConfirmation, SerializerHelper.SerializeObject(new ServerConfirmationMessage
         {
-            Type = (byte)Models.MessageType.ServerConfirmation,
-            Data = SerializerHelper.SerializeObject(new ServerConfirmationMessage
-            {
-                UseSecurity = SecurityConnection,
-                Clients = SendToClientList(client)
-            })
-        });
+            UseSecurity = SecurityConnection,
+            Clients = SendToClientList(client)
+        })));
 
         foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-            _client.SendMessage(new()
-            {
-                Type = (byte)Models.MessageType.ClienList,
-                Data = SerializerHelper.SerializeObject(SendToClientList(_client))
-            });
+            _client.SendMessage(new((byte)Models.MessageType.ClienList, SerializerHelper.SerializeObject(SendToClientList(_client))));
     }
 
     private IEnumerable<ClientItem> SendToClientList(DataTransferClientItem client)

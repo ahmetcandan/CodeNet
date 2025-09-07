@@ -1,14 +1,14 @@
 ﻿namespace CodeNet.Socket.Models;
 
-public class Message
+public class Message(byte type, byte[] data)
 {
     /// <summary>
     /// Type(1) + Length(4)
     /// </summary>
     private static readonly int _defaultLength = 5;
-    public virtual byte Type { get; set; }
+    public virtual byte Type { get; set; } = type;
 
-    private byte[] _data;
+    private byte[] _data = data;
     public virtual byte[] Data
     {
         get { return _data; }
@@ -18,7 +18,7 @@ public class Message
             _data = value;
         }
     }
-    public int Length { get; private set; }
+    public int Length { get; private set; } = data.Length;
 
     public byte[] Seriliaze()
     {
@@ -40,21 +40,11 @@ public class Message
 
     public static Message Deseriliaze(byte[] data)
     {
-        return new()
-        {
-            Type = data[0],
-            Data = data[_defaultLength..],
-            Length = data.Length
-        };
+        return new(data[0], data[_defaultLength..]);
     }
 
     public static Message Deseriliaze(byte type, byte[] data)
     {
-        return new()
-        {
-            Type = type,
-            Data = data,
-            Length = data.Length
-        };
+        return new(type, data);
     }
 }

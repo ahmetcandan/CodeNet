@@ -25,12 +25,10 @@ public class KafkaProducerService<TKey, TValue>(IOptions<KafkaProducerOptions> o
         return Publish(key, value, null, cancellationToken);
     }
 
-    public Task Publish(TKey key, TValue value, Headers headers, CancellationToken cancellationToken)
-    {
-        return Publish(key, value, headers, new Timestamp(DateTime.Now), cancellationToken);
-    }
+    public Task Publish(TKey key, TValue value, Headers? headers, CancellationToken cancellationToken)
+        => Publish(key, value, headers, new Timestamp(DateTime.Now), cancellationToken);
 
-    public async Task Publish(TKey key, TValue value, Headers headers, Timestamp timestamp, CancellationToken cancellationToken = default)
+    public async Task Publish(TKey key, TValue value, Headers? headers, Timestamp timestamp, CancellationToken cancellationToken = default)
     {
         using var producer = new ProducerBuilder<TKey, TValue>(options.Value.Config).Build();
         var result = await producer.ProduceAsync(topic: options.Value.Topic,

@@ -146,7 +146,7 @@ public abstract class CodeNetClient : ICodeNetClient
     private void Disconnect_(bool listening = false)
     {
         if (!IsServerSide)
-            SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
+            SendMessage(new((byte)MessageType.Disconnected, []));
         if (_client?.Connected is true)
             _client?.Close();
         Working = false;
@@ -211,11 +211,7 @@ public abstract class CodeNetClient : ICodeNetClient
                 if (Connected)
                 {
                     ConnectedEvent?.Invoke(new(this));
-                    SendMessage(new()
-                    {
-                        Type = (byte)MessageType.Connected,
-                        Data = [1]
-                    });
+                    SendMessage(new((byte)MessageType.Connected, [1]));
                 }
             }
 
@@ -251,10 +247,6 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private bool Validation()
     {
-        return SendMessage(new Message
-        {
-            Type = (byte)MessageType.Validation,
-            Data = Encoding.UTF8.GetBytes(ApplicationKey)
-        });
+        return SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
     }
 }

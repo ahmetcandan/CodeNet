@@ -26,24 +26,33 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
 
     private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null)
     {
-        var isJsonData = data.GetType() != typeof(string);
-        PostLogData(logTime, methodBase, isJsonData ? JsonConvert.SerializeObject(data) : data?.ToString() ?? string.Empty, isJsonData, elapsedDuration, exception: exception);
+        PostLogData(logTime, methodBase, IsSimpleType(data.GetType()) ? data?.ToString() ?? string.Empty : JsonConvert.SerializeObject(data), elapsedDuration, exception: exception);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, bool isJsonData, long? elapsedDuration = null, Exception? exception = null)
+    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, long? elapsedDuration = null, Exception? exception = null)
     {
         var _methodBase = methodBase?.GetMethodBase();
-        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, isJsonData, elapsedDuration: elapsedDuration, exception: exception);
+        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, elapsedDuration: elapsedDuration, exception: exception);
     }
+    private static bool IsSimpleType(Type type) => type.IsPrimitive || type.IsValueType || type == typeof(string);
 
-    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, bool isJsonData, long? elapsedDuration = null, Exception? exception = null)
-    {
-        logger.Log(
+    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null, Exception? exception = null)
+        => logger.Log(
             LogTimeToLevel(logTime),
             new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}"),
             exception,
-            LogModel.ToJson(isJsonData, data, elapsedDuration, codeNetContext.CorrelationId, assemblyName, className, methodName, logTime.ToString(), codeNetContext.UserName));
-    }
+            "{@LogData}",
+            new LogModel
+            {
+                AssemblyName = assemblyName ?? string.Empty,
+                ClassName = className,
+                MethodName = methodName,
+                Data = data,
+                CorrelationId = codeNetContext.CorrelationId,
+                ElapsedDuration = elapsedDuration,
+                LogTime = logTime.ToString(),
+                Username = codeNetContext.UserName
+            });
 
     private static LogLevel LogTimeToLevel(LogTime logTime) => logTime switch
     {

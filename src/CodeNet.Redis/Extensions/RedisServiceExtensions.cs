@@ -17,20 +17,14 @@ public static class RedisServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder UseDistributedCache(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<CacheMiddleware?>();
-    }
+    public static IApplicationBuilder UseDistributedCache(this IApplicationBuilder app) => app.UseMiddleware<CacheMiddleware?>();
 
     /// <summary>
     /// Use Distributed Lock
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder UseDistributedLock(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<LockMiddleware?>();
-    }
+    public static IApplicationBuilder UseDistributedLock(this IApplicationBuilder app) => app.UseMiddleware<LockMiddleware?>();
 
     /// <summary>
     /// Add Redis Distributed Cache
@@ -40,9 +34,7 @@ public static class RedisServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfiguration configuration, string sectionName)
-    {
-        return services.AddRedisDistributedCache(configuration.GetSection(sectionName));
-    }
+        => services.AddRedisDistributedCache(configuration.GetSection(sectionName));
 
     /// <summary>
     /// Add Redis Distributed Cache
@@ -52,10 +44,7 @@ public static class RedisServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddRedisDistributedCache(this IServiceCollection services, IConfigurationSection configurationSection)
-    {
-        var redisSettings = configurationSection.Get<RedisCacheOptions?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
-        return services.AddRedisDistributedCache(redisSettings);
-    }
+        => services.AddRedisDistributedCache(configurationSection.Get<RedisCacheOptions?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json"));
 
     /// <summary>
     /// Add Redis Distributed Cache
@@ -85,9 +74,7 @@ public static class RedisServiceExtensions
     /// <param name="sectionName"></param>
     /// <returns></returns>
     public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, IConfiguration configuration, string sectionName)
-    {
-        return services.AddRedisDistributedLock(configuration.GetSection(sectionName));
-    }
+        => services.AddRedisDistributedLock(configuration.GetSection(sectionName));
 
     /// <summary>
     /// Add Redis Distributed Lock
@@ -97,10 +84,7 @@ public static class RedisServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, IConfigurationSection configurationSection)
-    {
-        var redisSettings = configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json");
-        return services.AddRedisDistributedLock(redisSettings);
-    }
+        => services.AddRedisDistributedLock(configurationSection.Get<RedisSettings?>() ?? throw new ArgumentNullException($"'{configurationSection.Path}' is null or empty in appSettings.json"));
 
     /// <summary>
     /// Add Redis Distributed Lock
@@ -109,12 +93,8 @@ public static class RedisServiceExtensions
     /// <param name="settings"></param>
     /// <returns></returns>
     public static IServiceCollection AddRedisDistributedLock(this IServiceCollection services, RedisSettings settings)
-    {
-        var redisConnection = ConnectionMultiplexer.Connect(settings.Configuration);
-        var endPoints = new List<RedLockEndPoint?>
+        => services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(new List<RedLockEndPoint?>
         {
-            new(redisConnection.GetEndPoints().FirstOrDefault())
-        };
-        return services.AddSingleton<IDistributedLockFactory>(_ => RedLockFactory.Create(endPoints));
-    }
+            new(ConnectionMultiplexer.Connect(settings.Configuration).GetEndPoints().FirstOrDefault())
+        }));
 }

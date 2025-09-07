@@ -36,10 +36,6 @@ public class CodeNetPublisher(string hostname, int port, string channel)
 
     public bool Publish(byte[] message)
     {
-        return _client.SendMessage(new()
-        {
-            Type = (byte)MessageType.Publish,
-            Data = message
-        });
+        return _client.SendMessage(new((byte)MessageType.Publish, message));
     }
 }
