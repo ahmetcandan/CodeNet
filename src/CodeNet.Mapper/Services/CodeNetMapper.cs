@@ -6,17 +6,14 @@ namespace CodeNet.Mapper.Services;
 
 internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
-    readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(MapperConfiguration));
+    private readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(MapperConfiguration));
     private readonly Dictionary<MapType, Dictionary<object, object>> _cache = [];
 
     public TDestination? MapTo<TSource, TDestination>(TSource source)
         where TSource : new()
         where TDestination : new()
     {
-        if (source is null)
-            return default;
-
-        return (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, _cache, 0);
+        return source is null ? default : (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, _cache, 0);
     }
 
     private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, Dictionary<MapType, Dictionary<object, object>> memoryCache, int depth = default)
@@ -27,7 +24,7 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         var mapType = MapType.Create(sourceType, destinationType);
         if (depth > _config.MaxDepth || !_config.MapperItems.TryGetValue(mapType, out MapperItemProperties[]? columns))
             return null;
-        
+
         if (memoryCache.TryGetValue(mapType, out Dictionary<object, object>? cache) && cache.TryGetValue(source, out object? cachedValue))
             return cachedValue;
 

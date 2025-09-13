@@ -12,7 +12,7 @@ public class CodeNetException(string code, string message) : Exception
 
     public CodeNetException(ExceptionMessage exceptionMessage) : this(exceptionMessage.Code, exceptionMessage.Message) { }
 
-    public CodeNetException(string code, string message, int httpStatusCode) : this (code, message) => HttpStatusCode = httpStatusCode;
+    public CodeNetException(string code, string message, int httpStatusCode) : this(code, message) => HttpStatusCode = httpStatusCode;
 
     public static void ThrowIfNull<TObject>(TObject obj, string parameterName = "")
     {
