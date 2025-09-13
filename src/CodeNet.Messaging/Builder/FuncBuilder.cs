@@ -23,7 +23,7 @@ public class FuncBuilder : ITemplateBuilder
         return builder;
     }
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         _functionExecuter ??= new();
         foreach (var param in Parameters.Where(c => c.Type is ParamType.Parameter))

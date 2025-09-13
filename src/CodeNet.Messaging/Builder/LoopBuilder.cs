@@ -25,7 +25,7 @@ public class LoopBuilder : ITemplateBuilder
         return builder;
     }
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         Array?.SetValue(data);
         StringBuilder builder = new();
@@ -33,16 +33,16 @@ public class LoopBuilder : ITemplateBuilder
         {
             dynamic dynamicObj = new ExpandoObject();
             var dictionary = (IDictionary<string, object>)dynamicObj;
-            var type = data.GetType();
-            foreach (var prop in type.GetProperties())
-            {
-                if (prop.Name == ItemName)
-                    throw new MessagingException(ExceptionMessages.LoopItemParam);
+            if (data is not null)
+                foreach (var prop in data.GetType().GetProperties())
+                {
+                    if (prop.Name == ItemName)
+                        throw new MessagingException(ExceptionMessages.LoopItemParam);
 
-                var value = prop.GetValue(data);
-                if (value is not null)
-                    dictionary[prop.Name] = value;
-            }
+                    var value = prop.GetValue(data);
+                    if (value is not null)
+                        dictionary[prop.Name] = value;
+                }
             foreach (var item in (dynamic)Array.Value!)
             {
                 dictionary[ItemName] = item;

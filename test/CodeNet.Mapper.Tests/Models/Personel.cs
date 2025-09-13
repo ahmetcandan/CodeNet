@@ -3,14 +3,14 @@
 internal class Personel
 {
     public int PersonNo { get; set; }
-    public string PersonName { get; set; }
+    public string PersonName { get; set; } = string.Empty;
     public DateTime BirthDate { get; set; }
-    public List<PersonelDetail> Details { get; set; }
-    public Note Note { get; set; }
+    public List<PersonelDetail> Details { get; set; } = [];
+    public Note? Note { get; set; }
     public Status Status { get; set; }
     public Bolum Department { get; set; }
-    public List<int> Ids { get; set; }
-    public PersonelDetail Detail { get; set; }
+    public List<int> Ids { get; set; } = [];
+    public PersonelDetail? Detail { get; set; }
 }
 
 internal enum Bolum
@@ -22,5 +22,5 @@ internal enum Bolum
 
 internal class PersonelDetail
 {
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 }

@@ -39,5 +39,5 @@ public interface IEmailService
     /// <param name="param"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    Task SendMail(MailMessage mailMessage, object param, CancellationToken cancellationToken);
+    Task SendMail(MailMessage mailMessage, object? param, CancellationToken cancellationToken);
 }

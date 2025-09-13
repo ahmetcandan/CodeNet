@@ -69,4 +69,6 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
 
         return result;
     }
+
+    public string QueueName { get { return options.Value.Queue; } }
 }

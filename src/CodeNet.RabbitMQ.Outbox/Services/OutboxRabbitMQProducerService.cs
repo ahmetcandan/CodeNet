@@ -20,7 +20,7 @@ internal class OutboxRabbitMQProducerService(IOutboxService outboxService, IOpti
             outboxService.AddMessage(new CreateMessageModel
             {
                 Data = message.Data,
-                QueueName = options.Value.Queue
+                QueueName = QueueName,
             }, string.IsNullOrEmpty(message.MessageId) ? Guid.NewGuid().ToString("N") : message.MessageId);
 
         return messages;

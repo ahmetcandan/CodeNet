@@ -22,10 +22,7 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         _makerCheckerHistoryRepository = new MakerCheckerHistoryRepository(dbContext, identityContext);
     }
 
-    public override TMakerCheckerEntity Add(TMakerCheckerEntity entity)
-    {
-        return Add(entity, EntryState.Insert);
-    }
+    public override TMakerCheckerEntity Add(TMakerCheckerEntity entity) => Add(entity, EntryState.Insert);
 
     private TMakerCheckerEntity Add(TMakerCheckerEntity entity, EntryState entryState, Guid? mainReferenceId = null)
     {
@@ -79,15 +76,9 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         return await base.AddAsync(entity, cancellationToken);
     }
 
-    public override Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity)
-    {
-        return AddAsync(entity, CancellationToken.None);
-    }
+    public override Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity) => AddAsync(entity, CancellationToken.None);
 
-    public override Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
-    {
-        return AddAsync(entity, EntryState.Insert, cancellationToken);
-    }
+    public override Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken) => AddAsync(entity, EntryState.Insert, cancellationToken);
 
     private async Task<TMakerCheckerEntity> AddAsync(TMakerCheckerEntity entity, EntryState entryState, CancellationToken cancellationToken)
     {
@@ -107,55 +98,32 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
         return await base.AddAsync(entity, cancellationToken);
     }
 
-    public override TMakerCheckerEntity Update(TMakerCheckerEntity entity)
-    {
-        return Add(entity, EntryState.Update, entity.ReferenceId);
-    }
+    public override TMakerCheckerEntity Update(TMakerCheckerEntity entity) => Add(entity, EntryState.Update, entity.ReferenceId);
 
-    public Task<TMakerCheckerEntity> UpdateAsync(TMakerCheckerEntity entity)
-    {
-        return UpdateAsync(entity, CancellationToken.None);
-    }
+    public Task<TMakerCheckerEntity> UpdateAsync(TMakerCheckerEntity entity) => UpdateAsync(entity, CancellationToken.None);
 
     public Task<TMakerCheckerEntity> UpdateAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
-    {
-        return AddAsync(entity, EntryState.Update, entity.ReferenceId, cancellationToken);
-    }
+        => AddAsync(entity, EntryState.Update, entity.ReferenceId, cancellationToken);
 
-    public override TMakerCheckerEntity Remove(TMakerCheckerEntity entity)
-    {
-        return Add(entity, EntryState.Delete, entity.ReferenceId);
-    }
-    
-    public Task<TMakerCheckerEntity> RemoveAsync(TMakerCheckerEntity entity)
-    {
-        return RemoveAsync(entity, CancellationToken.None);
-    }
+    public override TMakerCheckerEntity Remove(TMakerCheckerEntity entity) => Add(entity, EntryState.Delete, entity.ReferenceId);
+
+    public Task<TMakerCheckerEntity> RemoveAsync(TMakerCheckerEntity entity) => RemoveAsync(entity, CancellationToken.None);
 
     public Task<TMakerCheckerEntity> RemoveAsync(TMakerCheckerEntity entity, CancellationToken cancellationToken)
-    {
-        return AddAsync(entity, EntryState.Delete, entity.ReferenceId, cancellationToken);
-    }
+        => AddAsync(entity, EntryState.Delete, entity.ReferenceId, cancellationToken);
 
-    public virtual TMakerCheckerEntity? GetByReferenceId(Guid referenceId)
-    {
-        return _entities.FirstOrDefault(c => c.ReferenceId == referenceId);
-    }
+    public virtual TMakerCheckerEntity? GetByReferenceId(Guid referenceId) => _entities.FirstOrDefault(c => c.ReferenceId == referenceId);
 
     public virtual Task<TMakerCheckerEntity?> GetByReferenceIdAsync(Guid referenceId, CancellationToken cancellationToken = default)
-    {
-        return _entities.FirstOrDefaultAsync(c => c.ReferenceId == referenceId, cancellationToken);
-    }
+        => _entities.FirstOrDefaultAsync(c => c.ReferenceId == referenceId, cancellationToken);
 
     private IQueryable<MakerCheckerFlow> GetMakerCheckerFlowListQueryable()
-    {
-        return (from flow in _makerCheckerFlows
-                where flow.EntityName == _entityName
-                    && flow.IsActive && !flow.IsDeleted
-                orderby flow.Order
-                select flow)
+        => (from flow in _makerCheckerFlows
+            where flow.EntityName == _entityName
+                && flow.IsActive && !flow.IsDeleted
+            orderby flow.Order
+            select flow)
                 .AsNoTracking();
-    }
 
     private static MakerCheckerHistory NewHistory(MakerCheckerFlow flow, Guid referenceId) => new()
     {
@@ -166,68 +134,39 @@ public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepos
     };
 
     internal IQueryable<MakerCheckerFlowHistory> GetMakerCheckerFlowHistoryListQueryable(Guid referenceId)
-    {
-        return from flow in _makerCheckerFlows
-               join history in _makerCheckerHistories on flow.Id equals history.FlowId
-               where flow.EntityName == _entityName
-                   && history.ReferenceId == referenceId
-                   && flow.IsActive && !flow.IsDeleted
-                   && history.IsActive && !history.IsDeleted
-               orderby flow.Order ascending
-               select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = flow.EntityName };
-    }
+         => from flow in _makerCheckerFlows
+            join history in _makerCheckerHistories on flow.Id equals history.FlowId
+            where flow.EntityName == _entityName
+                && history.ReferenceId == referenceId
+                && flow.IsActive && !flow.IsDeleted
+                && history.IsActive && !history.IsDeleted
+            orderby flow.Order ascending
+            select new MakerCheckerFlowHistory { MakerCheckerHistory = history, Approver = flow.Approver, ApproveType = flow.ApproveType, Order = flow.Order, EntityName = flow.EntityName };
 
-    protected internal TMakerCheckerEntity InternalUpdate(TMakerCheckerEntity entity)
-    {
-        return base.Update(entity);
-    }
+    protected internal TMakerCheckerEntity InternalUpdate(TMakerCheckerEntity entity) => base.Update(entity);
 
-    protected internal TMakerCheckerEntity InternalRemove(TMakerCheckerEntity entity)
-    {
-        return base.Remove(entity);
-    }
+    protected internal TMakerCheckerEntity InternalRemove(TMakerCheckerEntity entity) => base.Remove(entity);
 
-    #region Obsolete
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
+    #region Not Used
     public override TMakerCheckerEntity HardDelete(TMakerCheckerEntity entity)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("HardDelete"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("HardDelete"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override IEnumerable<TMakerCheckerEntity> HardDeleteRange(IEnumerable<TMakerCheckerEntity> entities)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("HardDeleteRange"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("HardDeleteRange"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override IEnumerable<TMakerCheckerEntity> RemoveRange(IEnumerable<TMakerCheckerEntity> entities)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("RemoveRange"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("RemoveRange"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override IEnumerable<TMakerCheckerEntity> AddRange(IEnumerable<TMakerCheckerEntity> entities)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRange"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRange"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override Task<IEnumerable<TMakerCheckerEntity>> AddRangeAsync(IEnumerable<TMakerCheckerEntity> entities)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRangeAsync"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRangeAsync"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override Task<IEnumerable<TMakerCheckerEntity>> AddRangeAsync(IEnumerable<TMakerCheckerEntity> entities, CancellationToken cancellationToken)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRangeAsync"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("AddRangeAsync"));
 
-    [Obsolete("This method is not used for this 'MakerCheckerRepository'")]
     public override IEnumerable<TMakerCheckerEntity> UpdateRange(IEnumerable<TMakerCheckerEntity> entities)
-    {
-        throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("UpdateRange"));
-    }
+        => throw new MakerCheckerException(ExceptionMessages.MethodNotUsed.UseParams("UpdateRange"));
     #endregion
 }

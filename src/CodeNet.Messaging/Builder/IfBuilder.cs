@@ -37,7 +37,7 @@ public class IfBuilder : ITemplateBuilder
 
     private static bool ParamEquals(ParamValue param1, ParamValue param2) => (!param1.HasValue && !param2.HasValue) || (param1.HasValue && param2.HasValue && param1.Value!.Equals(param2.Value));
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         if (ParamLeft.Type == ParamType.Parameter)
             ParamLeft.SetValue(data);

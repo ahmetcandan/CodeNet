@@ -61,9 +61,12 @@ internal class EmailService : IEmailService
             IsBodyHtml = mailTemplate.IsBodyHtml,
         };
 
-        request.To.Add(mailTemplate.To);
-        request.Cc.Add(mailTemplate.Cc);
-        request.Bcc.Add(mailTemplate.Bcc);
+        if (!string.IsNullOrWhiteSpace(mailTemplate.To))
+            request.To.Add(mailTemplate.To);
+        if (!string.IsNullOrWhiteSpace(mailTemplate.Cc))
+            request.Cc.Add(mailTemplate.Cc);
+        if (!string.IsNullOrWhiteSpace(mailTemplate.Bcc))
+            request.Bcc.Add(mailTemplate.Bcc);
 
         mailMessage.To.Add(request.To.ToString());
         mailMessage.CC.Add(request.Cc.ToString());
@@ -77,7 +80,7 @@ internal class EmailService : IEmailService
         return SendMail(mailMessage, string.Empty, cancellationToken);
     }
 
-    public Task SendMail(MailMessage mailMessage, object param, CancellationToken cancellationToken)
+    public Task SendMail(MailMessage mailMessage, object? param, CancellationToken cancellationToken)
     {
         var builder = TemplateBuilder.Compile(mailMessage.Body);
         mailMessage.Body = builder.Build(param).ToString();
@@ -108,7 +111,7 @@ internal class EmailService : IEmailService
             : await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
     }
 
-    private static MailTemplateResult GenerateMailBody(MailTemplate template, object parameters)
+    private static MailTemplateResult GenerateMailBody(MailTemplate template, object? parameters)
     {
         string body = template.Builder?.Build(parameters).ToString() ?? string.Empty;
         return new MailTemplateResult

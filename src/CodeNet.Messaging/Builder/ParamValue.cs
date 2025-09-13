@@ -14,12 +14,12 @@ public class ParamValue(string name, ParamType type)
     public ParamType Type { get; set; } = type;
     public bool HasValue { get { return Value is not null; } }
 
-    public void SetValue(object obj)
+    public void SetValue(object? obj)
     {
         switch (Type)
         {
             case ParamType.Parameter:
-                Value = obj.GetValue(Name);
+                Value = obj?.GetValue(Name);
                 break;
         }
     }

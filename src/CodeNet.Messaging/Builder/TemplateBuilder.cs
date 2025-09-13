@@ -44,7 +44,7 @@ public class TemplateBuilder : ITemplateBuilder
         return result;
     }
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         StringBuilder stringBuilder = new(Content);
 

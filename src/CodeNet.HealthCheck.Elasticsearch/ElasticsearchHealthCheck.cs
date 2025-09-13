@@ -8,7 +8,7 @@ namespace CodeNet.HealthCheck.Elasticsearch;
 internal class ElasticsearchHealthCheck<TDbContext>(TDbContext dbContext) : IHealthCheck
     where TDbContext : ElasticsearchDbContext
 {
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext? context, CancellationToken cancellationToken = default)
     {
         try
         {

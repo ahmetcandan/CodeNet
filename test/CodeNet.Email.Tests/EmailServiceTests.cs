@@ -13,7 +13,7 @@ public class EmailServiceTests
     }
 
     [Test]
-    public async Task Send_Email_Test()
+    public void Send_Email_Test()
     {
         IServiceCollection services = new ServiceCollection();
 

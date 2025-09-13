@@ -6,7 +6,7 @@ namespace CodeNet.HealthCheck.EntityFramework;
 internal class EntityFrameworkHealthCheck<TDbContext>(TDbContext dbContext) : IHealthCheck
     where TDbContext : DbContext
 {
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext? context, CancellationToken cancellationToken = default)
     {
         try
         {

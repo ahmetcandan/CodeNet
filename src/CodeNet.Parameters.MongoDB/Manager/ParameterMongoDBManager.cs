@@ -28,7 +28,7 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
             Code = model.Code,
             ApprovalRequired = model.ApprovalRequired,
             CreatedDate = DateTime.Now,
-            CreatedUser = codeNetContext.UserName,
+            CreatedUser = codeNetContext.UserName ?? string.Empty,
             Description = model.Description,
             Id = model.Id,
             IsActive = true,
@@ -58,7 +58,7 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         var dto = await _repository.GetByIdAsync(c => c.Code == model.Code, cancellationToken);
         var result = DtoToResult(dto);
 
-        if (_distributedCache is not null)
+        if (result is not null && _distributedCache is not null)
         {
             await RemoveCacheAsync(model.Code, cancellationToken);
             await SetCacheAsync(result, cancellationToken);
@@ -123,13 +123,13 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
     {
         var dtoList = await _repository.GetPagingListAsync(c => c.IsActive, c => c.CreatedDate, true, page, count, cancellationToken);
-        return dtoList.Select(c => new ParameterGroupResult
+        return [.. dtoList.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
             ApprovalRequired = c.ApprovalRequired,
             Description = c.Description,
             Id = c.Id
-        }).ToList();
+        })];
     }
 
     private static ParameterGroupWithParamsResult ModelToResult(ParameterGroupWithParamsModel model) => new()

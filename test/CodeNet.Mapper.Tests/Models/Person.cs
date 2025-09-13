@@ -3,14 +3,14 @@
 internal class Person
 {
     public int PersonNo { get; set; }
-    public List<PersonDetail> Details { get; set; }
-    public string PersonName { get; set; }
+    public List<PersonDetail> Details { get; set; } = [];
+    public string PersonName { get; set; } = string.Empty;
     public DateTime BirthDate { get; set; }
-    public Note Note { get; set; }
+    public Note? Note { get; set; }
     public Status Status { get; set; }
     public Department Department { get; set; }
-    public List<int> Ids { get; set; }
-    public PersonDetail Detail { get; set; }
+    public List<int> Ids { get; set; } = [];
+    public PersonDetail? Detail { get; set; }
 }
 
 internal enum Status
@@ -28,10 +28,10 @@ internal enum Department
 
 internal class PersonDetail
 {
-    public string Description { get; set; }
+    public string Description { get; set; } = string.Empty;
 }
 
 internal class Note
 {
-    public string Context { get; set; }
+    public string Context { get; set; } = string.Empty;
 }
