@@ -21,7 +21,7 @@ public static class InMemoryServiceExtensions
     /// <param name="services"></param>
     /// <param name="databaseName">Database Name</param>
     /// <returns></returns>
-    public static IServiceCollection AddInMemoryDB<TDbContext>(this IServiceCollection services, string databaseName) 
+    public static IServiceCollection AddInMemoryDB<TDbContext>(this IServiceCollection services, string databaseName)
         where TDbContext : DbContext
         => services.AddDbContext<TDbContext>(options => options.UseInMemoryDatabase(databaseName));
 

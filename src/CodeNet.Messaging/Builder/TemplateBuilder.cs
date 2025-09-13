@@ -65,10 +65,10 @@ public class TemplateBuilder : ITemplateBuilder
         MatchCollection eachMatches = MessagingRegex.LoopRegex().Matches(content);
         foreach (var match in eachMatches.Where(c => c.Success))
             LoopBuilders.Add(LoopBuilder.Compile(
-                match.Groups["item"].Value, 
-                match.Groups["array"].Value, 
-                match.Groups["body"].Value, 
-                match.Value, 
+                match.Groups["item"].Value,
+                match.Groups["array"].Value,
+                match.Groups["body"].Value,
+                match.Value,
                 match.Index));
     }
 
@@ -81,10 +81,10 @@ public class TemplateBuilder : ITemplateBuilder
             MatchCollection paramMatches = MessagingRegex.FuncParamRegex().Matches(match.Groups["params"].Value);
             foreach (var paramMatch in paramMatches.Where(c => c.Success))
                 funcBuilder.Parameters.Add(NewParamValue(
-                    paramMatch.Groups["param"].Value, 
-                    paramMatch.Groups["number"].Value, 
-                    paramMatch.Groups["text"].Value, 
-                    paramMatch.Groups["null"].Value, 
+                    paramMatch.Groups["param"].Value,
+                    paramMatch.Groups["number"].Value,
+                    paramMatch.Groups["text"].Value,
+                    paramMatch.Groups["null"].Value,
                     paramMatch.Groups["bool"].Value));
 
             FuncBuilders.Add(funcBuilder);

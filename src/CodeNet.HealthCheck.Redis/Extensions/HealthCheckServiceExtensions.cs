@@ -29,7 +29,7 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, RedisHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
     {
-        builder.Services.Configure<RedisHealthCheckOptions>(c => 
+        builder.Services.Configure<RedisHealthCheckOptions>(c =>
         {
             c.Configuration = options.Configuration;
         });

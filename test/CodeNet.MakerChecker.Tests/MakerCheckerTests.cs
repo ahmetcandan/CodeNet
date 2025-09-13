@@ -172,7 +172,7 @@ namespace CodeNet.MakerChecker.Tests
             var makerCheckerManager = serviceProvider.GetRequiredService<IMakerCheckerManager>();
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
-            
+
             await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",

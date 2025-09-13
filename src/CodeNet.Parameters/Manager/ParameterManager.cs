@@ -213,9 +213,9 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
     }
     #endregion
 
-    private Task RemoveCacheAsync(ParameterGroup parameterGroup, CancellationToken cancellationToken) 
+    private Task RemoveCacheAsync(ParameterGroup parameterGroup, CancellationToken cancellationToken)
         => _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{parameterGroup.Code}", cancellationToken) ?? Task.CompletedTask;
 
-    private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken) 
+    private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken)
         => _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
 }

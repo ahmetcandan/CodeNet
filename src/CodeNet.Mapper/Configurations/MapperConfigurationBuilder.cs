@@ -11,7 +11,7 @@ public class MapperConfigurationBuilder
     internal readonly Dictionary<Type, Func<object>> _listConstructors = [];
     internal readonly Dictionary<Type, Func<object>> _objectConstructor = [];
     internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
-    
+
     public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action, bool reverse = false)
     where TSource : new()
     where TDestination : new()
@@ -37,9 +37,9 @@ public class MapperConfigurationBuilder
         return map;
     }
 
-        public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action = null)
-        where TSource : new()
-        where TDestination : new()
+    public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action = null)
+    where TSource : new()
+    where TDestination : new()
     {
         return CreateMap(action, false);
     }

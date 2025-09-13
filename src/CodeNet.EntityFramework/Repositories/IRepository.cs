@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public interface IRepository<TEntity> 
+public interface IRepository<TEntity>
     where TEntity : class
 {
     TEntity? Get(params object[] keyValues);

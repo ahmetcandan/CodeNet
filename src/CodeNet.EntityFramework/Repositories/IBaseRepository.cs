@@ -3,7 +3,7 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity> 
+public interface IBaseRepository<TBaseEntity> : IRepository<TBaseEntity>
     where TBaseEntity : class, IBaseEntity
 {
     List<TBaseEntity> Find(Expression<Func<TBaseEntity, bool>> predicate, bool isActive = true);

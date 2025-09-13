@@ -148,7 +148,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
         var flowHistories = await makerCheckerRepository.GetMakerCheckerFlowHistoryListAsync(referenceId, cancellationToken);
         var flowHistory = flowHistories.FirstOrDefault(c => entity.Order == c.Order && c.MakerCheckerHistory.ApproveStatus == ApproveStatus.Pending) ?? throw new MakerCheckerException(ExceptionMessages.NoPendingFlow);
-        
+
         var username = identityContext.UserName;
         var roles = identityContext.Roles;
 

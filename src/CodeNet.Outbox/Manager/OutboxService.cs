@@ -43,7 +43,7 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
             Data = response.Data,
             QueueName = response.QueueName
         };
-    }    
+    }
 
     public IEnumerable<MessageModel> GetWaitingMessages(string queueName)
     {
