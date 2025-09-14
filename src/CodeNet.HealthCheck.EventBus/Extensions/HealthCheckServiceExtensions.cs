@@ -1,11 +1,11 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CodeNet.HealthCheck.Redis.Extensions;
+namespace CodeNet.HealthCheck.EventBus.Extensions;
 
 public static class HealthCheckServiceExtensions
 {
-    private const string _name = "redis";
+    private const string _name = "codenet-eventbus";
 
     /// <summary>
     /// Add Redis Health Check
@@ -16,7 +16,7 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-        => builder.AddRedisHealthCheck(configuration.Get<RedisHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
+        => builder.AddRedisHealthCheck(configuration.Get<EventBusHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
     /// Add Redis Health Check
@@ -25,12 +25,14 @@ public static class HealthCheckServiceExtensions
     /// <param name="options"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, RedisHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, EventBusHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
     {
-        builder.Services.Configure<RedisHealthCheckOptions>(c =>
+        builder.Services.Configure<EventBusHealthCheckOptions>(c =>
         {
-            c.Configuration = options.Configuration;
+            c.HostName = options.HostName;
+            c.Port = options.Port;
+            c.Channel = options.Channel;
         });
-        return builder.AddCheck<RedisHealthCheck>(name, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, [_name], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<EventBusHealthCheck>(name, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, [_name], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }
