@@ -11,9 +11,9 @@ public abstract class BaseRabbitMQOptions
     public bool Durable { get; set; } = false;
     public bool Exclusive { get; set; } = false;
     public bool AutoDelete { get; set; } = false;
-    public IDictionary<string, object>? Arguments { get; set; } = null;
-    public IDictionary<string, object>? QueueBindArguments { get; set; } = null;
-    public IDictionary<string, object>? ExchangeArguments { get; set; } = null;
+    public IDictionary<string, object>? Arguments { get; set; }
+    public IDictionary<string, object>? QueueBindArguments { get; set; }
+    public IDictionary<string, object>? ExchangeArguments { get; set; }
     public bool DeclareQueue { get; set; } = true;
     public bool DeclareExchange { get; set; } = false;
     public bool QueueBind { get; set; } = false;

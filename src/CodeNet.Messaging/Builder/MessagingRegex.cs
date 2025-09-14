@@ -24,5 +24,4 @@ public static partial class MessagingRegex
 
     [GeneratedRegex(_ifPattern)]
     public static partial Regex IfRegex();
-
 }

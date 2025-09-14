@@ -11,7 +11,7 @@ public class Message(byte type, byte[] data)
     private byte[] _data = data;
     public virtual byte[] Data
     {
-        get { return _data; }
+        get => _data;
         set
         {
             Length = value.Length;
@@ -38,13 +38,7 @@ public class Message(byte type, byte[] data)
         return result;
     }
 
-    public static Message Deseriliaze(byte[] data)
-    {
-        return new(data[0], data[_defaultLength..]);
-    }
+    public static Message Deseriliaze(byte[] data) => new(data[0], data[_defaultLength..]);
 
-    public static Message Deseriliaze(byte type, byte[] data)
-    {
-        return new(type, data);
-    }
+    public static Message Deseriliaze(byte type, byte[] data) => new(type, data);
 }

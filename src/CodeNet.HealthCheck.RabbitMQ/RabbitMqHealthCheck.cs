@@ -9,8 +9,7 @@ internal class RabbitMqHealthCheck(IOptions<HealthCheckRabitMQSettings> config) 
     {
         try
         {
-            var testConnection = new TestRabbitMqService(config);
-            return testConnection.CanConnection()
+            return new TestRabbitMqService(config).CanConnection()
                 ? Task.FromResult(HealthCheckResult.Healthy($"This is RabbitMQ, standing as always. Have a good work ;) "))
                 : Task.FromResult(HealthCheckResult.Unhealthy($"Sorry, RabbitMQ is down :("));
         }

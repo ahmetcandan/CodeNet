@@ -7,20 +7,13 @@ using System.Reflection;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-public abstract class MakerCheckerRepository<TMakerCheckerEntity> : TracingRepository<TMakerCheckerEntity>, IMakerCheckerRepository<TMakerCheckerEntity>
+public abstract class MakerCheckerRepository<TMakerCheckerEntity>(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : TracingRepository<TMakerCheckerEntity>(dbContext, identityContext), IMakerCheckerRepository<TMakerCheckerEntity>
     where TMakerCheckerEntity : class, IMakerCheckerEntity
 {
     private readonly string _entityName = typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name;
-    private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
-    private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories;
-    private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository;
-
-    public MakerCheckerRepository(MakerCheckerDbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
-    {
-        _makerCheckerFlows = _dbContext.Set<MakerCheckerFlow>();
-        _makerCheckerHistories = _dbContext.Set<MakerCheckerHistory>();
-        _makerCheckerHistoryRepository = new MakerCheckerHistoryRepository(dbContext, identityContext);
-    }
+    private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows = dbContext.Set<MakerCheckerFlow>();
+    private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories = dbContext.Set<MakerCheckerHistory>();
+    private readonly MakerCheckerHistoryRepository _makerCheckerHistoryRepository = new(dbContext, identityContext);
 
     public override TMakerCheckerEntity Add(TMakerCheckerEntity entity) => Add(entity, EntryState.Insert);
 

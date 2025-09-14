@@ -4,15 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace CodeNet.Messaging.Builder;
 
-public class TemplateBuilder : ITemplateBuilder
+public class BodyBuilder : IBodyBuilder
 {
-    private TemplateBuilder()
-    {
-    }
+    private BodyBuilder() { }
 
-    public static TemplateBuilder Compile(string content)
+    public static BodyBuilder Compile(string content)
     {
-        TemplateBuilder result = new()
+        BodyBuilder result = new()
         {
             Index = 0,
             Content = content
@@ -48,7 +46,7 @@ public class TemplateBuilder : ITemplateBuilder
     {
         StringBuilder stringBuilder = new(Content);
 
-        foreach (var builder in Enumerable.Empty<ITemplateBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
+        foreach (var builder in Enumerable.Empty<IBodyBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
             stringBuilder.Replace(builder.Content, builder.Build(data).ToString());
 
         foreach (var param in Parameters)

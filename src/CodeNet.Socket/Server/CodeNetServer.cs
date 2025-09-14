@@ -94,9 +94,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         client.Dispose();
     }
 
-    public virtual void ClientDisconnecting(TClient client)
-    {
-    }
+    public virtual void ClientDisconnecting(TClient client) { }
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)
     {
@@ -126,9 +124,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         }
     }
 
-    protected internal virtual void ReceivedMessage(TClient client, Message message)
-    {
-    }
+    protected internal virtual void ReceivedMessage(TClient client, Message message) { }
 
     public void Dispose()
     {

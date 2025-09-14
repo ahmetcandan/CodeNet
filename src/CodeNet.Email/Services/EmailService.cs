@@ -8,28 +8,14 @@ using System.Net.Mail;
 
 namespace CodeNet.Email.Services;
 
-internal class EmailService : IEmailService
+internal class EmailService(IServiceProvider serviceProvider, IOptions<MailOptions> options) : IEmailService
 {
-    private readonly MailOptions _options;
-    private readonly MailTemplateRepositories? _templateRepositories;
-    private readonly OutboxRepositories? _outboxRepositories;
+    private readonly MailTemplateRepositories? _templateRepositories = options.Value.HasMongoDB ? serviceProvider.GetService<MailTemplateRepositories>() : null;
+    private readonly OutboxRepositories? _outboxRepositories = options.Value.HasMongoDB ? serviceProvider.GetService<OutboxRepositories>() : null;
 
-    public EmailService(IServiceProvider serviceProvider, IOptions<MailOptions> options)
-    {
-        _options = options.Value;
-        if (_options.HasMongoDB)
-        {
-            _templateRepositories = serviceProvider.GetService<MailTemplateRepositories>();
-            _outboxRepositories = serviceProvider.GetService<OutboxRepositories>();
-        }
-    }
 
     public async Task SendMail(SendMailRequest request, CancellationToken cancellationToken)
-    {
-        var template = await GetMailTemplate(request.TemplateCode, cancellationToken);
-        var mailBody = GenerateMailBody(template, request.Params);
-        await SendMail(mailBody, request, request.TemplateCode, cancellationToken);
-    }
+        => await SendMail(GenerateMailBody(await GetMailTemplate(request.TemplateCode, cancellationToken), request.Params), request, request.TemplateCode, cancellationToken);
 
     public async Task SendBulkMail(SendBulkMailRequest request, CancellationToken cancellationToken)
     {
@@ -54,7 +40,7 @@ internal class EmailService : IEmailService
         MailMessage mailMessage = new()
         {
             From = string.IsNullOrEmpty(mailTemplate.From)
-                        ? new MailAddress(_options.EmailAddress)
+                        ? new MailAddress(options.Value.EmailAddress)
                         : new MailAddress(mailTemplate.From),
             Subject = request.Subject,
             Body = mailTemplate.Body,
@@ -75,22 +61,18 @@ internal class EmailService : IEmailService
         return SendMail(mailMessage, templateCode, cancellationToken);
     }
 
-    public Task SendMail(MailMessage mailMessage, CancellationToken cancellationToken)
-    {
-        return SendMail(mailMessage, string.Empty, cancellationToken);
-    }
+    public Task SendMail(MailMessage mailMessage, CancellationToken cancellationToken) => SendMail(mailMessage, string.Empty, cancellationToken);
 
     public Task SendMail(MailMessage mailMessage, object? param, CancellationToken cancellationToken)
     {
-        var builder = TemplateBuilder.Compile(mailMessage.Body);
-        mailMessage.Body = builder.Build(param).ToString();
+        mailMessage.Body = BodyBuilder.Compile(mailMessage.Body).Build(param).ToString();
         return SendMail(mailMessage, cancellationToken);
     }
 
     private async Task SendMail(MailMessage mailMessage, string templateCode, CancellationToken cancellationToken)
     {
-        await _options.SmtpClient.SendMailAsync(mailMessage, cancellationToken);
-        if (_options.HasMongoDB)
+        await options.Value.SmtpClient.SendMailAsync(mailMessage, cancellationToken);
+        if (options.Value.HasMongoDB)
             await _outboxRepositories!.CreateAsync(new Outbox()
             {
                 Id = Guid.NewGuid(),
@@ -104,24 +86,17 @@ internal class EmailService : IEmailService
             }, cancellationToken);
     }
 
-    private async Task<MailTemplate> GetMailTemplate(string templateCode, CancellationToken cancellationToken)
-    {
-        return !_options.HasMongoDB
+    private async Task<MailTemplate> GetMailTemplate(string templateCode, CancellationToken cancellationToken) => !options.Value.HasMongoDB
             ? throw new NotImplementedException("MongoDB is not implemented!")
             : await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
-    }
 
-    private static MailTemplateResult GenerateMailBody(MailTemplate template, object? parameters)
+    private static MailTemplateResult GenerateMailBody(MailTemplate template, object? parameters) => new()
     {
-        string body = template.Builder?.Build(parameters).ToString() ?? string.Empty;
-        return new MailTemplateResult
-        {
-            Body = body,
-            IsBodyHtml = template.IsBodyHtml,
-            From = template.From,
-            To = template.To,
-            Cc = template.Cc,
-            Bcc = template.Bcc,
-        };
-    }
+        Body = template.Builder?.Build(parameters).ToString() ?? string.Empty,
+        IsBodyHtml = template.IsBodyHtml,
+        From = template.From,
+        To = template.To,
+        Cc = template.Cc,
+        Bcc = template.Bcc,
+    };
 }

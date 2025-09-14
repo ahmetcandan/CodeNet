@@ -76,13 +76,10 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
             _client.SendMessage(new((byte)Models.MessageType.ClienList, SerializerHelper.SerializeObject(SendToClientList(_client))));
     }
 
-    private IEnumerable<ClientItem> SendToClientList(DataTransferClientItem client)
+    private IEnumerable<ClientItem> SendToClientList(DataTransferClientItem client) => Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
     {
-        return Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
-        {
-            Id = c.ClientId,
-            Name = c.ClientName,
-            RSAPublicKey = c.PublicKey
-        });
-    }
+        Id = c.ClientId,
+        Name = c.ClientName,
+        RSAPublicKey = c.PublicKey
+    });
 }

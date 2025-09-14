@@ -6,15 +6,9 @@ namespace CodeNet.StackExchange.Redis.Services;
 
 public class StackExchangePublisherService(ISerializer serializer, IOptions<StackExchangePublisherOptions> options)
 {
-    public Task<long> PublishAsync(object data)
-    {
-        return PublishAsync(serializer.Serialize(data));
-    }
+    public Task<long> PublishAsync(object data) => PublishAsync(serializer.Serialize(data));
 
-    public Task PublishAsync(object[] datas)
-    {
-        return PublishAsync(datas.Select(data => serializer.Serialize(data)).ToArray());
-    }
+    public Task PublishAsync(object[] datas) => PublishAsync(datas.Select(data => serializer.Serialize(data)).ToArray());
 
     public async Task<long> PublishAsync(string message)
     {

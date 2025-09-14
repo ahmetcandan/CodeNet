@@ -4,17 +4,11 @@ using System.Linq.Expressions;
 
 namespace CodeNet.EntityFramework.Repositories;
 
-public class Repository<TEntity> : IRepository<TEntity>
+public class Repository<TEntity>(DbContext dbContext) : IRepository<TEntity>
     where TEntity : class
 {
-    protected readonly DbContext _dbContext;
-    protected readonly DbSet<TEntity> _entities;
-
-    public Repository(DbContext dbContext)
-    {
-        _dbContext = dbContext;
-        _entities = _dbContext.Set<TEntity>();
-    }
+    protected readonly DbContext _dbContext = dbContext;
+    protected readonly DbSet<TEntity> _entities = dbContext.Set<TEntity>();
 
     #region Add
     public virtual TEntity Add(TEntity entity) => _entities.Add(entity).Entity;
@@ -67,7 +61,7 @@ public class Repository<TEntity> : IRepository<TEntity>
                 ? [.. _entities.OrderBy(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count)]
                 : [.. _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count)]);
 
-        return new PagingList<TEntity>
+        return new()
         {
             List = list,
             PageCount = count,
@@ -95,7 +89,7 @@ public class Repository<TEntity> : IRepository<TEntity>
                 ? await _entities.OrderBy(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken)
                 : await _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken));
 
-        return new PagingList<TEntity>
+        return new()
         {
             List = list,
             PageCount = count,

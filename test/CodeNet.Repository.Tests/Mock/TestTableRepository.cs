@@ -11,6 +11,5 @@ namespace CodeNet.EntityFramework.Tests.Mock
 
     public class TestRepository(DbContext dbContext) : Repository<TestTable>(dbContext)
     {
-
     }
 }

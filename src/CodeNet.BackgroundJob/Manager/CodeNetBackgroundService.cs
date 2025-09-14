@@ -290,28 +290,19 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         MessageInvoke();
     }
 
-    public JobStatus GetStatus()
-    {
-        return _jobStatus;
-    }
+    public JobStatus GetStatus() => _jobStatus;
 
-    public int GetJobId()
-    {
-        return _jobId;
-    }
+    public int GetJobId() => _jobId;
 
     public event StatusChanged? StatusChanged;
 
-    private void MessageInvoke(JobWorkingDetail? detail = null)
+    private void MessageInvoke(JobWorkingDetail? detail = null) => StatusChanged?.Invoke(new ReceivedMessageEventArgs
     {
-        StatusChanged?.Invoke(new ReceivedMessageEventArgs
-        {
-            Detail = detail,
-            ServiceName = options.Value.Title,
-            Status = _jobStatus,
-            JobId = _jobId
-        });
-    }
+        Detail = detail,
+        ServiceName = options.Value.Title,
+        Status = _jobStatus,
+        JobId = _jobId
+    });
 
     private CancellationToken GetCancellationToken(CancellationToken cancellationToken)
     {

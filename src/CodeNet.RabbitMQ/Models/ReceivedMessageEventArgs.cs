@@ -21,13 +21,7 @@ public class ReceivedMessageEventArgs : EventArgs
     public string? CorrelationId { get; internal set; }
     public string? Type { get; internal set; }
 
-    public TModel? GetDataToModel<TModel>()
-    {
-        return JsonConvert.DeserializeObject<TModel>(GetDataToString());
-    }
+    public TModel? GetDataToModel<TModel>() => JsonConvert.DeserializeObject<TModel>(GetDataToString());
 
-    public string GetDataToString()
-    {
-        return Encoding.UTF8.GetString(Data.ToArray());
-    }
+    public string GetDataToString() => Encoding.UTF8.GetString(Data.ToArray());
 }

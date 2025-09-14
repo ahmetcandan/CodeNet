@@ -11,10 +11,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public Task<TModel?> GetValueAsync(string key)
-    {
-        return GetValueAsync(key, CancellationToken.None);
-    }
+    public Task<TModel?> GetValueAsync(string key) => GetValueAsync(key, CancellationToken.None);
 
     /// <summary>
     /// Get Value
@@ -46,10 +43,8 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="key"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public Task SetValueAsync(TModel model, string key, int time)
-    {
-        return SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, CancellationToken.None);
-    }
+    public Task SetValueAsync(TModel model, string key, int time) 
+        => SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, CancellationToken.None);
 
     /// <summary>
     /// Set Value
@@ -59,10 +54,8 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="time">Minutes</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task SetValueAsync(TModel model, string key, int time, CancellationToken cancellationToken)
-    {
-        return SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, cancellationToken);
-    }
+    public Task SetValueAsync(TModel model, string key, int time, CancellationToken cancellationToken) 
+        => SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, cancellationToken);
 
     /// <summary>
     /// Set Value
@@ -72,10 +65,8 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="distributedCacheEntryOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions)
-    {
-        await SetValueAsync(model, key, distributedCacheEntryOptions, CancellationToken.None);
-    }
+    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions) 
+        => await SetValueAsync(model, key, distributedCacheEntryOptions, CancellationToken.None);
 
     /// <summary>
     /// Set Value
@@ -85,10 +76,8 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="distributedCacheEntryOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken)
-    {
-        await distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions, cancellationToken);
-    }
+    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken) 
+        => await distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions, cancellationToken);
 
     /// <summary>
     /// Set Value
@@ -96,10 +85,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="model"></param>
     /// <param name="key"></param>
     /// <param name="time"></param>
-    public void SetValue(TModel model, string key, int time)
-    {
-        SetValue(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) });
-    }
+    public void SetValue(TModel model, string key, int time) => SetValue(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) });
 
     /// <summary>
     /// Set Value
@@ -107,29 +93,20 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="model"></param>
     /// <param name="key"></param>
     /// <param name="distributedCacheEntryOptions"></param>
-    public void SetValue(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions)
-    {
-        distributedCache.SetString(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions);
-    }
+    public void SetValue(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions) => distributedCache.SetString(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions);
 
     /// <summary>
     /// Remove by Key
     /// </summary>
     /// <param name="key"></param>
-    public void Remove(string key)
-    {
-        distributedCache.Remove(key);
-    }
+    public void Remove(string key) => distributedCache.Remove(key);
 
     /// <summary>
     /// Remove by Key
     /// </summary>
     /// <param name="key"></param>
     /// <returns></returns>
-    public Task RemoveAsync(string key)
-    {
-        return RemoveAsync(key, CancellationToken.None);
-    }
+    public Task RemoveAsync(string key) => RemoveAsync(key, CancellationToken.None);
 
     /// <summary>
     /// Remove by Key
@@ -137,8 +114,5 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="key"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task RemoveAsync(string key, CancellationToken cancellationToken)
-    {
-        return distributedCache.RemoveAsync(key, cancellationToken);
-    }
+    public Task RemoveAsync(string key, CancellationToken cancellationToken) => distributedCache.RemoveAsync(key, cancellationToken);
 }

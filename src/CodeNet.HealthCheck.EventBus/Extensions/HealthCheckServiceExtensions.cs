@@ -8,24 +8,24 @@ public static class HealthCheckServiceExtensions
     private const string _name = "codenet-eventbus";
 
     /// <summary>
-    /// Add Redis Health Check
+    /// Add CodeNet.EventBus Health Check
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="configuration"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-        => builder.AddRedisHealthCheck(configuration.Get<EventBusHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
+    public static IHealthChecksBuilder AddCodeNetEventBusHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
+        => builder.AddCodeNetEventBusHealthCheck(configuration.Get<EventBusHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
-    /// Add Redis Health Check
+    /// Add CodeNet.EventBus Health Check
     /// </summary>
     /// <param name="builder"></param>
     /// <param name="options"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, EventBusHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
+    public static IHealthChecksBuilder AddCodeNetEventBusHealthCheck(this IHealthChecksBuilder builder, EventBusHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
     {
         builder.Services.Configure<EventBusHealthCheckOptions>(c =>
         {

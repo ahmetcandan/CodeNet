@@ -110,15 +110,12 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
             ? (DateTimeOffset?)new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime).AddTicks(DateTimeOffset.Now.Offset.Ticks)
             : null;
 
-    private static DeliveredMode GetDeliveryMode(IBasicProperties? basicProperties)
+    private static DeliveredMode GetDeliveryMode(IBasicProperties? basicProperties) => (basicProperties?.DeliveryMode) switch
     {
-        return (basicProperties?.DeliveryMode) switch
-        {
-            1 => DeliveredMode.NonPersistent,
-            2 => DeliveredMode.Persistent,
-            _ => DeliveredMode.None,
-        };
-    }
+        1 => DeliveredMode.NonPersistent,
+        2 => DeliveredMode.Persistent,
+        _ => DeliveredMode.None,
+    };
 
     public void StopListening()
     {

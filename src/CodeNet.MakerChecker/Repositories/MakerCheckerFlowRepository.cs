@@ -5,16 +5,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.MakerChecker.Repositories;
 
-internal class MakerCheckerFlowRepository : TracingRepository<MakerCheckerFlow>
+internal class MakerCheckerFlowRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetContext identityContext) : TracingRepository<MakerCheckerFlow>(makerCheckerDbContext, identityContext)
 {
-    private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows;
-    private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories;
-
-    public MakerCheckerFlowRepository(MakerCheckerDbContext makerCheckerDbContext, ICodeNetContext identityContext) : base(makerCheckerDbContext, identityContext)
-    {
-        _makerCheckerFlows = _dbContext.Set<MakerCheckerFlow>();
-        _makerCheckerHistories = _dbContext.Set<MakerCheckerHistory>();
-    }
+    private readonly DbSet<MakerCheckerFlow> _makerCheckerFlows = makerCheckerDbContext.Set<MakerCheckerFlow>();
+    private readonly DbSet<MakerCheckerHistory> _makerCheckerHistories = makerCheckerDbContext.Set<MakerCheckerHistory>();
 
     public List<MakerCheckerPending> GetPendingList() => [.. GetPendingListQueryable()];
 

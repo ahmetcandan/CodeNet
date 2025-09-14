@@ -4,10 +4,7 @@ public class ParamValue(string name, ParamType type)
 {
     public ParamValue(string name) : this(name, null) { }
 
-    public ParamValue(string name, object? value) : this(name, ParamType.StaticValue)
-    {
-        Value = value;
-    }
+    public ParamValue(string name, object? value) : this(name, ParamType.StaticValue) => Value = value;
 
     public string Name { get; set; } = name;
     public object? Value { get; set; }

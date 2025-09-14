@@ -28,9 +28,7 @@ internal partial class DataTransferClientItem : CodeNetClient
         _clients = [];
     }
 
-    public DataTransferClientItem()
-    {
-    }
+    public DataTransferClientItem() { }
 
     public override async Task<bool> ConnectAsync()
     {

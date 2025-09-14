@@ -1,7 +1,6 @@
 ﻿using CodeNet.Core.Context;
 using CodeNet.Core.Extensions;
 using CodeNet.Logging.Enum;
-using CodeNet.Logging.Models;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using System.Reflection;
@@ -10,6 +9,9 @@ namespace CodeNet.Logging;
 
 public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger) : IAppLogger
 {
+    private const string _message1 = "AssemblyName: {AssemblyName}, ClassName: {ClassName}, MethodName: {MethodName}, Data: {Data}, CorrelationId: {CorrelationId}, ElapsedDuration: {ElapsedDuration}, LogTime: {LogTime}, Username: {Username}";
+    private const string _message2 = "AssemblyName: {AssemblyName}, ClassName: {ClassName}, MethodName: {MethodName}, Data: {@Data}, CorrelationId: {CorrelationId}, ElapsedDuration: {ElapsedDuration}, LogTime: {LogTime}, Username: {Username}";
+
     public void EntryLog(object request, MethodBase? methodBase) => PostLogData(LogTime.Entry, methodBase, request);
 
     public void ExceptionLog(Exception exception, MethodBase? methodBase) => PostLogData(LogTime.Error, methodBase, exception, exception: exception);
@@ -26,14 +28,13 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
 
     private void PostLogData(LogTime logTime, MethodBase? methodBase, object data, long? elapsedDuration = null, Exception? exception = null)
     {
-        PostLogData(logTime, methodBase, IsSimpleType(data.GetType()) ? data?.ToString() ?? string.Empty : JsonConvert.SerializeObject(data), elapsedDuration, exception: exception);
+        var _methodBase = methodBase?.GetMethodBase();
+        if (IsSimpleType(data.GetType()))
+            PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data?.ToString() ?? string.Empty, elapsedDuration: elapsedDuration, exception: exception);
+        else
+            PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, elapsedDuration: elapsedDuration, exception: exception);
     }
 
-    private void PostLogData(LogTime logTime, MethodBase? methodBase, string data, long? elapsedDuration = null, Exception? exception = null)
-    {
-        var _methodBase = methodBase?.GetMethodBase();
-        PostLogData(logTime, _methodBase?.DeclaringType?.Assembly.GetName().Name, _methodBase?.DeclaringType?.Name ?? string.Empty, _methodBase?.Name ?? string.Empty, data, elapsedDuration: elapsedDuration, exception: exception);
-    }
     private static bool IsSimpleType(Type type) => type.IsPrimitive || type.IsValueType || type == typeof(string);
 
     private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, string data, long? elapsedDuration = null, Exception? exception = null)
@@ -41,18 +42,30 @@ public class AppLogger(ICodeNetContext codeNetContext, ILogger<AppLogger> logger
             LogTimeToLevel(logTime),
             new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}"),
             exception,
-            "{@LogData}",
-            new LogModel
-            {
-                AssemblyName = assemblyName ?? string.Empty,
-                ClassName = className,
-                MethodName = methodName,
-                Data = data,
-                CorrelationId = codeNetContext.CorrelationId,
-                ElapsedDuration = elapsedDuration,
-                LogTime = logTime.ToString(),
-                Username = codeNetContext.UserName
-            });
+            _message1,
+            assemblyName ?? string.Empty,
+            className,
+            methodName,
+            data,
+            codeNetContext.CorrelationId,
+            elapsedDuration,
+            logTime.ToString(),
+            codeNetContext.UserName);
+
+    private void PostLogData(LogTime logTime, string? assemblyName, string className, string methodName, object data, long? elapsedDuration = null, Exception? exception = null)
+        => logger.Log(
+            LogTimeToLevel(logTime),
+            new EventId(codeNetContext.CorrelationId.GetHashCode(), $"{assemblyName}_{className}_{methodName}"),
+            exception,
+            _message2,
+            assemblyName ?? string.Empty,
+            className,
+            methodName,
+            data,
+            codeNetContext.CorrelationId,
+            elapsedDuration,
+            logTime.ToString(),
+            codeNetContext.UserName);
 
     private static LogLevel LogTimeToLevel(LogTime logTime) => logTime switch
     {

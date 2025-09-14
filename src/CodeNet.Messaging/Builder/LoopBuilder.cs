@@ -4,11 +4,9 @@ using System.Text;
 
 namespace CodeNet.Messaging.Builder;
 
-public class LoopBuilder : ITemplateBuilder
+public class LoopBuilder : IBodyBuilder
 {
-    private LoopBuilder()
-    {
-    }
+    private LoopBuilder() { }
 
     public static LoopBuilder Compile(string itemName, string arrayName, string rowBody, string content, int index)
     {
@@ -19,7 +17,7 @@ public class LoopBuilder : ITemplateBuilder
             RowContent = rowBody,
             Content = content,
             Index = index,
-            BodyBuilder = TemplateBuilder.Compile(rowBody)
+            BodyBuilder = BodyBuilder.Compile(rowBody)
         };
 
         return builder;
@@ -58,6 +56,6 @@ public class LoopBuilder : ITemplateBuilder
     public ParamValue? Array { get; set; }
     public string ItemName { get; set; } = string.Empty;
     public string RowContent { get; set; } = string.Empty;
-    public required TemplateBuilder BodyBuilder { get; set; }
+    public required BodyBuilder BodyBuilder { get; set; }
     public BuildType Type { get; } = BuildType.Loop;
 }

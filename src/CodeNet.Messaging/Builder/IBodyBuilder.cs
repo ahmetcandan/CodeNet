@@ -2,7 +2,7 @@
 
 namespace CodeNet.Messaging.Builder;
 
-public interface ITemplateBuilder
+public interface IBodyBuilder
 {
     StringBuilder Build(object? data);
     int Index { get; set; }

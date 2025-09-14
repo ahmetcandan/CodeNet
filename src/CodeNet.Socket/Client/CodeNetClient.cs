@@ -26,7 +26,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public bool Working { get; private set; } = false;
     public bool Connected { get; private set; } = false;
-    public ulong ClientId { get { return _clientId ?? 0; } private set { _clientId = value; } }
+    public ulong ClientId { get => _clientId ?? 0; private set => _clientId = value; }
     public bool IsServerSide { get { return _clientId is not null; } }
 
     /// <summary>
@@ -34,14 +34,8 @@ public abstract class CodeNetClient : ICodeNetClient
     /// </summary>
     public int ConnectionTimeout
     {
-        get
-        {
-            return _connectionTimeout;
-        }
-        set
-        {
-            _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
-        }
+        get => _connectionTimeout; 
+        set => _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
     }
 
     public event NewMessageReceived? NewMessgeReceived;
@@ -50,10 +44,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public abstract string ApplicationKey { get; }
 
-    public CodeNetClient()
-    {
-        ClientId = 0;
-    }
+    public CodeNetClient() => ClientId = 0;
 
     public CodeNetClient(string hostName, int port)
     {
@@ -119,12 +110,9 @@ public abstract class CodeNetClient : ICodeNetClient
         }
     }
 
-    private static TcpClient NewTcpClient(string? hostname, int? port)
-    {
-        return string.IsNullOrEmpty(hostname)
+    private static TcpClient NewTcpClient(string? hostname, int? port) => string.IsNullOrEmpty(hostname)
             ? throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.")
             : port is null or 0 ? throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).") : new();
-    }
 
     private void Start()
     {
@@ -231,10 +219,7 @@ public abstract class CodeNetClient : ICodeNetClient
         ReceivedMessage(message);
     }
 
-    protected internal virtual void ReceivedMessage(Message message)
-    {
-        NewMessgeReceived?.Invoke(new(message));
-    }
+    protected internal virtual void ReceivedMessage(Message message) => NewMessgeReceived?.Invoke(new(message));
 
     public bool SendMessage(Message message)
     {
@@ -245,8 +230,5 @@ public abstract class CodeNetClient : ICodeNetClient
         return true;
     }
 
-    private bool Validation()
-    {
-        return SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
-    }
+    private bool Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
 }

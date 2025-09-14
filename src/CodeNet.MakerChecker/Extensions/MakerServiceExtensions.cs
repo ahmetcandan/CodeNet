@@ -14,10 +14,7 @@ public static class MakerServiceExtensions
     /// <param name="services"></param>
     /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker(this IServiceCollection services, string connectionString)
-    {
-        return services.AddMakerChecker<MakerCheckerDbContext>(connectionString);
-    }
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, string connectionString) => services.AddMakerChecker<MakerCheckerDbContext>(connectionString);
 
     /// <summary>
     /// Add Maker Checker
@@ -27,10 +24,8 @@ public static class MakerServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, string connectionString)
-        where TDbContext : MakerCheckerDbContext
-    {
-        return services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
-    }
+        where TDbContext : MakerCheckerDbContext 
+        => services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
 
     /// <summary>
     /// Add Maker Checker
@@ -38,10 +33,8 @@ public static class MakerServiceExtensions
     /// <param name="services"></param>
     /// <param name="dbOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions)
-    {
-        return services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
-    }
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions) 
+        => services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
 
     /// <summary>
     /// Add Maker Checker

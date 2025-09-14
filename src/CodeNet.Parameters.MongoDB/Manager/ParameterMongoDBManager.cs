@@ -186,13 +186,9 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
     };
     #endregion
 
-    private Task RemoveCacheAsync(string groupCode, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{groupCode}", cancellationToken) ?? Task.CompletedTask;
-    }
+    private Task RemoveCacheAsync(string groupCode, CancellationToken cancellationToken) 
+        => _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{groupCode}", cancellationToken) ?? Task.CompletedTask;
 
-    private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
-    }
+    private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken) 
+        => _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
 }

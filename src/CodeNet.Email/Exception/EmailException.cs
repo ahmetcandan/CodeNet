@@ -5,11 +5,7 @@ namespace CodeNet.Email.Exception;
 
 public class EmailException : UserLevelException
 {
-    public EmailException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message)
-    {
-    }
+    public EmailException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message) { }
 
-    public EmailException(string code, string message) : base(code, message)
-    {
-    }
+    public EmailException(string code, string message) : base(code, message) { }
 }

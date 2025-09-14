@@ -18,10 +18,8 @@ public static class HealthCheckRabbitMqServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddRabbitMqHealthCheck(services, configuration.Get<HealthCheckRabitMQSettings>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
-    }
+    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+        => builder.AddRabbitMqHealthCheck(services, configuration.Get<HealthCheckRabitMQSettings>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
     /// Add RabbitMQ Health Check
@@ -51,6 +49,6 @@ public static class HealthCheckRabbitMqServiceExtensions
             c.ExchangeType = options.ExchangeType;
             c.Exclusive = options.Exclusive;
         });
-        return builder.AddCheck<RabbitMqHealthCheck>(name, HealthStatus.Unhealthy, ["rabbit-mq", "queue"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<RabbitMqHealthCheck>(name, HealthStatus.Unhealthy, [_name, "queue"], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }

@@ -10,7 +10,7 @@ public class MapperConfigurationBuilder
     internal readonly Dictionary<Type, Func<int, Array>> _arrayConstructors = [];
     internal readonly Dictionary<Type, Func<object>> _listConstructors = [];
     internal readonly Dictionary<Type, Func<object>> _objectConstructor = [];
-    internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions.DEFAULT_MAX_DEPTH;
+    internal int MaxDepth { get; private set; } = MapperConfigurationBuilderExtensions._default_max_depth;
 
     public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action, bool reverse = false)
     where TSource : new()
@@ -38,11 +38,8 @@ public class MapperConfigurationBuilder
     }
 
     public MapperColumnBuilder<TSource, TDestination> CreateMap<TSource, TDestination>(Action<MapperColumnBuilder<TSource, TDestination>>? action = null)
-    where TSource : new()
-    where TDestination : new()
-    {
-        return CreateMap(action, false);
-    }
+        where TSource : new()
+        where TDestination : new() => CreateMap(action, false);
 
     private bool SetColumnProperties(MapType mapType, Dictionary<string, string> mapperColumns)
     {

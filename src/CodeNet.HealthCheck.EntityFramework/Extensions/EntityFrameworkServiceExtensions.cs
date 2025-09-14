@@ -16,10 +16,8 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddEntityFrameworkHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddEntityFrameworkHealthCheck<DbContext>(name, timeSpan);
-    }
+    public static IHealthChecksBuilder AddEntityFrameworkHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null) 
+        => builder.AddEntityFrameworkHealthCheck<DbContext>(name, timeSpan);
 
     /// <summary>
     /// Add EntityFramework Health Check
@@ -29,10 +27,8 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     public static IHealthChecksBuilder AddEntityFrameworkHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
-        where TDbContext : DbContext
-    {
-        return builder.AddCheck<EntityFrameworkHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["sql", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
-    }
+        where TDbContext : DbContext 
+        => builder.AddCheck<EntityFrameworkHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["sql", "database"], timeSpan ?? TimeSpan.FromSeconds(5));
 
     /// <summary>
     /// Add EntityFramework Health Check
@@ -43,10 +39,8 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddEntityFrameworkHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddEntityFrameworkHealthCheck(configuration.Get<DbContextOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
-    }
+    public static IHealthChecksBuilder AddEntityFrameworkHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+        => builder.AddEntityFrameworkHealthCheck(configuration.Get<DbContextOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
     /// Add EntityFramework Health Check

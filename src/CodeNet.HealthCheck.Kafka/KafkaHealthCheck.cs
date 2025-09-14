@@ -9,8 +9,7 @@ internal class KafkaHealthCheck(IOptions<HealthCheckKafkaSettings> config) : IHe
     {
         try
         {
-            var testConnection = new TestKafkaService(config);
-            return testConnection.CanConnection()
+            return new TestKafkaService(config).CanConnection()
                 ? Task.FromResult(HealthCheckResult.Healthy($"This is Kafka, standing as always. Have a good work ;) "))
                 : Task.FromResult(HealthCheckResult.Unhealthy($"Sorry, Kafka is down :("));
         }

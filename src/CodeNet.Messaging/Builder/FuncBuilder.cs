@@ -3,13 +3,11 @@ using System.Text;
 
 namespace CodeNet.Messaging.Builder;
 
-public class FuncBuilder : ITemplateBuilder
+public class FuncBuilder : IBodyBuilder
 {
     private FunctionExecuter? _functionExecuter;
 
-    private FuncBuilder()
-    {
-    }
+    private FuncBuilder() { }
 
     public static FuncBuilder Compile(string functionName, string content, int index)
     {

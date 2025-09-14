@@ -47,19 +47,15 @@ public class ElasticsearchRepository<TModel>(ElasticsearchDbContext dbContext) :
         return response.IsValidResponse ? response.Source : null;
     }
 
-    public virtual async Task<IEnumerable<TModel>> GetListAsync(Expression<Func<TModel, bool>> predicate, CancellationToken cancellationToken)
-    {
-        var result = await _elasticsearchClient.SearchAsync<TModel>(s =>
+    public virtual async Task<IEnumerable<TModel>> GetListAsync(Expression<Func<TModel, bool>> predicate, CancellationToken cancellationToken) 
+        => (await _elasticsearchClient.SearchAsync<TModel>(s =>
             s.Query(q =>
                 q.Bool(b =>
                     b.Filter(f =>
                         f.Script(script =>
                             script.Script(_s =>
                                 _s.Source("params.predicate(doc)")
-                                    .Params(p => p.Add("predicate", predicate))))))), cancellationToken);
-
-        return result.Documents;
-    }
+                                    .Params(p => p.Add("predicate", predicate))))))), cancellationToken)).Documents;
 
     /// <summary>
     /// Update Data

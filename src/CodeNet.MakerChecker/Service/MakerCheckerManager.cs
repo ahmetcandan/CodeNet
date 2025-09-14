@@ -29,9 +29,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
     public Guid InsertFlow<TMakerCheckerEntity>(FlowInserModel flow)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        return InsertFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
-    }
+        => InsertFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
 
     public async Task<Guid> InsertFlowAsync(FlowInserModel flow, string entityName, CancellationToken cancellationToken = default)
     {
@@ -50,9 +48,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
     public Task<Guid> InsertFlowAsync<TMakerCheckerEntity>(FlowInserModel flow, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        return InsertFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
-    }
+        => InsertFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
 
     public FlowUpdateModel UpdateFlow(FlowUpdateModel flow, string entityName)
     {
@@ -68,9 +64,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
     public FlowUpdateModel UpdateFlow<TMakerCheckerEntity>(FlowUpdateModel flow)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        return UpdateFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
-    }
+        => UpdateFlow(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name);
 
     public async Task<FlowUpdateModel> UpdateFlowAsync(FlowUpdateModel flow, string entityName, CancellationToken cancellationToken = default)
     {
@@ -86,9 +80,7 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
 
     public Task<FlowUpdateModel> UpdateFlowAsync<TMakerCheckerEntity>(FlowUpdateModel flow, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
-    {
-        return UpdateFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
-    }
+        => UpdateFlowAsync(flow, typeof(TMakerCheckerEntity).GetCustomAttribute<EntityNameAttribute>()?.Name ?? typeof(TMakerCheckerEntity).Name, cancellationToken);
 
     public FlowUpdateModel DeleteFlow(Guid flowId)
     {
@@ -120,15 +112,9 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
         };
     }
 
-    public List<MakerCheckerPending> GetPendingList()
-    {
-        return _makerCheckerFlowRepository.GetPendingList();
-    }
+    public List<MakerCheckerPending> GetPendingList() => _makerCheckerFlowRepository.GetPendingList();
 
-    public Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default)
-    {
-        return _makerCheckerFlowRepository.GetPendingListAsync(cancellationToken);
-    }
+    public Task<List<MakerCheckerPending>> GetPendingListAsync(CancellationToken cancellationToken = default) => _makerCheckerFlowRepository.GetPendingListAsync(cancellationToken);
 
     public async Task<TMakerCheckerEntity> ApproveAsync<TMakerCheckerEntity>(Guid referenceId, string description, CancellationToken cancellationToken = default)
         where TMakerCheckerEntity : class, IMakerCheckerEntity
@@ -348,10 +334,8 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
         var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var baseProperties = typeof(MakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var property in properties.Where(c => !baseProperties.Select(d => d.Name).Contains(c.Name)))
-        {
             if (property.GetCustomAttribute<PrimaryKeyAttribute>() is null)
                 property.SetValue(source, property.GetValue(destination));
-        }
 
         return source;
     }

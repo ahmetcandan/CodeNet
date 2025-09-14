@@ -16,10 +16,8 @@ public static class StackExchangeServiceExtensions
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddStackExcahangeSubscribe<TSubscribeHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<StackExchangeSubscribeService>
-    {
-        return services.AddStackExcahangeSubscribe<StackExchangeSubscribeService, TSubscribeHandler>(stackExcahangeSection);
-    }
+        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<StackExchangeSubscribeService> 
+        => services.AddStackExcahangeSubscribe<StackExchangeSubscribeService, TSubscribeHandler>(stackExcahangeSection);
 
     /// <summary>
     /// Add StackExchange Subscriber
@@ -72,10 +70,8 @@ public static class StackExchangeServiceExtensions
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangePublisher(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-    {
-        return services.AddStackExcahangePublisher<StackExchangePublisherService>(stackExcahangeSection);
-    }
+    public static IServiceCollection AddStackExcahangePublisher(this IServiceCollection services, IConfigurationSection stackExcahangeSection) 
+        => services.AddStackExcahangePublisher<StackExchangePublisherService>(stackExcahangeSection);
 
     /// <summary>
     /// Add StackExchange Publisher
@@ -125,10 +121,7 @@ public static class StackExchangeServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseStackExcahangeSubscriber(this WebApplication app)
-    {
-        return app.UseStackExcahangeSubscriber<StackExchangeSubscribeService>();
-    }
+    public static WebApplication UseStackExcahangeSubscriber(this WebApplication app) => app.UseStackExcahangeSubscriber<StackExchangeSubscribeService>();
 
     /// <summary>
     /// Use StackExchange Subscriber

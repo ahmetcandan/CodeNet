@@ -80,15 +80,9 @@ public class CodeNetOptionsBuilder(IServiceCollection services)
         return this;
     }
 
-    private static RsaSecurityKey GetAsymmetricKey(AuthenticationSettingsWithAsymmetricKey authenticationSettings)
-    {
-        return new RsaSecurityKey(AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath));
-    }
+    private static RsaSecurityKey GetAsymmetricKey(AuthenticationSettingsWithAsymmetricKey authenticationSettings) => new(AsymmetricKeyEncryption.CreateRSA(authenticationSettings.PublicKeyPath));
 
-    private static SymmetricSecurityKey GetSymmetricKey(AuthenticationSettingsWithSymmetricKey authenticationSettings)
-    {
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey));
-    }
+    private static SymmetricSecurityKey GetSymmetricKey(AuthenticationSettingsWithSymmetricKey authenticationSettings) => new(Encoding.UTF8.GetBytes(authenticationSettings.IssuerSigningKey));
 
     /// <summary>
     /// Add CodeNetContext

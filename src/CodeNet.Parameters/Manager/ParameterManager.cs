@@ -201,16 +201,14 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
         return await _parameterGroupRepository.GetParameterGroupWithDefaultParam(parameterGroupCode, cancellationToken);
     }
 
-    public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
-    {
-        return [.. (await _parameterGroupRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken)).List?.Select(c => new ParameterGroupResult
+    public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default) 
+        => [.. (await _parameterGroupRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken)).List?.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
             ApprovalRequired = c.ApprovalRequired,
             Description = c.Description,
             Id = c.Id
         }) ?? []];
-    }
     #endregion
 
     private Task RemoveCacheAsync(ParameterGroup parameterGroup, CancellationToken cancellationToken)
