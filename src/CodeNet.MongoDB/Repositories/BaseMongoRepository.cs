@@ -91,7 +91,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken) 
+    public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
         => await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToListAsync(cancellationToken: cancellationToken);
 
     /// <summary>

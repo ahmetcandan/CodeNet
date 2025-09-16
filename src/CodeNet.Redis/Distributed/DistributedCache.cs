@@ -43,7 +43,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="key"></param>
     /// <param name="time"></param>
     /// <returns></returns>
-    public Task SetValueAsync(TModel model, string key, int time) 
+    public Task SetValueAsync(TModel model, string key, int time)
         => SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, CancellationToken.None);
 
     /// <summary>
@@ -54,7 +54,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="time">Minutes</param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public Task SetValueAsync(TModel model, string key, int time, CancellationToken cancellationToken) 
+    public Task SetValueAsync(TModel model, string key, int time, CancellationToken cancellationToken)
         => SetValueAsync(model, key, new DistributedCacheEntryOptions { AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(time) }, cancellationToken);
 
     /// <summary>
@@ -65,7 +65,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="distributedCacheEntryOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions) 
+    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions)
         => await SetValueAsync(model, key, distributedCacheEntryOptions, CancellationToken.None);
 
     /// <summary>
@@ -76,7 +76,7 @@ internal class DistributedCache<TModel>(IDistributedCache distributedCache) : ID
     /// <param name="distributedCacheEntryOptions"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken) 
+    public async Task SetValueAsync(TModel model, string key, DistributedCacheEntryOptions distributedCacheEntryOptions, CancellationToken cancellationToken)
         => await distributedCache.SetStringAsync(key, JsonConvert.SerializeObject(model), distributedCacheEntryOptions, cancellationToken);
 
     /// <summary>

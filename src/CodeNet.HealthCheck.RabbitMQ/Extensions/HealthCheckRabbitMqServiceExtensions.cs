@@ -18,7 +18,7 @@ public static class HealthCheckRabbitMqServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddRabbitMqHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddRabbitMqHealthCheck(services, configuration.Get<HealthCheckRabitMQSettings>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>

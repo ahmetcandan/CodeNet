@@ -47,7 +47,7 @@ public class ElasticsearchRepository<TModel>(ElasticsearchDbContext dbContext) :
         return response.IsValidResponse ? response.Source : null;
     }
 
-    public virtual async Task<IEnumerable<TModel>> GetListAsync(Expression<Func<TModel, bool>> predicate, CancellationToken cancellationToken) 
+    public virtual async Task<IEnumerable<TModel>> GetListAsync(Expression<Func<TModel, bool>> predicate, CancellationToken cancellationToken)
         => (await _elasticsearchClient.SearchAsync<TModel>(s =>
             s.Query(q =>
                 q.Bool(b =>

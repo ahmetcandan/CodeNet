@@ -34,7 +34,7 @@ public abstract class CodeNetClient : ICodeNetClient
     /// </summary>
     public int ConnectionTimeout
     {
-        get => _connectionTimeout; 
+        get => _connectionTimeout;
         set => _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
     }
 

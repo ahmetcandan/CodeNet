@@ -10,10 +10,9 @@ internal class EventBusHealthCheck(IOptions<EventBusHealthCheckOptions> options)
     {
         try
         {
-            if (await new CodeNetEventBusCanConnection(options.Value.HostName, options.Value.Port).CanConnectionAsync())
-                return HealthCheckResult.Healthy("This is CodeNet.EventBus, standing as always. Have a good work ;) ");
-            else
-                return HealthCheckResult.Unhealthy("Sorry, CodeNet.EventBus is down :(");
+            return await new CodeNetEventBusCanConnection(options.Value.HostName, options.Value.Port).CanConnectionAsync()
+                ? HealthCheckResult.Healthy("This is CodeNet.EventBus, standing as always. Have a good work ;) ")
+                : HealthCheckResult.Unhealthy("Sorry, CodeNet.EventBus is down :(");
         }
         catch
         {

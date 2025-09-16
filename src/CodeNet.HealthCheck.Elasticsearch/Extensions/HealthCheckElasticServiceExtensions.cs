@@ -17,7 +17,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddElasticsearchHealthCheck<ElasticsearchDbContext>(name, timeSpan);
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     public static IHealthChecksBuilder AddElasticsearchHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
-        where TDbContext : ElasticsearchDbContext 
+        where TDbContext : ElasticsearchDbContext
         => builder.AddCheck<ElasticsearchHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["elasticsearch"], timeSpan ?? TimeSpan.FromSeconds(5));
 
     /// <summary>
@@ -40,7 +40,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddElasticsearchHealthCheck(configuration.Get<ElasticsearchOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>

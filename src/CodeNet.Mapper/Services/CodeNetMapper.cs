@@ -11,7 +11,7 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
 
     public TDestination? MapTo<TSource, TDestination>(TSource source)
         where TSource : new()
-        where TDestination : new() 
+        where TDestination : new()
         => source is null ? default : (TDestination?)MapToObject(_config, typeof(TSource), typeof(TDestination), source, _cache, 0);
 
     private static object? MapToObject(MapperConfiguration _config, Type sourceType, Type destinationType, object? source, Dictionary<MapType, Dictionary<object, object>> memoryCache, int depth = default)

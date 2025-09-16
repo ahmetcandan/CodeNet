@@ -16,7 +16,7 @@ public static class StackExchangeServiceExtensions
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddStackExcahangeSubscribe<TSubscribeHandler>(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
-        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<StackExchangeSubscribeService> 
+        where TSubscribeHandler : class, IStackExchangeSubscribeHandler<StackExchangeSubscribeService>
         => services.AddStackExcahangeSubscribe<StackExchangeSubscribeService, TSubscribeHandler>(stackExcahangeSection);
 
     /// <summary>
@@ -70,7 +70,7 @@ public static class StackExchangeServiceExtensions
     /// <param name="services"></param>
     /// <param name="stackExcahangeSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddStackExcahangePublisher(this IServiceCollection services, IConfigurationSection stackExcahangeSection) 
+    public static IServiceCollection AddStackExcahangePublisher(this IServiceCollection services, IConfigurationSection stackExcahangeSection)
         => services.AddStackExcahangePublisher<StackExchangePublisherService>(stackExcahangeSection);
 
     /// <summary>

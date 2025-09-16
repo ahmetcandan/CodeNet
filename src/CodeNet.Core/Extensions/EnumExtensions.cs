@@ -5,7 +5,7 @@ namespace CodeNet.Core.Extensions;
 
 public static class EnumExtensions
 {
-    public static string? GetDisplayName(this Enum enumValue) 
+    public static string? GetDisplayName(this Enum enumValue)
         => enumValue
             .GetType()
             .GetMember(enumValue.ToString())[0]

@@ -62,7 +62,7 @@ public static class RabbitMQOutboxServiceExtension
         });
     }
 
-    private static bool IsRabbitMQProducerServiceType(Type type) 
+    private static bool IsRabbitMQProducerServiceType(Type type)
         => type.Equals(typeof(RabbitMQProducerService)) || (type.BaseType is not null && !type.BaseType.Equals(typeof(object)) && IsRabbitMQProducerServiceType(type.BaseType));
 
     /// <summary>

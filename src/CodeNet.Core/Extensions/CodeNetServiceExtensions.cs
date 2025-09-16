@@ -27,7 +27,7 @@ public static class CodeNetServiceExtensions
     /// <param name="configuration"></param>
     /// <param name="sectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName, Action<CodeNetOptionsBuilder>? action = null) 
+    public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName, Action<CodeNetOptionsBuilder>? action = null)
         => services.AddCodeNet(configuration.GetSection(sectionName), action);
 
     /// <summary>

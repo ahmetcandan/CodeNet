@@ -10,10 +10,9 @@ internal class TransportHealthCheck(IOptions<TransportHealthCheckOptions> option
     {
         try
         {
-            if (await new DataTransferClient(options.Value.HostName, options.Value.Port, "healthcheck").CanConnectionAsync())
-                return HealthCheckResult.Healthy("This is CodeNet.Transport, standing as always. Have a good work ;) ");
-            else
-                return HealthCheckResult.Unhealthy("Sorry, CodeNet.Transport is down :(");
+            return await new DataTransferClient(options.Value.HostName, options.Value.Port, "healthcheck").CanConnectionAsync()
+                ? HealthCheckResult.Healthy("This is CodeNet.Transport, standing as always. Have a good work ;) ")
+                : HealthCheckResult.Unhealthy("Sorry, CodeNet.Transport is down :(");
         }
         catch
         {

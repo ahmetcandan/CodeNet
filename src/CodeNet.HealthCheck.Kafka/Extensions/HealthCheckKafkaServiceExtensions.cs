@@ -15,7 +15,7 @@ public static class HealthCheckKafkaServiceExtensions
     /// <param name="sectionName"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddKafkaHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddKafkaHealthCheck(this IHealthChecksBuilder builder, IServiceCollection services, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddKafkaHealthCheck(services, configuration.Get<HealthCheckKafkaSettings>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>

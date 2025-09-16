@@ -17,7 +17,7 @@ public static class KafkaServiceExtensions
     /// <param name="kafkaSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddKafkaConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection kafkaSection)
-        where TConsumerHandler : class, IKafkaConsumerHandler<KafkaConsumerService> 
+        where TConsumerHandler : class, IKafkaConsumerHandler<KafkaConsumerService>
         => services.AddKafkaConsumer<KafkaConsumerService, TConsumerHandler>(kafkaSection);
 
     /// <summary>
@@ -166,7 +166,7 @@ public static class KafkaServiceExtensions
     /// <param name="app"></param>
     /// <returns></returns>
     public static WebApplication UseKafkaConsumer<TConsumerService, TValue>(this WebApplication app)
-        where TConsumerService : KafkaConsumerService<TValue> 
+        where TConsumerService : KafkaConsumerService<TValue>
         => app.UseKafkaConsumer<TConsumerService, Null, TValue>();
 
     /// <summary>

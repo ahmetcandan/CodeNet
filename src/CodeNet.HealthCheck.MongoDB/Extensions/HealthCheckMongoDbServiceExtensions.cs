@@ -17,7 +17,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="builder"></param>
     /// <param name="timeSpan"></param>
     /// <returns></returns>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddMongoDbHealthCheck<MongoDBContext>(name, timeSpan);
 
     /// <summary>
@@ -28,7 +28,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     public static IHealthChecksBuilder AddMongoDbHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
-        where TDbContext : MongoDBContext 
+        where TDbContext : MongoDBContext
         => builder.AddCheck<MongoDbHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, [_name, "database"], timeSpan ?? TimeSpan.FromSeconds(5));
 
     /// <summary>
@@ -39,7 +39,7 @@ public static class HealthCheckMongoDbServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
-    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null) 
+    public static IHealthChecksBuilder AddMongoDbHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
         => builder.AddMongoDbHealthCheck(configuration.Get<MongoDbOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>

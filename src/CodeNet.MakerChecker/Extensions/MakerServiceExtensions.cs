@@ -24,7 +24,7 @@ public static class MakerServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, string connectionString)
-        where TDbContext : MakerCheckerDbContext 
+        where TDbContext : MakerCheckerDbContext
         => services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
 
     /// <summary>
@@ -33,7 +33,7 @@ public static class MakerServiceExtensions
     /// <param name="services"></param>
     /// <param name="dbOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions) 
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions)
         => services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
 
     /// <summary>

@@ -13,7 +13,7 @@ internal class ParameterGroupRepository(DbContext dbContext, ICodeNetContext ide
 
     public ValueTask<ParameterGroup?> GetParameterGroupAsync(int groupId, CancellationToken cancellationToken = default) => _entities.FindAsync([groupId], cancellationToken);
 
-    public async Task<bool> GetApprovalRequiredAsync(int groupId, CancellationToken cancellationToken = default) 
+    public async Task<bool> GetApprovalRequiredAsync(int groupId, CancellationToken cancellationToken = default)
         => (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
 
     public bool GetApprovalRequired(int groupId) => _entities.Find(groupId)?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
@@ -87,7 +87,7 @@ internal class ParameterGroupRepository(DbContext dbContext, ICodeNetContext ide
             : null;
     }
 
-    private IQueryable<ParameterGroupParameter> GetParameterGroupParameter(bool hasIsDefault = false) 
+    private IQueryable<ParameterGroupParameter> GetParameterGroupParameter(bool hasIsDefault = false)
         => (from pg in _entities
             join p in _parameters.Where(c => !hasIsDefault || c.IsDefault).OrderBy(c => c.Order) on pg.Id equals p.GroupId into pi
             from p in pi.DefaultIfEmpty()

@@ -8,7 +8,7 @@ namespace CodeNet.BackgroundJob.Manager;
 
 internal static class ApiServices
 {
-    public static RouteHandlerBuilder GetServices(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder GetServices(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapGet($"{path}/getServices", async (int page, int count, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
@@ -17,7 +17,7 @@ internal static class ApiServices
             return await serviceRepository.GetPagingListAsync(c => c.IsActive, c => c.Id, true, page, count, cancellationToken);
         });
 
-    public static RouteHandlerBuilder GetServiceDetails(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder GetServiceDetails(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapGet($"{path}/getServiceDetails", async (int jobId, DetailStatus? status, int page, int count, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
@@ -26,7 +26,7 @@ internal static class ApiServices
             return await jobWorkingDetailRepository.GetPagingListAsync(c => c.JobId == jobId && (status == null || c.Status == status), c => c.StartDate, false, page, count);
         });
 
-    public static RouteHandlerBuilder DeleteDetails(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder DeleteDetails(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapDelete($"{path}/deleteDetails", async ([FromBody] int[] detailIds, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
@@ -37,7 +37,7 @@ internal static class ApiServices
             return await dbContext.SaveChangesAsync(cancellationToken);
         });
 
-    public static RouteHandlerBuilder ChangeServiceStatus(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder ChangeServiceStatus(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapPut($"{path}/changeStatus", async (int jobId, [FromBody] JobStatus status, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
@@ -73,7 +73,7 @@ internal static class ApiServices
             }
         });
 
-    public static RouteHandlerBuilder GetJobStatus(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder GetJobStatus(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapGet($"{path}/getJobStatus", async (int jobId, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();
@@ -94,7 +94,7 @@ internal static class ApiServices
             };
         });
 
-    public static RouteHandlerBuilder JobExecute(this WebApplication app, IServiceProvider serviceProvider, string path) => 
+    public static RouteHandlerBuilder JobExecute(this WebApplication app, IServiceProvider serviceProvider, string path) =>
         app.MapPost($"{path}/jobExecute", async (int jobId, CancellationToken cancellationToken) =>
         {
             var serviceScope = serviceProvider.CreateScope();

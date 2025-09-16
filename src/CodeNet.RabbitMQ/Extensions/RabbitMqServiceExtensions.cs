@@ -16,7 +16,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
-        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService> 
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
         => services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>(rabbitSection);
 
     /// <summary>
@@ -43,7 +43,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions config)
-        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService> 
+        where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
         => services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>((RabbitMQConsumerOptions<RabbitMQConsumerService>)config);
 
     /// <summary>
@@ -116,7 +116,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="services"></param>
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, IConfigurationSection rabbitSection) 
+    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, IConfigurationSection rabbitSection)
         => services.AddRabbitMQProducer<RabbitMQProducerService>(rabbitSection);
 
     /// <summary>
@@ -139,7 +139,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="services"></param>
     /// <param name="config"></param>
     /// <returns></returns>
-    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, RabbitMQProducerOptions config) 
+    public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, RabbitMQProducerOptions config)
         => services.AddRabbitMQProducer((RabbitMQProducerOptions<RabbitMQProducerService>)config);
 
     /// <summary>
