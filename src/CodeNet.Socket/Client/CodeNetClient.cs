@@ -226,7 +226,7 @@ public abstract class CodeNetClient : ICodeNetClient
         if (!Working || !(_writer?.BaseStream.CanWrite ?? false))
             return false;
 
-        _writer?.Write(message.Seriliaze());
+        _writer?.Write(Message.Seriliaze(message));
         return true;
     }
 

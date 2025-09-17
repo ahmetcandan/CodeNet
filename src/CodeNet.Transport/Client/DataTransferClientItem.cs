@@ -114,7 +114,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (string.IsNullOrEmpty(_privateKey))
                     throw new InvalidOperationException("Private key is not set.");
 
-                var handshakeMessage = SerializerHelper.DeserializeObject<HandshakeMessage>(message.Data);
+                var handshakeMessage = HandshakeMessage.DeserializeObject(message.Data);
                 if (handshakeMessage is null)
                     return;
 
@@ -166,27 +166,25 @@ internal partial class DataTransferClientItem : CodeNetClient
             data = CryptographyService.AESEncrypt(data, client.AESKey!.Value);
         }
 
-        return SendMessage(new((byte)Models.MessageType.Message, SerializerHelper.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
+        return SendMessage(new((byte)Models.MessageType.Message, SendDataMessage.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
     }
 
     private bool Handshake(ClientItem client)
     {
         if (string.IsNullOrEmpty(client.RSAPublicKey))
             throw new InvalidOperationException("Client public key is not set.");
-        else
+
+        client.AESKey = CryptographyService.GenerateAESKey();
+        return SendMessage(new((byte)Models.MessageType.ShareAESKey, HandshakeMessage.SerializeObject(new HandshakeMessage
         {
-            client.AESKey = CryptographyService.GenerateAESKey();
-            return SendMessage(new((byte)Models.MessageType.ShareAESKey, SerializerHelper.SerializeObject(new HandshakeMessage
-            {
-                ClientId = client.Id,
-                EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
-            })));
-        }
+            ClientId = client.Id,
+            EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
+        })));
     }
 
     private void DataReceivedHandler(MessageReceivingArguments e)
     {
-        var message = SerializerHelper.DeserializeObject<SendDataMessage>(e.Message.Data);
+        var message = SendDataMessage.DeserializeObject(e.Message.Data);
         if (message is null)
             return;
 
