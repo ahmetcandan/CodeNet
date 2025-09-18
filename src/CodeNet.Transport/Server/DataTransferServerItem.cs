@@ -29,7 +29,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (message.Data is null)
                     return;
 
-                var receiveMessage = SerializerHelper.DeserializeObject<SendDataMessage>(message.Data);
+                var receiveMessage = SendDataMessage.DeserializeObject(message.Data);
                 if (receiveMessage is null)
                     return;
 
@@ -37,7 +37,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (receiveClient is null)
                     return;
 
-                receiveClient.SendMessage(new((byte)Models.MessageType.Message, SerializerHelper.SerializeObject(new SendDataMessage
+                receiveClient.SendMessage(new((byte)Models.MessageType.Message, SendDataMessage.SerializeObject(new SendDataMessage
                 {
                     ClientId = client.ClientId,
                     Data = receiveMessage.Data,
@@ -47,7 +47,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (message.Data is null)
                     return;
 
-                var handshakeMessage = SerializerHelper.DeserializeObject<HandshakeMessage>(message.Data);
+                var handshakeMessage = HandshakeMessage.DeserializeObject(message.Data);
                 if (handshakeMessage is null)
                     return;
 
@@ -55,7 +55,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
                 if (receiveClient is null)
                     return;
 
-                receiveClient.SendMessage(new((byte)Models.MessageType.ShareAESKey, SerializerHelper.SerializeObject(new HandshakeMessage
+                receiveClient.SendMessage(new((byte)Models.MessageType.ShareAESKey, HandshakeMessage.SerializeObject(new HandshakeMessage
                 {
                     ClientId = client.ClientId,
                     EncryptedAESKey = handshakeMessage.EncryptedAESKey
@@ -66,7 +66,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
 
     protected override void ClientConnecting(DataTransferClientItem client)
     {
-        client.SendMessage(new((byte)Models.MessageType.ServerConfirmation, SerializerHelper.SerializeObject(new ServerConfirmationMessage
+        client.SendMessage(new((byte)Models.MessageType.ServerConfirmation, ServerConfirmationMessage.SerializeObject(new ServerConfirmationMessage
         {
             UseSecurity = SecurityConnection,
             Clients = SendToClientList(client)

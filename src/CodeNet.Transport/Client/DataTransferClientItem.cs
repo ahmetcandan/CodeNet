@@ -81,12 +81,12 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (IsServerSide)
                     return;
 
-                var serverConfirmationMessage = SerializerHelper.DeserializeObject<ServerConfirmationMessage>(message.Data);
+                var serverConfirmationMessage = ServerConfirmationMessage.DeserializeObject(message.Data);
                 if (serverConfirmationMessage?.UseSecurity is true)
                     GenerateRSAKeys();
 
                 _clients = serverConfirmationMessage?.Clients?.ToList() ?? [];
-                SendMessage(new((byte)Models.MessageType.ClientConfirmation, SerializerHelper.SerializeObject(new ClientConfirmationMessage
+                SendMessage(new((byte)Models.MessageType.ClientConfirmation, ClientConfirmationMessage.SerializeObject(new ClientConfirmationMessage
                 {
                     ClientName = ClientName,
                     PublicKey = PublicKey
@@ -97,7 +97,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (!IsServerSide)
                     return;
 
-                var clientConfirmationMessage = SerializerHelper.DeserializeObject<ClientConfirmationMessage>(message.Data);
+                var clientConfirmationMessage = ClientConfirmationMessage.DeserializeObject(message.Data);
                 ClientName = clientConfirmationMessage?.ClientName ?? string.Empty;
                 ClientConnectFinish?.Invoke(new(this));
                 PublicKey = clientConfirmationMessage?.PublicKey;
@@ -178,7 +178,7 @@ internal partial class DataTransferClientItem : CodeNetClient
         return SendMessage(new((byte)Models.MessageType.ShareAESKey, HandshakeMessage.SerializeObject(new HandshakeMessage
         {
             ClientId = client.Id,
-            EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
+            EncryptedAESKey = CryptographyService.RSAEncrypt(AesKey.ToData(client.AESKey.Value), client.RSAPublicKey)
         })));
     }
 
