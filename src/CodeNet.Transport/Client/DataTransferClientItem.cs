@@ -3,7 +3,6 @@ using CodeNet.Socket.Client;
 using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
 using CodeNet.Transport.EventDefinitions;
-using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
 using System.Text.RegularExpressions;
 
@@ -13,7 +12,7 @@ internal partial class DataTransferClientItem : CodeNetClient
 {
     private string? _privateKey;
     private bool _connected = false;
-    private IList<ClientItem>? _clients = null;
+    private IEnumerable<ClientItem>? _clients = null;
 
     public bool SecurityConnection { get; private set; } = false;
 
@@ -85,7 +84,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (serverConfirmationMessage?.UseSecurity is true)
                     GenerateRSAKeys();
 
-                _clients = serverConfirmationMessage?.Clients?.ToList() ?? [];
+                _clients = serverConfirmationMessage?.Clients ?? [];
                 SendMessage(new((byte)Models.MessageType.ClientConfirmation, ClientConfirmationMessage.SerializeObject(new ClientConfirmationMessage
                 {
                     ClientName = ClientName,
@@ -126,7 +125,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (IsServerSide)
                     return;
 
-                _clients = SerializerHelper.DeserializeObject<IList<ClientItem>>(message.Data);
+                _clients = ClientItemCollection.DeserializeObject(message.Data).Clients;
                 return;
             case (byte)Models.MessageType.None:
             default:

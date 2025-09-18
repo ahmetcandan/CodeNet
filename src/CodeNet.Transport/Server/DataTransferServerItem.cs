@@ -2,7 +2,6 @@
 using CodeNet.Socket.Models;
 using CodeNet.Socket.Server;
 using CodeNet.Transport.Client;
-using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
 
 namespace CodeNet.Transport.Server;
@@ -22,7 +21,7 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
         {
             case (byte)Models.MessageType.ClientConfirmation:
                 foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-                    _client.SendMessage(new((byte)Models.MessageType.ClienList, SerializerHelper.SerializeObject(SendToClientList(_client))));
+                    _client.SendMessage(new((byte)Models.MessageType.ClienList, ClientItemCollection.SerializeObject(SendToClientCollection(_client))));
                 ClientConnectFinish?.Invoke(new(client));
                 return;
             case (byte)Models.MessageType.Message:
@@ -69,17 +68,17 @@ internal class DataTransferServerItem(int port, bool withSecurity = false) : Cod
         client.SendMessage(new((byte)Models.MessageType.ServerConfirmation, ServerConfirmationMessage.SerializeObject(new ServerConfirmationMessage
         {
             UseSecurity = SecurityConnection,
-            Clients = SendToClientList(client)
+            Clients = SendToClientCollection(client).Clients
         })));
 
         foreach (var _client in Clients.Where(c => c.ClientId != client.ClientId))
-            _client.SendMessage(new((byte)Models.MessageType.ClienList, SerializerHelper.SerializeObject(SendToClientList(_client))));
+            _client.SendMessage(new((byte)Models.MessageType.ClienList, ClientItemCollection.SerializeObject(SendToClientCollection(_client))));
     }
 
-    private IEnumerable<ClientItem> SendToClientList(DataTransferClientItem client) => Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
+    private ClientItemCollection SendToClientCollection(DataTransferClientItem client) => new(Clients.Where(c => c.ClientId != client.ClientId).Select(c => new ClientItem
     {
         Id = c.ClientId,
         Name = c.ClientName,
         RSAPublicKey = c.PublicKey
-    });
+    }));
 }
