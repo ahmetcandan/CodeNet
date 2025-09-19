@@ -1,4 +1,4 @@
-﻿using CodeNet.Elasticsearch;
+﻿using CodeNet.Elasticsearch.Repositories;
 using CodeNet.Elasticsearch.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;

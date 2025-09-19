@@ -1,4 +1,6 @@
-﻿using CodeNet.Redis.Settings;
+﻿using CodeNet.Redis.Distributed;
+using CodeNet.Redis.Middleware;
+using CodeNet.Redis.Settings;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Configuration;

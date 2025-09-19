@@ -1,9 +1,10 @@
 ﻿using CodeNet.Core.Context;
+using CodeNet.Parameters.DbContext;
 using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.Repositories;
 using CodeNet.Parameters.Settings;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

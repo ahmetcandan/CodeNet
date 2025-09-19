@@ -1,4 +1,6 @@
-﻿namespace CodeNet.MongoDB.Settings;
+﻿using CodeNet.MongoDB.Repositories;
+
+namespace CodeNet.MongoDB.Settings;
 
 public class MongoDbOptions
 {

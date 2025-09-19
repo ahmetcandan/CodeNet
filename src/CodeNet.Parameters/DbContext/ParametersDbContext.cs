@@ -1,8 +1,8 @@
-﻿using CodeNet.MakerChecker;
+﻿using CodeNet.MakerChecker.DbContext;
 using CodeNet.Parameters.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeNet.Parameters;
+namespace CodeNet.Parameters.DbContext;
 
 public class ParametersDbContext(DbContextOptions options) : MakerCheckerDbContext(options)
 {

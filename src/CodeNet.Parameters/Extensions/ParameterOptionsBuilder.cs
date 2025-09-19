@@ -1,4 +1,5 @@
 ﻿using CodeNet.MakerChecker.Extensions;
+using CodeNet.Parameters.DbContext;
 using CodeNet.Redis.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

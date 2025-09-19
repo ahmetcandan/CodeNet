@@ -1,5 +1,5 @@
-﻿using CodeNet.Core;
-using CodeNet.Core.Extensions;
+﻿using CodeNet.Core.Extensions;
+using CodeNet.Core.Middleware;
 using CodeNet.Core.Settings;
 using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Net.Http.Headers;
 using System.Reflection;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Middleware;
 
 internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache) : BaseMiddleware
 {

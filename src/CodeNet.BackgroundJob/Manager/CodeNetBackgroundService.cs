@@ -2,7 +2,7 @@
 using CodeNet.BackgroundJob.Settings;
 using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;

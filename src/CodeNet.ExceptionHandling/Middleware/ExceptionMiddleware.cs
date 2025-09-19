@@ -1,11 +1,11 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Middleware;
 using CodeNet.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace CodeNet.ExceptionHandling;
+namespace CodeNet.ExceptionHandling.Middleware;
 
 internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMiddleware
 {

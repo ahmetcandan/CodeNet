@@ -8,7 +8,7 @@ public class StackExchangePublisherService(ISerializer serializer, IOptions<Stac
 {
     public Task<long> PublishAsync(object data) => PublishAsync(serializer.Serialize(data));
 
-    public Task PublishAsync(object[] datas) => PublishAsync(datas.Select(data => serializer.Serialize(data)).ToArray());
+    public Task PublishAsync(object[] datas) => PublishAsync([.. datas.Select(data => serializer.Serialize(data))]);
 
     public async Task<long> PublishAsync(string message)
     {

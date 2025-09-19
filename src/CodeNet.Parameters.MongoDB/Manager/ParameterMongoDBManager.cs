@@ -1,12 +1,11 @@
 ﻿using CodeNet.Core.Context;
-using CodeNet.MongoDB;
 using CodeNet.MongoDB.Repositories;
 using CodeNet.Parameters.Manager;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.MongoDB.Exception;
 using CodeNet.Parameters.MongoDB.Models;
 using CodeNet.Parameters.Settings;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 

@@ -13,19 +13,18 @@ namespace CodeNet.Identity.Tests
     [TestFixture]
     public class IdentityTests
     {
-        private readonly string admin = "admin";
-        private readonly string adminEmail = "admin@test.net";
-        private readonly string adminPassword = "@dMin-123!";
-        private readonly string[] adminRoles = ["admin"];
-        private readonly string user = "user";
-        private readonly string userEmail = "user@test.net";
-        private readonly string userPassword = "Us€r-123!";
-        private readonly string[] userRoles = ["user"];
+        private const string _admin = "admin";
+        private const string _adminEmail = "admin@test.net";
+        private const string _adminPassword = "@dMin-123!";
+        private readonly string[] _adminRoles = ["admin"];
+        private const string _user = "user";
+        private const string _userEmail = "user@test.net";
+        private const string _userPassword = "Us€r-123!";
+        private readonly string[] _userRoles = ["user"];
 
         [SetUp]
         public void Setup()
         {
-
         }
 
         [Test]
@@ -38,7 +37,7 @@ namespace CodeNet.Identity.Tests
             new CodeNetOptionsBuilder(builder.Services).AddAuthentication(SecurityKeyType.AsymmetricKey, builder.Configuration.GetSection("Identity"));
             var _app = builder.Build();
             var roleManager = _app.Services.GetRequiredService<IIdentityRoleManager>();
-            foreach (var role in userRoles.Union(adminRoles))
+            foreach (var role in _userRoles.Union(_adminRoles))
             {
                 var result = await roleManager.CreateRole(new Models.CreateRoleModel
                 {
@@ -60,19 +59,19 @@ namespace CodeNet.Identity.Tests
             var userManager = _app.Services.GetRequiredService<IIdentityUserManager>();
             var adminResult = await userManager.CreateUser(new Models.RegisterUserModel
             {
-                Email = adminEmail,
-                Password = adminPassword,
-                Username = admin,
-                Roles = adminRoles
+                Email = _adminEmail,
+                Password = _adminPassword,
+                Username = _admin,
+                Roles = _adminRoles
             });
             Assert.That(adminResult, Is.Not.Null);
 
             var userResult = await userManager.CreateUser(new Models.RegisterUserModel
             {
-                Email = userEmail,
-                Password = userPassword,
-                Username = user,
-                Roles = userRoles
+                Email = _userEmail,
+                Password = _userPassword,
+                Username = _user,
+                Roles = _userRoles
             });
             Assert.That(userResult, Is.Not.Null);
         }
@@ -89,8 +88,8 @@ namespace CodeNet.Identity.Tests
             var tokenManager = _app.Services.GetRequiredService<IIdentityTokenManager>();
             var tokenResult = await tokenManager.GenerateToken(new Models.LoginModel
             {
-                Username = admin,
-                Password = adminPassword,
+                Username = _admin,
+                Password = _adminPassword,
             });
             Assert.Multiple(() =>
             {

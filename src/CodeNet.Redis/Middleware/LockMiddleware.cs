@@ -1,11 +1,11 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Middleware;
 using CodeNet.Redis.Attributes;
 using CodeNet.Redis.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using RedLockNet;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Middleware;
 
 internal sealed class LockMiddleware(RequestDelegate next) : BaseMiddleware
 {

@@ -2,6 +2,7 @@
 using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.MakerChecker.Extensions;
 using CodeNet.MakerChecker.Models;
+using CodeNet.MakerChecker.Service;
 using CodeNet.MakerChecker.Tests.Mock.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;

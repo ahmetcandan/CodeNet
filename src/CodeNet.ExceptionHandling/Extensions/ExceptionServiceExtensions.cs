@@ -1,4 +1,5 @@
-﻿using CodeNet.Logging.Extensions;
+﻿using CodeNet.ExceptionHandling.Middleware;
+using CodeNet.Logging.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;

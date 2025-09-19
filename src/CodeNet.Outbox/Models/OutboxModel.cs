@@ -1,4 +1,4 @@
-﻿using CodeNet.MongoDB;
+﻿using CodeNet.MongoDB.Attributes;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace CodeNet.Outbox.Models;

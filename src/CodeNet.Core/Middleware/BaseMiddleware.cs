@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 using System.Text;
 
-namespace CodeNet.Core;
+namespace CodeNet.Core.Middleware;
 
 public abstract class BaseMiddleware
 {

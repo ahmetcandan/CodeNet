@@ -1,7 +1,7 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 using Newtonsoft.Json;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Distributed;
 
 internal class DistributedCache<TModel>(IDistributedCache distributedCache) : IDistributedCache<TModel>
     where TModel : class

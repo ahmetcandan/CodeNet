@@ -1,4 +1,4 @@
-﻿using CodeNet.MongoDB;
+﻿using CodeNet.MongoDB.Repositories;
 using CodeNet.MongoDB.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

@@ -1,4 +1,4 @@
-﻿namespace CodeNet.MongoDB
+﻿namespace CodeNet.MongoDB.Attributes
 {
     /// <summary>
     /// MongoDB CollectionName Attribute

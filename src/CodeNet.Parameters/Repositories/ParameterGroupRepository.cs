@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.Parameters.Repositories;
 
-internal class ParameterGroupRepository(DbContext dbContext, ICodeNetContext identityContext) : TracingRepository<ParameterGroup>(dbContext, identityContext)
+internal class ParameterGroupRepository(Microsoft.EntityFrameworkCore.DbContext dbContext, ICodeNetContext identityContext) : TracingRepository<ParameterGroup>(dbContext, identityContext)
 {
     private readonly DbSet<Parameter> _parameters = dbContext.Set<Parameter>();
 
