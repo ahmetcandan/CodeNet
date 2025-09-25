@@ -31,13 +31,13 @@ internal partial class DataTransferClientItem : CodeNetClient
 
     public override async Task<bool> ConnectAsync()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         return ConnectedHandler(await base.ConnectAsync(), cts);
     }
 
     public override bool Connect()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         return ConnectedHandler(base.Connect(), cts);
     }
 

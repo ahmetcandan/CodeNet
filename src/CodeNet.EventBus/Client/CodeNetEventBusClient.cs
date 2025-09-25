@@ -48,10 +48,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         Channel = string.Empty;
     }
 
-    public CodeNetEventBusClient()
-    {
-        Channel = string.Empty;
-    }
+    public CodeNetEventBusClient() => Channel = string.Empty;
 
     protected override void ReceivedMessage(Message message)
     {

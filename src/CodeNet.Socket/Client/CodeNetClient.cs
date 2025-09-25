@@ -16,7 +16,7 @@ public abstract class CodeNetClient : ICodeNetClient
     private NetworkStream? _stream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
-    private int _connectionTimeout = 5;
+    private TimeSpan _connectionTimeout = TimeSpan.FromSeconds(30);
 
     public void Dispose()
     {
@@ -32,7 +32,7 @@ public abstract class CodeNetClient : ICodeNetClient
     /// <summary>
     /// Default: 30 seconds
     /// </summary>
-    public int ConnectionTimeout
+    public TimeSpan ConnectionTimeout
     {
         get => _connectionTimeout;
         set => _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
@@ -61,7 +61,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public virtual async Task<bool> ConnectAsync()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         _client = NewTcpClient(_hostName, _port);
         await _client.ConnectAsync(_hostName!, _port!.Value);
         Start();
@@ -71,7 +71,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public virtual bool Connect()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         _client = NewTcpClient(_hostName, _port);
         _client.Connect(_hostName!, _port!.Value);
         Start();
