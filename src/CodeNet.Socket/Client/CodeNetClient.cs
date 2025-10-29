@@ -1,6 +1,9 @@
 ﻿using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CodeNet.Socket.Client;
@@ -14,9 +17,12 @@ public abstract class CodeNetClient : ICodeNetClient
     private ulong? _clientId = null;
     private Thread? _thread;
     private NetworkStream? _stream;
+    private SslStream? _sslStream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
     private TimeSpan _connectionTimeout = TimeSpan.FromSeconds(30);
+    private X509Certificate2? _certificate;
+    private readonly bool _secureConnection = false;
 
     public void Dispose()
     {
@@ -52,11 +58,28 @@ public abstract class CodeNetClient : ICodeNetClient
         _port = port;
     }
 
+    public CodeNetClient(string hostName, int port, bool secureConnection) : this(hostName, port)
+    {
+        _secureConnection = secureConnection;
+    }
+
+    public CodeNetClient(string hostName, int port, string certificatePath, string certificatePassword) : this(hostName, port)
+    {
+        _secureConnection = true;
+        _certificate = new X509Certificate2(certificatePath, certificatePassword);
+    }
+
     public void SetTcpClient(TcpClient client, ulong clientId)
     {
         _client = client;
         ClientId = clientId;
         Start();
+    }
+
+    public void SetTcpClient(TcpClient client, ulong clientId, X509Certificate2 certificate)
+    {
+        _certificate = certificate;
+        SetTcpClient(client, clientId);
     }
 
     public virtual async Task<bool> ConnectAsync()
@@ -117,8 +140,56 @@ public abstract class CodeNetClient : ICodeNetClient
     private void Start()
     {
         _stream = _client!.GetStream();
-        _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
-        _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+        if (IsServerSide)
+        {
+            if (_certificate is not null)
+            {
+                _sslStream = new(_stream, false);
+                _sslStream.AuthenticateAsServer(_certificate,
+                    clientCertificateRequired: false,
+                    enabledSslProtocols: SslProtocols.None,
+                    checkCertificateRevocation: false);
+                _reader = new BinaryReader(_sslStream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_sslStream, Encoding.BigEndianUnicode);
+            }
+            else
+            {
+                _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+            }
+        }
+        else
+        {
+            if (_secureConnection)
+            {
+                _sslStream = new SslStream(
+                    _stream,
+                    false,
+                    new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                    null
+                );
+                if (_certificate is not null)
+                {
+                    X509CertificateCollection clientCertificates = [_certificate];
+                    _sslStream.AuthenticateAsClient(
+                        _hostName!,
+                        clientCertificates,
+                        SslProtocols.None,
+                        false
+                    );
+                }
+                else
+                    _sslStream.AuthenticateAsClient(_hostName!);
+                _reader = new BinaryReader(_sslStream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_sslStream, Encoding.BigEndianUnicode);
+            }
+            else
+            {
+                _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+            }
+        }
+
         _thread = new(new ThreadStart(StartListening));
         Working = true;
         _thread.Start();
@@ -231,4 +302,9 @@ public abstract class CodeNetClient : ICodeNetClient
     }
 
     private bool Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
+
+    public virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    {
+        return sslPolicyErrors == SslPolicyErrors.None;
+    }
 }

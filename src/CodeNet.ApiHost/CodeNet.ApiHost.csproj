@@ -9,15 +9,15 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageIcon>ico.png</PackageIcon>
-		<Title>CodeNet BackgroudJob</Title>
-		<Description>CodeNet BackgroudJob package.</Description>
+		<Title>CodeNet ApiHost</Title>
+		<Description>CodeNet ApiHost package.</Description>
 		<Copyright>Copyright 2025</Copyright>
 		<Company>CodeNet</Company>
 		<Version>1.1.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
-		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Background;Job;Schedule;Task;Cron</PackageTags>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Api;ApiHost;ApiMapper;Service;EndPoint</PackageTags>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -39,10 +39,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Include="..\CodeNet.EntityFramework\CodeNet.EntityFramework.csproj" />
-		<ProjectReference Include="..\CodeNet.Logging\CodeNet.Logging.csproj" />
-		<ProjectReference Include="..\CodeNet.Redis\CodeNet.Redis.csproj" />
-		<ProjectReference Include="..\CodeNet.SignalR\CodeNet.SignalR.csproj" />
+		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
 	</ItemGroup>
 
 </Project>

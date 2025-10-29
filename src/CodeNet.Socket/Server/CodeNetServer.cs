@@ -3,6 +3,7 @@ using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CodeNet.Socket.Server;
@@ -14,6 +15,12 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
     private TcpListener? _tcpListener;
     private ulong _lastClientId = 0;
     private Thread? _thread;
+    private readonly X509Certificate2? _certificate;
+
+    public CodeNetServer(int port, string certificatePath, string certificatePassword) : this(port)
+    {
+        _certificate = new X509Certificate2(certificatePath, certificatePassword);
+    }
 
     public event ClientConnected<TClient>? ClientConnected;
     public event ServerNewMessageReceived<TClient>? NewMessgeReceived;
@@ -57,7 +64,10 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
                     if (tcpClient is not null)
                     {
                         TClient client = new();
-                        client.SetTcpClient(tcpClient, ++_lastClientId);
+                        if (_certificate is not null)
+                            client.SetTcpClient(tcpClient, ++_lastClientId, _certificate);
+                        else
+                            client.SetTcpClient(tcpClient, ++_lastClientId);
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
                         client.Disconnected += (e) => Client_Disonnected(client);
                         client.ConnectedEvent += (e) => Client_Connected(client);
