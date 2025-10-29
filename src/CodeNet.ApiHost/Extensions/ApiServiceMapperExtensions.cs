@@ -10,15 +10,15 @@ namespace CodeNet.ApiHost.Extensions;
 
 public static class ApiServiceMapperExtensions
 {
+    public static IServiceCollection AddApiHost(this IServiceCollection services, Type type)
+    {
+        return services.AddApiHost(type.Assembly);
+    }
+
     public static IServiceCollection AddApiHost(this IServiceCollection services, Assembly assembly)
     {
         assembly ??= Assembly.GetExecutingAssembly();
         return services.AddApiHost(assembly.GetTypes());
-    }
-
-    public static IServiceCollection AddApiHost(this IServiceCollection services, Type type)
-    {
-        return services.AddApiHost(type.Assembly.GetTypes());
     }
 
     private static IServiceCollection AddApiHost(this IServiceCollection services, Type[] types)
