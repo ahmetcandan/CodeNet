@@ -92,21 +92,24 @@ public static class ApiServiceMapperExtensions
 
     private static void AddAuthorization(this IEndpointConventionBuilder endpointBuilder, XAuthAttribute? methodAuthAttr, XAuthAttribute? classAuthAttr)
     {
-        var authBuilder = endpointBuilder.RequireAuthorization(configure =>
-        {
-            if (!string.IsNullOrEmpty(methodAuthAttr?.Users))
-                foreach (var userName in methodAuthAttr.Users.SemicolonSplit())
-                    configure.RequireUserName(userName);
-            if (!string.IsNullOrEmpty(classAuthAttr?.Users))
-                foreach (var userName in classAuthAttr.Users.SemicolonSplit())
-                    configure.RequireUserName(userName);
+        if (string.IsNullOrEmpty(methodAuthAttr?.Users) && string.IsNullOrEmpty(methodAuthAttr?.Roles) && string.IsNullOrEmpty(classAuthAttr?.Users) && string.IsNullOrEmpty(classAuthAttr?.Roles))
+            endpointBuilder.RequireAuthorization();
+        else
+            endpointBuilder.RequireAuthorization(configure =>
+            {
+                if (!string.IsNullOrEmpty(methodAuthAttr?.Users))
+                    foreach (var userName in methodAuthAttr.Users.SemicolonSplit())
+                        configure.RequireUserName(userName);
+                if (!string.IsNullOrEmpty(classAuthAttr?.Users))
+                    foreach (var userName in classAuthAttr.Users.SemicolonSplit())
+                        configure.RequireUserName(userName);
 
-            if (!string.IsNullOrEmpty(methodAuthAttr?.Roles))
-                foreach (var role in methodAuthAttr.Roles.SemicolonSplit())
-                    configure.RequireRole(role);
-            if (!string.IsNullOrEmpty(classAuthAttr?.Roles))
-                foreach (var role in classAuthAttr.Roles.SemicolonSplit())
-                    configure.RequireRole(role);
-        });
+                if (!string.IsNullOrEmpty(methodAuthAttr?.Roles))
+                    foreach (var role in methodAuthAttr.Roles.SemicolonSplit())
+                        configure.RequireRole(role);
+                if (!string.IsNullOrEmpty(classAuthAttr?.Roles))
+                    foreach (var role in classAuthAttr.Roles.SemicolonSplit())
+                        configure.RequireRole(role);
+            });
     }
 }
