@@ -1,9 +1,9 @@
 ﻿using CodeNet.ApiHost.Attributes;
-using CodeNet.ApiHost.Filters;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Http.Metadata;
 using Microsoft.Extensions.DependencyInjection;
+using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 
 namespace CodeNet.ApiHost.Extensions;
@@ -23,17 +23,14 @@ public static class ApiServiceMapperExtensions
 
     private static IServiceCollection AddApiHost(this IServiceCollection services, Type[] types)
     {
-        foreach (var type in types.Where(t => t.IsClass && !t.IsAbstract && typeof(IApiService).IsAssignableFrom(t)))
+        foreach (var serviceType in types.Where(t => t.IsClass && !t.IsAbstract && typeof(IApiService).IsAssignableFrom(t)))
         {
-            var implementationType = type.GetInterfaces().Where(c => c != typeof(IApiService)).FirstOrDefault();
-            if (implementationType is null)
-                services.AddScoped(type);
+            var serviceInterface = serviceType.GetInterfaces().Where(c => c != typeof(IApiService)).FirstOrDefault();
+            if (serviceInterface is null)
+                services.AddScoped(serviceType);
             else
-                services.AddScoped(implementationType, type);
+                services.AddScoped(serviceInterface, serviceType);
         }
-
-        services.AddTransient<ApiValidationFilter>();
-        services.AddTransient<ApiAuthorizationFilter>();
 
         return services;
     }
@@ -65,32 +62,30 @@ public static class ApiServiceMapperExtensions
             {
                 var methodAttr = method.GetCustomAttribute<XHttpMethodAttribute>()!;
                 var requestDelegate = RequestDelegateFactory.Create(method,
-                    (context) => context.RequestServices.GetRequiredService(implementationType ?? serviceType!))
+                    (context) =>
+                    {
+                        return context.RequestServices.GetRequiredService(implementationType ?? serviceType!);
+                    })
                     .RequestDelegate;
                 var endpointBuilder = app.MapMethods($"{apiPrefix}/{classRoute}/{methodAttr.Route ?? method.Name}".ToLowerInvariant().Replace("//", "/"),
                     [methodAttr.HttpMethod.ToUpperInvariant()],
                     requestDelegate);
 
-                var validationFilter = app.Services.GetRequiredService<ApiValidationFilter>();
-                var authFilter = app.Services.GetRequiredService<ApiAuthorizationFilter>();
-
-                endpointBuilder.AddEndpointFilter(validationFilter);
-                endpointBuilder.AddEndpointFilter(authFilter);
-
-                var methodAuthAttr = method.GetCustomAttribute<XAuthAttribute>();
-                var classAuthAttr = serviceType!.GetCustomAttribute<XAuthAttribute>();
+                var methodAuthAttr = method.GetCustomAttribute<XAuthorizeAttribute>();
+                var classAuthAttr = serviceType!.GetCustomAttribute<XAuthorizeAttribute>();
                 if (methodAuthAttr is not null || classAuthAttr is not null)
                     endpointBuilder.AddAuthorization(methodAuthAttr, classAuthAttr);
 
                 if (method.GetParameters().Any(p => p.ParameterType.IsClass))
-                    endpointBuilder.WithMetadata(new AcceptsMetadata(isOptional: false, contentTypes: ["application/json"]));
-                endpointBuilder.WithMetadata(method);
+                    endpointBuilder.WithMetadata(method, new AcceptsMetadata(isOptional: true, type: method.GetParameters().First(c => c.ParameterType.IsClass).ParameterType, contentTypes: ["application/json"]));
+                else
+                    endpointBuilder.WithMetadata(method);
             }
         }
         return app;
     }
 
-    private static void AddAuthorization(this IEndpointConventionBuilder endpointBuilder, XAuthAttribute? methodAuthAttr, XAuthAttribute? classAuthAttr)
+    private static void AddAuthorization(this IEndpointConventionBuilder endpointBuilder, XAuthorizeAttribute? methodAuthAttr, XAuthorizeAttribute? classAuthAttr)
     {
         if (string.IsNullOrEmpty(methodAuthAttr?.Users) && string.IsNullOrEmpty(methodAuthAttr?.Roles) && string.IsNullOrEmpty(classAuthAttr?.Users) && string.IsNullOrEmpty(classAuthAttr?.Roles))
             endpointBuilder.RequireAuthorization();

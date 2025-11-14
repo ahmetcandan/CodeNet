@@ -1,7 +1,7 @@
 ﻿namespace CodeNet.ApiHost.Attributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-public class XAuthAttribute : Attribute
+public class XAuthorizeAttribute : Attribute
 {
     public string? Users { get; set; }
 

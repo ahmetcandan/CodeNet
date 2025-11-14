@@ -12,5 +12,6 @@ public partial class MailTemplate
     public string To { get; set; } = string.Empty;
     public string Cc { get; set; } = string.Empty;
     public string Bcc { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
     public bool IsBodyHtml { get; set; }
 }

@@ -10,6 +10,7 @@ internal class TemplateService(MailTemplateRepositories templateRepositories) : 
     {
         Bcc = model.Bcc,
         Builder = BodyBuilder.Compile(model.Content),
+        Content = model.Content,
         Cc = model.Cc,
         Code = model.Code,
         From = model.From,
@@ -21,6 +22,7 @@ internal class TemplateService(MailTemplateRepositories templateRepositories) : 
     {
         Bcc = model.Bcc,
         Builder = BodyBuilder.Compile(model.Content),
+        Content = model.Content,
         Cc = model.Cc,
         Code = model.Code,
         From = model.From,
