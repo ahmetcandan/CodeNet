@@ -1,4 +1,5 @@
 ﻿using CodeNet.Core.Middleware;
+using CodeNet.ExceptionHandling.Exceptions;
 using CodeNet.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -31,6 +32,10 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                     errorMessage = userLevelException.Message;
                     context.Response.StatusCode = userLevelException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(UserLevelException);
+                    break;
+                case RedisLockException redisLockException:
+                    context.Response.StatusCode = StatusCodes.Status423Locked;
+                    title = nameof(RedisLockException);
                     break;
                 case CodeNetException codeNetException:
                     context.Response.StatusCode = codeNetException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;

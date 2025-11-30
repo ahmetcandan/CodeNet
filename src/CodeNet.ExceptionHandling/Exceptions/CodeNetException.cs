@@ -1,6 +1,6 @@
 ﻿using CodeNet.Core.Models;
 
-namespace CodeNet.ExceptionHandling;
+namespace CodeNet.ExceptionHandling.Exceptions;
 
 public class CodeNetException(string code, string message) : Exception
 {

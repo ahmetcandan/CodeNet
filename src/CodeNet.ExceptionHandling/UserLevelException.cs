@@ -1,4 +1,6 @@
-﻿namespace CodeNet.ExceptionHandling;
+﻿using CodeNet.ExceptionHandling.Exceptions;
+
+namespace CodeNet.ExceptionHandling;
 
 public class UserLevelException : CodeNetException
 {

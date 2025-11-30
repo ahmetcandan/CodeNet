@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+internal class IdentityUserManager<TUser, TRole, TKey>(UserManager<TUser> userManager, RoleManager<TRole> roleManager) : IIdentityUserManager
     where TUser : IdentityUser<TKey>, new()
     where TKey : IEquatable<TKey>
+    where TRole : IdentityRole<TKey>, new()
 {
     public async Task<IdentityResult> CreateUser(RegisterUserModel model)
     {
