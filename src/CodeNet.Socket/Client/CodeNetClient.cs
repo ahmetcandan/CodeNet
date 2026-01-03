@@ -303,7 +303,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private bool Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
 
-    public virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+    internal virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
         return sslPolicyErrors == SslPolicyErrors.None;
     }

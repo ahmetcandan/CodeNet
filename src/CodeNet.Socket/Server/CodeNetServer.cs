@@ -42,7 +42,9 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         Status = TcpStatus.Starting;
     }
 
-    public void Stop()
+    public void Stop() => Stop(false);
+
+    private void Stop(bool retryStart = false)
     {
         if (Status is TcpStatus.Starting)
         {
@@ -50,6 +52,9 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
             Status = TcpStatus.Stop;
         }
         _thread?.Join();
+
+        if (retryStart)
+            Start();
     }
 
     private async void ClientAccept()
@@ -79,7 +84,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
             }
             catch
             {
-                Stop();
+                Stop(true);
             }
         }
     }
