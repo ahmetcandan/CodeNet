@@ -17,14 +17,6 @@ public interface IEmailService
     Task SendMail(SendMailRequest request, CancellationToken cancellationToken);
 
     /// <summary>
-    /// Send Multi Mail
-    /// </summary>
-    /// <param name="request"></param>
-    /// <param name="cancellationToken"></param>
-    /// <returns></returns>
-    Task SendBulkMail(SendBulkMailRequest request, CancellationToken cancellationToken);
-
-    /// <summary>
     /// Send Mail
     /// </summary>
     /// <param name="mailMessage"></param>
@@ -40,4 +32,12 @@ public interface IEmailService
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     Task SendMail(MailMessage mailMessage, object? param, CancellationToken cancellationToken);
+
+    /// <summary>
+    /// Send Multi Mail
+    /// </summary>
+    /// <param name="request"></param>
+    /// <param name="cancellationToken"></param>
+    /// <returns></returns>
+    Task SendBulkMail(SendBulkMailRequest request, CancellationToken cancellationToken);
 }

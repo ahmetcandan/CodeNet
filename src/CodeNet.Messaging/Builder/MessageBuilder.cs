@@ -4,13 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace CodeNet.Messaging.Builder;
 
-public class BodyBuilder : IBodyBuilder
+public class MessageBuilder : IMessageBuilder
 {
-    private BodyBuilder() { }
+    private MessageBuilder() { }
 
-    public static BodyBuilder Compile(string content)
+    public static MessageBuilder Compile(string content)
     {
-        BodyBuilder result = new()
+        MessageBuilder result = new()
         {
             Index = 0,
             Content = content
@@ -46,7 +46,7 @@ public class BodyBuilder : IBodyBuilder
     {
         StringBuilder stringBuilder = new(Content);
 
-        foreach (var builder in Enumerable.Empty<IBodyBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
+        foreach (var builder in Enumerable.Empty<IMessageBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
             stringBuilder.Replace(builder.Content, builder.Build(data).ToString());
 
         foreach (var param in Parameters)
@@ -128,11 +128,11 @@ public class BodyBuilder : IBodyBuilder
         return $"STATIC_VALUE_{_staticParamId:000}";
     }
 
-    public string Content { get; set; } = string.Empty;
-    public int Index { get; set; }
-    public ICollection<ParamValue> Parameters { get; set; } = [];
-    public ICollection<LoopBuilder> LoopBuilders { get; set; } = [];
-    public ICollection<FuncBuilder> FuncBuilders { get; set; } = [];
-    public ICollection<IfBuilder> IfBuilders { get; set; } = [];
-    public BuildType Type { get; } = BuildType.Body;
+    public string Content { get; private set; } = string.Empty;
+    public int Index { get; private set; }
+    internal ICollection<ParamValue> Parameters { get; set; } = [];
+    internal ICollection<LoopBuilder> LoopBuilders { get; set; } = [];
+    internal ICollection<FuncBuilder> FuncBuilders { get; set; } = [];
+    internal ICollection<IfBuilder> IfBuilders { get; set; } = [];
+    public BuildType Type { get; } = BuildType.Message;
 }

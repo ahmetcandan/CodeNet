@@ -9,7 +9,7 @@ internal class TemplateService(MailTemplateRepositories templateRepositories) : 
     public async Task AddTemplate(TemplateCreateModel model) => await templateRepositories.CreateAsync(new MailTemplate
     {
         Bcc = model.Bcc,
-        Builder = BodyBuilder.Compile(model.Content),
+        Builder = MessageBuilder.Compile(model.Content),
         Content = model.Content,
         Cc = model.Cc,
         Code = model.Code,
@@ -21,7 +21,7 @@ internal class TemplateService(MailTemplateRepositories templateRepositories) : 
     public async Task UpdateTemplate(TemplateUpdateModel model) => await templateRepositories.UpdateAsync(c => c.Code == model.Code, new MailTemplate
     {
         Bcc = model.Bcc,
-        Builder = BodyBuilder.Compile(model.Content),
+        Builder = MessageBuilder.Compile(model.Content),
         Content = model.Content,
         Cc = model.Cc,
         Code = model.Code,

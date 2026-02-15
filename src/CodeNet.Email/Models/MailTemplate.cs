@@ -7,7 +7,7 @@ public partial class MailTemplate
 {
     [BsonId]
     public required string Code { get; set; }
-    public BodyBuilder? Builder { get; set; }
+    public MessageBuilder? Builder { get; set; }
     public string From { get; set; } = string.Empty;
     public string To { get; set; } = string.Empty;
     public string Cc { get; set; } = string.Empty;

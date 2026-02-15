@@ -50,16 +50,16 @@ public class Repository<TEntity>(DbContext dbContext) : IRepository<TEntity>
     #endregion
 
     #region Paging List
-    public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingList(c => true, orderBySelector, isAcending, page, count);
+    public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingList(c => true, orderBySelector, isAscending, page, count);
 
-    public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
+    public virtual PagingList<TEntity> GetPagingList<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
     {
-        List<TEntity> list = page < 1 || count < 1
-            ? throw new ArgumentException("Page or count cannot be less than 1")
-            : (isAcending
+        PageAndCountControl(page, count);
+
+        List<TEntity> list = isAscending
                 ? [.. _entities.OrderBy(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count)]
-                : [.. _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count)]);
+                : [.. _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count)];
 
         return new()
         {
@@ -71,23 +71,23 @@ public class Repository<TEntity>(DbContext dbContext) : IRepository<TEntity>
     }
 
 
-    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingListAsync(orderBySelector, isAcending, page, count, CancellationToken.None);
+    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingListAsync(orderBySelector, isAscending, page, count, CancellationToken.None);
 
-    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingListAsync(predicate, orderBySelector, isAcending, page, count, CancellationToken.None);
+    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingListAsync(predicate, orderBySelector, isAscending, page, count, CancellationToken.None);
 
-    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
-        => GetPagingListAsync(c => true, orderBySelector, isAcending, page, count, cancellationToken);
+    public virtual Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
+        => GetPagingListAsync(c => true, orderBySelector, isAscending, page, count, cancellationToken);
 
     public virtual async Task<PagingList<TEntity>> GetPagingListAsync<TKey>(Expression<Func<TEntity, bool>> predicate, Expression<Func<TEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
     {
+        PageAndCountControl(page, count);
+
         int totalCount = await _entities.CountAsync(predicate, cancellationToken);
-        List<TEntity> list = page < 1 || count < 1
-            ? throw new ArgumentException("Page or count cannot be less than 1")
-            : (isAscending
+        List<TEntity> list = isAscending
                 ? await _entities.OrderBy(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken)
-                : await _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken));
+                : await _entities.OrderByDescending(orderBySelector).Where(predicate).Skip((page - 1) * count).Take(count).ToListAsync(cancellationToken);
 
         return new()
         {
@@ -96,6 +96,12 @@ public class Repository<TEntity>(DbContext dbContext) : IRepository<TEntity>
             PageNumber = page,
             TotalCount = totalCount
         };
+    }
+
+    private void PageAndCountControl(int page, int count)
+    {
+        if (page < 1 || count < 1)
+            throw new ArgumentException("Page or count cannot be less than 1");
     }
     #endregion
 

@@ -71,34 +71,34 @@ public class BaseRepository<TBaseEntity>(DbContext dbContext) : Repository<TBase
 
     #region PagingList
 
-    public override PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingList(true, orderBySelector, isAcending, page, count);
+    public override PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingList(true, orderBySelector, isAscending, page, count);
 
-    public virtual PagingList<TBaseEntity> GetPagingList<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => base.GetPagingList(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAcending, page, count);
+    public virtual PagingList<TBaseEntity> GetPagingList<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => base.GetPagingList(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAscending, page, count);
 
-    public override PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, bool>> predicate, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingList(predicate, true, orderBySelector, isAcending, page, count);
+    public override PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, bool>> predicate, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingList(predicate, true, orderBySelector, isAscending, page, count);
 
-    public virtual PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count) => base.GetPagingList(AddCondition(predicate, c => c.IsActive == isActive && !c.IsDeleted), orderBySelector, isAcending, page, count);
+    public virtual PagingList<TBaseEntity> GetPagingList<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count) => base.GetPagingList(AddCondition(predicate, c => c.IsActive == isActive && !c.IsDeleted), orderBySelector, isAscending, page, count);
 
-    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingListAsync(true, orderBySelector, isAcending, page, count);
+    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingListAsync(true, orderBySelector, isAscending, page, count);
 
-    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => base.GetPagingListAsync(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAcending, page, count);
+    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => base.GetPagingListAsync(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAscending, page, count);
 
-    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => GetPagingListAsync(predicate, true, orderBySelector, isAcending, page, count);
+    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => GetPagingListAsync(predicate, true, orderBySelector, isAscending, page, count);
 
-    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count)
-        => base.GetPagingListAsync(AddCondition(predicate, c => c.IsActive == isActive && !c.IsDeleted), orderBySelector, isAcending, page, count);
+    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count)
+        => base.GetPagingListAsync(AddCondition(predicate, c => c.IsActive == isActive && !c.IsDeleted), orderBySelector, isAscending, page, count);
 
-    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
-        => GetPagingListAsync(true, orderBySelector, isAcending, page, count, cancellationToken);
+    public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
+        => GetPagingListAsync(true, orderBySelector, isAscending, page, count, cancellationToken);
 
-    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
-        => base.GetPagingListAsync(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAcending, page, count, cancellationToken);
+    public virtual Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(bool isActive, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
+        => base.GetPagingListAsync(c => c.IsActive == isActive && !c.IsDeleted, orderBySelector, isAscending, page, count, cancellationToken);
 
     public override Task<PagingList<TBaseEntity>> GetPagingListAsync<TKey>(Expression<Func<TBaseEntity, bool>> predicate, Expression<Func<TBaseEntity, TKey>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
         => GetPagingListAsync(predicate, true, orderBySelector, isAscending, page, count, cancellationToken);

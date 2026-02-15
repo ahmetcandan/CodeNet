@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CodeNet.Messaging.Builder;
 
-public class FuncBuilder : IBodyBuilder
+internal class FuncBuilder : IMessageBuilder
 {
     private FunctionExecuter? _functionExecuter;
 

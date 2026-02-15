@@ -3,7 +3,7 @@ using System.Text;
 
 namespace CodeNet.Messaging.Builder;
 
-public class IfBuilder : IBodyBuilder
+internal class IfBuilder : IMessageBuilder
 {
     private IfBuilder() { }
 
@@ -26,8 +26,8 @@ public class IfBuilder : IBodyBuilder
             Operator = _operator,
             ParamLeft = paramLeft,
             ParamRight = paramRight,
-            IfBodyBuilder = BodyBuilder.Compile(ifContent),
-            ElseBodyBuilder = string.IsNullOrEmpty(elseContent) ? null : BodyBuilder.Compile(elseContent)
+            IfBodyBuilder = MessageBuilder.Compile(ifContent),
+            ElseBodyBuilder = string.IsNullOrEmpty(elseContent) ? null : MessageBuilder.Compile(elseContent)
         };
 
         return builder;
@@ -70,8 +70,8 @@ public class IfBuilder : IBodyBuilder
     public int Index { get; set; }
     public required ParamValue ParamLeft { get; set; }
     public required ParamValue ParamRight { get; set; }
-    public required BodyBuilder IfBodyBuilder { get; set; }
-    public BodyBuilder? ElseBodyBuilder { get; set; }
+    public required MessageBuilder IfBodyBuilder { get; set; }
+    public MessageBuilder? ElseBodyBuilder { get; set; }
     public Operator Operator { get; set; }
     public BuildType Type { get; } = BuildType.If;
 }

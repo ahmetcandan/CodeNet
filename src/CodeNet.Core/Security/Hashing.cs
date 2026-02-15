@@ -2,7 +2,7 @@
 
 namespace CodeNet.Core.Security
 {
-    public class Hashing
+    public static class Hashing
     {
         public static string MD5(string input) => MD5(Encoding.UTF8.GetBytes(input));
 

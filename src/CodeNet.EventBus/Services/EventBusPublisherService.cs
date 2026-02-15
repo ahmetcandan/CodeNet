@@ -9,10 +9,20 @@ public class EventBusPublisherService(IOptions<EventBusPublisherOptions> options
 {
     private CodeNetPublisher? _publisher;
 
+    ~EventBusPublisherService()
+    {
+        Dispose(false);
+    }
+
     public void Dispose()
     {
-        _publisher?.Disconnect();
+        Dispose(true);
         GC.SuppressFinalize(this);
+    }
+
+    protected virtual void Dispose(bool disposing)
+    {
+        _publisher?.Disconnect();
     }
 
     public virtual void Publish(byte[] message)
@@ -32,7 +42,6 @@ public class EventBusPublisherService(IOptions<EventBusPublisherOptions> options
             _publisher.Connect();
 
         var queue = new ConcurrentQueue<byte[]>(messages);
-        int consumerCount = Environment.ProcessorCount;
         Parallel.For(0, messages.Count, _ =>
         {
             while (queue.TryDequeue(out var message))

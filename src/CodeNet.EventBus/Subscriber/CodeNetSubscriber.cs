@@ -19,22 +19,20 @@ public class CodeNetSubscriber(string hostname, int port, string channel)
 
     public async Task<bool> ConnectAsync()
     {
-        var result = await _client.ConnectAsync();
-        if (result is false)
+        if (!await _client.ConnectAsync())
             return false;
 
         ConnectProcess();
-        return result;
+        return true;
     }
 
     public bool Connect()
     {
-        var result = _client.Connect();
-        if (result is false)
+        if (!_client.Connect())
             return false;
 
         ConnectProcess();
-        return result;
+        return true;
     }
 
     private void ConnectProcess()

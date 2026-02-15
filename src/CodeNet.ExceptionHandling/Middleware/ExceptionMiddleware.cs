@@ -30,7 +30,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                 case UserLevelException userLevelException:
                     errorCode = userLevelException.Code;
                     errorMessage = userLevelException.Message;
-                    context.Response.StatusCode = userLevelException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
+                    context.Response.StatusCode = userLevelException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(UserLevelException);
                     break;
                 case RedisLockException redisLockException:
@@ -38,7 +38,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                     title = nameof(RedisLockException);
                     break;
                 case CodeNetException codeNetException:
-                    context.Response.StatusCode = codeNetException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
+                    context.Response.StatusCode = codeNetException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(CodeNetException);
                     break;
                 case BadHttpRequestException badHttpRequestException:
@@ -68,7 +68,6 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                 Status = context.Response.StatusCode,
                 Instance = context.Request.Path
             }, context.RequestAborted);
-            return;
         }
     }
 }

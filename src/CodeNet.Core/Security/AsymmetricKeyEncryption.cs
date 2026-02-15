@@ -2,7 +2,7 @@
 
 namespace CodeNet.Core.Security;
 
-public sealed class AsymmetricKeyEncryption
+public static class AsymmetricKeyEncryption
 {
     public static RSA CreateRSA(string filePath)
     {

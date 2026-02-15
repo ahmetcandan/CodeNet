@@ -16,7 +16,6 @@ public abstract class CodeNetClient : ICodeNetClient
     private TcpClient? _client;
     private ulong? _clientId = null;
     private Thread? _thread;
-    private NetworkStream? _stream;
     private SslStream? _sslStream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
@@ -139,12 +138,12 @@ public abstract class CodeNetClient : ICodeNetClient
 
     private void Start()
     {
-        _stream = _client!.GetStream();
+        var stream = _client!.GetStream();
         if (IsServerSide)
         {
             if (_certificate is not null)
             {
-                _sslStream = new(_stream, false);
+                _sslStream = new(stream, false);
                 _sslStream.AuthenticateAsServer(_certificate,
                     clientCertificateRequired: false,
                     enabledSslProtocols: SslProtocols.None,
@@ -154,8 +153,8 @@ public abstract class CodeNetClient : ICodeNetClient
             }
             else
             {
-                _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
-                _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+                _reader = new BinaryReader(stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(stream, Encoding.BigEndianUnicode);
             }
         }
         else
@@ -163,7 +162,7 @@ public abstract class CodeNetClient : ICodeNetClient
             if (_secureConnection)
             {
                 _sslStream = new SslStream(
-                    _stream,
+                    stream,
                     false,
                     new RemoteCertificateValidationCallback(ValidateServerCertificate),
                     null
@@ -185,8 +184,8 @@ public abstract class CodeNetClient : ICodeNetClient
             }
             else
             {
-                _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
-                _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+                _reader = new BinaryReader(stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(stream, Encoding.BigEndianUnicode);
             }
         }
 

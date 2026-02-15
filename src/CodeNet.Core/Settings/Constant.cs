@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.Core.Settings;
 
-public class Constant
+public static class Constant
 {
     public const string CorrelationId = "X-Correlation-Id";
     public const string DefaultVersion = "v1.0";

@@ -48,7 +48,7 @@ internal static class ApiServices
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService<IScheduleJob> ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             var currentStatus = backgroundService.GetStatus();
             switch (status)
@@ -84,7 +84,7 @@ internal static class ApiServices
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService<IScheduleJob> ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             var currentStatus = backgroundService.GetStatus();
             return new
@@ -105,7 +105,7 @@ internal static class ApiServices
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService<IScheduleJob> ?? throw new NotImplementedException($"'builder.services.AddBackgroundService<{tJobType.Name}>(string cronExpression, TimeSpan? lockExperyTime = null)' not implemented background service.");
 
             return await backgroundService.DoWorkAsync(tJob, jobId, cancellationToken);
         });

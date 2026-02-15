@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.BackgroundJob.Models;
 
-internal class JobConstants
+internal static class JobConstants
 {
     public const int DefaultTimeOutSeconds = 60;
     public const int ManuelDelaySeconds = 60;

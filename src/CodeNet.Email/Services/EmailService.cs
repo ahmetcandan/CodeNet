@@ -65,7 +65,7 @@ internal class EmailService(IServiceProvider serviceProvider, IOptions<MailOptio
 
     public Task SendMail(MailMessage mailMessage, object? param, CancellationToken cancellationToken)
     {
-        mailMessage.Body = BodyBuilder.Compile(mailMessage.Body).Build(param).ToString();
+        mailMessage.Body = MessageBuilder.Compile(mailMessage.Body).Build(param).ToString();
         return SendMail(mailMessage, cancellationToken);
     }
 

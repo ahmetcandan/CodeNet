@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.Messaging.Builder;
 
-public class ParamValue(string name, ParamType type)
+internal class ParamValue(string name, ParamType type)
 {
     public ParamValue(string name) : this(name, null) { }
 

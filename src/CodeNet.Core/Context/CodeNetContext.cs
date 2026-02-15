@@ -44,7 +44,7 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
             if (httpContextAccessor.HttpContext?.Request.Headers.ContainsKey("Authorization") is true)
             {
                 var authValues = httpContextAccessor.HttpContext.Request.Headers.Authorization[0]!.Split(' ');
-                if (authValues?.Length > 1)
+                if (authValues.Length > 1)
                     return authValues[1];
             }
 
@@ -52,20 +52,20 @@ internal class CodeNetContext(IHttpContextAccessor httpContextAccessor) : ICodeN
         }
     }
 
-    public CacheState CacheState
+    public CacheStates CacheState
     {
         get
         {
-            CacheState cacheState = CacheState.None;
+            CacheStates cacheState = CacheStates.None;
 
             var states = httpContextAccessor.HttpContext?.Request?.Headers?.CacheControl;
             if (states.HasValue)
             {
                 var values = states.Value.ToString().Replace(" ", "").ToLower().Split(',');
                 if (values.Contains("no-cache"))
-                    cacheState |= CacheState.NoCache;
+                    cacheState |= CacheStates.NoCache;
                 if (values.Contains("clear-cache"))
-                    cacheState |= CacheState.ClearCache;
+                    cacheState |= CacheStates.ClearCache;
             }
 
             return cacheState;

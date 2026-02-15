@@ -42,7 +42,7 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
 
         var user = await userManager.FindByNameAsync(username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         var refreshTokenModel = await GetActiveRefreshToken(user.Id, refreshToken);
-        return refreshTokenModel is null || !(refreshTokenModel?.RefreshToken?.Equals(refreshToken) ?? false)
+        return refreshTokenModel is null || !(refreshTokenModel.RefreshToken?.Equals(refreshToken) ?? false)
             ? throw new IdentityException(ExceptionMessages.InvalidRefreshToken)
             : await GenerateToken(user, false);
     }
@@ -158,7 +158,7 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
 
         try
         {
-            _ = tokenHandler.ValidateToken(token, validationParameters, out SecurityToken validatedToken);
+            _ = tokenHandler.ValidateToken(token, validationParameters, out _);
             return true;
         }
         catch (System.Exception)
@@ -183,8 +183,8 @@ internal abstract class IdentityTokenManager<TUser, TRole, TKey>(UserManager<TUs
             : new()
             {
                 UserId = userId,
-                RefreshToken = result?.RefreshToken ?? string.Empty,
-                ExpiryTime = result?.RefreshTokenExpiryDate ?? DateTime.MinValue
+                RefreshToken = result.RefreshToken ?? string.Empty,
+                ExpiryTime = result.RefreshTokenExpiryDate ?? DateTime.MinValue
             };
     }
 

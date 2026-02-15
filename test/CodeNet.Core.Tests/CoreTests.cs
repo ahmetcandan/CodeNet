@@ -34,8 +34,8 @@ namespace CodeNet.Core.Tests
         [Test]
         public void Enum_Test()
         {
-            CacheState noCache = CacheState.NoCache;
-            CacheState clearCache = CacheState.ClearCache;
+            CacheStates noCache = CacheStates.NoCache;
+            CacheStates clearCache = CacheStates.ClearCache;
 
             var noCacheName = noCache.GetDisplayName();
             var clearCacheName = clearCache.GetDisplayName();

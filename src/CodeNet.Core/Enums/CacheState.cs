@@ -1,7 +1,7 @@
 ﻿namespace CodeNet.Core.Enums;
 
 [Flags]
-public enum CacheState
+public enum CacheStates
 {
     None = 0,
     NoCache = 1,

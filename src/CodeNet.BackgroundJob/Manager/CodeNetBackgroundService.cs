@@ -76,8 +76,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         await AddOrUpdateService(cancellationToken);
         await GetManuelTimeCache(cancellationToken);
 
-        var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
-        if (tJob is null)
+        if (serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob))) is not TJob tJob)
         {
             _jobStatus = JobStatus.Stopped;
             MessageInvoke();
@@ -168,7 +167,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         }
     }
 
-    public async Task<JobWorkingDetail?> DoWorkAsync(IScheduleJob tJob, int jobId, CancellationToken cancellationToken = default)
+    public async Task<JobWorkingDetail?> DoWorkAsync(TJob tJob, int jobId, CancellationToken cancellationToken = default)
     {
         if (_manuelExecute && !_manuelRunning)
             return null;

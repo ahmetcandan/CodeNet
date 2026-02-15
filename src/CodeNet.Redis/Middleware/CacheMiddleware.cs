@@ -23,13 +23,13 @@ internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache di
             var cacheState = context.Response.Headers.GetCacheState();
 
             string? key = null;
-            if (cacheState.HasFlag(Core.Enums.CacheState.ClearCache))
+            if (cacheState.HasFlag(Core.Enums.CacheStates.ClearCache))
             {
                 key ??= await GetRequestKey(context, methodInfo);
                 await distributedCache.RemoveAsync(key, context.RequestAborted);
             }
 
-            if (cacheState.HasFlag(Core.Enums.CacheState.NoCache))
+            if (cacheState.HasFlag(Core.Enums.CacheStates.NoCache))
             {
                 context.Response.Headers.SetResponseHeader(HeaderNames.CacheControl, Constant.NoCache);
                 await next(context);
