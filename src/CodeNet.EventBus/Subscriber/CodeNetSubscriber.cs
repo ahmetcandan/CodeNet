@@ -7,10 +7,7 @@ namespace CodeNet.EventBus.Subscriber;
 
 public class CodeNetSubscriber(string hostname, int port, string channel)
 {
-    public CodeNetSubscriber(string hostname, int port, string channel, string consumerGroup) : this(hostname, port, channel)
-    {
-        ConsumerGroup = consumerGroup;
-    }
+    public CodeNetSubscriber(string hostname, int port, string channel, string consumerGroup) : this(hostname, port, channel) => ConsumerGroup = consumerGroup;
 
     private readonly CodeNetEventBusClient _client = new(hostname, port, ClientType.Subscriber);
 
@@ -22,22 +19,20 @@ public class CodeNetSubscriber(string hostname, int port, string channel)
 
     public async Task<bool> ConnectAsync()
     {
-        var result = await _client.ConnectAsync();
-        if (result is false)
+        if (!await _client.ConnectAsync())
             return false;
 
         ConnectProcess();
-        return result;
+        return true;
     }
 
     public bool Connect()
     {
-        var result = _client.Connect();
-        if (result is false)
+        if (!_client.Connect())
             return false;
 
         ConnectProcess();
-        return result;
+        return true;
     }
 
     private void ConnectProcess()
@@ -49,13 +44,7 @@ public class CodeNetSubscriber(string hostname, int port, string channel)
         _client.SetChannel(channel);
     }
 
-    public void Disconnect()
-    {
-        _client?.Disconnect();
-    }
+    public void Disconnect() => _client?.Disconnect();
 
-    private void Client_NewMessgeReceived(MessageReceivingArguments e)
-    {
-        MessageConsumed?.Invoke(new(e.Message.Data, ConsumerGroup));
-    }
+    private void Client_NewMessgeReceived(MessageReceivingArguments e) => MessageConsumed?.Invoke(new(e.Message.Data, ConsumerGroup));
 }

@@ -1,4 +1,4 @@
-﻿using CodeNet.MongoDB;
+﻿using CodeNet.MongoDB.Attributes;
 using CodeNet.Parameters.Models;
 using MongoDB.Bson.Serialization.Attributes;
 

@@ -1,4 +1,4 @@
-﻿using CodeNet.Elasticsearch;
+﻿using CodeNet.Elasticsearch.Repositories;
 using CodeNet.Elasticsearch.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -18,9 +18,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <param name="timeSpan"></param>
     /// <returns></returns>
     public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddElasticsearchHealthCheck<ElasticsearchDbContext>(name, timeSpan);
-    }
+        => builder.AddElasticsearchHealthCheck<ElasticsearchDbContext>(name, timeSpan);
 
     /// <summary>
     /// Add Elasticsearch Health Check
@@ -31,9 +29,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <returns></returns>
     public static IHealthChecksBuilder AddElasticsearchHealthCheck<TDbContext>(this IHealthChecksBuilder builder, string name = _name, TimeSpan? timeSpan = null)
         where TDbContext : ElasticsearchDbContext
-    {
-        return builder.AddCheck<ElasticsearchHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["elasticsearch"], timeSpan ?? TimeSpan.FromSeconds(5));
-    }
+        => builder.AddCheck<ElasticsearchHealthCheck<TDbContext>>(name, HealthStatus.Unhealthy, ["elasticsearch"], timeSpan ?? TimeSpan.FromSeconds(5));
 
     /// <summary>
     /// Add Elasticsearch Health Check
@@ -45,9 +41,7 @@ public static class HealthCheckElasticServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IHealthChecksBuilder AddElasticsearchHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddElasticsearchHealthCheck(configuration.Get<ElasticsearchOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
-    }
+        => builder.AddElasticsearchHealthCheck(configuration.Get<ElasticsearchOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
     /// Add Elasticsearch Health Check

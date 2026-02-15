@@ -20,20 +20,14 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual List<TModel> GetList(Expression<Func<TModel, bool>> filter)
-    {
-        return _mongoCollection.Find(filter).ToList();
-    }
+    public virtual List<TModel> GetList(Expression<Func<TModel, bool>> filter) => _mongoCollection.Find(filter).ToList();
 
     /// <summary>
     /// Get By ID
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual TModel? GetById(Expression<Func<TModel, bool>> filter)
-    {
-        return _mongoCollection.Find(filter).FirstOrDefault();
-    }
+    public virtual TModel? GetById(Expression<Func<TModel, bool>> filter) => _mongoCollection.Find(filter).FirstOrDefault();
 
     /// <summary>
     /// Create
@@ -58,53 +52,31 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     }
 
     /// <summary>
-    /// Update
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <param name="model"></param>
-    public virtual void Update(Expression<Func<TModel, bool>> filter, TModel model)
-    {
-        _mongoCollection.ReplaceOne(filter, model);
-    }
-
-    /// <summary>
     /// Delete
     /// </summary>
     /// <param name="filter"></param>
-    public virtual void Delete(Expression<Func<TModel, bool>> filter)
-    {
-        _mongoCollection.DeleteMany(filter);
-    }
+    public virtual void Delete(Expression<Func<TModel, bool>> filter) => _mongoCollection.DeleteMany(filter);
 
     /// <summary>
     /// Exists
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual bool Exists(Expression<Func<TModel, bool>> filter)
-    {
-        return _mongoCollection.CountDocuments(filter) > 0;
-    }
+    public virtual bool Exists(Expression<Func<TModel, bool>> filter) => _mongoCollection.CountDocuments(filter) > 0;
 
     /// <summary>
     /// Count
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual long Count(Expression<Func<TModel, bool>> filter)
-    {
-        return _mongoCollection.CountDocuments(filter);
-    }
+    public virtual long Count(Expression<Func<TModel, bool>> filter) => _mongoCollection.CountDocuments(filter);
 
     /// <summary>
     /// Get List
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter)
-    {
-        return await GetListAsync(filter, CancellationToken.None);
-    }
+    public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter) => await GetListAsync(filter, CancellationToken.None);
 
     /// <summary>
     /// Get List
@@ -113,9 +85,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
     public virtual async Task<List<TModel>> GetListAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
-    {
-        return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToListAsync(cancellationToken: cancellationToken);
-    }
+        => await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).ToListAsync(cancellationToken: cancellationToken);
 
     /// <summary>
     /// Get Paging List
@@ -125,16 +95,17 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="count"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAcending, int page, int count, CancellationToken cancellationToken)
+    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
     {
-        return page < 1 || count < 1
-            ? throw new ArgumentException("Page or count cannot be less than 1")
-            : await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
-            {
-                Skip = (page - 1) * count,
-                Limit = count,
-                Sort = isAcending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
-            }, cancellationToken)).ToListAsync(cancellationToken);
+        if (page < 1 || count < 1)
+            throw new ArgumentException("Page or count cannot be less than 1");
+
+        return await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
+        {
+            Skip = (page - 1) * count,
+            Limit = count,
+            Sort = isAscending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
+        }, cancellationToken)).ToListAsync(cancellationToken);
     }
 
     /// <summary>
@@ -142,10 +113,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter)
-    {
-        return await GetByIdAsync(filter, CancellationToken.None);
-    }
+    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter) => await GetByIdAsync(filter, CancellationToken.None);
 
     /// <summary>
     /// Get By ID
@@ -153,10 +121,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
-    {
-        return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefaultAsync(cancellationToken: cancellationToken);
-    }
+    public virtual async Task<TModel?> GetByIdAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken) => await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)).FirstOrDefaultAsync(cancellationToken: cancellationToken);
 
     /// <summary>
     /// Create
@@ -174,10 +139,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="models"></param>
     /// <returns></returns>
-    public virtual Task<IEnumerable<TModel>> CreateAsync(IEnumerable<TModel> models)
-    {
-        return CreateAsync(models, CancellationToken.None);
-    }
+    public virtual Task<IEnumerable<TModel>> CreateAsync(IEnumerable<TModel> models) => CreateAsync(models, CancellationToken.None);
 
     /// <summary>
     /// Create
@@ -209,10 +171,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="model"></param>
     /// <returns></returns>
-    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model)
-    {
-        await UpdateAsync(filter, model, CancellationToken.None);
-    }
+    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model) => await UpdateAsync(filter, model, CancellationToken.None);
 
     /// <summary>
     /// Update
@@ -221,10 +180,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="model"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model, CancellationToken cancellationToken)
-    {
-        await _mongoCollection.ReplaceOneAsync(filter, model, cancellationToken: cancellationToken);
-    }
+    public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, TModel model, CancellationToken cancellationToken) => await _mongoCollection.ReplaceOneAsync(filter, model, cancellationToken: cancellationToken);
 
     /// <summary>
     /// Update
@@ -247,6 +203,13 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// Update
     /// </summary>
     /// <param name="filter"></param>
+    /// <param name="model"></param>
+    public virtual void Update(Expression<Func<TModel, bool>> filter, TModel model) => _mongoCollection.ReplaceOne(filter, model);
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
     /// <param name="updatedValues"></param>
     public virtual void Update(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues)
     {
@@ -263,10 +226,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter)
-    {
-        await DeleteAsync(filter, CancellationToken.None);
-    }
+    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter) => await DeleteAsync(filter, CancellationToken.None);
 
     /// <summary>
     /// Delete
@@ -274,20 +234,14 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
-    {
-        await _mongoCollection.DeleteManyAsync(filter, cancellationToken);
-    }
+    public virtual async Task DeleteAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken) => await _mongoCollection.DeleteManyAsync(filter, cancellationToken);
 
     /// <summary>
     /// Exists
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter)
-    {
-        return await ExistsAsync(filter, CancellationToken.None);
-    }
+    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter) => await ExistsAsync(filter, CancellationToken.None);
 
     /// <summary>
     /// Exists
@@ -295,20 +249,14 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
-    {
-        return await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0;
-    }
+    public virtual async Task<bool> ExistsAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken) => await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken) > 0;
 
     /// <summary>
     /// Count
     /// </summary>
     /// <param name="filter"></param>
     /// <returns></returns>
-    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter)
-    {
-        return await CountAsync(filter, CancellationToken.None);
-    }
+    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter) => await CountAsync(filter, CancellationToken.None);
 
     /// <summary>
     /// Count
@@ -316,8 +264,5 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="filter"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken)
-    {
-        return await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
-    }
+    public virtual async Task<long> CountAsync(Expression<Func<TModel, bool>> filter, CancellationToken cancellationToken) => await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
 }

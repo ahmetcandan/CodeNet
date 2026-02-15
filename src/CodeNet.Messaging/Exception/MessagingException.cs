@@ -5,11 +5,7 @@ namespace CodeNet.Messaging.Exception;
 
 public class MessagingException : UserLevelException
 {
-    public MessagingException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message)
-    {
-    }
+    public MessagingException(ExceptionMessage exceptionMessage) : base(exceptionMessage.Code, exceptionMessage.Message) { }
 
-    public MessagingException(string code, string message) : base(code, message)
-    {
-    }
+    public MessagingException(string code, string message) : base(code, message) { }
 }

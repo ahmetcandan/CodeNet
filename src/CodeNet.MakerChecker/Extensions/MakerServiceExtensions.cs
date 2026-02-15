@@ -1,5 +1,6 @@
 ﻿using CodeNet.Core.Extensions;
 using CodeNet.EntityFramework.Extensions;
+using CodeNet.MakerChecker.DbContext;
 using CodeNet.MakerChecker.Service;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -14,10 +15,7 @@ public static class MakerServiceExtensions
     /// <param name="services"></param>
     /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMakerChecker(this IServiceCollection services, string connectionString)
-    {
-        return services.AddMakerChecker<MakerCheckerDbContext>(connectionString);
-    }
+    public static IServiceCollection AddMakerChecker(this IServiceCollection services, string connectionString) => services.AddMakerChecker<MakerCheckerDbContext>(connectionString);
 
     /// <summary>
     /// Add Maker Checker
@@ -28,9 +26,7 @@ public static class MakerServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddMakerChecker<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : MakerCheckerDbContext
-    {
-        return services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
-    }
+        => services.AddMakerChecker<TDbContext>(builder => builder.UseSqlServer(connectionString));
 
     /// <summary>
     /// Add Maker Checker
@@ -39,9 +35,7 @@ public static class MakerServiceExtensions
     /// <param name="dbOptions"></param>
     /// <returns></returns>
     public static IServiceCollection AddMakerChecker(this IServiceCollection services, Action<DbContextOptionsBuilder> dbOptions)
-    {
-        return services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
-    }
+        => services.AddMakerChecker<MakerCheckerDbContext>(dbOptions);
 
     /// <summary>
     /// Add Maker Checker

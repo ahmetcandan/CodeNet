@@ -1,4 +1,5 @@
 ﻿using CodeNet.MakerChecker.Extensions;
+using CodeNet.Parameters.DbContext;
 using CodeNet.Redis.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -10,10 +11,7 @@ public class ParameterOptionsBuilder(IServiceCollection services)
 {
     public IServiceCollection Services { get { return services; } }
 
-    public ParameterOptionsBuilder AddDbContext(Action<DbContextOptionsBuilder> action)
-    {
-        return AddDbContext<ParametersDbContext>(action);
-    }
+    public ParameterOptionsBuilder AddDbContext(Action<DbContextOptionsBuilder> action) => AddDbContext<ParametersDbContext>(action);
 
     public ParameterOptionsBuilder AddDbContext<TDbContext>(Action<DbContextOptionsBuilder> action)
         where TDbContext : ParametersDbContext

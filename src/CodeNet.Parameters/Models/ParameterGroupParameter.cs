@@ -2,6 +2,6 @@
 
 internal class ParameterGroupParameter
 {
-    public ParameterGroup ParameterGroup { get; set; }
-    public Parameter Parameter { get; set; }
+    public required ParameterGroup ParameterGroup { get; set; }
+    public required Parameter Parameter { get; set; }
 }

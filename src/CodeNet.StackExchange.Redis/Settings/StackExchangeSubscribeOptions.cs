@@ -4,7 +4,7 @@ namespace CodeNet.StackExchange.Redis.Settings;
 
 public class StackExchangeSubscribeOptions
 {
-    public string Configuration { get; set; }
+    public string Configuration { get; set; } = string.Empty;
     public string Channel { get; set; } = "default";
 }
 

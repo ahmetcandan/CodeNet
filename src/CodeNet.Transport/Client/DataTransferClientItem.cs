@@ -3,7 +3,6 @@ using CodeNet.Socket.Client;
 using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
 using CodeNet.Transport.EventDefinitions;
-using CodeNet.Transport.Helper;
 using CodeNet.Transport.Models;
 using System.Text.RegularExpressions;
 
@@ -13,7 +12,7 @@ internal partial class DataTransferClientItem : CodeNetClient
 {
     private string? _privateKey;
     private bool _connected = false;
-    private IList<ClientItem>? _clients = null;
+    private IEnumerable<ClientItem>? _clients = null;
 
     public bool SecurityConnection { get; private set; } = false;
 
@@ -28,19 +27,17 @@ internal partial class DataTransferClientItem : CodeNetClient
         _clients = [];
     }
 
-    public DataTransferClientItem()
-    {
-    }
+    public DataTransferClientItem() { }
 
     public override async Task<bool> ConnectAsync()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         return ConnectedHandler(await base.ConnectAsync(), cts);
     }
 
     public override bool Connect()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         return ConnectedHandler(base.Connect(), cts);
     }
 
@@ -83,27 +80,23 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (IsServerSide)
                     return;
 
-                var serverConfirmationMessage = SerializerHelper.DeserializeObject<ServerConfirmationMessage>(message.Data);
+                var serverConfirmationMessage = ServerConfirmationMessage.DeserializeObject(message.Data);
                 if (serverConfirmationMessage?.UseSecurity is true)
                     GenerateRSAKeys();
 
-                _clients = serverConfirmationMessage?.Clients?.ToList() ?? [];
-                SendMessage(new()
+                _clients = serverConfirmationMessage?.Clients ?? [];
+                SendMessage(new((byte)Models.MessageType.ClientConfirmation, ClientConfirmationMessage.SerializeObject(new ClientConfirmationMessage
                 {
-                    Type = (byte)Models.MessageType.ClientConfirmation,
-                    Data = SerializerHelper.SerializeObject(new ClientConfirmationMessage
-                    {
-                        ClientName = ClientName,
-                        PublicKey = PublicKey
-                    })
-                });
+                    ClientName = ClientName,
+                    PublicKey = PublicKey
+                })));
                 _connected = true;
                 return;
             case (byte)Models.MessageType.ClientConfirmation:
                 if (!IsServerSide)
                     return;
 
-                var clientConfirmationMessage = SerializerHelper.DeserializeObject<ClientConfirmationMessage>(message.Data);
+                var clientConfirmationMessage = ClientConfirmationMessage.DeserializeObject(message.Data);
                 ClientName = clientConfirmationMessage?.ClientName ?? string.Empty;
                 ClientConnectFinish?.Invoke(new(this));
                 PublicKey = clientConfirmationMessage?.PublicKey;
@@ -120,7 +113,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (string.IsNullOrEmpty(_privateKey))
                     throw new InvalidOperationException("Private key is not set.");
 
-                var handshakeMessage = SerializerHelper.DeserializeObject<HandshakeMessage>(message.Data);
+                var handshakeMessage = HandshakeMessage.DeserializeObject(message.Data);
                 if (handshakeMessage is null)
                     return;
 
@@ -132,7 +125,7 @@ internal partial class DataTransferClientItem : CodeNetClient
                 if (IsServerSide)
                     return;
 
-                _clients = SerializerHelper.DeserializeObject<IList<ClientItem>>(message.Data);
+                _clients = ClientItemCollection.DeserializeObject(message.Data).Clients;
                 return;
             case (byte)Models.MessageType.None:
             default:
@@ -172,35 +165,25 @@ internal partial class DataTransferClientItem : CodeNetClient
             data = CryptographyService.AESEncrypt(data, client.AESKey!.Value);
         }
 
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.Message,
-            Data = SerializerHelper.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })
-        });
+        return SendMessage(new((byte)Models.MessageType.Message, SendDataMessage.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
     }
 
     private bool Handshake(ClientItem client)
     {
         if (string.IsNullOrEmpty(client.RSAPublicKey))
             throw new InvalidOperationException("Client public key is not set.");
-        else
+
+        client.AESKey = CryptographyService.GenerateAESKey();
+        return SendMessage(new((byte)Models.MessageType.ShareAESKey, HandshakeMessage.SerializeObject(new HandshakeMessage
         {
-            client.AESKey = CryptographyService.GenerateAESKey();
-            return SendMessage(new()
-            {
-                Type = (byte)Models.MessageType.ShareAESKey,
-                Data = SerializerHelper.SerializeObject(new HandshakeMessage
-                {
-                    ClientId = client.Id,
-                    EncryptedAESKey = CryptographyService.RSAEncrypt(client.AESKey.Value.ToData(), client.RSAPublicKey)
-                })
-            });
-        }
+            ClientId = client.Id,
+            EncryptedAESKey = CryptographyService.RSAEncrypt(AesKey.ToData(client.AESKey.Value), client.RSAPublicKey)
+        })));
     }
 
     private void DataReceivedHandler(MessageReceivingArguments e)
     {
-        var message = SerializerHelper.DeserializeObject<SendDataMessage>(e.Message.Data);
+        var message = SendDataMessage.DeserializeObject(e.Message.Data);
         if (message is null)
             return;
 
@@ -220,10 +203,7 @@ internal partial class DataTransferClientItem : CodeNetClient
         DataReceived?.Invoke(new(message.Data) { ClientName = client.Name });
     }
 
-    private static bool ClientNameValidation(string clientName)
-    {
-        return ClientNameRegex().Match(clientName).Success;
-    }
+    private static bool ClientNameValidation(string clientName) => ClientNameRegex().Match(clientName).Success;
 
     [GeneratedRegex(@"^[a-zA-Z_][a-zA-Z0-9_.-]*$")]
     private static partial Regex ClientNameRegex();

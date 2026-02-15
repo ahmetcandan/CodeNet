@@ -21,10 +21,7 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
         });
     }
 
-    public Task<MessageModel> AddMessageAsync(CreateMessageModel model, CancellationToken cancellationToken = default)
-    {
-        return AddMessageAsync(model, Guid.NewGuid().ToString("N"), cancellationToken);
-    }
+    public Task<MessageModel> AddMessageAsync(CreateMessageModel model, CancellationToken cancellationToken = default) => AddMessageAsync(model, Guid.NewGuid().ToString("N"), cancellationToken);
 
     public async Task<MessageModel> AddMessageAsync(CreateMessageModel model, string messageId, CancellationToken cancellationToken = default)
     {
@@ -43,7 +40,7 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
             Data = response.Data,
             QueueName = response.QueueName
         };
-    }    
+    }
 
     public IEnumerable<MessageModel> GetWaitingMessages(string queueName)
     {
@@ -59,10 +56,7 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
         });
     }
 
-    public MessageModel AddMessage(CreateMessageModel model)
-    {
-        return AddMessage(model, Guid.NewGuid().ToString("N"));
-    }
+    public MessageModel AddMessage(CreateMessageModel model) => AddMessage(model, Guid.NewGuid().ToString("N"));
 
     public MessageModel AddMessage(CreateMessageModel model, string messageId)
     {
@@ -85,23 +79,11 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
         };
     }
 
-    public void DeleteMessage(Guid id)
-    {
-        outboxRepository.Delete(c => c.Id == id);
-    }
+    public void DeleteMessage(Guid id) => outboxRepository.Delete(c => c.Id == id);
 
-    public void DeleteMessage(IEnumerable<Guid> ids)
-    {
-        outboxRepository.Delete(c => ids.Contains(c.Id));
-    }
+    public void DeleteMessage(IEnumerable<Guid> ids) => outboxRepository.Delete(c => ids.Contains(c.Id));
 
-    public Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken)
-    {
-        return outboxRepository.DeleteAsync(c => c.Id == id, cancellationToken);
-    }
+    public Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken = default) => outboxRepository.DeleteAsync(c => c.Id == id, cancellationToken);
 
-    public Task DeleteMessageAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken)
-    {
-        return outboxRepository.DeleteAsync(c => ids.Contains(c.Id), cancellationToken);
-    }
+    public Task DeleteMessageAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default) => outboxRepository.DeleteAsync(c => ids.Contains(c.Id), cancellationToken);
 }

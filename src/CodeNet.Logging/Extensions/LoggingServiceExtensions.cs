@@ -23,8 +23,5 @@ public static class LoggingServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder UseLogging(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<LoggingMiddleware>();
-    }
+    public static IApplicationBuilder UseLogging(this IApplicationBuilder app) => app.UseMiddleware<LoggingMiddleware>();
 }

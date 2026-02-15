@@ -1,4 +1,4 @@
-﻿using CodeNet.MongoDB;
+﻿using CodeNet.MongoDB.Repositories;
 using CodeNet.MongoDB.Settings;
 using Microsoft.Extensions.Diagnostics.HealthChecks;
 using Microsoft.Extensions.Options;
@@ -8,7 +8,7 @@ namespace CodeNet.HealthCheck.MongoDB;
 internal class MongoDbHealthCheck<TDbContext>(TDbContext dbContext) : IHealthCheck
     where TDbContext : MongoDBContext
 {
-    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext context, CancellationToken cancellationToken = default)
+    public async Task<HealthCheckResult> CheckHealthAsync(HealthCheckContext? context, CancellationToken cancellationToken = default)
     {
         try
         {

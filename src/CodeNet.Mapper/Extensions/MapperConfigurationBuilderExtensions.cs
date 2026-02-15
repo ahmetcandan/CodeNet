@@ -5,7 +5,7 @@ namespace CodeNet.Mapper.Extensions;
 
 public static class MapperConfigurationBuilderExtensions
 {
-    internal const int DEFAULT_MAX_DEPTH = 4;
+    internal const int _default_max_depth = 4;
 
     public static MapperColumnBuilder<TSource, TDestination> Map<TSource, TDestination>(this MapperColumnBuilder<TSource, TDestination> builder, Expression<Func<TSource, object>> sourceSelector, Expression<Func<TDestination, object>> destinationSelector)
         where TSource : new()

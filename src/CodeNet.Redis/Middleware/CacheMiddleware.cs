@@ -1,5 +1,5 @@
-﻿using CodeNet.Core;
-using CodeNet.Core.Extensions;
+﻿using CodeNet.Core.Extensions;
+using CodeNet.Core.Middleware;
 using CodeNet.Core.Settings;
 using CodeNet.Redis.Attributes;
 using Microsoft.AspNetCore.Http;
@@ -7,7 +7,7 @@ using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Net.Http.Headers;
 using System.Reflection;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Middleware;
 
 internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache distributedCache) : BaseMiddleware
 {
@@ -23,13 +23,13 @@ internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache di
             var cacheState = context.Response.Headers.GetCacheState();
 
             string? key = null;
-            if (cacheState.HasFlag(Core.Enums.CacheState.ClearCache))
+            if (cacheState.HasFlag(Core.Enums.CacheStates.ClearCache))
             {
                 key ??= await GetRequestKey(context, methodInfo);
                 await distributedCache.RemoveAsync(key, context.RequestAborted);
             }
 
-            if (cacheState.HasFlag(Core.Enums.CacheState.NoCache))
+            if (cacheState.HasFlag(Core.Enums.CacheStates.NoCache))
             {
                 context.Response.Headers.SetResponseHeader(HeaderNames.CacheControl, Constant.NoCache);
                 await next(context);

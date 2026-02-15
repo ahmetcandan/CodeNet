@@ -5,9 +5,10 @@ using Microsoft.AspNetCore.Identity;
 
 namespace CodeNet.Identity.Manager;
 
-internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, RoleManager<IdentityRole> roleManager) : IIdentityUserManager
+internal class IdentityUserManager<TUser, TRole, TKey>(UserManager<TUser> userManager, RoleManager<TRole> roleManager) : IIdentityUserManager
     where TUser : IdentityUser<TKey>, new()
     where TKey : IEquatable<TKey>
+    where TRole : IdentityRole<TKey>, new()
 {
     public async Task<IdentityResult> CreateUser(RegisterUserModel model)
     {
@@ -41,7 +42,7 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
         if (model.Roles is not null)
             await userManager.AddToRolesAsync(user, model.Roles.Where(r => !currentRoles.Any(c => c.Equals(r))));
 
-        return new ResponseMessage("000", "User updated roles successfully!");
+        return new("000", "User updated roles successfully!");
     }
 
     public async Task<ResponseMessage> EditUserClaims(UpdateUserClaimsModel model)
@@ -58,7 +59,7 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
         //add roles
         await userManager.AddClaimsAsync(user, model.Claims!.Where(r => !currentClaims.Any(c => c.Type.Equals(r.Type))).Select(c => c.GetClaim()));
 
-        return new ResponseMessage("000", "User updated claims successfully!");
+        return new("000", "User updated claims successfully!");
     }
 
     public async Task<UserModel> GetUser(string username)
@@ -77,7 +78,7 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
                 claims.Add(new System.Security.Claims.Claim(claim.Type, claim.Value));
         }
 
-        return new UserModel()
+        return new()
         {
             Username = user.UserName ?? string.Empty,
             Email = user.Email ?? string.Empty,
@@ -92,6 +93,6 @@ internal class IdentityUserManager<TUser, TKey>(UserManager<TUser> userManager, 
         var user = await userManager.FindByNameAsync(model.Username) ?? throw new IdentityException(ExceptionMessages.UserNotFound);
         await userManager.DeleteAsync(user);
 
-        return new ResponseMessage("000", "User removed successfully!");
+        return new("000", "User removed successfully!");
     }
 }

@@ -1,10 +1,9 @@
 ﻿using CodeNet.EntityFramework.Models;
 
-namespace CodeNet.EntityFramework.Tests.Mock.Model
+namespace CodeNet.Repository.Tests.Mock.Model;
+
+public class TestTable : TracingEntity, ISoftDelete
 {
-    public class TestTable : TracingEntity, ISoftDelete
-    {
-        public int Id { get; set; }
-        public string Name { get; set; }
-    }
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
 }

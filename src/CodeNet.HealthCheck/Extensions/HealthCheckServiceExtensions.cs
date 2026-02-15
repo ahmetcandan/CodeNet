@@ -33,13 +33,13 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     public static IHealthChecksBuilder AddCodeNetHealthCheck(this IHealthChecksBuilder builder, TimeSpan? timeSpan = null)
     {
-        return builder.AddCheck<CodeNetHealthCheck>("codenet", HealthStatus.Unhealthy, ["codenet", "identity-context"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddHealthCheck<CodeNetHealthCheck>("codenet", ["codenet", "identity-context"], HealthStatus.Unhealthy, timeSpan ?? TimeSpan.FromSeconds(5));
     }
 
     public static IHealthChecksBuilder AddHealthCheck<THealthCheck>(this IHealthChecksBuilder builder, string name, IEnumerable<string> tags, HealthStatus failureStatus = HealthStatus.Unhealthy, TimeSpan? timeSpan = null)
         where THealthCheck : class, IHealthCheck
     {
-        return builder.AddCheck<THealthCheck>(name, failureStatus, tags);
+        return builder.AddCheck<THealthCheck>(name, failureStatus, tags, timeSpan);
     }
 
     /// <summary>

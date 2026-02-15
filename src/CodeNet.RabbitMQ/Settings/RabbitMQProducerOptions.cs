@@ -6,17 +6,10 @@ public class RabbitMQProducerOptions : BaseRabbitMQOptions
 {
     public bool? Mandatory { get; set; } = false;
 
-    public override string ToString()
-    {
-        return $"{base.ToString()} Mandatory: {Mandatory}";
-    }
+    public override string ToString() => $"{base.ToString()} Mandatory: {Mandatory}";
 }
 
 public class RabbitMQProducerOptions<TProducerService> : RabbitMQProducerOptions
     where TProducerService : RabbitMQProducerService
 {
-    public override string ToString()
-    {
-        return base.ToString();
-    }
 }

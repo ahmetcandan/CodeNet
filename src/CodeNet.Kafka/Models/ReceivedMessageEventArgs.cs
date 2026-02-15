@@ -11,9 +11,9 @@ public class ReceivedMessageEventArgs<TValue> : ReceivedMessageEventArgs<Null, T
 
 public class ReceivedMessageEventArgs<TKey, TValue> : EventArgs
 {
-    public Headers Headers { get; set; }
-    public TKey Key { get; set; }
-    public TValue Value { get; set; }
+    public required Headers Headers { get; set; }
+    public required TKey Key { get; set; }
+    public required TValue Value { get; set; }
     public long Offset { get; set; }
     public int Partition { get; set; }
     public Timestamp Timestamp { get; set; }

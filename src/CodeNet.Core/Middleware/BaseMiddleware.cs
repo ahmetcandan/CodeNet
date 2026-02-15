@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc.Controllers;
 using System.Reflection;
 using System.Text;
 
-namespace CodeNet.Core;
+namespace CodeNet.Core.Middleware;
 
 public abstract class BaseMiddleware
 {
@@ -42,17 +42,11 @@ public abstract class BaseMiddleware
         return responseBody;
     }
 
-    protected static async Task<string> GetRequestKey(HttpContext context, MethodInfo methodInfo)
-    {
-        return context.Request.ContentType is null
+    protected static async Task<string> GetRequestKey(HttpContext context, MethodInfo methodInfo) => context.Request.ContentType is null
             ? Hashing.MD5((context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty) + string.Join("", context.Request.RouteValues.Select(c => c.Value)))
             : Hashing.MD5(await StreamToByteArray(context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty, context.RequestAborted));
-    }
 
-    protected static async Task<string> GetRequest(HttpContext context)
-    {
-        return context.Request.ContentType is null
+    protected static async Task<string> GetRequest(HttpContext context) => context.Request.ContentType is null
             ? string.Join("", context.Request.RouteValues.Select(c => c.Value))
             : Encoding.UTF8.GetString(await StreamToByteArray(context.Request.Body, context.RequestAborted));
-    }
 }

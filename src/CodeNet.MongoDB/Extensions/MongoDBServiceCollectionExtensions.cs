@@ -1,4 +1,5 @@
-﻿using CodeNet.MongoDB.Settings;
+﻿using CodeNet.MongoDB.Repositories;
+using CodeNet.MongoDB.Settings;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -12,10 +13,7 @@ public static class MongoDBServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="mongoSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMongoDB(this IServiceCollection services, IConfigurationSection mongoSection)
-    {
-        return services.AddMongoDB<MongoDBContext>(mongoSection);
-    }
+    public static IServiceCollection AddMongoDB(this IServiceCollection services, IConfigurationSection mongoSection) => services.AddMongoDB<MongoDBContext>(mongoSection);
 
     /// <summary>
     /// Add MongoDB Settings
@@ -37,14 +35,11 @@ public static class MongoDBServiceCollectionExtensions
     /// <param name="services"></param>
     /// <param name="mongoDbOptions"></param>
     /// <returns></returns>
-    public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoDbOptions mongoDbOptions)
+    public static IServiceCollection AddMongoDB(this IServiceCollection services, MongoDbOptions mongoDbOptions) => services.AddMongoDB(new MongoDbOptions<MongoDBContext>
     {
-        return services.AddMongoDB(new MongoDbOptions<MongoDBContext>
-        {
-            ConnectionString = mongoDbOptions.ConnectionString,
-            DatabaseName = mongoDbOptions.DatabaseName
-        });
-    }
+        ConnectionString = mongoDbOptions.ConnectionString,
+        DatabaseName = mongoDbOptions.DatabaseName
+    });
 
     /// <summary>
     /// Add MongoDB Settings

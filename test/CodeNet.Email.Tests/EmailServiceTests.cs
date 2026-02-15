@@ -13,7 +13,7 @@ public class EmailServiceTests
     }
 
     [Test]
-    public async Task Send_Email_Test()
+    public void Send_Email_Test()
     {
         IServiceCollection services = new ServiceCollection();
 
@@ -89,7 +89,7 @@ Send date: 08.04.2025 22:55";
             }
         };
 
-        var builder = TemplateBuilder.Compile(body);
+        var builder = MessageBuilder.Compile(body);
 
         var txt = builder.Build(param).ToString() ?? string.Empty;
 

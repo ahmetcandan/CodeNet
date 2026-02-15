@@ -1,12 +1,11 @@
 ﻿using CodeNet.Core.Context;
-using CodeNet.MongoDB;
 using CodeNet.MongoDB.Repositories;
 using CodeNet.Parameters.Manager;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.MongoDB.Exception;
 using CodeNet.Parameters.MongoDB.Models;
 using CodeNet.Parameters.Settings;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -28,7 +27,7 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
             Code = model.Code,
             ApprovalRequired = model.ApprovalRequired,
             CreatedDate = DateTime.Now,
-            CreatedUser = codeNetContext.UserName,
+            CreatedUser = codeNetContext.UserName ?? string.Empty,
             Description = model.Description,
             Id = model.Id,
             IsActive = true,
@@ -58,7 +57,7 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
         var dto = await _repository.GetByIdAsync(c => c.Code == model.Code, cancellationToken);
         var result = DtoToResult(dto);
 
-        if (_distributedCache is not null)
+        if (result is not null && _distributedCache is not null)
         {
             await RemoveCacheAsync(model.Code, cancellationToken);
             await SetCacheAsync(result, cancellationToken);
@@ -123,13 +122,13 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
     {
         var dtoList = await _repository.GetPagingListAsync(c => c.IsActive, c => c.CreatedDate, true, page, count, cancellationToken);
-        return dtoList.Select(c => new ParameterGroupResult
+        return [.. dtoList.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
             ApprovalRequired = c.ApprovalRequired,
             Description = c.Description,
             Id = c.Id
-        }).ToList();
+        })];
     }
 
     private static ParameterGroupWithParamsResult ModelToResult(ParameterGroupWithParamsModel model) => new()
@@ -187,12 +186,8 @@ internal sealed class ParameterMongoDBManager(MongoDBContext dbContext, ICodeNet
     #endregion
 
     private Task RemoveCacheAsync(string groupCode, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{groupCode}", cancellationToken) ?? Task.CompletedTask;
-    }
+        => _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{groupCode}", cancellationToken) ?? Task.CompletedTask;
 
     private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
-    }
+        => _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
 }

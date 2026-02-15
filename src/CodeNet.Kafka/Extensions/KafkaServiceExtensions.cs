@@ -18,9 +18,7 @@ public static class KafkaServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddKafkaConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection kafkaSection)
         where TConsumerHandler : class, IKafkaConsumerHandler<KafkaConsumerService>
-    {
-        return services.AddKafkaConsumer<KafkaConsumerService, TConsumerHandler>(kafkaSection);
-    }
+        => services.AddKafkaConsumer<KafkaConsumerService, TConsumerHandler>(kafkaSection);
 
     /// <summary>
     /// Add Kafka Consumer
@@ -91,10 +89,7 @@ public static class KafkaServiceExtensions
     /// <param name="services"></param>
     /// <param name="kafkaSection"></param>
     /// <returns></returns>
-    public static IServiceCollection AddKafkaProducer(this IServiceCollection services, IConfigurationSection kafkaSection)
-    {
-        return services.AddKafkaProducer<KafkaProducerService>(kafkaSection);
-    }
+    public static IServiceCollection AddKafkaProducer(this IServiceCollection services, IConfigurationSection kafkaSection) => services.AddKafkaProducer<KafkaProducerService>(kafkaSection);
 
     /// <summary>
     /// Add Kafka Producer
@@ -152,10 +147,7 @@ public static class KafkaServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseKafkaConsumer(this WebApplication app)
-    {
-        return app.UseKafkaConsumer<KafkaConsumerService>();
-    }
+    public static WebApplication UseKafkaConsumer(this WebApplication app) => app.UseKafkaConsumer<KafkaConsumerService>();
 
     /// <summary>
     /// Use Kafka Consumer
@@ -164,10 +156,7 @@ public static class KafkaServiceExtensions
     /// <param name="app"></param>
     /// <returns></returns>
     public static WebApplication UseKafkaConsumer<TConsumerService>(this WebApplication app)
-        where TConsumerService : KafkaConsumerService
-    {
-        return app.UseKafkaConsumer<TConsumerService, string>();
-    }
+        where TConsumerService : KafkaConsumerService => app.UseKafkaConsumer<TConsumerService, string>();
 
     /// <summary>
     /// Use Kafka Consumer
@@ -178,9 +167,7 @@ public static class KafkaServiceExtensions
     /// <returns></returns>
     public static WebApplication UseKafkaConsumer<TConsumerService, TValue>(this WebApplication app)
         where TConsumerService : KafkaConsumerService<TValue>
-    {
-        return app.UseKafkaConsumer<TConsumerService, Null, TValue>();
-    }
+        => app.UseKafkaConsumer<TConsumerService, Null, TValue>();
 
     /// <summary>
     /// Use Kafka Consumer

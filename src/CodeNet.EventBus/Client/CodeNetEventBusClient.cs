@@ -18,31 +18,19 @@ internal class CodeNetEventBusClient : CodeNetClient
     public bool SetClientType(ClientType clientType)
     {
         ClientType = clientType;
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.SetClientType,
-            Data = [(byte)clientType]
-        });
+        return SendMessage(new((byte)Models.MessageType.SetClientType, [(byte)clientType]));
     }
 
     public bool SetConsumerGroup(string consumerGroup)
     {
         ConsumerGroup = consumerGroup;
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.SetConsumerGroup,
-            Data = Encoding.UTF8.GetBytes(consumerGroup)
-        });
+        return SendMessage(new((byte)Models.MessageType.SetConsumerGroup, Encoding.UTF8.GetBytes(consumerGroup)));
     }
 
     public bool SetChannel(string channel)
     {
         Channel = channel;
-        return SendMessage(new()
-        {
-            Type = (byte)Models.MessageType.SetChannel,
-            Data = Encoding.UTF8.GetBytes(channel)
-        });
+        return SendMessage(new((byte)Models.MessageType.SetChannel, Encoding.UTF8.GetBytes(channel)));
     }
 
     public override string ApplicationKey => EventBusKey.ApplicationKey;
@@ -60,10 +48,7 @@ internal class CodeNetEventBusClient : CodeNetClient
         Channel = string.Empty;
     }
 
-    public CodeNetEventBusClient()
-    {
-        Channel = string.Empty;
-    }
+    public CodeNetEventBusClient() => Channel = string.Empty;
 
     protected override void ReceivedMessage(Message message)
     {

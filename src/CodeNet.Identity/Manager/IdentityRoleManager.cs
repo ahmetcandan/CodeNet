@@ -72,10 +72,7 @@ internal class IdentityRoleManager<TRole, TKey>(RoleManager<TRole> roleManager) 
             : new ResponseMessage("000", "Role deleted successfully!");
     }
 
-    public async Task<IEnumerable<RoleViewModel>> GetRoles(CancellationToken cancellationToken)
-    {
-        return await GetRolesWithClaims(cancellationToken);
-    }
+    public async Task<IEnumerable<RoleViewModel>> GetRoles(CancellationToken cancellationToken) => await GetRolesWithClaims(cancellationToken);
 
     private async Task<IEnumerable<RoleViewModel>> GetRolesWithClaims(CancellationToken cancellationToken)
     {

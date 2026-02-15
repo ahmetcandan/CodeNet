@@ -1,4 +1,5 @@
-﻿using Elastic.Clients.Elasticsearch;
+﻿using CodeNet.Elasticsearch.Repositories;
+using Elastic.Clients.Elasticsearch;
 
 namespace CodeNet.Elasticsearch.Settings;
 

@@ -1,24 +1,11 @@
 ﻿namespace CodeNet.RabbitMQ.Models;
 
-public class PublishModel
+public class PublishModel(byte[] data, string messageId, IDictionary<string, object>? headers = null)
 {
-    public PublishModel(Guid id, byte[] data, string messageId, IDictionary<string, object>? headers = null)
-    {
-        Id = id;
-        Data = data;
-        MessageId = messageId;
-        Headers = headers;
-    }
-
-    public PublishModel(byte[] data, string messageId, IDictionary<string, object>? headers = null)
-    {
-        Data = data;
-        MessageId = messageId;
-        Headers = headers;
-    }
+    public PublishModel(Guid id, byte[] data, string messageId, IDictionary<string, object>? headers = null) : this(data, messageId, headers) => Id = id;
 
     public Guid Id { get; set; }
-    public byte[] Data { get; set; }
-    public string MessageId { get; set; }
-    public IDictionary<string, object>? Headers { get; set; }
+    public byte[] Data { get; set; } = data;
+    public string MessageId { get; set; } = messageId;
+    public IDictionary<string, object>? Headers { get; set; } = headers;
 }

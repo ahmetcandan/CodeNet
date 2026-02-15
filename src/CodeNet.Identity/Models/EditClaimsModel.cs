@@ -7,8 +7,5 @@ public class EditClaimsModel
     public required string Type { get; set; }
     public required string Value { get; set; }
 
-    public Claim GetClaim()
-    {
-        return new(Type, Value);
-    }
+    public Claim GetClaim() => new(Type, Value);
 }

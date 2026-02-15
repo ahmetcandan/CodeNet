@@ -9,11 +9,11 @@
 		<PackAsTool>False</PackAsTool>
 		<PackageId>$(AssemblyName)</PackageId>
 		<PackageIcon>ico.png</PackageIcon>
-		<Title>CodeNet Core</Title>
-		<Description>CodeNet Core package.</Description>
+		<Title>CodeNet BackgroudJob</Title>
+		<Description>CodeNet BackgroudJob package.</Description>
 		<Copyright>Copyright 2025</Copyright>
 		<Company>CodeNet</Company>
-		<Version>1.1.6</Version>
+		<Version>1.1.7</Version>
 		<Authors>CodeNet</Authors>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>

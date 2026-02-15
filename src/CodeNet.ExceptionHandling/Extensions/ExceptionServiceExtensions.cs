@@ -1,4 +1,5 @@
-﻿using CodeNet.Logging.Extensions;
+﻿using CodeNet.ExceptionHandling.Middleware;
+using CodeNet.Logging.Extensions;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,9 +16,7 @@ public static class ExceptionServiceExtensions
     /// <param name="sectionName">ErrorResponseMessage</param>
     /// <returns></returns>
     public static IServiceCollection AddDefaultErrorMessage(this IServiceCollection services, IConfiguration configuration, string sectionName)
-    {
-        return services.AddDefaultErrorMessage(configuration.GetSection(sectionName));
-    }
+        => services.AddDefaultErrorMessage(configuration.GetSection(sectionName));
 
     /// <summary>
     /// Json is ProblemDetails
@@ -37,8 +36,5 @@ public static class ExceptionServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app)
-    {
-        return app.UseMiddleware<ExceptionHandlerMiddleware>();
-    }
+    public static IApplicationBuilder UseExceptionHandling(this IApplicationBuilder app) => app.UseMiddleware<ExceptionHandlerMiddleware>();
 }

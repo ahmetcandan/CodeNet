@@ -1,9 +1,10 @@
 ﻿using CodeNet.Core.Context;
+using CodeNet.Parameters.DbContext;
 using CodeNet.Parameters.Exception;
 using CodeNet.Parameters.Models;
 using CodeNet.Parameters.Repositories;
 using CodeNet.Parameters.Settings;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
@@ -202,24 +203,18 @@ internal sealed class ParameterManager(ParametersDbContext dbContext, ICodeNetCo
     }
 
     public async Task<List<ParameterGroupResult>> GetParameterGroupListAsync(int page, int count, CancellationToken cancellationToken = default)
-    {
-        return (await _parameterGroupRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken)).List.Select(c => new ParameterGroupResult
+        => [.. (await _parameterGroupRepository.GetPagingListAsync(c => c.Id, true, page, count, cancellationToken)).List?.Select(c => new ParameterGroupResult
         {
             Code = c.Code,
             ApprovalRequired = c.ApprovalRequired,
             Description = c.Description,
             Id = c.Id
-        }).ToList();
-    }
+        }) ?? []];
     #endregion
 
     private Task RemoveCacheAsync(ParameterGroup parameterGroup, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{parameterGroup.Code}", cancellationToken) ?? Task.CompletedTask;
-    }
+        => _distributedCache?.RemoveAsync($"{_parameterSettings!.RedisPrefix}_Code:{parameterGroup.Code}", cancellationToken) ?? Task.CompletedTask;
 
     private Task SetCacheAsync(ParameterGroupWithParamsResult result, CancellationToken cancellationToken)
-    {
-        return _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
-    }
+        => _distributedCache?.SetValueAsync(result, $"{_parameterSettings!.RedisPrefix}_Code:{result.Code}", _parameterSettings!.Time, cancellationToken) ?? Task.CompletedTask;
 }

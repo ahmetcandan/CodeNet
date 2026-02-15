@@ -7,29 +7,16 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeNet.Parameters.Repositories;
 
-internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
+internal class ParameterGroupRepository(Microsoft.EntityFrameworkCore.DbContext dbContext, ICodeNetContext identityContext) : TracingRepository<ParameterGroup>(dbContext, identityContext)
 {
-    private readonly DbSet<Parameter> _parameters;
+    private readonly DbSet<Parameter> _parameters = dbContext.Set<Parameter>();
 
-    public ParameterGroupRepository(DbContext dbContext, ICodeNetContext identityContext) : base(dbContext, identityContext)
-    {
-        _parameters = _dbContext.Set<Parameter>();
-    }
-
-    public ValueTask<ParameterGroup?> GetParameterGroupAsync(int groupId, CancellationToken cancellationToken = default)
-    {
-        return _entities.FindAsync([groupId], cancellationToken);
-    }
+    public ValueTask<ParameterGroup?> GetParameterGroupAsync(int groupId, CancellationToken cancellationToken = default) => _entities.FindAsync([groupId], cancellationToken);
 
     public async Task<bool> GetApprovalRequiredAsync(int groupId, CancellationToken cancellationToken = default)
-    {
-        return (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
-    }
+        => (await _entities.FindAsync([groupId], cancellationToken))?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
 
-    public bool GetApprovalRequired(int groupId)
-    {
-        return _entities.Find(groupId)?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
-    }
+    public bool GetApprovalRequired(int groupId) => _entities.Find(groupId)?.ApprovalRequired ?? throw new ParameterException(ExceptionMessages.NotFoundGroup.UseParams(groupId.ToString()));
 
     public async Task<ParameterGroupWithParamsResult?> GetParameterGroupWithParams(int groupId, CancellationToken cancellationToken)
     {
@@ -101,13 +88,10 @@ internal class ParameterGroupRepository : TracingRepository<ParameterGroup>
     }
 
     private IQueryable<ParameterGroupParameter> GetParameterGroupParameter(bool hasIsDefault = false)
-    {
-        return (from pg in _entities
-                join p in _parameters.Where(c => !hasIsDefault || c.IsDefault).OrderBy(c => c.Order) on pg.Id equals p.GroupId into pi
-                from p in pi.DefaultIfEmpty()
-                where pg.IsActive && !pg.IsDeleted
-                    && p.IsActive && !p.IsDeleted
-                select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg })
-                .AsNoTracking();
-    }
+        => (from pg in _entities
+            join p in _parameters.Where(c => !hasIsDefault || c.IsDefault).OrderBy(c => c.Order) on pg.Id equals p.GroupId into pi
+            from p in pi.DefaultIfEmpty()
+            where pg.IsActive && !pg.IsDeleted
+                && p.IsActive && !p.IsDeleted
+            select new ParameterGroupParameter { Parameter = p, ParameterGroup = pg }).AsNoTracking();
 }

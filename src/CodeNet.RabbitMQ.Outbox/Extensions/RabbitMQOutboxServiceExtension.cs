@@ -63,18 +63,12 @@ public static class RabbitMQOutboxServiceExtension
     }
 
     private static bool IsRabbitMQProducerServiceType(Type type)
-    {
-        return type.Equals(typeof(RabbitMQProducerService))
-|| (type.BaseType is not null && !type.BaseType.Equals(typeof(object)) && IsRabbitMQProducerServiceType(type.BaseType));
-    }
+        => type.Equals(typeof(RabbitMQProducerService)) || (type.BaseType is not null && !type.BaseType.Equals(typeof(object)) && IsRabbitMQProducerServiceType(type.BaseType));
 
     /// <summary>
     /// Use RabbitMQ Outbox Module
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseRabbitMQOutboxModule(this WebApplication app)
-    {
-        return app.UseBackgroundService();
-    }
+    public static WebApplication UseRabbitMQOutboxModule(this WebApplication app) => app.UseBackgroundService();
 }

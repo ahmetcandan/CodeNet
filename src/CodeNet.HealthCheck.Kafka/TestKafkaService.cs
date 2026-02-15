@@ -8,13 +8,13 @@ internal class TestKafkaService(IOptions<HealthCheckKafkaSettings> options)
     public bool CanConnection()
     {
         try
-		{
+        {
             using var producer = new ProducerBuilder<Null, string>(options.Value.Config).Build();
             return true;
-		}
-		catch
-		{
-			return false;
-		}
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

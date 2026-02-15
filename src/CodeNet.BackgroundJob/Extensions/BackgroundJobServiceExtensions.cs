@@ -57,9 +57,9 @@ public static class BackgroundJobServiceExtensions
         foreach (var tJobType in tJobs.Select(c => c.GetType()).Distinct())
         {
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
-            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService ?? throw new NotImplementedException($"'BackgroundJobOptionsBuilder.AddScheduleJob<{tJobType.Name}>(JobOptions options)' not implemented background service.");
+            var backgroundService = serviceScope.ServiceProvider.GetService(serviceType) as ICodeNetBackgroundService<IScheduleJob> ?? throw new NotImplementedException($"'BackgroundJobOptionsBuilder.AddScheduleJob<{tJobType.Name}>(JobOptions options)' not implemented background service.");
             if (notificationHub is not null)
-                backgroundService.StatusChanged += async (ReceivedMessageEventArgs e) =>
+                backgroundService.StatusChanged += async e =>
                 {
                     await notificationHub.Clients.All.SendAsync("ChangeStatus_ScheculeJob", e, CancellationToken.None);
                 };

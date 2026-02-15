@@ -9,10 +9,7 @@ public class ParameterSettings
     /// </summary>
     public string RedisPrefix
     {
-        get
-        {
-            return string.IsNullOrEmpty(_redisPrefix) ? "CNPRM" : (_redisPrefix ?? string.Empty);
-        }
+        get => string.IsNullOrEmpty(_redisPrefix) ? "CNPRM" : _redisPrefix;
         set { _redisPrefix = value; }
     }
 
@@ -23,10 +20,7 @@ public class ParameterSettings
     /// </summary>
     public int Time
     {
-        get
-        {
-            return _time ?? 360;
-        }
+        get => _time ?? 360;
         set { _time = value; }
     }
 }

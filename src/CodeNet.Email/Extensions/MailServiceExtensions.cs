@@ -16,10 +16,7 @@ public static class MailServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddEmailService(this IServiceCollection services, IConfigurationSection section, Action<MailServiceOptionsBuilder>? action = null)
-    {
-        var options = section.Get<SmtpOptions>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json");
-        return AddEmailService(services, options, action);
-    }
+        => AddEmailService(services, section.Get<SmtpOptions>() ?? throw new ArgumentNullException($"'{section.Path}' is null or empty in appSettings.json"), action);
 
     /// <summary>
     /// Add Email Service

@@ -6,11 +6,12 @@ namespace CodeNet.Email.Models;
 public partial class MailTemplate
 {
     [BsonId]
-    public string Code { get; set; }
-    public TemplateBuilder Builder { get; set; }
+    public required string Code { get; set; }
+    public MessageBuilder? Builder { get; set; }
     public string From { get; set; } = string.Empty;
     public string To { get; set; } = string.Empty;
     public string Cc { get; set; } = string.Empty;
     public string Bcc { get; set; } = string.Empty;
+    public string Content { get; set; } = string.Empty;
     public bool IsBodyHtml { get; set; }
 }

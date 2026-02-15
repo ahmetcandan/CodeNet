@@ -11,6 +11,7 @@ internal static class ObjectExtension
         object? value = type.Equals(typeof(ExpandoObject))
             ? ((IDictionary<string, object>)obj)[properties[0]]
             : (type.GetProperty(properties[0])?.GetValue(obj));
+
         return value is null
             ? null
             : properties.Length == 1

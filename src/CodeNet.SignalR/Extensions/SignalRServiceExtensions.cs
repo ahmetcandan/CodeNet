@@ -17,10 +17,7 @@ public static class SignalRServiceExtensions
     {
         app.UseCors();
         app.UseRouting();
-        app.UseEndpoints(endpoints =>
-        {
-            endpoints.MapHub<THub>(pattern);
-        });
+        app.MapHub<THub>(pattern);
         return app;
     }
 }

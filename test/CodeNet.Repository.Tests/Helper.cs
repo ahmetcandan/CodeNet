@@ -1,4 +1,4 @@
-﻿namespace CodeNet.EntityFramework.Tests
+﻿namespace CodeNet.Repository.Tests
 {
     public class Assert2 : Assert
     {

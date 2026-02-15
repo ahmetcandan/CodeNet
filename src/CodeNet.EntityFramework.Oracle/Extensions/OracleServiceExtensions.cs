@@ -14,9 +14,7 @@ public static class OracleServiceExtensions
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
     public static IServiceCollection AddOracle(this IServiceCollection services, IConfiguration configuration, string connectionName)
-    {
-        return services.AddOracle<DbContext>(configuration, connectionName);
-    }
+        => services.AddOracle<DbContext>(configuration, connectionName);
 
     /// <summary>
     /// Add Oracle
@@ -29,9 +27,7 @@ public static class OracleServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddOracle<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseOracle(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseOracle(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
 
     /// <summary>
     /// Add Oracle
@@ -40,9 +36,7 @@ public static class OracleServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddOracle(this IServiceCollection services, string connectionString)
-    {
-        return services.AddOracle<DbContext>(connectionString);
-    }
+        => services.AddOracle<DbContext>(connectionString);
 
     /// <summary>
     /// Add Oracle
@@ -53,9 +47,7 @@ public static class OracleServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddOracle<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseOracle(connectionString));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseOracle(connectionString));
 
     /// <summary>
     /// Use Oracle
@@ -64,7 +56,5 @@ public static class OracleServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static DbContextOptionsBuilder UseOracle(this DbContextOptionsBuilder optionsBuilder, string connectionString)
-    {
-        return OracleDbContextOptionsExtensions.UseOracle(optionsBuilder, connectionString);
-    }
+        => OracleDbContextOptionsExtensions.UseOracle(optionsBuilder, connectionString);
 }

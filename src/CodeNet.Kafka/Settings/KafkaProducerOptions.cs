@@ -5,7 +5,7 @@ namespace CodeNet.Kafka.Settings;
 
 public class KafkaProducerOptions : BaseKafkaOptions
 {
-    public ProducerConfig Config { get; set; }
+    public required ProducerConfig Config { get; set; }
 }
 
 public class KafkaProducerOptions<TProducerService, TKey, TValue> : KafkaProducerOptions

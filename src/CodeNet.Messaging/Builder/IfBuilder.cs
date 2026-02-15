@@ -3,13 +3,11 @@ using System.Text;
 
 namespace CodeNet.Messaging.Builder;
 
-public class IfBuilder : ITemplateBuilder
+internal class IfBuilder : IMessageBuilder
 {
-    private IfBuilder()
-    {
-    }
+    private IfBuilder() { }
 
-    public static IfBuilder Compile(string content, int index, string operation, string ifContent, string? elseContent = null)
+    public static IfBuilder Compile(string content, int index, ParamValue paramLeft, ParamValue paramRight, string operation, string ifContent, string? elseContent = null)
     {
         var _operator = operation switch
         {
@@ -26,8 +24,10 @@ public class IfBuilder : ITemplateBuilder
             Content = content,
             Index = index,
             Operator = _operator,
-            IfBodyBuilder = TemplateBuilder.Compile(ifContent),
-            ElseBodyBuilder = string.IsNullOrEmpty(elseContent) ? null : TemplateBuilder.Compile(elseContent)
+            ParamLeft = paramLeft,
+            ParamRight = paramRight,
+            IfBodyBuilder = MessageBuilder.Compile(ifContent),
+            ElseBodyBuilder = string.IsNullOrEmpty(elseContent) ? null : MessageBuilder.Compile(elseContent)
         };
 
         return builder;
@@ -35,7 +35,7 @@ public class IfBuilder : ITemplateBuilder
 
     private static bool ParamEquals(ParamValue param1, ParamValue param2) => (!param1.HasValue && !param2.HasValue) || (param1.HasValue && param2.HasValue && param1.Value!.Equals(param2.Value));
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         if (ParamLeft.Type == ParamType.Parameter)
             ParamLeft.SetValue(data);
@@ -68,10 +68,10 @@ public class IfBuilder : ITemplateBuilder
 
     public string Content { get; set; } = string.Empty;
     public int Index { get; set; }
-    public ParamValue ParamLeft { get; set; }
-    public ParamValue ParamRight { get; set; }
-    public required TemplateBuilder IfBodyBuilder { get; set; }
-    public TemplateBuilder? ElseBodyBuilder { get; set; }
+    public required ParamValue ParamLeft { get; set; }
+    public required ParamValue ParamRight { get; set; }
+    public required MessageBuilder IfBodyBuilder { get; set; }
+    public MessageBuilder? ElseBodyBuilder { get; set; }
     public Operator Operator { get; set; }
     public BuildType Type { get; } = BuildType.If;
 }

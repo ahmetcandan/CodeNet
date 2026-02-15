@@ -2,7 +2,7 @@
 
 public enum BuildType
 {
-    Body = 1,
+    Message = 1,
     Loop = 2,
     Func = 3,
     If = 4

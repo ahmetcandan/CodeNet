@@ -18,13 +18,7 @@ internal class CodeNetEventBusServer(int port) : CodeNetServer<CodeNetEventBusCl
             ClientConnectFinish?.Invoke(new(client));
     }
 
-    protected override void ClientConnecting(CodeNetEventBusClient client)
-    {
-        client.ClientConnectFinish += Client_ClientConnectFinish;
-    }
+    protected override void ClientConnecting(CodeNetEventBusClient client) => client.ClientConnectFinish += Client_ClientConnectFinish;
 
-    private void Client_ClientConnectFinish(ClientArguments<CodeNetEventBusClient> e)
-    {
-        ClientConnectFinish?.Invoke(e);
-    }
+    private void Client_ClientConnectFinish(ClientArguments<CodeNetEventBusClient> e) => ClientConnectFinish?.Invoke(e);
 }

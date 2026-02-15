@@ -17,9 +17,7 @@ public static class RabbitMqServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, IConfigurationSection rabbitSection)
         where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
-    {
-        return services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>(rabbitSection);
-    }
+        => services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>(rabbitSection);
 
     /// <summary>
     /// Add RabbitMQ Consumer
@@ -46,9 +44,7 @@ public static class RabbitMqServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQConsumer<TConsumerHandler>(this IServiceCollection services, RabbitMQConsumerOptions config)
         where TConsumerHandler : class, IRabbitMQConsumerHandler<RabbitMQConsumerService>
-    {
-        return services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>((RabbitMQConsumerOptions<RabbitMQConsumerService>)config);
-    }
+        => services.AddRabbitMQConsumer<RabbitMQConsumerService, TConsumerHandler>((RabbitMQConsumerOptions<RabbitMQConsumerService>)config);
 
     /// <summary>
     /// Add RabbitMQ Consumer
@@ -121,9 +117,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="rabbitSection"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, IConfigurationSection rabbitSection)
-    {
-        return services.AddRabbitMQProducer<RabbitMQProducerService>(rabbitSection);
-    }
+        => services.AddRabbitMQProducer<RabbitMQProducerService>(rabbitSection);
 
     /// <summary>
     /// Add RabbitMQ Producer
@@ -146,9 +140,7 @@ public static class RabbitMqServiceExtensions
     /// <param name="config"></param>
     /// <returns></returns>
     public static IServiceCollection AddRabbitMQProducer(this IServiceCollection services, RabbitMQProducerOptions config)
-    {
-        return services.AddRabbitMQProducer((RabbitMQProducerOptions<RabbitMQProducerService>)config);
-    }
+        => services.AddRabbitMQProducer((RabbitMQProducerOptions<RabbitMQProducerService>)config);
 
     /// <summary>
     /// Add RabbitMQ Producer
@@ -206,10 +198,7 @@ public static class RabbitMqServiceExtensions
     /// </summary>
     /// <param name="app"></param>
     /// <returns></returns>
-    public static WebApplication UseRabbitMQConsumer(this WebApplication app)
-    {
-        return app.UseRabbitMQConsumer<RabbitMQConsumerService>();
-    }
+    public static WebApplication UseRabbitMQConsumer(this WebApplication app) => app.UseRabbitMQConsumer<RabbitMQConsumerService>();
 
     /// <summary>
     /// Use RabbitMQ Consumer

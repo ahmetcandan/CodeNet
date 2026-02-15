@@ -38,10 +38,7 @@ public class CodeNetEventBus(int port)
         PublishMessageToSubscribers(e.Message, e.Client.Channel);
     }
 
-    private void Server_ClientConnected(ClientArguments<CodeNetEventBusClient> e)
-    {
-        _clients.Add(e.Client.ClientId, e.Client);
-    }
+    private void Server_ClientConnected(ClientArguments<CodeNetEventBusClient> e) => _clients.Add(e.Client.ClientId, e.Client);
 
     private void Server_ClientConnectedFinish(ClientArguments<CodeNetEventBusClient> e)
     {
@@ -78,24 +75,27 @@ public class CodeNetEventBus(int port)
         _clients.Remove(e.Client.ClientId);
 
         if (e.Client.ClientType is ClientType.Subscriber)
+            Server_ClientDisconnectedForSubscriber(e.Client);
+    }
+
+    private void Server_ClientDisconnectedForSubscriber(CodeNetEventBusClient client)
+    {
+        if (string.IsNullOrWhiteSpace(client.ConsumerGroup))
         {
-            if (string.IsNullOrWhiteSpace(e.Client.ConsumerGroup))
+            var consumerGroup = _channels[client.Channel].FirstOrDefault(c => c.Name is null && c.ClientIds.Contains(client.ClientId));
+            if (consumerGroup is not null)
+                _channels[client.Channel].Remove(consumerGroup);
+        }
+        else
+        {
+            var consumerGroup = _channels[client.Channel].FirstOrDefault(c => c.Name == client.ConsumerGroup && c.ClientIds.Contains(client.ClientId));
+            if (consumerGroup is not null)
             {
-                var consumerGroup = _channels[e.Client.Channel].FirstOrDefault(c => c.Name is null && c.ClientIds.Contains(e.Client.ClientId));
-                if (consumerGroup is not null)
-                    _channels[e.Client.Channel].Remove(consumerGroup);
-            }
-            else
-            {
-                var consumerGroup = _channels[e.Client.Channel].FirstOrDefault(c => c.Name == e.Client.ConsumerGroup && c.ClientIds.Contains(e.Client.ClientId));
-                if (consumerGroup is not null)
+                consumerGroup.ClientIds.Remove(client.ClientId);
+                if (consumerGroup.ClientIds.Count == 0)
                 {
-                    consumerGroup.ClientIds.Remove(e.Client.ClientId);
-                    if (consumerGroup.ClientIds.Count == 0)
-                    {
-                        _channels[e.Client.Channel].Remove(consumerGroup);
-                        _consumerGroupIndex.Remove(new(e.Client.Channel, e.Client.ConsumerGroup));
-                    }
+                    _channels[client.Channel].Remove(consumerGroup);
+                    _consumerGroupIndex.Remove(new(client.Channel, client.ConsumerGroup));
                 }
             }
         }
@@ -122,7 +122,7 @@ public class CodeNetEventBus(int port)
 
     private void ClientToMessage(ulong clientId, Message message) => _clients[clientId]?.SendMessage(message);
 
-    private class ConsumerGroup
+    private sealed class ConsumerGroup
     {
         public string? Name { get; set; }
         public List<ulong> ClientIds { get; set; } = [];

@@ -16,9 +16,7 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, IConfigurationSection configuration, string name = _name, TimeSpan? timeSpan = null)
-    {
-        return builder.AddRedisHealthCheck(configuration.Get<RedisHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
-    }
+        => builder.AddRedisHealthCheck(configuration.Get<RedisHealthCheckOptions>() ?? throw new ArgumentNullException($"'{configuration.Path}' is null or empty in appSettings.json"), name, timeSpan);
 
     /// <summary>
     /// Add Redis Health Check
@@ -29,10 +27,10 @@ public static class HealthCheckServiceExtensions
     /// <returns></returns>
     public static IHealthChecksBuilder AddRedisHealthCheck(this IHealthChecksBuilder builder, RedisHealthCheckOptions options, string name = _name, TimeSpan? timeSpan = null)
     {
-        builder.Services.Configure<RedisHealthCheckOptions>(c => 
+        builder.Services.Configure<RedisHealthCheckOptions>(c =>
         {
             c.Configuration = options.Configuration;
         });
-        return builder.AddCheck<RedisHealthCheck>(name, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, ["redis"], timeSpan ?? TimeSpan.FromSeconds(5));
+        return builder.AddCheck<RedisHealthCheck>(name, Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Unhealthy, [_name], timeSpan ?? TimeSpan.FromSeconds(5));
     }
 }

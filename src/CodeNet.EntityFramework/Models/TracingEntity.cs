@@ -5,7 +5,8 @@ namespace CodeNet.EntityFramework.Models;
 public abstract class TracingEntity : BaseEntity, ITracingEntity
 {
     [MaxLength(100)]
-    public string CreatedUser { get; set; }
+    [Required]
+    public string CreatedUser { get; set; } = string.Empty;
 
     [Required]
     public DateTime CreatedDate { get; set; }

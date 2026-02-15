@@ -11,6 +11,7 @@ internal static class Helper
         Description = parameterGroup.Description,
         Id = parameterGroup.Id
     };
+
     public static ParameterResult ToParameterResult(this Parameter parameter) => new()
     {
         Id = parameter.Id,

@@ -1,11 +1,11 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Middleware;
+using CodeNet.ExceptionHandling.Exceptions;
 using CodeNet.Redis.Attributes;
-using CodeNet.Redis.Exception;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using RedLockNet;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Middleware;
 
 internal sealed class LockMiddleware(RequestDelegate next) : BaseMiddleware
 {
@@ -24,10 +24,9 @@ internal sealed class LockMiddleware(RequestDelegate next) : BaseMiddleware
         using var redLock = await lockFactory.CreateLockAsync(key, TimeSpan.FromSeconds(distributedLockAttribute.ExpiryTime));
 
         if (!redLock.IsAcquired)
-            throw new RedisException("RDS0012", "Distributed Lock Fail !");
+            throw new RedisLockException("RDS0012", "Distributed Lock Fail !");
 
         await next(context);
-        await redLock.DisposeAsync();
 
         return;
     }

@@ -2,7 +2,7 @@
 using Elastic.Clients.Elasticsearch;
 using Microsoft.Extensions.Options;
 
-namespace CodeNet.Elasticsearch;
+namespace CodeNet.Elasticsearch.Repositories;
 
 public class ElasticsearchDbContext(IOptions<ElasticsearchOptions> config)
 {

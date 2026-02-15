@@ -1,10 +1,9 @@
-﻿using CodeNet.EntityFramework.Tests.Mock.Model;
+﻿using CodeNet.Repository.Tests.Mock.Model;
 using Microsoft.EntityFrameworkCore;
 
-namespace CodeNet.EntityFramework.Tests.Mock
+namespace CodeNet.Repository.Tests.Mock;
+
+public class MockDbContext(DbContextOptions<DbContext> options) : DbContext(options)
 {
-    public class MockDbContext(DbContextOptions<DbContext> options) : DbContext(options)
-    {
-        public virtual DbSet<TestTable> TestTables { get; set; }
-    }
+    public virtual DbSet<TestTable> TestTables { get; set; }
 }

@@ -44,8 +44,8 @@ namespace CodeNet.Mapper.Tests
                 Assert.That(result.PersonName, Is.EqualTo(person.PersonName));
                 Assert.That(result.BirthDate, Is.EqualTo(person.BirthDate));
                 Assert.That(result.Details?.Count, Is.EqualTo(person.Details.Count));
-                Assert.That(result.Details?.Any(c => c.Description == person.Details[0].Description) is true);
-                Assert.That(result.Details?.Any(c => c.Description == person.Details[1].Description) is true);
+                Assert.That(result.Details?.Any(c => c.Description == person.Details[0].Description), Is.EqualTo(true));
+                Assert.That(result.Details?.Any(c => c.Description == person.Details[1].Description), Is.EqualTo(true));
                 Assert.That(result.Note?.Context, Is.EqualTo(person.Note.Context));
                 Assert.That(result.Detail?.Description, Is.EqualTo(person.Detail?.Description));
                 Assert.That(result.Status, Is.EqualTo(person.Status));

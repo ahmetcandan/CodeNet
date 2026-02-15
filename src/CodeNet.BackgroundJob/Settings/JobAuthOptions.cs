@@ -9,11 +9,11 @@ internal class JobAuthOptions
 
 internal class JobJwtAuthOptions
 {
-    public string Roles { get; set; }
-    public string Users { get; set; }
+    public required string Roles { get; set; }
+    public required string Users { get; set; }
 }
 
 internal class JobBasicAuthOptions
 {
-    public Dictionary<string, string> UserPass { get; set; }
+    public required Dictionary<string, string> UserPass { get; set; }
 }

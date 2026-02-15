@@ -27,8 +27,5 @@ internal class IdentityTokenManagerWithSymmetricKey<TUser, TRole, TKey>(UserMana
     where TRole : IdentityRole<TKey>
     where TKey : IEquatable<TKey>
 {
-    internal override SymmetricSecurityKey GetSecurityKey()
-    {
-        return new SymmetricSecurityKey(Encoding.UTF8.GetBytes(identityOptions.Value.IssuerSigningKey));
-    }
+    internal override SymmetricSecurityKey GetSecurityKey() => new(Encoding.UTF8.GetBytes(identityOptions.Value.IssuerSigningKey));
 }

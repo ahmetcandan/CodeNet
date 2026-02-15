@@ -1,5 +1,6 @@
 ﻿using CodeNet.Core.Context;
 using CodeNet.MakerChecker.Repositories;
+using CodeNet.Parameters.DbContext;
 using CodeNet.Parameters.Models;
 
 namespace CodeNet.Parameters.Repositories;

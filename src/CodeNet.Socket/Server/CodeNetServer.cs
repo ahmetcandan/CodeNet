@@ -3,6 +3,7 @@ using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CodeNet.Socket.Server;
@@ -14,6 +15,12 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
     private TcpListener? _tcpListener;
     private ulong _lastClientId = 0;
     private Thread? _thread;
+    private readonly X509Certificate2? _certificate;
+
+    protected CodeNetServer(int port, string certificatePath, string certificatePassword) : this(port)
+    {
+        _certificate = new X509Certificate2(certificatePath, certificatePassword);
+    }
 
     public event ClientConnected<TClient>? ClientConnected;
     public event ServerNewMessageReceived<TClient>? NewMessgeReceived;
@@ -35,7 +42,9 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         Status = TcpStatus.Starting;
     }
 
-    public void Stop()
+    public void Stop() => Stop(false);
+
+    private void Stop(bool retryStart)
     {
         if (Status is TcpStatus.Starting)
         {
@@ -43,6 +52,9 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
             Status = TcpStatus.Stop;
         }
         _thread?.Join();
+
+        if (retryStart)
+            Start();
     }
 
     private async void ClientAccept()
@@ -57,7 +69,10 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
                     if (tcpClient is not null)
                     {
                         TClient client = new();
-                        client.SetTcpClient(tcpClient, ++_lastClientId);
+                        if (_certificate is not null)
+                            client.SetTcpClient(tcpClient, ++_lastClientId, _certificate);
+                        else
+                            client.SetTcpClient(tcpClient, ++_lastClientId);
                         client.NewMessgeReceived += (e) => Client_NewMessgeReceived(client, e);
                         client.Disconnected += (e) => Client_Disonnected(client);
                         client.ConnectedEvent += (e) => Client_Connected(client);
@@ -69,7 +84,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
             }
             catch
             {
-                Stop();
+                Stop(true);
             }
         }
     }
@@ -94,22 +109,14 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         client.Dispose();
     }
 
-    public virtual void ClientDisconnecting(TClient client)
-    {
-    }
+    public virtual void ClientDisconnecting(TClient client) { }
 
     private void Client_NewMessgeReceived(TClient client, MessageReceivingArguments e)
     {
         if (e.Message.Type is (byte)MessageType.Validation)
         {
             if (Encoding.UTF8.GetString(e.Message.Data).Equals(ApplicationKey))
-            {
-                client.SendMessage(new()
-                {
-                    Type = (byte)MessageType.Validation,
-                    Data = [1]
-                });
-            }
+                client.SendMessage(new((byte)MessageType.Validation, [1]));
             else
                 RemoveClient(client);
         }
@@ -132,9 +139,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
         }
     }
 
-    protected internal virtual void ReceivedMessage(TClient client, Message message)
-    {
-    }
+    protected internal virtual void ReceivedMessage(TClient client, Message message) { }
 
     public void Dispose()
     {

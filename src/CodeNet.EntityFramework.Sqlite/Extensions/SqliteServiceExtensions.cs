@@ -14,9 +14,7 @@ public static class SqliteServiceExtensions
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
     public static IServiceCollection AddSqlite(this IServiceCollection services, IConfiguration configuration, string connectionName)
-    {
-        return services.AddSqlite<DbContext>(configuration, connectionName);
-    }
+        => services.AddSqlite<DbContext>(configuration, connectionName);
 
     /// <summary>
     /// Add Sqlite
@@ -29,9 +27,7 @@ public static class SqliteServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddSqlite<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseSqlite(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseSqlite(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
 
     /// <summary>
     /// Add Sqlite
@@ -40,9 +36,7 @@ public static class SqliteServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddSqlite(this IServiceCollection services, string connectionString)
-    {
-        return services.AddSqlite<DbContext>(connectionString);
-    }
+        => services.AddSqlite<DbContext>(connectionString);
 
     /// <summary>
     /// Add Sqlite
@@ -53,9 +47,7 @@ public static class SqliteServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddSqlite<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseSqlite(connectionString));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseSqlite(connectionString));
 
     /// <summary>
     /// Use Sqlite
@@ -65,7 +57,5 @@ public static class SqliteServiceExtensions
     /// <param name="connectionName"></param>
     /// <returns></returns>
     public static DbContextOptionsBuilder UseSqlite(this DbContextOptionsBuilder optionsBuilder, string connectionString)
-    {
-        return SqliteDbContextOptionsBuilderExtensions.UseSqlite(optionsBuilder, connectionString);
-    }
+        => SqliteDbContextOptionsBuilderExtensions.UseSqlite(optionsBuilder, connectionString);
 }

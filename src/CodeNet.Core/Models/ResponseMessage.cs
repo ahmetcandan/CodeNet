@@ -2,9 +2,7 @@
 
 public class ResponseMessage
 {
-    public ResponseMessage()
-    {
-    }
+    public ResponseMessage() { }
 
     public ResponseMessage(string messageCode, string message)
     {

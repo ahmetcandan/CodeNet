@@ -2,7 +2,7 @@
 using CodeNet.BackgroundJob.Settings;
 using CodeNet.EntityFramework.Repositories;
 using CodeNet.Logging;
-using CodeNet.Redis;
+using CodeNet.Redis.Distributed;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
@@ -76,8 +76,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         await AddOrUpdateService(cancellationToken);
         await GetManuelTimeCache(cancellationToken);
 
-        var tJob = serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob)));
-        if (tJob is null)
+        if (serviceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().Equals(typeof(TJob))) is not TJob tJob)
         {
             _jobStatus = JobStatus.Stopped;
             MessageInvoke();
@@ -168,7 +167,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         }
     }
 
-    public async Task<JobWorkingDetail?> DoWorkAsync(IScheduleJob tJob, int jobId, CancellationToken cancellationToken = default)
+    public async Task<JobWorkingDetail?> DoWorkAsync(TJob tJob, int jobId, CancellationToken cancellationToken = default)
     {
         if (_manuelExecute && !_manuelRunning)
             return null;
@@ -200,14 +199,9 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     JobId = jobId
                 };
 
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+                await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
                 MessageInvoke(detail);
-
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+                await SaveDetailRepository(workingDetailRepository, cancellationToken);
                 return detail;
             }
             else
@@ -233,14 +227,9 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     JobId = jobId
                 };
 
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+                await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
                 MessageInvoke(detail);
-
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+                await SaveDetailRepository(workingDetailRepository, cancellationToken);
                 return detail;
             }
         }
@@ -256,16 +245,23 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 JobId = jobId
             };
 
-            if (workingDetailRepository is not null)
-                await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+            await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
             MessageInvoke(detail);
-
-            if (workingDetailRepository is not null)
-                await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+            await SaveDetailRepository(workingDetailRepository, cancellationToken);
             return detail;
         }
+    }
+
+    private static async Task AddDetailAsync(Repository<JobWorkingDetail>? repository, JobWorkingDetail detail, CancellationToken cancellationToken)
+    {
+        if (repository is not null)
+            await repository.AddAsync(detail, cancellationToken);
+    }
+
+    private static async Task SaveDetailRepository(Repository<JobWorkingDetail>? repository, CancellationToken cancellationToken)
+    {
+        if (repository is not null)
+            await repository.SaveChangesAsync(cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -290,28 +286,19 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
         MessageInvoke();
     }
 
-    public JobStatus GetStatus()
-    {
-        return _jobStatus;
-    }
+    public JobStatus GetStatus() => _jobStatus;
 
-    public int GetJobId()
-    {
-        return _jobId;
-    }
+    public int GetJobId() => _jobId;
 
     public event StatusChanged? StatusChanged;
 
-    private void MessageInvoke(JobWorkingDetail? detail = null)
+    private void MessageInvoke(JobWorkingDetail? detail = null) => StatusChanged?.Invoke(new ReceivedMessageEventArgs
     {
-        StatusChanged?.Invoke(new ReceivedMessageEventArgs
-        {
-            Detail = detail,
-            ServiceName = options.Value.Title,
-            Status = _jobStatus,
-            JobId = _jobId
-        });
-    }
+        Detail = detail,
+        ServiceName = options.Value.Title,
+        Status = _jobStatus,
+        JobId = _jobId
+    });
 
     private CancellationToken GetCancellationToken(CancellationToken cancellationToken)
     {

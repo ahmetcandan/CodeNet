@@ -1,6 +1,6 @@
 ﻿using CodeNet.MakerChecker.Models;
 
-namespace CodeNet.MakerChecker;
+namespace CodeNet.MakerChecker.Service;
 
 public interface IMakerCheckerManager
 {

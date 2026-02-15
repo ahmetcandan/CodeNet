@@ -9,22 +9,22 @@ public static class CodeNetExtensions
 
     public static bool SetResponseHeader(this IHeaderDictionary headers, string key, string value)
     {
-        if (headers.TryGetValue(key, out StringValues strings) is true)
+        if (headers.TryGetValue(key, out StringValues strings))
             headers.Remove(key);
 
         return headers.TryAdd(key, new StringValues([.. strings, value]));
     }
 
-    public static CacheState GetCacheState(this IHeaderDictionary headers)
+    public static CacheStates GetCacheState(this IHeaderDictionary headers)
     {
-        CacheState cacheState = CacheState.None;
+        CacheStates cacheState = CacheStates.None;
 
         var states = headers.CacheControl;
         var values = states.ToString().Replace(" ", "").ToLower().Split(',');
         if (values.Contains("no-cache"))
-            cacheState |= CacheState.NoCache;
+            cacheState |= CacheStates.NoCache;
         if (values.Contains("clear-cache"))
-            cacheState |= CacheState.ClearCache;
+            cacheState |= CacheStates.ClearCache;
 
         return cacheState;
     }

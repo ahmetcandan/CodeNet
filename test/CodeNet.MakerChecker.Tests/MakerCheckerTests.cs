@@ -2,6 +2,7 @@
 using CodeNet.EntityFramework.InMemory.Extensions;
 using CodeNet.MakerChecker.Extensions;
 using CodeNet.MakerChecker.Models;
+using CodeNet.MakerChecker.Service;
 using CodeNet.MakerChecker.Tests.Mock.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -172,7 +173,7 @@ namespace CodeNet.MakerChecker.Tests
             var makerCheckerManager = serviceProvider.GetRequiredService<IMakerCheckerManager>();
             var dbContext = serviceProvider.GetRequiredService<MockMakerCheckerDbContext>();
             var tableRepository = new TestTableRepository(dbContext, mockCodeNetContext.Object);
-            
+
             await makerCheckerManager.InsertFlowAsync<TestTable>(new FlowInserModel
             {
                 Approver = "admin",

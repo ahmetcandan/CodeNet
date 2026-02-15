@@ -7,14 +7,14 @@ internal class TestRabbitMqService(IOptions<BaseRabbitMQOptions> options)
 {
     public bool CanConnection()
     {
-		try
-		{
+        try
+        {
             using var connection = options.Value.ConnectionFactory.CreateConnection();
             return true;
-		}
-		catch
-		{
-			return false;
-		}
+        }
+        catch
+        {
+            return false;
+        }
     }
 }

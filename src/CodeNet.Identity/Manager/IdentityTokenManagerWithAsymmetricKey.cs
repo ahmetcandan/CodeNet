@@ -27,8 +27,5 @@ internal class IdentityTokenManagerWithAsymmetricKey<TUser, TRole, TKey>(UserMan
     where TRole : IdentityRole<TKey>
     where TKey : IEquatable<TKey>
 {
-    internal override RsaSecurityKey GetSecurityKey()
-    {
-        return new RsaSecurityKey(AsymmetricKeyEncryption.CreateRSA(identityOptions.Value.PrivateKeyPath));
-    }
+    internal override RsaSecurityKey GetSecurityKey() => new(AsymmetricKeyEncryption.CreateRSA(identityOptions.Value.PrivateKeyPath));
 }

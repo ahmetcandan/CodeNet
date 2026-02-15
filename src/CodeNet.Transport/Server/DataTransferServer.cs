@@ -26,9 +26,7 @@ public class DataTransferServer(int port, bool withSecurity = false)
     }
 
     private void OnClientConnectFinish(ClientArguments<DataTransferClientItem> e)
-    {
-        ClientConnected?.Invoke(new() { ClientName = e.Client.ClientName });
-    }
+        => ClientConnected?.Invoke(new() { ClientName = e.Client.ClientName });
 
     public void Stop()
     {

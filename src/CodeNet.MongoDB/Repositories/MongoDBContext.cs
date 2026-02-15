@@ -1,9 +1,10 @@
-﻿using CodeNet.MongoDB.Settings;
+﻿using CodeNet.MongoDB.Attributes;
+using CodeNet.MongoDB.Settings;
 using Microsoft.Extensions.Options;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace CodeNet.MongoDB;
+namespace CodeNet.MongoDB.Repositories;
 
 public class MongoDBContext
 {
@@ -18,7 +19,7 @@ public class MongoDBContext
 
     public IMongoCollection<TModel> Set<TModel>() where TModel : class
     {
-        string collectionName = (typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute)
+        string collectionName = typeof(TModel).GetCustomAttributes(typeof(CollectionNameAttribute), true).FirstOrDefault() is not CollectionNameAttribute collectionAttribute
                 ? typeof(TModel).Name
                 : collectionAttribute.Name;
         return _database.GetCollection<TModel>(collectionName);

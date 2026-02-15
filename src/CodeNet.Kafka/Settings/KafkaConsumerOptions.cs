@@ -5,7 +5,7 @@ namespace CodeNet.Kafka.Settings;
 
 public class KafkaConsumerOptions : BaseKafkaOptions
 {
-    public ConsumerConfig Config { get; set; }
+    public required ConsumerConfig Config { get; set; }
 }
 
 public class KafkaConsumerOptions<TConsumerService, TKey, TValue> : KafkaConsumerOptions

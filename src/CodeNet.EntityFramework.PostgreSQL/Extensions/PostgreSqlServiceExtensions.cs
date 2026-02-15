@@ -14,9 +14,7 @@ public static class PostgreSqlServiceExtensions
     /// <param name="connectionName">appSettings.json must contain ConnectionStrings:connectionName</param>
     /// <returns></returns>
     public static IServiceCollection AddNpgsql(this IServiceCollection services, IConfiguration configuration, string connectionName)
-    {
-        return services.AddNpgsql<DbContext>(configuration, connectionName);
-    }
+        => services.AddNpgsql<DbContext>(configuration, connectionName);
 
     /// <summary>
     /// Add PostgeSQL
@@ -29,9 +27,7 @@ public static class PostgreSqlServiceExtensions
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddNpgsql<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseNpgsql(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseNpgsql(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
 
     /// <summary>
     /// Add PostgeSQL
@@ -40,9 +36,7 @@ public static class PostgreSqlServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static IServiceCollection AddNpgsql(this IServiceCollection services, string connectionString)
-    {
-        return services.AddNpgsql<DbContext>(connectionString);
-    }
+        => services.AddNpgsql<DbContext>(connectionString);
 
     /// <summary>
     /// Add PostgeSQL
@@ -53,9 +47,7 @@ public static class PostgreSqlServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddNpgsql<TDbContext>(this IServiceCollection services, string connectionString)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseNpgsql(connectionString));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseNpgsql(connectionString));
 
     /// <summary>
     /// Use PostgeSQL
@@ -64,7 +56,5 @@ public static class PostgreSqlServiceExtensions
     /// <param name="connectionString"></param>
     /// <returns></returns>
     public static DbContextOptionsBuilder UseNpgsql(this DbContextOptionsBuilder optionsBuilder, string connectionString)
-    {
-        return NpgsqlDbContextOptionsBuilderExtensions.UseNpgsql(optionsBuilder, connectionString);
-    }
+        => NpgsqlDbContextOptionsBuilderExtensions.UseNpgsql(optionsBuilder, connectionString);
 }

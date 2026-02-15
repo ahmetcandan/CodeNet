@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Distributed;
 
-namespace CodeNet.Redis;
+namespace CodeNet.Redis.Distributed;
 
 public interface IDistributedCache<TModel>
     where TModel : class

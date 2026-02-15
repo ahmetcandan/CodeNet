@@ -1,11 +1,12 @@
-﻿using CodeNet.Core;
+﻿using CodeNet.Core.Middleware;
+using CodeNet.ExceptionHandling.Exceptions;
 using CodeNet.Logging;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 
-namespace CodeNet.ExceptionHandling;
+namespace CodeNet.ExceptionHandling.Middleware;
 
 internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMiddleware
 {
@@ -29,14 +30,18 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                 case UserLevelException userLevelException:
                     errorCode = userLevelException.Code;
                     errorMessage = userLevelException.Message;
-                    context.Response.StatusCode = userLevelException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
+                    context.Response.StatusCode = userLevelException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(UserLevelException);
                     break;
+                case RedisLockException:
+                    context.Response.StatusCode = StatusCodes.Status423Locked;
+                    title = nameof(RedisLockException);
+                    break;
                 case CodeNetException codeNetException:
-                    context.Response.StatusCode = codeNetException?.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
+                    context.Response.StatusCode = codeNetException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(CodeNetException);
                     break;
-                case BadHttpRequestException badHttpRequestException:
+                case BadHttpRequestException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     title = nameof(BadHttpRequestException);
                     break;
@@ -63,7 +68,6 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                 Status = context.Response.StatusCode,
                 Instance = context.Request.Path
             }, context.RequestAborted);
-            return;
         }
     }
 }

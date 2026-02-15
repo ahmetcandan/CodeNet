@@ -29,17 +29,7 @@ public class CodeNetPublisher(string hostname, int port, string channel)
         _client.SetChannel(channel);
     }
 
-    public void Disconnect()
-    {
-        _client?.Disconnect();
-    }
+    public void Disconnect() => _client?.Disconnect();
 
-    public bool Publish(byte[] message)
-    {
-        return _client.SendMessage(new()
-        {
-            Type = (byte)MessageType.Publish,
-            Data = message
-        });
-    }
+    public bool Publish(byte[] message) => _client.SendMessage(new((byte)MessageType.Publish, message));
 }

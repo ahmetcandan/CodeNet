@@ -1,0 +1,45 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>net8.0</TargetFramework>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<Nullable>enable</Nullable>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<IncludeSymbols>False</IncludeSymbols>
+		<PackAsTool>False</PackAsTool>
+		<PackageId>$(AssemblyName)</PackageId>
+		<PackageIcon>ico.png</PackageIcon>
+		<Title>CodeNet ApiHost</Title>
+		<Description>CodeNet ApiHost package.</Description>
+		<Copyright>Copyright 2025</Copyright>
+		<Company>CodeNet</Company>
+		<Version>1.1.7</Version>
+		<Authors>CodeNet</Authors>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageProjectUrl>https://github.com/ahmetcandan/CodeNet_Example</PackageProjectUrl>
+		<PackageTags>Asp.Net;.Net;Framework;CodeNet;Code;Net;Api;ApiHost;ApiMapper;Service;EndPoint</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\ico.png">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<None Update="README.md">
+			<Pack>True</Pack>
+			<PackagePath>\</PackagePath>
+		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Cronos" Version="0.8.4" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\CodeNet.Core\CodeNet.Core.csproj" />
+	</ItemGroup>
+
+</Project>

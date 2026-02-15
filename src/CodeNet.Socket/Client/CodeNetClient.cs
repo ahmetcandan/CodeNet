@@ -1,6 +1,9 @@
 ﻿using CodeNet.Socket.EventDefinitions;
 using CodeNet.Socket.Models;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Text;
 
 namespace CodeNet.Socket.Client;
@@ -13,10 +16,12 @@ public abstract class CodeNetClient : ICodeNetClient
     private TcpClient? _client;
     private ulong? _clientId = null;
     private Thread? _thread;
-    private NetworkStream? _stream;
+    private SslStream? _sslStream;
     private BinaryReader? _reader;
     private BinaryWriter? _writer;
-    private int _connectionTimeout = 5;
+    private TimeSpan _connectionTimeout = TimeSpan.FromSeconds(30);
+    private X509Certificate2? _certificate;
+    private readonly bool _secureConnection = false;
 
     public void Dispose()
     {
@@ -26,22 +31,16 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public bool Working { get; private set; } = false;
     public bool Connected { get; private set; } = false;
-    public ulong ClientId { get { return _clientId ?? 0; } private set { _clientId = value; } }
+    public ulong ClientId { get => _clientId ?? 0; private set => _clientId = value; }
     public bool IsServerSide { get { return _clientId is not null; } }
 
     /// <summary>
     /// Default: 30 seconds
     /// </summary>
-    public int ConnectionTimeout
+    public TimeSpan ConnectionTimeout
     {
-        get
-        {
-            return _connectionTimeout;
-        }
-        set
-        {
-            _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
-        }
+        get => _connectionTimeout;
+        set => _connectionTimeout = !Working ? value : throw new InvalidOperationException("Cannot set connection timeout while connected.");
     }
 
     public event NewMessageReceived? NewMessgeReceived;
@@ -50,15 +49,23 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public abstract string ApplicationKey { get; }
 
-    public CodeNetClient()
-    {
-        ClientId = 0;
-    }
+    protected CodeNetClient() => ClientId = 0;
 
     public CodeNetClient(string hostName, int port)
     {
         _hostName = hostName;
         _port = port;
+    }
+
+    protected CodeNetClient(string hostName, int port, bool secureConnection) : this(hostName, port)
+    {
+        _secureConnection = secureConnection;
+    }
+
+    protected CodeNetClient(string hostName, int port, string certificatePath, string certificatePassword) : this(hostName, port)
+    {
+        _secureConnection = true;
+        _certificate = new X509Certificate2(certificatePath, certificatePassword);
     }
 
     public void SetTcpClient(TcpClient client, ulong clientId)
@@ -68,9 +75,15 @@ public abstract class CodeNetClient : ICodeNetClient
         Start();
     }
 
+    public void SetTcpClient(TcpClient client, ulong clientId, X509Certificate2 certificate)
+    {
+        _certificate = certificate;
+        SetTcpClient(client, clientId);
+    }
+
     public virtual async Task<bool> ConnectAsync()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         _client = NewTcpClient(_hostName, _port);
         await _client.ConnectAsync(_hostName!, _port!.Value);
         Start();
@@ -80,7 +93,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public virtual bool Connect()
     {
-        using var cts = new CancellationTokenSource(TimeSpan.FromSeconds(ConnectionTimeout));
+        using var cts = new CancellationTokenSource(ConnectionTimeout);
         _client = NewTcpClient(_hostName, _port);
         _client.Connect(_hostName!, _port!.Value);
         Start();
@@ -119,18 +132,63 @@ public abstract class CodeNetClient : ICodeNetClient
         }
     }
 
-    private static TcpClient NewTcpClient(string? hostname, int? port)
-    {
-        return string.IsNullOrEmpty(hostname)
+    private static TcpClient NewTcpClient(string? hostname, int? port) => string.IsNullOrEmpty(hostname)
             ? throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.")
             : port is null or 0 ? throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).") : new();
-    }
 
     private void Start()
     {
-        _stream = _client!.GetStream();
-        _reader = new BinaryReader(_stream, Encoding.BigEndianUnicode);
-        _writer = new BinaryWriter(_stream, Encoding.BigEndianUnicode);
+        var stream = _client!.GetStream();
+        if (IsServerSide)
+        {
+            if (_certificate is not null)
+            {
+                _sslStream = new(stream, false);
+                _sslStream.AuthenticateAsServer(_certificate,
+                    clientCertificateRequired: false,
+                    enabledSslProtocols: SslProtocols.None,
+                    checkCertificateRevocation: false);
+                _reader = new BinaryReader(_sslStream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_sslStream, Encoding.BigEndianUnicode);
+            }
+            else
+            {
+                _reader = new BinaryReader(stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(stream, Encoding.BigEndianUnicode);
+            }
+        }
+        else
+        {
+            if (_secureConnection)
+            {
+                _sslStream = new SslStream(
+                    stream,
+                    false,
+                    new RemoteCertificateValidationCallback(ValidateServerCertificate),
+                    null
+                );
+                if (_certificate is not null)
+                {
+                    X509CertificateCollection clientCertificates = [_certificate];
+                    _sslStream.AuthenticateAsClient(
+                        _hostName!,
+                        clientCertificates,
+                        SslProtocols.None,
+                        false
+                    );
+                }
+                else
+                    _sslStream.AuthenticateAsClient(_hostName!);
+                _reader = new BinaryReader(_sslStream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(_sslStream, Encoding.BigEndianUnicode);
+            }
+            else
+            {
+                _reader = new BinaryReader(stream, Encoding.BigEndianUnicode);
+                _writer = new BinaryWriter(stream, Encoding.BigEndianUnicode);
+            }
+        }
+
         _thread = new(new ThreadStart(StartListening));
         Working = true;
         _thread.Start();
@@ -146,7 +204,7 @@ public abstract class CodeNetClient : ICodeNetClient
     private void Disconnect_(bool listening = false)
     {
         if (!IsServerSide)
-            SendMessage(new() { Type = (byte)MessageType.Disconnected, Data = [] });
+            SendMessage(new((byte)MessageType.Disconnected, []));
         if (_client?.Connected is true)
             _client?.Close();
         Working = false;
@@ -211,11 +269,7 @@ public abstract class CodeNetClient : ICodeNetClient
                 if (Connected)
                 {
                     ConnectedEvent?.Invoke(new(this));
-                    SendMessage(new()
-                    {
-                        Type = (byte)MessageType.Connected,
-                        Data = [1]
-                    });
+                    SendMessage(new((byte)MessageType.Connected, [1]));
                 }
             }
 
@@ -235,26 +289,21 @@ public abstract class CodeNetClient : ICodeNetClient
         ReceivedMessage(message);
     }
 
-    protected internal virtual void ReceivedMessage(Message message)
-    {
-        NewMessgeReceived?.Invoke(new(message));
-    }
+    protected internal virtual void ReceivedMessage(Message message) => NewMessgeReceived?.Invoke(new(message));
 
     public bool SendMessage(Message message)
     {
         if (!Working || !(_writer?.BaseStream.CanWrite ?? false))
             return false;
 
-        _writer?.Write(message.Seriliaze());
+        _writer.Write(Message.Seriliaze(message));
         return true;
     }
 
-    private bool Validation()
+    private void Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
+
+    internal virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
-        return SendMessage(new Message
-        {
-            Type = (byte)MessageType.Validation,
-            Data = Encoding.UTF8.GetBytes(ApplicationKey)
-        });
+        return sslPolicyErrors == SslPolicyErrors.None;
     }
 }

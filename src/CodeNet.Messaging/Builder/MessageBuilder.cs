@@ -4,15 +4,13 @@ using System.Text.RegularExpressions;
 
 namespace CodeNet.Messaging.Builder;
 
-public class TemplateBuilder : ITemplateBuilder
+public class MessageBuilder : IMessageBuilder
 {
-    private TemplateBuilder()
-    {
-    }
+    private MessageBuilder() { }
 
-    public static TemplateBuilder Compile(string content)
+    public static MessageBuilder Compile(string content)
     {
-        TemplateBuilder result = new()
+        MessageBuilder result = new()
         {
             Index = 0,
             Content = content
@@ -44,14 +42,12 @@ public class TemplateBuilder : ITemplateBuilder
         return result;
     }
 
-    public StringBuilder Build(object data)
+    public StringBuilder Build(object? data)
     {
         StringBuilder stringBuilder = new(Content);
 
-        foreach (var builder in Enumerable.Empty<ITemplateBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
-        {
+        foreach (var builder in Enumerable.Empty<IMessageBuilder>().Union(LoopBuilders).Union(FuncBuilders).Union(IfBuilders).OrderBy(c => c.Index))
             stringBuilder.Replace(builder.Content, builder.Build(data).ToString());
-        }
 
         foreach (var param in Parameters)
         {
@@ -66,13 +62,12 @@ public class TemplateBuilder : ITemplateBuilder
     {
         MatchCollection eachMatches = MessagingRegex.LoopRegex().Matches(content);
         foreach (var match in eachMatches.Where(c => c.Success))
-        {
-            string itemName = match.Groups["item"].Value;
-            string rowContent = match.Groups["body"].Value;
-            string arrayName = match.Groups["array"].Value;
-            LoopBuilder loopBuilder = LoopBuilder.Compile(itemName, arrayName, rowContent, match.Value, match.Index);
-            LoopBuilders.Add(loopBuilder);
-        }
+            LoopBuilders.Add(LoopBuilder.Compile(
+                match.Groups["item"].Value,
+                match.Groups["array"].Value,
+                match.Groups["body"].Value,
+                match.Value,
+                match.Index));
     }
 
     private void AddFuncBuilder(string content)
@@ -82,15 +77,13 @@ public class TemplateBuilder : ITemplateBuilder
         {
             FuncBuilder funcBuilder = FuncBuilder.Compile(match.Groups["function"].Value, match.Value, match.Index);
             MatchCollection paramMatches = MessagingRegex.FuncParamRegex().Matches(match.Groups["params"].Value);
-            foreach (var paramMatch in paramMatches.Where(c => c.Success))
-            {
-                string param = paramMatch.Groups["param"].Value;
-                string number = paramMatch.Groups["number"].Value;
-                string text = paramMatch.Groups["text"].Value;
-                string _null = paramMatch.Groups["null"].Value;
-                string boolean = paramMatch.Groups["bool"].Value;
-                funcBuilder.Parameters.Add(NewParamValue(param, number, text, _null, boolean));
-            }
+            foreach (var paramMatch in paramMatches.Where(c => c.Success).Select(c => c.Groups))
+                funcBuilder.Parameters.Add(NewParamValue(
+                    paramMatch["param"].Value,
+                    paramMatch["number"].Value,
+                    paramMatch["text"].Value,
+                    paramMatch["null"].Value,
+                    paramMatch["bool"].Value));
 
             FuncBuilders.Add(funcBuilder);
         }
@@ -100,47 +93,28 @@ public class TemplateBuilder : ITemplateBuilder
     {
         MatchCollection ifMatches = MessagingRegex.IfRegex().Matches(content);
         foreach (var match in ifMatches.Where(c => c.Success))
-        {
-            IfBuilder ifBuilder = IfBuilder.Compile(match.Value, match.Index, match.Groups["operator"].Value, match.Groups["if"].Value, match.Groups["else"].Value);
-            string param1 = match.Groups["param1"].Value;
-            string number1 = match.Groups["number1"].Value;
-            string text1 = match.Groups["text1"].Value;
-            string _null1 = match.Groups["null1"].Value;
-            string boolean1 = match.Groups["bool1"].Value;
-            ifBuilder.ParamLeft = NewParamValue(param1, number1, text1, _null1, boolean1);
-            string param2 = match.Groups["param2"].Value;
-            string number2 = match.Groups["number2"].Value;
-            string text2 = match.Groups["text2"].Value;
-            string _null2 = match.Groups["null2"].Value;
-            string boolean2 = match.Groups["bool2"].Value;
-            ifBuilder.ParamRight = NewParamValue(param2, number2, text2, _null2, boolean2);
-
-            IfBuilders.Add(ifBuilder);
-        }
+            IfBuilders.Add(IfBuilder.Compile(
+                match.Value,
+                match.Index,
+                NewParamValue(match.Groups["param1"].Value, match.Groups["number1"].Value, match.Groups["text1"].Value, match.Groups["null1"].Value, match.Groups["bool1"].Value),
+                NewParamValue(match.Groups["param2"].Value, match.Groups["number2"].Value, match.Groups["text2"].Value, match.Groups["null2"].Value, match.Groups["bool2"].Value),
+                match.Groups["operator"].Value,
+                match.Groups["if"].Value,
+                match.Groups["else"].Value));
     }
 
     private ParamValue NewParamValue(string param, string number, string text, string _null, string boolean)
     {
         if (!string.IsNullOrEmpty(param))
-        {
             return new(param, ParamType.Parameter);
-        }
         else if (!string.IsNullOrEmpty(number))
-        {
             return new(GenerateParamName(), double.Parse(number));
-        }
         else if (!string.IsNullOrEmpty(text))
-        {
             return new(GenerateParamName(), text);
-        }
         else if (!string.IsNullOrEmpty(_null))
-        {
-            return new(GenerateParamName(), null);
-        }
+            return new(GenerateParamName());
         else if (!string.IsNullOrEmpty(boolean))
-        {
             return new(GenerateParamName(), boolean == "true");
-        }
 
         throw new MessagingException(ExceptionMessages.IncorrectValue);
     }
@@ -154,11 +128,11 @@ public class TemplateBuilder : ITemplateBuilder
         return $"STATIC_VALUE_{_staticParamId:000}";
     }
 
-    public string Content { get; set; } = string.Empty;
-    public int Index { get; set; }
-    public ICollection<ParamValue> Parameters { get; set; } = [];
-    public ICollection<LoopBuilder> LoopBuilders { get; set; } = [];
-    public ICollection<FuncBuilder> FuncBuilders { get; set; } = [];
-    public ICollection<IfBuilder> IfBuilders { get; set; } = [];
-    public BuildType Type { get; } = BuildType.Body;
+    public string Content { get; private set; } = string.Empty;
+    public int Index { get; private set; }
+    internal ICollection<ParamValue> Parameters { get; set; } = [];
+    internal ICollection<LoopBuilder> LoopBuilders { get; set; } = [];
+    internal ICollection<FuncBuilder> FuncBuilders { get; set; } = [];
+    internal ICollection<IfBuilder> IfBuilders { get; set; } = [];
+    public BuildType Type { get; } = BuildType.Message;
 }

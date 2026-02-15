@@ -14,10 +14,7 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddSqlServer(this IServiceCollection services, IConfiguration configuration, string connectionName)
-    {
-        return services.AddSqlServer<DbContext>(configuration, connectionName);
-    }
+    public static IServiceCollection AddSqlServer(this IServiceCollection services, IConfiguration configuration, string connectionName) => services.AddSqlServer<DbContext>(configuration, connectionName);
 
     /// <summary>
     /// Add SqlServer
@@ -29,10 +26,7 @@ public static class EntityFrameworkServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddSqlServer<TDbContext>(this IServiceCollection services, IConfiguration configuration, string connectionName)
-        where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
-    }
+        where TDbContext : DbContext => services.AddDbContext<TDbContext>(options => options.UseSqlServer(configuration.GetConnectionString(connectionName) ?? throw new ArgumentNullException(typeof(IConfiguration).Name, $"There is no '{connectionName}' in ConnectionStrings.")));
 
     /// <summary>
     /// Add SqlServer
@@ -41,10 +35,7 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="configuration"></param>
     /// <param name="connectionName"></param>
     /// <returns></returns>
-    public static IServiceCollection AddSqlServer(this IServiceCollection services, string connectionString)
-    {
-        return services.AddSqlServer<DbContext>(connectionString);
-    }
+    public static IServiceCollection AddSqlServer(this IServiceCollection services, string connectionString) => services.AddSqlServer<DbContext>(connectionString);
 
     /// <summary>
     /// Add SqlServer
@@ -56,10 +47,7 @@ public static class EntityFrameworkServiceExtensions
     /// <returns></returns>
     /// <exception cref="ArgumentNullException"></exception>
     public static IServiceCollection AddSqlServer<TDbContext>(this IServiceCollection services, string connectionString)
-        where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
-    }
+        where TDbContext : DbContext => services.AddDbContext<TDbContext>(options => options.UseSqlServer(connectionString));
 
     /// <summary>
     /// Add DbContext
@@ -81,8 +69,5 @@ public static class EntityFrameworkServiceExtensions
     /// <param name="optionsBuilder"></param>
     /// <param name="connectionString"></param>
     /// <returns></returns>
-    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, string connectionString)
-    {
-        return SqlServerDbContextOptionsExtensions.UseSqlServer(optionsBuilder, connectionString);
-    }
+    public static DbContextOptionsBuilder UseSqlServer(this DbContextOptionsBuilder optionsBuilder, string connectionString) => SqlServerDbContextOptionsExtensions.UseSqlServer(optionsBuilder, connectionString);
 }

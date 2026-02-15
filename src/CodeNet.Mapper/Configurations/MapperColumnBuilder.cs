@@ -10,7 +10,5 @@ public class MapperColumnBuilder<TSource, TDestination>
     internal static MapType MapType => new(typeof(TSource), typeof(TDestination));
 
     internal bool AddMapColumn(Expression<Func<TSource, object>> sourceColumn, Expression<Func<TDestination, object>> destinationColumn)
-    {
-        return Columns.TryAdd(string.Join('.', sourceColumn.Body.ToString().Split('.')[1..]), string.Join('.', destinationColumn.Body.ToString().Split('.')[1..]));
-    }
+        => Columns.TryAdd(string.Join('.', sourceColumn.Body.ToString().Split('.')[1..]), string.Join('.', destinationColumn.Body.ToString().Split('.')[1..]));
 }

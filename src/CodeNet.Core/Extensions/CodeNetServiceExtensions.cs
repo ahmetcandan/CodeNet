@@ -28,9 +28,7 @@ public static class CodeNetServiceExtensions
     /// <param name="sectionName"></param>
     /// <returns></returns>
     public static IServiceCollection AddCodeNet(this IServiceCollection services, IConfiguration configuration, string sectionName, Action<CodeNetOptionsBuilder>? action = null)
-    {
-        return services.AddCodeNet(configuration.GetSection(sectionName), action);
-    }
+        => services.AddCodeNet(configuration.GetSection(sectionName), action);
 
     /// <summary>
     /// Add CodeNet Configuration
@@ -83,10 +81,7 @@ public static class CodeNetServiceExtensions
     /// </summary>
     /// <param name="services"></param>
     /// <returns></returns>
-    public static IServiceCollection AddCodeNetContext(this IServiceCollection services)
-    {
-        return services.AddScoped<ICodeNetContext, CodeNetContext>();
-    }
+    public static IServiceCollection AddCodeNetContext(this IServiceCollection services) => services.AddScoped<ICodeNetContext, CodeNetContext>();
 
     /// <summary>
     /// Use CodeNet

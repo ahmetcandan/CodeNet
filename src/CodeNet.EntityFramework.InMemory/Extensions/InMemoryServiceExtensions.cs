@@ -12,10 +12,7 @@ public static class InMemoryServiceExtensions
     /// <param name="services"></param>
     /// <param name="databaseName">Database Name</param>
     /// <returns></returns>
-    public static IServiceCollection AddInMemoryDB(this IServiceCollection services, string databaseName)
-    {
-        return services.AddInMemoryDB<DbContext>(databaseName);
-    }
+    public static IServiceCollection AddInMemoryDB(this IServiceCollection services, string databaseName) => services.AddInMemoryDB<DbContext>(databaseName);
 
     /// <summary>    
     /// Add InMemory DB
@@ -24,11 +21,9 @@ public static class InMemoryServiceExtensions
     /// <param name="services"></param>
     /// <param name="databaseName">Database Name</param>
     /// <returns></returns>
-    public static IServiceCollection AddInMemoryDB<TDbContext>(this IServiceCollection services, string databaseName) 
+    public static IServiceCollection AddInMemoryDB<TDbContext>(this IServiceCollection services, string databaseName)
         where TDbContext : DbContext
-    {
-        return services.AddDbContext<TDbContext>(options => options.UseInMemoryDatabase(databaseName));
-    }
+        => services.AddDbContext<TDbContext>(options => options.UseInMemoryDatabase(databaseName));
 
     /// <summary>
     /// Use InMemory DB
@@ -38,7 +33,5 @@ public static class InMemoryServiceExtensions
     /// <param name="connectionName"></param>
     /// <returns></returns>
     public static DbContextOptionsBuilder UseInMemoryDatabase(this DbContextOptionsBuilder optionsBuilder, string databaseName)
-    {
-        return InMemoryDbContextOptionsExtensions.UseInMemoryDatabase(optionsBuilder, databaseName);
-    }
+         => InMemoryDbContextOptionsExtensions.UseInMemoryDatabase(optionsBuilder, databaseName);
 }

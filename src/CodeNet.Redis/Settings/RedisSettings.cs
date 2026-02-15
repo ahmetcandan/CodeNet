@@ -2,5 +2,5 @@
 
 public class RedisSettings
 {
-    public string Configuration { get; set; }
+    public required string Configuration { get; set; }
 }
