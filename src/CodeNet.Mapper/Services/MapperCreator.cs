@@ -7,7 +7,7 @@ public static class MapperCreator
 {
     public static ICodeNetMapper Create(Action<MapperConfigurationBuilder> action)
     {
-        ArgumentNullException.ThrowIfNull(action, nameof(action));
+        ArgumentNullException.ThrowIfNull(action);
 
         MapperConfigurationBuilder builder = new();
         action(builder);

@@ -77,49 +77,13 @@ internal partial class DataTransferClientItem : CodeNetClient
                     DataReceivedHandler(new(message));
                 return;
             case (byte)Models.MessageType.ServerConfirmation:
-                if (IsServerSide)
-                    return;
-
-                var serverConfirmationMessage = ServerConfirmationMessage.DeserializeObject(message.Data);
-                if (serverConfirmationMessage?.UseSecurity is true)
-                    GenerateRSAKeys();
-
-                _clients = serverConfirmationMessage?.Clients ?? [];
-                SendMessage(new((byte)Models.MessageType.ClientConfirmation, ClientConfirmationMessage.SerializeObject(new ClientConfirmationMessage
-                {
-                    ClientName = ClientName,
-                    PublicKey = PublicKey
-                })));
-                _connected = true;
+                ServerConfirmationHandler(message);
                 return;
             case (byte)Models.MessageType.ClientConfirmation:
-                if (!IsServerSide)
-                    return;
-
-                var clientConfirmationMessage = ClientConfirmationMessage.DeserializeObject(message.Data);
-                ClientName = clientConfirmationMessage?.ClientName ?? string.Empty;
-                ClientConnectFinish?.Invoke(new(this));
-                PublicKey = clientConfirmationMessage?.PublicKey;
-                base.ReceivedMessage(message);
-                _connected = true;
+                ClientConfirmationHandler(message);
                 return;
             case (byte)Models.MessageType.ShareAESKey:
-                if (IsServerSide)
-                {
-                    base.ReceivedMessage(message);
-                    return;
-                }
-
-                if (string.IsNullOrEmpty(_privateKey))
-                    throw new InvalidOperationException("Private key is not set.");
-
-                var handshakeMessage = HandshakeMessage.DeserializeObject(message.Data);
-                if (handshakeMessage is null)
-                    return;
-
-                var client = _clients?.FirstOrDefault(c => c.Id == handshakeMessage?.ClientId);
-                if (client is not null)
-                    client.AESKey = AesKey.FromData(CryptographyService.RSADecrypt(handshakeMessage.EncryptedAESKey, _privateKey!));
+                ShareAESKeyHandler(message);
                 return;
             case (byte)Models.MessageType.ClienList:
                 if (IsServerSide)
@@ -131,6 +95,60 @@ internal partial class DataTransferClientItem : CodeNetClient
             default:
                 return;
         }
+    }
+
+    private void ShareAESKeyHandler(Message message)
+    {
+        if (IsServerSide)
+        {
+            base.ReceivedMessage(message);
+            return;
+        }
+
+        if (string.IsNullOrEmpty(_privateKey))
+            throw new InvalidOperationException("Private key is not set.");
+
+        var handshakeMessage = HandshakeMessage.DeserializeObject(message.Data);
+        if (handshakeMessage is null)
+            return;
+
+        var client = _clients?.FirstOrDefault(c => c.Id == handshakeMessage?.ClientId);
+        if (client is not null)
+            client.AESKey = AesKey.FromData(CryptographyService.RSADecrypt(handshakeMessage.EncryptedAESKey, _privateKey!));
+        return;
+    }
+
+    private void ClientConfirmationHandler(Message message)
+    {
+        if (!IsServerSide)
+            return;
+
+        var clientConfirmationMessage = ClientConfirmationMessage.DeserializeObject(message.Data);
+        ClientName = clientConfirmationMessage?.ClientName ?? string.Empty;
+        ClientConnectFinish?.Invoke(new(this));
+        PublicKey = clientConfirmationMessage?.PublicKey;
+        base.ReceivedMessage(message);
+        _connected = true;
+        return;
+    }
+
+    private void ServerConfirmationHandler(Message message)
+    {
+        if (IsServerSide)
+            return;
+
+        var serverConfirmationMessage = ServerConfirmationMessage.DeserializeObject(message.Data);
+        if (serverConfirmationMessage?.UseSecurity is true)
+            GenerateRSAKeys();
+
+        _clients = serverConfirmationMessage?.Clients ?? [];
+        SendMessage(new((byte)Models.MessageType.ClientConfirmation, ClientConfirmationMessage.SerializeObject(new ClientConfirmationMessage
+        {
+            ClientName = ClientName,
+            PublicKey = PublicKey
+        })));
+        _connected = true;
+        return;
     }
 
     private void GenerateRSAKeys()
@@ -147,25 +165,22 @@ internal partial class DataTransferClientItem : CodeNetClient
             return false;
 
         foreach (var client in _clients.Where(c => c.Name.Equals(clientName)))
-            return SendDataByClient(client, data);
+            SendDataByClient(client, data);
 
         return true;
     }
 
-    private bool SendDataByClient(ClientItem client, byte[] data)
+    private void SendDataByClient(ClientItem client, byte[] data)
     {
         if (SecurityConnection)
         {
-            if (!client.AESKey.HasValue)
-            {
-                if (!Handshake(client))
-                    return false;
-            }
+            if (!client.AESKey.HasValue && !Handshake(client))
+                return;
 
             data = CryptographyService.AESEncrypt(data, client.AESKey!.Value);
         }
 
-        return SendMessage(new((byte)Models.MessageType.Message, SendDataMessage.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
+        SendMessage(new((byte)Models.MessageType.Message, SendDataMessage.SerializeObject(new SendDataMessage() { ClientId = client.Id, Data = data })));
     }
 
     private bool Handshake(ClientItem client)

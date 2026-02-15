@@ -132,9 +132,13 @@ public abstract class CodeNetClient : ICodeNetClient
         }
     }
 
-    private static TcpClient NewTcpClient(string? hostname, int? port) => string.IsNullOrEmpty(hostname)
-            ? throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.")
-            : port is null or 0 ? throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).") : new();
+    private static TcpClient NewTcpClient(string? hostname, int? port)
+    {
+        if (string.IsNullOrEmpty(hostname))
+            throw new ArgumentNullException(nameof(hostname), "Host name cannot be null or empty.");
+
+        return port is null or 0 ? throw new ArgumentNullException(nameof(port), "Port cannot be null or Zero (0).") : new();
+    }
 
     private void Start()
     {
@@ -206,7 +210,7 @@ public abstract class CodeNetClient : ICodeNetClient
         if (!IsServerSide)
             SendMessage(new((byte)MessageType.Disconnected, []));
         if (_client?.Connected is true)
-            _client?.Close();
+            _client.Close();
         Working = false;
         if (!listening)
             _thread?.Join();
@@ -241,12 +245,9 @@ public abstract class CodeNetClient : ICodeNetClient
             }
         }
 
-        try
-        {
-            if (_client?.Connected is true)
-                _client.Close();
-        }
-        catch { }
+        if (_client?.Connected is true)
+            _client.Close();
+
         if (IsServerSide)
             Disconnected?.Invoke(new(this));
     }
@@ -261,20 +262,10 @@ public abstract class CodeNetClient : ICodeNetClient
 
         if (message.Type is (byte)MessageType.Validation)
         {
-            if (IsServerSide)
-                NewMessgeReceived?.Invoke(new(message));
-            else
-            {
-                Connected = message.Data.Length == 1 && message.Data[0] == 1;
-                if (Connected)
-                {
-                    ConnectedEvent?.Invoke(new(this));
-                    SendMessage(new((byte)MessageType.Connected, [1]));
-                }
-            }
-
+            HandleValidationMessage(message);
             return;
         }
+
         if (IsServerSide && message.Type is (byte)MessageType.Connected)
         {
             Connected = message.Data.Length == 1 && message.Data[0] == 1;
@@ -287,6 +278,21 @@ public abstract class CodeNetClient : ICodeNetClient
             return;
 
         ReceivedMessage(message);
+    }
+
+    private void HandleValidationMessage(Message message)
+    {
+        if (IsServerSide)
+            NewMessgeReceived?.Invoke(new(message));
+        else
+        {
+            Connected = message.Data.Length == 1 && message.Data[0] == 1;
+            if (Connected)
+            {
+                ConnectedEvent?.Invoke(new(this));
+                SendMessage(new((byte)MessageType.Connected, [1]));
+            }
+        }
     }
 
     protected internal virtual void ReceivedMessage(Message message) => NewMessgeReceived?.Invoke(new(message));

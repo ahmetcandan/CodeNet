@@ -11,7 +11,7 @@ public interface IOutboxService
     MessageModel AddMessage(CreateMessageModel model, string messageId);
     MessageModel AddMessage(CreateMessageModel model);
     Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken = default);
-    void DeleteMessage(Guid id);
     Task DeleteMessageAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default);
+    void DeleteMessage(Guid id);
     void DeleteMessage(IEnumerable<Guid> ids);
 }

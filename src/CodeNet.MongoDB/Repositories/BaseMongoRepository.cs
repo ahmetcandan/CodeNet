@@ -191,7 +191,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <returns></returns>
     public virtual async Task UpdateAsync(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues, CancellationToken cancellationToken)
     {
-        var first = updatedValues.First();
+        var first = updatedValues[0];
         var _update = Builders<TModel>.Update.Set(first.Key, first.Value);
         for (int i = 1; i < updatedValues.Count; i++)
             _update.Set(updatedValues[i].Key, updatedValues[i].Value);
@@ -213,7 +213,7 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="updatedValues"></param>
     public virtual void Update(Expression<Func<TModel, bool>> filter, IList<KeyValuePair<string, object>> updatedValues)
     {
-        var first = updatedValues.First();
+        var first = updatedValues[0];
         var _update = Builders<TModel>.Update.Set(first.Key, first.Value);
         for (int i = 1; i < updatedValues.Count; i++)
             _update.Set(updatedValues[i].Key, updatedValues[i].Value);

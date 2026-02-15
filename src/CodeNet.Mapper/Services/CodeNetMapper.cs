@@ -6,7 +6,7 @@ namespace CodeNet.Mapper.Services;
 
 internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMapper
 {
-    private readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(MapperConfiguration));
+    private readonly MapperConfiguration _config = options.Value ?? throw new ArgumentNullException(nameof(options));
     private readonly Dictionary<MapType, Dictionary<object, object>> _cache = [];
 
     public TDestination? MapTo<TSource, TDestination>(TSource source)
@@ -47,27 +47,33 @@ internal class CodeNetMapper(IOptions<MapperConfiguration> options) : ICodeNetMa
         if (value is null || column.ColumnsIsEquals)
             return value;
         else if (value is Array sourceArray && column.ColumnHasElementType)
-        {
-            var destinationArray = arrayConstractor!(sourceArray.Length);
-            for (int i = 0; i < sourceArray.Length; i++)
-                destinationArray.SetValue(column.ElementTypeIsAssignableEnum
-                                            ? sourceArray.GetValue(i)
-                                            : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(i), memoryCache, depth + 1),
-                                        i);
-            return destinationArray;
-        }
+            return MapToArray(_config, column, arrayConstractor, depth, memoryCache, sourceArray);
         else if (value is IEnumerable sourceList)
-        {
-            var destinationList = (_config.ListConstructors[column.DestinationElementType!].Invoke() as IList)!;
-            foreach (var item in sourceList)
-                destinationList.Add(column.ElementTypeIsAssignableEnum
-                                        ? item
-                                        : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, item, memoryCache, depth + 1));
-            return destinationList;
-        }
+            return MapToList(_config, column, depth, memoryCache, sourceList);
         else if (column.SourceTypeIsClass && column.SourceType != typeof(string))
             return MapToObject(_config, column.SourceType, column.DestinationType, value, memoryCache, depth + 1);
 
         return null;
+    }
+
+    private static IList? MapToList(MapperConfiguration _config, MapperItemProperties column, int depth, Dictionary<MapType, Dictionary<object, object>> memoryCache, IEnumerable sourceList)
+    {
+        var destinationList = (_config.ListConstructors[column.DestinationElementType!].Invoke() as IList)!;
+        foreach (var item in sourceList)
+            destinationList.Add(column.ElementTypeIsAssignableEnum
+                                    ? item
+                                    : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, item, memoryCache, depth + 1));
+        return destinationList;
+    }
+    
+    private static Array? MapToArray(MapperConfiguration _config, MapperItemProperties column, Func<int, Array>? arrayConstractor, int depth, Dictionary<MapType, Dictionary<object, object>> memoryCache, Array sourceArray)
+    {
+        var destinationArray = arrayConstractor!(sourceArray.Length);
+        for (int i = 0; i < sourceArray.Length; i++)
+            destinationArray.SetValue(column.ElementTypeIsAssignableEnum
+                                        ? sourceArray.GetValue(i)
+                                        : MapToObject(_config, column.SourceElementType!, column.DestinationElementType!, sourceArray.GetValue(i), memoryCache, depth + 1),
+                                    i);
+        return destinationArray;
     }
 }

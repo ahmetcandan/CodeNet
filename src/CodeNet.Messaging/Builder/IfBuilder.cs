@@ -61,9 +61,10 @@ internal class IfBuilder : IMessageBuilder
                 _ => null
             };
 
-        return result is null
-            ? throw new MessagingException(ExceptionMessages.IfConditionException)
-            : result.Value ? IfBodyBuilder.Build(data) : (ElseBodyBuilder?.Build(data) ?? new(""));
+        if (result is null)
+            throw new MessagingException(ExceptionMessages.IfConditionException);
+
+        return result.Value ? IfBodyBuilder.Build(data) : (ElseBodyBuilder?.Build(data) ?? new(string.Empty));
     }
 
     public string Content { get; set; } = string.Empty;

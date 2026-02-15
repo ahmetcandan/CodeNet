@@ -14,7 +14,7 @@ public static class MapperServiceExtensions
     /// <returns></returns>
     public static IServiceCollection AddMapper(this IServiceCollection services, Action<MapperConfigurationBuilder> action)
     {
-        ArgumentNullException.ThrowIfNull(action, nameof(action));
+        ArgumentNullException.ThrowIfNull(action);
 
         MapperConfigurationBuilder builder = new();
         action(builder);

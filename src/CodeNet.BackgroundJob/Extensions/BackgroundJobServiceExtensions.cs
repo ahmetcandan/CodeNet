@@ -91,25 +91,28 @@ public static class BackgroundJobServiceExtensions
                 var users = string.IsNullOrEmpty(authOptions.Value?.JwtAuthOptions?.Users) ? [] : (authOptions.Value?.JwtAuthOptions?.Users.Split(',') ?? []);
                 var roles = string.IsNullOrEmpty(authOptions.Value?.JwtAuthOptions?.Roles) ? [] : (authOptions.Value?.JwtAuthOptions?.Roles.Split(',') ?? []);
                 foreach (var routeHandlerBuilder in routeHandlerBuilders)
-                {
-                    if (users.Length == 0 && roles.Length == 0)
-                        routeHandlerBuilder.RequireAuthorization();
-                    else
-                        routeHandlerBuilder.RequireAuthorization(policy =>
-                        {
-                            if (users.Length > 0)
-                                policy.RequireAssertion(context => users.Contains(context.User?.Identity?.Name));
-
-                            if (roles.Length > 0)
-                                policy.RequireRole(roles);
-                        });
-                }
+                    ConfigureJwtAuthorization(users, roles, routeHandlerBuilder);
                 break;
             default:
                 break;
         }
 
         return app;
+    }
+
+    private static void ConfigureJwtAuthorization(string[] users, string[] roles, RouteHandlerBuilder routeHandlerBuilder)
+    {
+        if (users.Length == 0 && roles.Length == 0)
+            routeHandlerBuilder.RequireAuthorization();
+        else
+            routeHandlerBuilder.RequireAuthorization(policy =>
+            {
+                if (users.Length > 0)
+                    policy.RequireAssertion(context => users.Contains(context.User?.Identity?.Name));
+
+                if (roles.Length > 0)
+                    policy.RequireRole(roles);
+            });
     }
 
     private static void SetPrivateJobs(BackgroundJobDbContext dbContext)

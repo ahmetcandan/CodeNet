@@ -12,10 +12,11 @@ internal static class ObjectExtension
             ? ((IDictionary<string, object>)obj)[properties[0]]
             : (type.GetProperty(properties[0])?.GetValue(obj));
 
-        return value is null
-            ? null
-            : properties.Length == 1
+        if (value is null) 
+            return null;
+
+        return properties.Length == 1
             ? value
-            : value?.GetValue(string.Join('.', properties[1..]));
+            : value.GetValue(string.Join('.', properties[1..]));
     }
 }

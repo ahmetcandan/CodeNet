@@ -4,6 +4,8 @@ namespace CodeNet.Messaging.Manager;
 
 public partial class FunctionExecuter
 {
+    private FunctionExecuter() { }
+
     public static string Now() => Now("");
 
     public static string Now(string format) => string.IsNullOrEmpty(format) ? DateTime.Now.ToString() : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);

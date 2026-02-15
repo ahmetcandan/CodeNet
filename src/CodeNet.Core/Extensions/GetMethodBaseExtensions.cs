@@ -7,7 +7,7 @@ public static class GetMethodBaseExtensions
 {
     public static MethodBase GetMethodBase(this MethodBase methodBase)
     {
-        if (methodBase!.DeclaringType!.GetInterfaces().Any(i => i.Equals(typeof(IAsyncStateMachine))) == true)
+        if (methodBase!.DeclaringType!.GetInterfaces().Any(i => i.Equals(typeof(IAsyncStateMachine))))
         {
             var generatedType = methodBase.DeclaringType;
             var originalType = generatedType.DeclaringType;

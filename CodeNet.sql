@@ -1,6 +1,4 @@
-/****** Object:  Database [CodeNet] ******/
 CREATE DATABASE [CodeNet]
-/****** Object:  Database [CodeNet] ******/
 
 GO
 
@@ -8,7 +6,6 @@ USE [CodeNet]
 
 GO
 
-/****** Object:  Table [dbo].[AspNetRoles] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -26,9 +23,7 @@ CREATE TABLE [dbo].[AspNetRoles](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetRoles] ******/
 
-/****** Object:  Table [dbo].[AspNetRoleClaims] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -54,9 +49,7 @@ GO
 
 ALTER TABLE [dbo].[AspNetRoleClaims] CHECK CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId]
 GO
-/****** Object:  Table [dbo].[AspNetRoleClaims] ******/
 
-/****** Object:  Table [dbo].[AspNetUsers] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -85,9 +78,7 @@ CREATE TABLE [dbo].[AspNetUsers](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[AspNetUsers] ******/
 
-/****** Object:  Table [dbo].[AspNetUserClaims] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -113,9 +104,7 @@ GO
 
 ALTER TABLE [dbo].[AspNetUserClaims] CHECK CONSTRAINT [FK_AspNetUserClaims_AspNetUsers_UserId]
 GO
-/****** Object:  Table [dbo].[AspNetUserClaims] ******/
 
-/****** Object:  Table [dbo].[AspNetUserLogins] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -142,9 +131,7 @@ GO
 
 ALTER TABLE [dbo].[AspNetUserLogins] CHECK CONSTRAINT [FK_AspNetUserLogins_AspNetUsers_UserId]
 GO
-/****** Object:  Table [dbo].[AspNetUserLogins] ******/
 
-/****** Object:  Table [dbo].[AspNetUserRoles] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -177,9 +164,7 @@ GO
 
 ALTER TABLE [dbo].[AspNetUserRoles] CHECK CONSTRAINT [FK_AspNetUserRoles_AspNetUsers_UserId]
 GO
-/****** Object:  Table [dbo].[AspNetUserRoles] ******/
 
-/****** Object:  Table [dbo].[AspNetUserTokens] ******/
 SET ANSI_NULLS ON
 GO
 
@@ -207,9 +192,7 @@ GO
 
 ALTER TABLE [dbo].[AspNetUserTokens] CHECK CONSTRAINT [FK_AspNetUserTokens_AspNetUsers_UserId]
 GO
-/****** Object:  Table [dbo].[AspNetUserTokens] ******/
 
-/****** Data ******/
 INSERT INTO [dbo].[AspNetRoles]
 ([Id], [Name], [NormalizedName], [ConcurrencyStamp])
 VALUES
@@ -228,4 +211,3 @@ INSERT INTO [dbo].[AspNetUserRoles]
 ([UserId], [RoleId])
 VALUES
 ('e0bdacf1-4337-4e28-9d7b-37c8f76497c0', '70f27727-ba9d-4b1c-8be6-a9e376198d6b')
-/****** Data ******/

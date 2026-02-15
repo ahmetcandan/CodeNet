@@ -41,7 +41,7 @@ public class MapperConfigurationBuilder
         where TSource : new()
         where TDestination : new() => CreateMap(action, false);
 
-    private bool SetColumnProperties(MapType mapType, Dictionary<string, string> mapperColumns)
+    private void SetColumnProperties(MapType mapType, Dictionary<string, string> mapperColumns)
     {
         List<MapperItemProperties> properties = [];
         foreach (var sourceProp in mapType.SourceType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
@@ -78,7 +78,7 @@ public class MapperConfigurationBuilder
             });
         }
 
-        return _mapperItems.TryAdd(mapType, [.. properties]);
+        _mapperItems.TryAdd(mapType, [.. properties]);
     }
 
     private static bool IsSimpleType(Type? type) => type is not null && (type.IsPrimitive || type.IsValueType || type == typeof(string));
