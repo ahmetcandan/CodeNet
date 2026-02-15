@@ -12,5 +12,4 @@ public class RabbitMQProducerOptions : BaseRabbitMQOptions
 public class RabbitMQProducerOptions<TProducerService> : RabbitMQProducerOptions
     where TProducerService : RabbitMQProducerService
 {
-    public override string ToString() => base.ToString();
 }

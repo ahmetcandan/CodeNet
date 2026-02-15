@@ -17,5 +17,4 @@ public class RabbitMQConsumerOptions : BaseRabbitMQOptions
 public class RabbitMQConsumerOptions<TConsumerService> : RabbitMQConsumerOptions
     where TConsumerService : RabbitMQConsumerService
 {
-    public override string ToString() => base.ToString();
 }

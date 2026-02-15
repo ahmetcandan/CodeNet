@@ -25,7 +25,7 @@ public static class ApiServiceMapperExtensions
     {
         foreach (var serviceType in types.Where(t => t.IsClass && !t.IsAbstract && typeof(IApiService).IsAssignableFrom(t)))
         {
-            var serviceInterface = serviceType.GetInterfaces().Where(c => c != typeof(IApiService)).FirstOrDefault();
+            var serviceInterface = serviceType.GetInterfaces().FirstOrDefault(c => c != typeof(IApiService));
             if (serviceInterface is null)
                 services.AddScoped(serviceType);
             else
@@ -45,7 +45,7 @@ public static class ApiServiceMapperExtensions
         {
             var apiRouteAttr = serviceType!.GetCustomAttribute<XApiRouteAttribute>();
             var classRoute = apiRouteAttr?.Route ?? serviceType!.Name.Replace("Service", "");
-            var implementationType = serviceType!.GetInterfaces().Where(c => c != typeof(IApiService)).FirstOrDefault();
+            var implementationType = serviceType!.GetInterfaces().FirstOrDefault(c => c != typeof(IApiService));
 
             var methods = serviceType!.GetMethods(BindingFlags.Public | BindingFlags.Instance)
                 .Where(m => m.GetCustomAttribute<XHttpMethodAttribute>() != null);
@@ -92,19 +92,28 @@ public static class ApiServiceMapperExtensions
         else
             endpointBuilder.RequireAuthorization(configure =>
             {
-                if (!string.IsNullOrEmpty(methodAuthAttr?.Users))
-                    foreach (var userName in methodAuthAttr.Users.SemicolonSplit())
-                        configure.RequireUserName(userName);
-                if (!string.IsNullOrEmpty(classAuthAttr?.Users))
-                    foreach (var userName in classAuthAttr.Users.SemicolonSplit())
-                        configure.RequireUserName(userName);
-
-                if (!string.IsNullOrEmpty(methodAuthAttr?.Roles))
-                    foreach (var role in methodAuthAttr.Roles.SemicolonSplit())
-                        configure.RequireRole(role);
-                if (!string.IsNullOrEmpty(classAuthAttr?.Roles))
-                    foreach (var role in classAuthAttr.Roles.SemicolonSplit())
-                        configure.RequireRole(role);
+                ApplyUserRequirements(methodAuthAttr, classAuthAttr, configure);
+                ApplyRoleRequirements(methodAuthAttr, classAuthAttr, configure);
             });
+    }
+
+    private static void ApplyRoleRequirements(XAuthorizeAttribute? methodAuthAttr, XAuthorizeAttribute? classAuthAttr, Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder configure)
+    {
+        if (!string.IsNullOrEmpty(methodAuthAttr?.Roles))
+            foreach (var role in methodAuthAttr.Roles.SemicolonSplit())
+                configure.RequireRole(role);
+        if (!string.IsNullOrEmpty(classAuthAttr?.Roles))
+            foreach (var role in classAuthAttr.Roles.SemicolonSplit())
+                configure.RequireRole(role);
+    }
+
+    private static void ApplyUserRequirements(XAuthorizeAttribute? methodAuthAttr, XAuthorizeAttribute? classAuthAttr, Microsoft.AspNetCore.Authorization.AuthorizationPolicyBuilder configure)
+    {
+        if (!string.IsNullOrEmpty(methodAuthAttr?.Users))
+            foreach (var userName in methodAuthAttr.Users.SemicolonSplit())
+                configure.RequireUserName(userName);
+        if (!string.IsNullOrEmpty(classAuthAttr?.Users))
+            foreach (var userName in classAuthAttr.Users.SemicolonSplit())
+                configure.RequireUserName(userName);
     }
 }

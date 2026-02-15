@@ -1,5 +1,6 @@
 ﻿namespace CodeNet.ApiHost.Attributes;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class XPostAttribute : XHttpMethodAttribute
 {
     private const string _method = "POST";

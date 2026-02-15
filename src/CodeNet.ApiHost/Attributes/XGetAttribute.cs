@@ -1,5 +1,6 @@
 ﻿namespace CodeNet.ApiHost.Attributes;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class XGetAttribute : XHttpMethodAttribute
 {
     private const string _method = "GET";

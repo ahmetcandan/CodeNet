@@ -31,16 +31,7 @@ internal class LoopBuilder : IMessageBuilder
         {
             dynamic dynamicObj = new ExpandoObject();
             var dictionary = (IDictionary<string, object>)dynamicObj;
-            if (data is not null)
-                foreach (var prop in data.GetType().GetProperties())
-                {
-                    if (prop.Name == ItemName)
-                        throw new MessagingException(ExceptionMessages.LoopItemParam);
-
-                    var value = prop.GetValue(data);
-                    if (value is not null)
-                        dictionary[prop.Name] = value;
-                }
+            PopulateDictionary(data, dictionary, ItemName);
             foreach (var item in (dynamic)Array.Value!)
             {
                 dictionary[ItemName] = item;
@@ -49,6 +40,20 @@ internal class LoopBuilder : IMessageBuilder
         }
 
         return builder;
+    }
+
+    private static void PopulateDictionary(object? data, IDictionary<string, object> dictionary, string itemName)
+    {
+        if (data is not null)
+            foreach (var prop in data.GetType().GetProperties())
+            {
+                if (prop.Name == itemName)
+                    throw new MessagingException(ExceptionMessages.LoopItemParam);
+
+                var value = prop.GetValue(data);
+                if (value is not null)
+                    dictionary[prop.Name] = value;
+            }
     }
 
     public string Content { get; set; } = string.Empty;

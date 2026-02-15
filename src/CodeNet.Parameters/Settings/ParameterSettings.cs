@@ -9,7 +9,7 @@ public class ParameterSettings
     /// </summary>
     public string RedisPrefix
     {
-        get => string.IsNullOrEmpty(_redisPrefix) ? "CNPRM" : (_redisPrefix ?? string.Empty);
+        get => string.IsNullOrEmpty(_redisPrefix) ? "CNPRM" : _redisPrefix;
         set { _redisPrefix = value; }
     }
 

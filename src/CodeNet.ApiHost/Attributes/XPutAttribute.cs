@@ -1,5 +1,6 @@
 ﻿namespace CodeNet.ApiHost.Attributes;
 
+[AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
 public class XPutAttribute : XHttpMethodAttribute
 {
     private const string _method = "PUT";

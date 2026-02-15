@@ -98,7 +98,7 @@ public class Repository<TEntity>(DbContext dbContext) : IRepository<TEntity>
         };
     }
 
-    private void PageAndCountControl(int page, int count)
+    private static void PageAndCountControl(int page, int count)
     {
         if (page < 1 || count < 1)
             throw new ArgumentException("Page or count cannot be less than 1");

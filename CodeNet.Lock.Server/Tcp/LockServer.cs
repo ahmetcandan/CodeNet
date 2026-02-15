@@ -24,7 +24,7 @@ internal class LockServer(int port)
 
     public void Stop() => Stop(false);
 
-    private void Stop(bool retryStart = false)
+    private void Stop(bool retryStart)
     {
         if (_started)
         {

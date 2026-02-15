@@ -17,7 +17,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
     private Thread? _thread;
     private readonly X509Certificate2? _certificate;
 
-    public CodeNetServer(int port, string certificatePath, string certificatePassword) : this(port)
+    protected CodeNetServer(int port, string certificatePath, string certificatePassword) : this(port)
     {
         _certificate = new X509Certificate2(certificatePath, certificatePassword);
     }
@@ -44,7 +44,7 @@ public abstract class CodeNetServer<TClient>(int port) : IDisposable
 
     public void Stop() => Stop(false);
 
-    private void Stop(bool retryStart = false)
+    private void Stop(bool retryStart)
     {
         if (Status is TcpStatus.Starting)
         {

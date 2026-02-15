@@ -33,7 +33,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                     context.Response.StatusCode = userLevelException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(UserLevelException);
                     break;
-                case RedisLockException redisLockException:
+                case RedisLockException:
                     context.Response.StatusCode = StatusCodes.Status423Locked;
                     title = nameof(RedisLockException);
                     break;
@@ -41,7 +41,7 @@ internal sealed class ExceptionHandlerMiddleware(RequestDelegate next) : BaseMid
                     context.Response.StatusCode = codeNetException.HttpStatusCode ?? StatusCodes.Status500InternalServerError;
                     title = nameof(CodeNetException);
                     break;
-                case BadHttpRequestException badHttpRequestException:
+                case BadHttpRequestException:
                     context.Response.StatusCode = StatusCodes.Status400BadRequest;
                     title = nameof(BadHttpRequestException);
                     break;

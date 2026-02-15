@@ -52,13 +52,6 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     }
 
     /// <summary>
-    /// Update
-    /// </summary>
-    /// <param name="filter"></param>
-    /// <param name="model"></param>
-    public virtual void Update(Expression<Func<TModel, bool>> filter, TModel model) => _mongoCollection.ReplaceOne(filter, model);
-
-    /// <summary>
     /// Delete
     /// </summary>
     /// <param name="filter"></param>
@@ -102,14 +95,18 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
     /// <param name="count"></param>
     /// <param name="cancellationToken"></param>
     /// <returns></returns>
-    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken) => page < 1 || count < 1
-            ? throw new ArgumentException("Page or count cannot be less than 1")
-            : await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
-            {
-                Skip = (page - 1) * count,
-                Limit = count,
-                Sort = isAscending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
-            }, cancellationToken)).ToListAsync(cancellationToken);
+    public virtual async Task<List<TModel>> GetPagingListAsync(Expression<Func<TModel, bool>> filter, Expression<Func<TModel, object>> orderBySelector, bool isAscending, int page, int count, CancellationToken cancellationToken)
+    {
+        if (page < 1 || count < 1)
+            throw new ArgumentException("Page or count cannot be less than 1");
+
+        return await (await _mongoCollection.FindAsync(filter: filter, options: new FindOptions<TModel>
+        {
+            Skip = (page - 1) * count,
+            Limit = count,
+            Sort = isAscending ? Builders<TModel>.Sort.Ascending(orderBySelector) : Builders<TModel>.Sort.Descending(orderBySelector)
+        }, cancellationToken)).ToListAsync(cancellationToken);
+    }
 
     /// <summary>
     /// Get By ID
@@ -201,6 +198,13 @@ public class BaseMongoRepository<TModel>(MongoDBContext dbContext) : IMongoDBRep
 
         await _mongoCollection.UpdateManyAsync(filter, _update, cancellationToken: cancellationToken);
     }
+
+    /// <summary>
+    /// Update
+    /// </summary>
+    /// <param name="filter"></param>
+    /// <param name="model"></param>
+    public virtual void Update(Expression<Func<TModel, bool>> filter, TModel model) => _mongoCollection.ReplaceOne(filter, model);
 
     /// <summary>
     /// Update

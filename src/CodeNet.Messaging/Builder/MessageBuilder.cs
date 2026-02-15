@@ -77,13 +77,13 @@ public class MessageBuilder : IMessageBuilder
         {
             FuncBuilder funcBuilder = FuncBuilder.Compile(match.Groups["function"].Value, match.Value, match.Index);
             MatchCollection paramMatches = MessagingRegex.FuncParamRegex().Matches(match.Groups["params"].Value);
-            foreach (var paramMatch in paramMatches.Where(c => c.Success))
+            foreach (var paramMatch in paramMatches.Where(c => c.Success).Select(c => c.Groups))
                 funcBuilder.Parameters.Add(NewParamValue(
-                    paramMatch.Groups["param"].Value,
-                    paramMatch.Groups["number"].Value,
-                    paramMatch.Groups["text"].Value,
-                    paramMatch.Groups["null"].Value,
-                    paramMatch.Groups["bool"].Value));
+                    paramMatch["param"].Value,
+                    paramMatch["number"].Value,
+                    paramMatch["text"].Value,
+                    paramMatch["null"].Value,
+                    paramMatch["bool"].Value));
 
             FuncBuilders.Add(funcBuilder);
         }

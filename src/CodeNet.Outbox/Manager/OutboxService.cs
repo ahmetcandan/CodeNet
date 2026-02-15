@@ -83,7 +83,7 @@ internal class OutboxService(OutboxRepository outboxRepository, IOptions<OutboxS
 
     public void DeleteMessage(IEnumerable<Guid> ids) => outboxRepository.Delete(c => ids.Contains(c.Id));
 
-    public Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken) => outboxRepository.DeleteAsync(c => c.Id == id, cancellationToken);
+    public Task DeleteMessageAsync(Guid id, CancellationToken cancellationToken = default) => outboxRepository.DeleteAsync(c => c.Id == id, cancellationToken);
 
-    public Task DeleteMessageAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken) => outboxRepository.DeleteAsync(c => ids.Contains(c.Id), cancellationToken);
+    public Task DeleteMessageAsync(IEnumerable<Guid> ids, CancellationToken cancellationToken = default) => outboxRepository.DeleteAsync(c => ids.Contains(c.Id), cancellationToken);
 }

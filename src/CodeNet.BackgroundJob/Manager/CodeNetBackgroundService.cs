@@ -199,14 +199,9 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     JobId = jobId
                 };
 
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+                await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
                 MessageInvoke(detail);
-
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+                await SaveDetailRepository(workingDetailRepository, cancellationToken);
                 return detail;
             }
             else
@@ -232,14 +227,9 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                     JobId = jobId
                 };
 
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+                await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
                 MessageInvoke(detail);
-
-                if (workingDetailRepository is not null)
-                    await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+                await SaveDetailRepository(workingDetailRepository, cancellationToken);
                 return detail;
             }
         }
@@ -255,16 +245,23 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 JobId = jobId
             };
 
-            if (workingDetailRepository is not null)
-                await workingDetailRepository.AddAsync(detail, cancellationToken);
-
+            await AddDetailAsync(workingDetailRepository, detail, cancellationToken);
             MessageInvoke(detail);
-
-            if (workingDetailRepository is not null)
-                await workingDetailRepository.SaveChangesAsync(cancellationToken);
-
+            await SaveDetailRepository(workingDetailRepository, cancellationToken);
             return detail;
         }
+    }
+
+    private static async Task AddDetailAsync(Repository<JobWorkingDetail>? repository, JobWorkingDetail detail, CancellationToken cancellationToken)
+    {
+        if (repository is not null)
+            await repository.AddAsync(detail, cancellationToken);
+    }
+
+    private static async Task SaveDetailRepository(Repository<JobWorkingDetail>? repository, CancellationToken cancellationToken)
+    {
+        if (repository is not null)
+            await repository.SaveChangesAsync(cancellationToken);
     }
 
     public async Task StopAsync(CancellationToken cancellationToken = default)

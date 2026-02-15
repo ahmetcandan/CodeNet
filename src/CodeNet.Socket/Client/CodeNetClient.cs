@@ -49,7 +49,7 @@ public abstract class CodeNetClient : ICodeNetClient
 
     public abstract string ApplicationKey { get; }
 
-    public CodeNetClient() => ClientId = 0;
+    protected CodeNetClient() => ClientId = 0;
 
     public CodeNetClient(string hostName, int port)
     {
@@ -57,12 +57,12 @@ public abstract class CodeNetClient : ICodeNetClient
         _port = port;
     }
 
-    public CodeNetClient(string hostName, int port, bool secureConnection) : this(hostName, port)
+    protected CodeNetClient(string hostName, int port, bool secureConnection) : this(hostName, port)
     {
         _secureConnection = secureConnection;
     }
 
-    public CodeNetClient(string hostName, int port, string certificatePath, string certificatePassword) : this(hostName, port)
+    protected CodeNetClient(string hostName, int port, string certificatePath, string certificatePassword) : this(hostName, port)
     {
         _secureConnection = true;
         _certificate = new X509Certificate2(certificatePath, certificatePassword);
@@ -296,11 +296,11 @@ public abstract class CodeNetClient : ICodeNetClient
         if (!Working || !(_writer?.BaseStream.CanWrite ?? false))
             return false;
 
-        _writer?.Write(Message.Seriliaze(message));
+        _writer.Write(Message.Seriliaze(message));
         return true;
     }
 
-    private bool Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
+    private void Validation() => SendMessage(new((byte)MessageType.Validation, Encoding.UTF8.GetBytes(ApplicationKey)));
 
     internal virtual bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
     {
