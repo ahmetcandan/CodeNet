@@ -134,5 +134,5 @@ public class MessageBuilder : IMessageBuilder
     internal ICollection<LoopBuilder> LoopBuilders { get; set; } = [];
     internal ICollection<FuncBuilder> FuncBuilders { get; set; } = [];
     internal ICollection<IfBuilder> IfBuilders { get; set; } = [];
-    public BuildType Type { get; } = BuildType.Message;
+    internal BuildType Type { get; } = BuildType.Message;
 }

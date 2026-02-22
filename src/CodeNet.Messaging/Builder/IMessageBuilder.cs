@@ -7,5 +7,4 @@ public interface IMessageBuilder
     StringBuilder Build(object? data);
     int Index { get; }
     string Content { get; }
-    BuildType Type { get; }
 }

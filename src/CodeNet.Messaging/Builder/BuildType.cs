@@ -1,6 +1,6 @@
 ﻿namespace CodeNet.Messaging.Builder;
 
-public enum BuildType
+internal enum BuildType
 {
     Message = 1,
     Loop = 2,

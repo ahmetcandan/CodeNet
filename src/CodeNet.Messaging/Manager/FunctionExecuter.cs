@@ -4,7 +4,7 @@ namespace CodeNet.Messaging.Manager;
 
 public partial class FunctionExecuter
 {
-    private FunctionExecuter() { }
+    internal FunctionExecuter() { }
 
     public static string Now() => Now("");
 

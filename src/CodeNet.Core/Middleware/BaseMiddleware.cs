@@ -43,8 +43,8 @@ public abstract class BaseMiddleware
     }
 
     protected static async Task<string> GetRequestKey(HttpContext context, MethodInfo methodInfo) => context.Request.ContentType is null
-            ? Hashing.MD5((context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty) + string.Join("", context.Request.RouteValues.Select(c => c.Value)))
-            : Hashing.MD5(await StreamToByteArray(context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty, context.RequestAborted));
+            ? Hashing.SHA256((context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty) + string.Join("", context.Request.RouteValues.Select(c => c.Value)))
+            : Hashing.SHA256(await StreamToByteArray(context.Request.Body, methodInfo.DeclaringType?.FullName ?? string.Empty, context.RequestAborted));
 
     protected static async Task<string> GetRequest(HttpContext context) => context.Request.ContentType is null
             ? string.Join("", context.Request.RouteValues.Select(c => c.Value))
