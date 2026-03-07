@@ -1,4 +1,5 @@
-﻿using CodeNet.BackgroundJob.Models;
+﻿using CodeNet.BackgroundJob.Exception;
+using CodeNet.BackgroundJob.Models;
 using CodeNet.EntityFramework.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Mvc;
@@ -43,8 +44,8 @@ internal static class ApiServices
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
-            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new BackgroundJobException(ExceptionMessages.JobEntityNotFound);
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new BackgroundJobException(ExceptionMessages.IScheduleJobNotFound);
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
@@ -79,8 +80,8 @@ internal static class ApiServices
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
-            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new BackgroundJobException(ExceptionMessages.JobEntityNotFound);
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new BackgroundJobException(ExceptionMessages.IScheduleJobNotFound);
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);
@@ -100,8 +101,8 @@ internal static class ApiServices
             var serviceScope = serviceProvider.CreateScope();
             var dbContext = serviceScope.ServiceProvider.GetRequiredService<BackgroundJobDbContext>();
             var serviceRepository = new Repository<Job>(dbContext);
-            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new Exception("Job entity is not found!");
-            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new Exception($"{jobEntity.ServiceType} IScheduleJob is not found!");
+            var jobEntity = await serviceRepository.GetAsync([jobId], cancellationToken) ?? throw new BackgroundJobException(ExceptionMessages.JobEntityNotFound);
+            var tJob = serviceScope.ServiceProvider.GetServices<IScheduleJob>().FirstOrDefault(c => c.GetType().ToString() == jobEntity.ServiceType) ?? throw new BackgroundJobException(ExceptionMessages.IScheduleJobNotFound);
 
             var tJobType = tJob.GetType();
             var serviceType = typeof(ICodeNetBackgroundService<>).MakeGenericType(tJobType);

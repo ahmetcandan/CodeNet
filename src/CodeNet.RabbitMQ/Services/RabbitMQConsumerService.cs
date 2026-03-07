@@ -1,4 +1,5 @@
-﻿using CodeNet.RabbitMQ.Models;
+﻿using CodeNet.RabbitMQ.Exception;
+using CodeNet.RabbitMQ.Models;
 using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.Options;
 using RabbitMQ.Client;
@@ -65,46 +66,31 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     private async void MessageHandler(object? model, BasicDeliverEventArgs args)
     {
         if (ReceivedMessage is not null)
-            await ReceivedMessage.Invoke(new ReceivedMessageEventArgs
-            {
-                Data = args.Body,
-                MessageId = args.BasicProperties?.MessageId,
-                Headers = args.BasicProperties?.Headers,
-                ConsumerTag = args.ConsumerTag,
-                DeliveryTag = args.DeliveryTag,
-                Exchange = args.Exchange,
-                RoutingKey = args.RoutingKey,
-                Redelivered = args.Redelivered,
-                AppId = args.BasicProperties?.AppId,
-                ClusterId = args.BasicProperties?.ClusterId,
-                Priority = args.BasicProperties?.Priority,
-                CorrelationId = args.BasicProperties?.CorrelationId,
-                Type = args.BasicProperties?.Type,
-                DeliveryMode = GetDeliveryMode(args.BasicProperties),
-                Timestamp = GetTimestamp(args.BasicProperties)
-            });
+            await ReceivedMessage.Invoke(GetReceivedMessageEventArgs(args));
     }
 
     private Task AsyncMessageHandler(object? model, BasicDeliverEventArgs args) => ReceivedMessage is not null
-            ? ReceivedMessage.Invoke(new ReceivedMessageEventArgs
-            {
-                Data = args.Body,
-                MessageId = args.BasicProperties?.MessageId,
-                Headers = args.BasicProperties?.Headers,
-                ConsumerTag = args.ConsumerTag,
-                DeliveryTag = args.DeliveryTag,
-                Exchange = args.Exchange,
-                RoutingKey = args.RoutingKey,
-                Redelivered = args.Redelivered,
-                AppId = args.BasicProperties?.AppId,
-                ClusterId = args.BasicProperties?.ClusterId,
-                Priority = args.BasicProperties?.Priority,
-                CorrelationId = args.BasicProperties?.CorrelationId,
-                Type = args.BasicProperties?.Type,
-                DeliveryMode = GetDeliveryMode(args.BasicProperties),
-                Timestamp = GetTimestamp(args.BasicProperties)
-            })
+            ? ReceivedMessage.Invoke(GetReceivedMessageEventArgs(args))
             : Task.CompletedTask;
+
+    private static ReceivedMessageEventArgs GetReceivedMessageEventArgs(BasicDeliverEventArgs args) => new()
+    {
+        Data = args.Body,
+        MessageId = args.BasicProperties?.MessageId,
+        Headers = args.BasicProperties?.Headers,
+        ConsumerTag = args.ConsumerTag,
+        DeliveryTag = args.DeliveryTag,
+        Exchange = args.Exchange,
+        RoutingKey = args.RoutingKey,
+        Redelivered = args.Redelivered,
+        AppId = args.BasicProperties?.AppId,
+        ClusterId = args.BasicProperties?.ClusterId,
+        Priority = args.BasicProperties?.Priority,
+        CorrelationId = args.BasicProperties?.CorrelationId,
+        Type = args.BasicProperties?.Type,
+        DeliveryMode = GetDeliveryMode(args.BasicProperties),
+        Timestamp = GetTimestamp(args.BasicProperties)
+    };
 
     private static DateTimeOffset? GetTimestamp(IBasicProperties? basicProperties) => basicProperties is not null
             ? (DateTimeOffset?)new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Local).AddSeconds(basicProperties.Timestamp.UnixTime).AddTicks(DateTimeOffset.Now.Offset.Ticks)
@@ -134,7 +120,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     public void CheckSuccessfullMessage(ulong deliveryTag, bool multiple = false)
     {
         if (options.Value.AutoAck)
-            throw new Exception("This method cannot be used if 'AutoAck' is on.");
+            throw new RabbitMQException(ExceptionMessages.AutoAck);
 
         if (_channel?.IsOpen is true)
             _channel.BasicAck(deliveryTag: deliveryTag, multiple: multiple);
@@ -143,7 +129,7 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
     public void CheckFailMessage(ulong deliveryTag, bool multiple = false, bool requeue = true)
     {
         if (options.Value.AutoAck)
-            throw new Exception("This method cannot be used if 'AutoAck' is on.");
+            throw new RabbitMQException(ExceptionMessages.AutoAck);
 
         if (_channel?.IsOpen is true)
             _channel.BasicNack(deliveryTag: deliveryTag, multiple: multiple, requeue: requeue);

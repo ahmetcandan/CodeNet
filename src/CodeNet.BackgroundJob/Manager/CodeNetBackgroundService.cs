@@ -233,7 +233,7 @@ internal class CodeNetBackgroundService<TJob>(IOptions<JobOptions<TJob>> options
                 return detail;
             }
         }
-        catch (Exception ex)
+        catch (System.Exception ex)
         {
             appLogger?.ExceptionLog(ex, methodInfo);
             _jobStatus = JobStatus.Stopped;

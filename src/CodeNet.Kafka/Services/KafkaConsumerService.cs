@@ -1,4 +1,5 @@
-﻿using CodeNet.Kafka.Models;
+﻿using CodeNet.Kafka.Exception;
+using CodeNet.Kafka.Models;
 using CodeNet.Kafka.Settings;
 using Confluent.Kafka;
 using Microsoft.Extensions.Options;
@@ -53,7 +54,7 @@ public class KafkaConsumerService<TKey, TValue>(IOptions<KafkaConsumerOptions> o
     public void CommitCheckPoint(int partition, long offset)
     {
         if (options.Value.Config.EnableAutoCommit is true)
-            throw new Exception("This method cannot be used if 'EnableAutoCommit' is on.");
+            throw new Exception.KafkaException(ExceptionMessages.EnableAutoCommit);
 
         _consumer?.Commit([new(options.Value.Topic, partition, offset)]);
     }
