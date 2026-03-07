@@ -1,12 +1,11 @@
-﻿namespace CodeNet.MongoDB.Attributes
+﻿namespace CodeNet.MongoDB.Attributes;
+
+/// <summary>
+/// MongoDB CollectionName Attribute
+/// </summary>
+/// <param name="name"></param>
+[AttributeUsage(AttributeTargets.Class)]
+public class CollectionNameAttribute(string name) : Attribute
 {
-    /// <summary>
-    /// MongoDB CollectionName Attribute
-    /// </summary>
-    /// <param name="name"></param>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class CollectionNameAttribute(string name) : Attribute
-    {
-        public string Name { get; set; } = name;
-    }
+    public string Name { get; set; } = name;
 }
