@@ -89,12 +89,12 @@ public static class CodeNetServiceExtensions
     /// <param name="app"></param>
     /// <param name="action"></param>
     /// <returns></returns>
-    /// <exception cref="NullReferenceException"></exception>
+    /// <exception cref="ArgumentNullException"></exception>
     public static WebApplication UseCodeNet(this WebApplication app, Action<CodeNetApplicationBuilder>? action = null)
     {
         var applicationSettings = app.Services.GetService<IOptions<ApplicationSettings>>();
         if (applicationSettings?.Value is null)
-            throw new NullReferenceException("ApplicationSettings is not implemented. Use the builder.Services.AddCodeNet(...) method.");
+            throw new ArgumentNullException(nameof(app), "'ApplicationSettings' is not configured. Please configure it in appSettings.json and add it to the service collection using 'services.Configure<ApplicationSettings>(configurationSection)'.");
 
         if (app.Environment.IsDevelopment())
             app.UseDeveloperExceptionPage();

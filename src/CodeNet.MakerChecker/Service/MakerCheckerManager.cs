@@ -278,13 +278,11 @@ internal class MakerCheckerManager<TDbContext>(TDbContext dbContext, ICodeNetCon
         return entity;
     }
 
-    private static TEntity Copy<TEntity>(TEntity source, TEntity destination)
+    private static void Copy<TEntity>(TEntity source, TEntity destination)
     {
         var properties = typeof(TEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         var baseProperties = typeof(MakerCheckerEntity).GetProperties(BindingFlags.Public | BindingFlags.Instance);
         foreach (var property in properties.Where(c => !baseProperties.Select(d => d.Name).Contains(c.Name) && c.GetCustomAttribute<PrimaryKeyAttribute>() is null))
             property.SetValue(source, property.GetValue(destination));
-
-        return source;
     }
 }
