@@ -17,24 +17,6 @@ internal class EmailService(IServiceProvider serviceProvider, IOptions<MailOptio
     public async Task SendMail(SendMailRequest request, CancellationToken cancellationToken)
         => await SendMail(GenerateMailBody(await GetMailTemplate(request.TemplateCode, cancellationToken), request.Params), request, request.TemplateCode, cancellationToken);
 
-    public async Task SendBulkMail(SendBulkMailRequest request, CancellationToken cancellationToken)
-    {
-        var template = await GetMailTemplate(request.TemplateCode, cancellationToken);
-        foreach (var item in request.MailInfos)
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            var mailBody = GenerateMailBody(template, item.Param);
-            await SendMail(mailBody, new()
-            {
-                To = item.To,
-                Cc = item.Cc,
-                Bcc = item.Bcc,
-                Params = item.Param,
-                Subject = request.Subject,
-            }, request.TemplateCode, cancellationToken);
-        }
-    }
-
     private Task SendMail(MailTemplateResult mailTemplate, SendMailModel request, string templateCode, CancellationToken cancellationToken)
     {
         MailMessage mailMessage = new()
@@ -86,9 +68,27 @@ internal class EmailService(IServiceProvider serviceProvider, IOptions<MailOptio
             }, cancellationToken);
     }
 
+    public async Task SendBulkMail(SendBulkMailRequest request, CancellationToken cancellationToken)
+    {
+        var template = await GetMailTemplate(request.TemplateCode, cancellationToken);
+        foreach (var item in request.MailInfos)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var mailBody = GenerateMailBody(template, item.Param);
+            await SendMail(mailBody, new()
+            {
+                To = item.To,
+                Cc = item.Cc,
+                Bcc = item.Bcc,
+                Params = item.Param,
+                Subject = request.Subject,
+            }, request.TemplateCode, cancellationToken);
+        }
+    }
+
     private async Task<MailTemplate> GetMailTemplate(string templateCode, CancellationToken cancellationToken) => !options.Value.HasMongoDB
             ? throw new NotImplementedException("MongoDB is not implemented!")
-            : await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new NullReferenceException($"'{templateCode}' is not found!");
+            : await _templateRepositories!.GetByIdAsync(c => c.Code == templateCode, cancellationToken) ?? throw new ArgumentNullException($"'{templateCode}' is not found!");
 
     private static MailTemplateResult GenerateMailBody(MailTemplate template, object? parameters) => new()
     {
