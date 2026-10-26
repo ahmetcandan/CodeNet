@@ -65,7 +65,10 @@ public class RabbitMQProducerService(IOptions<RabbitMQProducerOptions> options)
                 result.Add(message);
             }
         }
-        catch { }
+        catch (System.Exception ex)
+        {
+            Console.WriteLine($"RabbitMQProducerService.Publish Exception: {ex.Message}");
+        }
 
         return result;
     }

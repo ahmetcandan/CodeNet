@@ -2,13 +2,13 @@
 
 namespace CodeNet.Messaging.Manager;
 
-public partial class FunctionExecuter
+internal class FunctionExecuter
 {
-    internal FunctionExecuter() { }
-
     public static string Now() => Now("");
 
-    public static string Now(string format) => string.IsNullOrEmpty(format) ? DateTime.Now.ToString() : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
+    public static string Now(string format) => string.IsNullOrEmpty(format)
+        ? DateTime.Now.ToString(CultureInfo.InvariantCulture)
+        : DateTime.Now.ToString(format, CultureInfo.InvariantCulture);
 
     public static string NumberFormat(decimal value, string format) => value.ToString(format, CultureInfo.InvariantCulture);
 
@@ -18,5 +18,5 @@ public partial class FunctionExecuter
 
     public static string DateFormat(DateTime date, string format) => date.ToString(format, CultureInfo.InvariantCulture);
 
-    public static string Length(string value) => value.Length.ToString();
+    public static string Length(string value) => (value?.Length ?? 0).ToString(CultureInfo.InvariantCulture);
 }

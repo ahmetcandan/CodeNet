@@ -34,23 +34,23 @@ public static class RabbitMQOutboxServiceExtension
 
         var producerServices = services.Where(c => IsRabbitMQProducerServiceType(c.ServiceType)).ToList();
         int index = 0;
-        foreach (var producerService in producerServices)
+        foreach (var serviceType in producerServices.Select(c => c.ServiceType))
         {
             index++;
-            var outboxProducerServiceType = producerService.ServiceType.Equals(typeof(RabbitMQProducerService))
+            var outboxProducerServiceType = serviceType.Equals(typeof(RabbitMQProducerService))
                 ? typeof(OutboxRabbitMQProducerService)
-                : typeof(OutboxRabbitMQProducerService<>).MakeGenericType(producerService.ServiceType);
+                : typeof(OutboxRabbitMQProducerService<>).MakeGenericType(serviceType);
 
-            services.Replace(ServiceDescriptor.Scoped(producerService.ServiceType, outboxProducerServiceType));
+            services.Replace(ServiceDescriptor.Scoped(serviceType, outboxProducerServiceType));
             services.AddScoped(outboxProducerServiceType);
-            var sendServiceType = producerService.ServiceType.Equals(typeof(RabbitMQProducerService))
+            var sendServiceType = serviceType.Equals(typeof(RabbitMQProducerService))
                 ? typeof(RabbitMQSendService)
-                : typeof(RabbitMQSendService<,>).MakeGenericType(outboxProducerServiceType, producerService.ServiceType);
+                : typeof(RabbitMQSendService<,>).MakeGenericType(outboxProducerServiceType, serviceType);
             services.AddScoped(sendServiceType);
             services.AddBackgroundJob(c =>
             {
                 var addScheduleJobMethod = typeof(BackgroundJobOptionsBuilder).GetMethod("AddScheduleJob", [typeof(string), typeof(TimeSpan), typeof(JobOptions)])?.MakeGenericMethod(sendServiceType);
-                addScheduleJobMethod?.Invoke(c, [$"{outboxProducerServiceType.Name}[{index:000}]", settings.SendPeriod, new JobOptions(settings?.LockSettings?.LockTime ?? TimeSpan.FromMinutes(1), settings?.LockSettings?.TimeOut ?? TimeSpan.FromMinutes(1))]);
+                addScheduleJobMethod?.Invoke(c, [$"{outboxProducerServiceType.Name}[{index:000}]", settings.SendPeriod, new JobOptions(settings.LockSettings?.LockTime ?? TimeSpan.FromMinutes(1), settings.LockSettings?.TimeOut ?? TimeSpan.FromMinutes(1))]);
             });
         }
 

@@ -8,7 +8,7 @@ using System.Text;
 
 namespace CodeNet.Socket.Client;
 
-public abstract class CodeNetClient : ICodeNetClient
+public abstract class CodeNetClient : ICodeNetClient, IDisposable
 {
     private readonly string? _hostName;
     private readonly int? _port;
