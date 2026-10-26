@@ -25,7 +25,7 @@ internal sealed class CacheMiddleware(RequestDelegate next, IDistributedCache di
             string? key = null;
             if (cacheState.HasFlag(Core.Enums.CacheStates.ClearCache))
             {
-                key ??= await GetRequestKey(context, methodInfo);
+                key = await GetRequestKey(context, methodInfo);
                 await distributedCache.RemoveAsync(key, context.RequestAborted);
             }
 

@@ -1,0 +1,4 @@
+{
+    "dotnet.defaultSolution": "CodeNet.sln",
+    "geminicodeassist.enableTelemetry": false
+}
