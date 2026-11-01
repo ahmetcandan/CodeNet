@@ -108,12 +108,8 @@ public class RabbitMQConsumerService(IOptions<RabbitMQConsumerOptions> options)
         if (_channel?.IsOpen is true)
         {
             _channel.Close();
-
-            if (_consumer is not null)
-                _consumer.Received -= MessageHandler;
-
-            if (_asyncConsumer is not null)
-                _asyncConsumer.Received -= AsyncMessageHandler;
+            _consumer?.Received -= MessageHandler;
+            _asyncConsumer?.Received -= AsyncMessageHandler;
         }
     }
 

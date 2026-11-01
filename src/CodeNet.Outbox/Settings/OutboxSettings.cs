@@ -4,6 +4,7 @@ public class OutboxSettings
 {
     public TimeSpan SendPeriod { get; set; } = TimeSpan.FromMinutes(1);
     public int PrefetchCount { get; set; } = 100;
+    public string RedisPrefix { get; set; } = "outbox-lock";
     public OutboxLockSettings? LockSettings { get; set; }
 }
 

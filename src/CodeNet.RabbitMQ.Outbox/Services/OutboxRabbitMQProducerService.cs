@@ -26,5 +26,7 @@ internal class OutboxRabbitMQProducerService(IOutboxService outboxService, IOpti
         return messages;
     }
 
-    public IEnumerable<PublishModel> PublishRange(IEnumerable<PublishModel> messages) => base.Publish(messages);
+    public IEnumerable<PublishModel> PublishRangeQueue(IEnumerable<PublishModel> messages) => base.Publish(messages);
+
+    public PublishModel? PublishQueue(PublishModel message) => Publish(message, message.MessageId);
 }

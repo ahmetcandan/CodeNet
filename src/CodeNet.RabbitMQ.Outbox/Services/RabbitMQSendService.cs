@@ -1,9 +1,11 @@
 ﻿using CodeNet.BackgroundJob.Manager;
 using CodeNet.Outbox.Manager;
+using CodeNet.Outbox.Settings;
 using CodeNet.RabbitMQ.Services;
 using CodeNet.RabbitMQ.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
+using RedLockNet;
 
 namespace CodeNet.RabbitMQ.Outbox.Services;
 
@@ -19,8 +21,19 @@ internal class RabbitMQSendService<TOutboxProducerService, TProducerService>(ISe
             ? serviceScope.ServiceProvider.GetRequiredService<OutboxRabbitMQProducerService>()
             : serviceScope.ServiceProvider.GetRequiredService<TOutboxProducerService>();
         var waitingMessages = await outboxService.GetWaitingMessagesAsync(options.Value.Queue, cancellationToken);
-        var result = producerService.PublishRange(waitingMessages.Select(c => new Models.PublishModel(c.Id, c.Data, c.MessageId)));
-        await outboxService.DeleteMessageAsync(result.Select(c => c.Id), cancellationToken);
+        var distributedLockService = serviceScope.ServiceProvider.GetRequiredService<IDistributedLockFactory>();
+        var outboxSetting = serviceScope.ServiceProvider.GetRequiredService<IOptions<OutboxSettings>>().Value;
+
+        foreach (var message in waitingMessages)
+        {
+            using var lockResult = await distributedLockService.CreateLockAsync($"{outboxSetting.RedisPrefix}-{message.Id}", TimeSpan.FromMinutes(1), TimeSpan.FromMicroseconds(100), TimeSpan.FromMicroseconds(100), cancellationToken: cancellationToken);
+            if (!lockResult.IsAcquired)
+                continue;
+            
+            var publishResult = producerService.PublishQueue(new Models.PublishModel(message.Id, message.Data, message.MessageId));
+            if (publishResult is not null)
+                await outboxService.DeleteMessageAsync(publishResult.Id, cancellationToken);
+        }
     }
 }
 
